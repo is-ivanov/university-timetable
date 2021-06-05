@@ -1,4 +1,4 @@
-package ua.com.foxminded.university.domain;
+package ua.com.foxminded.university.domain.entity;
 
 import lombok.Data;
 
