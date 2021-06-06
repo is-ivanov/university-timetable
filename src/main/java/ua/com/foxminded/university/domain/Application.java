@@ -16,10 +16,10 @@ public class Application {
 
         CourseDaoImpl dao = context.getBean(CourseDaoImpl.class);
 
-//        System.out.println("Create new course");
-//        Course newCourse = new Course();
-//        newCourse.setName("newCourse");
-//        dao.add(newCourse);
+        System.out.println("Create new course");
+        Course newCourse = new Course();
+        newCourse.setName("newCourse");
+        dao.add(newCourse);
 
         System.out.println("get biology by id 3");
         System.out.println(dao.getById(11));
