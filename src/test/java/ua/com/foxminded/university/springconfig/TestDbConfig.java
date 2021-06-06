@@ -17,8 +17,7 @@ public class TestDbConfig {
     @Bean
     public DataSource dataSource() {
         DataSource dataSource = new EmbeddedDatabaseBuilder()
-                .setType(EmbeddedDatabaseType.H2)
-                .addScript("classpath:schema.sql").build();
+                .setType(EmbeddedDatabaseType.H2).build();
         return dataSource;
     }
 
