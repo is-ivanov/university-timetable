@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.Optional;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -37,11 +36,6 @@ class CourseDaoImplTest {
 
     @Autowired
     CourseDaoImpl dao;
-
-    @AfterEach
-    void tearDown() throws Exception {
-        JdbcTestUtils.deleteFromTables(JdbcTemplate, TABLE_NAME);
-    }
 
     @Nested
     @DisplayName("test 'add' method")
