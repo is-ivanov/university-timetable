@@ -32,7 +32,7 @@ class CourseDaoImplTest {
     private static final String FIRST_COURSE_NAME = "English";
 
     @Autowired
-    private JdbcTemplate JdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
 
     @Autowired
     CourseDaoImpl dao;
@@ -49,7 +49,7 @@ class CourseDaoImplTest {
 
             dao.add(course);
             int expectedRowsInTable = 4;
-            int actualRowsInTable = JdbcTestUtils.countRowsInTable(JdbcTemplate,
+            int actualRowsInTable = JdbcTestUtils.countRowsInTable(jdbcTemplate,
                     TABLE_NAME);
             assertEquals(expectedRowsInTable, actualRowsInTable);
         }
@@ -85,7 +85,7 @@ class CourseDaoImplTest {
         @DisplayName("should return List with size = 3")
         void testGetAllCourses() {
             int expectedQuantityCourses = JdbcTestUtils
-                    .countRowsInTable(JdbcTemplate, TABLE_NAME);
+                    .countRowsInTable(jdbcTemplate, TABLE_NAME);
             int actualQuantityCourses = dao.getAll().size();
             assertEquals(expectedQuantityCourses, actualQuantityCourses);
         }
@@ -113,11 +113,11 @@ class CourseDaoImplTest {
         @DisplayName("delete course id=1 should delete one record and number records table should equals 2")
         void testUpdateCourses() {
             int expectedQuantityCourses = JdbcTestUtils
-                    .countRowsInTable(JdbcTemplate, TABLE_NAME) - 1;
+                    .countRowsInTable(jdbcTemplate, TABLE_NAME) - 1;
             Course course = new Course(FIRST_ID, FIRST_COURSE_NAME);
             dao.delete(course);
             int actualQuantityCourses = JdbcTestUtils
-                    .countRowsInTable(JdbcTemplate, TABLE_NAME);
+                    .countRowsInTable(jdbcTemplate, TABLE_NAME);
             assertEquals(expectedQuantityCourses, actualQuantityCourses);
         }
     }
