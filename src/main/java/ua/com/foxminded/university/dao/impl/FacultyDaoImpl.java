@@ -1,4 +1,4 @@
-package ua.com.foxminded.university.dao.interfaces;
+package ua.com.foxminded.university.dao.impl;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,10 +6,13 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import ua.com.foxminded.university.dao.interfaces.FacultyDao;
 import ua.com.foxminded.university.domain.entity.Faculty;
+import ua.com.foxminded.university.domain.entity.mapper.FacultyMapper;
 
 @Component
 @PropertySource("classpath:sql_query.properties")
@@ -34,32 +37,43 @@ public class FacultyDaoImpl implements FacultyDao {
 
     @Override
     public void add(Faculty faculty) {
-        // TODO Auto-generated method stub
-
+        Integer deanId = null;
+        if (faculty.getDean() != null) {
+            deanId = faculty.getDean().getId();
+        }
+        jdbcTemplate.update(env.getRequiredProperty(QUERY_ADD),
+                faculty.getName(), deanId);
     }
 
     @Override
     public Optional<Faculty> getById(int id) {
-        // TODO Auto-generated method stub
-        return null;
+        Faculty result = null;
+        try {
+            result = jdbcTemplate.queryForObject(
+                    env.getRequiredProperty(QUERY_GET_BY_ID),
+                    new FacultyMapper(), id);
+        } catch (DataAccessException e) {
+            System.out.println("Faculty not found: " + id);
+        }
+        return Optional.ofNullable(result);
     }
 
     @Override
     public List<Faculty> getAll() {
-        // TODO Auto-generated method stub
-        return null;
+        return jdbcTemplate.query(env.getRequiredProperty(QUERY_GET_ALL),
+                new FacultyMapper());
     }
 
     @Override
     public void update(Faculty faculty) {
-        // TODO Auto-generated method stub
-
+        jdbcTemplate.update(env.getRequiredProperty(QUERY_UPDATE),
+                faculty.getName(), faculty.getDean().getId(), faculty.getId());
     }
 
     @Override
     public void delete(Faculty faculty) {
-        // TODO Auto-generated method stub
-
+        jdbcTemplate.update(env.getRequiredProperty(QUERY_DELETE),
+                faculty.getId());
     }
 
 }
