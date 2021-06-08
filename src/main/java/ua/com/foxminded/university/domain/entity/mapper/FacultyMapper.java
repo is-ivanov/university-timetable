@@ -31,7 +31,11 @@ public class FacultyMapper implements RowMapper<Faculty> {
 
     private Teacher createDean(ResultSet rs) throws SQLException {
         Teacher dean = new Teacher();
-        dean.setId(rs.getInt(ID_DEAN));
+        Integer id = rs.getInt(ID_DEAN);
+        if (rs.wasNull()) {
+            id = null;
+        }
+        dean.setId(id);
         dean.setFirstName(rs.getString(FIRST_NAME_DEAN));
         dean.setPatronymic(rs.getString(PATRONYMIC_DEAN));
         dean.setLastName(rs.getString(LAST_NAME_DEAN));

@@ -37,12 +37,14 @@ public class FacultyDaoImpl implements FacultyDao {
 
     @Override
     public void add(Faculty faculty) {
-        Integer deanId = null;
-        if (faculty.getDean() != null) {
-            deanId = faculty.getDean().getId();
-        }
+//        Integer deanId = null;
+//        if (faculty.getDean() != null) {
+//            deanId = faculty.getDean().getId();
+//        }
+//        jdbcTemplate.update(env.getRequiredProperty(QUERY_ADD),
+//                faculty.getName(), deanId);
         jdbcTemplate.update(env.getRequiredProperty(QUERY_ADD),
-                faculty.getName(), deanId);
+                faculty.getName(), faculty.getDean().getId());
     }
 
     @Override

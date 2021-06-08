@@ -118,7 +118,7 @@ class RoomDaoImplTest {
 
         @Test
         @DisplayName("delete room id=1 should delete one record and number records table should equals 2")
-        void testUpdateRooms() {
+        void testDeleteRooms() {
             int expectedQuantityRooms = JdbcTestUtils
                     .countRowsInTable(jdbcTemplate, TABLE_NAME) - 1;
             Room room = new Room(FIRST_ID, FIRST_ROOM_BUILDING,FIRST_ROOM_NUMBER);
