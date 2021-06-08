@@ -1,9 +1,7 @@
 package ua.com.foxminded.university.dao.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
-import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -17,6 +15,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.jdbc.JdbcTestUtils;
 
 import ua.com.foxminded.university.domain.entity.Room;
+import ua.com.foxminded.university.exception.DAOException;
 import ua.com.foxminded.university.springconfig.TestDbConfig;
 
 @ExtendWith(SpringExtension.class)
@@ -31,6 +30,7 @@ class RoomDaoImplTest {
     private static final int FIRST_ID = 1;
     private static final String FIRST_ROOM_BUILDING = "building-1";
     private static final String FIRST_ROOM_NUMBER = "1457a";
+    private static final String MESSAGE_EXCEPTION = "Room not found: 4";
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -63,9 +63,10 @@ class RoomDaoImplTest {
     class getByIdTest {
 
 
+
         @Test
         @DisplayName("with id = 1 should return room (1, 'building-1', '1457a')")
-        void testGetByIdRoom() {
+        void testGetByIdRoom() throws DAOException {
             Room expectedRoom = new Room();
             expectedRoom.setId(FIRST_ID);
             expectedRoom.setBuilding(FIRST_ROOM_BUILDING);
@@ -75,11 +76,11 @@ class RoomDaoImplTest {
         }
 
         @Test
-        @DisplayName("with id=4 should return 'Room not found: 4' and empty Optional")
-        void testGetByIdRoomException() {
-
-            Optional<Room> opt = dao.getById(4);
-            assertFalse(opt.isPresent());
+        @DisplayName("with id=4 should return DAOException 'Room not found: 4'")
+        void testGetByIdRoomException() throws DAOException {
+            DAOException exception = assertThrows(DAOException.class,
+                    () -> dao.getById(4));
+            assertEquals(MESSAGE_EXCEPTION, exception.getMessage());
         }
     }
 
@@ -103,7 +104,7 @@ class RoomDaoImplTest {
 
         @Test
         @DisplayName("update building and number room id=1 should write new fields and getById(1) return this fields")
-        void testUpdateRooms() {
+        void testUpdateRooms() throws DAOException {
             Room expectedRoom = new Room(FIRST_ID, TEST_BUILDING,
                     TEST_ROOM_NUMBER);
             dao.update(expectedRoom);

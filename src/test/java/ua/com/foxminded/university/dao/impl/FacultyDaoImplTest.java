@@ -1,9 +1,7 @@
 package ua.com.foxminded.university.dao.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
-import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -18,6 +16,7 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Teacher;
+import ua.com.foxminded.university.exception.DAOException;
 import ua.com.foxminded.university.springconfig.TestDbConfig;
 
 @ExtendWith(SpringExtension.class)
@@ -35,6 +34,7 @@ class FacultyDaoImplTest {
     private static final String NAME_DEAN = "Ivan";
     private static final String SURNAME_DEAN = "Petrov";
     private static final String PATRONYMIC_DEAN = "Sergeevich";
+    private static final String MESSAGE_EXCEPTION = "Faculty not found: 4";
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -69,7 +69,7 @@ class FacultyDaoImplTest {
 
         @Test
         @DisplayName("with id=1 should return faculty (1, 'Foreign Language', dean id=1)")
-        void testGetByIdFacultyWithDean() {
+        void testGetByIdFacultyWithDean() throws DAOException {
             Teacher expectedDean = new Teacher();
             expectedDean.setId(FIRST_ID);
             expectedDean.setFirstName(NAME_DEAN);
@@ -87,7 +87,7 @@ class FacultyDaoImplTest {
 
         @Test
         @DisplayName("with id=2 should return faculty (2, 'Chemical Technology', dean=null)")
-        void testGetByIdFacultyWithoutDean() {
+        void testGetByIdFacultyWithoutDean() throws DAOException {
             Teacher emptyDean = new Teacher();
 
             Faculty expectedFaculty = new Faculty();
@@ -100,11 +100,11 @@ class FacultyDaoImplTest {
         }
 
         @Test
-        @DisplayName("with id=4 should return 'Faculty not found: 4' and empty Optional")
-        void testGetByIdFacultyException() {
-
-            Optional<Faculty> opt = dao.getById(4);
-            assertFalse(opt.isPresent());
+        @DisplayName("with id=4 should return DAOException 'Faculty not found: 4'")
+        void testGetByIdFacultyException() throws DAOException {
+            DAOException exception = assertThrows(DAOException.class,
+                    () -> dao.getById(4));
+            assertEquals(MESSAGE_EXCEPTION, exception.getMessage());
         }
     }
 
@@ -128,7 +128,7 @@ class FacultyDaoImplTest {
 
         @Test
         @DisplayName("update name and dean_id (set to null) faculty id=1 should write new fields and getById(1) return this fields")
-        void testUpdateFaculties() {
+        void testUpdateFaculties() throws DAOException {
             Teacher dean = new Teacher();
             Faculty expectedFaculty = new Faculty(FIRST_ID, TEST_FACULTY_NAME,
                     dean);

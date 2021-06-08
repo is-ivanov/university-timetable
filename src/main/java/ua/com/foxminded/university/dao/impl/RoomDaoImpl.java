@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import ua.com.foxminded.university.dao.interfaces.RoomDao;
 import ua.com.foxminded.university.domain.entity.Room;
 import ua.com.foxminded.university.domain.entity.mapper.RoomMapper;
+import ua.com.foxminded.university.exception.DAOException;
 
 @Component
 @PropertySource("classpath:sql_query.properties")
@@ -23,6 +24,7 @@ public class RoomDaoImpl implements RoomDao {
     private static final String QUERY_GET_BY_ID = "room.getById";
     private static final String QUERY_UPDATE = "room.update";
     private static final String QUERY_DELETE = "room.delete";
+    private static final String MESSAGE_ROOM_NOT_FOUND = "Room not found: ";
 
     private JdbcTemplate jdbcTemplate;
 
@@ -41,14 +43,14 @@ public class RoomDaoImpl implements RoomDao {
     }
 
     @Override
-    public Optional<Room> getById(int id) {
+    public Optional<Room> getById(int id) throws DAOException {
         Room result = null;
         try {
             result = jdbcTemplate.queryForObject(
                     env.getRequiredProperty(QUERY_GET_BY_ID), new RoomMapper(),
                     id);
         } catch (DataAccessException e) {
-            System.out.println("Room not found: " + id);
+            throw new DAOException(MESSAGE_ROOM_NOT_FOUND + id, e);
         }
         return Optional.ofNullable(result);
     }

@@ -1,9 +1,7 @@
 package ua.com.foxminded.university.dao.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
-import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -17,6 +15,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.jdbc.JdbcTestUtils;
 
 import ua.com.foxminded.university.domain.entity.Course;
+import ua.com.foxminded.university.exception.DAOException;
 import ua.com.foxminded.university.springconfig.TestDbConfig;
 
 @ExtendWith(SpringExtension.class)
@@ -30,6 +29,7 @@ class CourseDaoImplTest {
     private static final String TEST_COURSE_NAME = "testName";
     private static final int FIRST_ID = 1;
     private static final String FIRST_COURSE_NAME = "English";
+    private static final String MESSAGE_EXCEPTION = "Course not found: 4";
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -59,21 +59,20 @@ class CourseDaoImplTest {
     @DisplayName("test 'getById' method")
     class getByIdTest {
 
-
         @Test
         @DisplayName("with id = 1 should return course (1, English)")
-        void testGetByIdCourse() {
+        void testGetByIdCourse() throws DAOException {
             Course expectedCourse = new Course(FIRST_ID, FIRST_COURSE_NAME);
             Course actualCourse = dao.getById(FIRST_ID).get();
             assertEquals(expectedCourse, actualCourse);
         }
 
         @Test
-        @DisplayName("with id=4 should return 'Course not found: 4' and empty Optional")
-        void testGetByIdCourseException() {
-
-            Optional<Course> opt = dao.getById(4);
-            assertFalse(opt.isPresent());
+        @DisplayName("with id=4 should return DAOException 'Course not found: 4'")
+        void testGetByIdCourseException() throws DAOException {
+            DAOException exception = assertThrows(DAOException.class,
+                    () -> dao.getById(4));
+            assertEquals(MESSAGE_EXCEPTION, exception.getMessage());
         }
     }
 
@@ -97,7 +96,7 @@ class CourseDaoImplTest {
 
         @Test
         @DisplayName("update name course id=1 should write new name and getById(1) return this name")
-        void testUpdateCourses() {
+        void testUpdateCourses() throws DAOException {
             Course course = new Course(FIRST_ID, TEST_COURSE_NAME);
             dao.update(course);
             String actualName = dao.getById(FIRST_ID).get().getName();

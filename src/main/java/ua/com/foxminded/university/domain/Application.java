@@ -6,11 +6,12 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 import ua.com.foxminded.university.dao.impl.CourseDaoImpl;
 import ua.com.foxminded.university.domain.entity.Course;
+import ua.com.foxminded.university.exception.DAOException;
 import ua.com.foxminded.university.springconfig.DbConfig;
 
 public class Application {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws DAOException {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(
                 DbConfig.class);
 

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import ua.com.foxminded.university.dao.interfaces.FacultyDao;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.mapper.FacultyMapper;
+import ua.com.foxminded.university.exception.DAOException;
 
 @Component
 @PropertySource("classpath:sql_query.properties")
@@ -23,6 +24,7 @@ public class FacultyDaoImpl implements FacultyDao {
     private static final String QUERY_GET_BY_ID = "faculty.getById";
     private static final String QUERY_UPDATE = "faculty.update";
     private static final String QUERY_DELETE = "faculty.delete";
+    private static final String MESSAGE_FACULTY_NOT_FOUND = "Faculty not found: ";
 
     private JdbcTemplate jdbcTemplate;
 
@@ -37,25 +39,23 @@ public class FacultyDaoImpl implements FacultyDao {
 
     @Override
     public void add(Faculty faculty) {
-//        Integer deanId = null;
-//        if (faculty.getDean() != null) {
-//            deanId = faculty.getDean().getId();
-//        }
-//        jdbcTemplate.update(env.getRequiredProperty(QUERY_ADD),
-//                faculty.getName(), deanId);
+        Integer deanId = null;
+        if (faculty.getDean() != null) {
+            deanId = faculty.getDean().getId();
+        }
         jdbcTemplate.update(env.getRequiredProperty(QUERY_ADD),
-                faculty.getName(), faculty.getDean().getId());
+                faculty.getName(), deanId);
     }
 
     @Override
-    public Optional<Faculty> getById(int id) {
+    public Optional<Faculty> getById(int id) throws DAOException {
         Faculty result = null;
         try {
             result = jdbcTemplate.queryForObject(
                     env.getRequiredProperty(QUERY_GET_BY_ID),
                     new FacultyMapper(), id);
         } catch (DataAccessException e) {
-            System.out.println("Faculty not found: " + id);
+            throw new DAOException(MESSAGE_FACULTY_NOT_FOUND + id, e);
         }
         return Optional.ofNullable(result);
     }
