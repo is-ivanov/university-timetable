@@ -1,6 +1,7 @@
 package ua.com.foxminded.university.dao.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -32,6 +33,7 @@ class GroupDaoImplTest {
     private static final int SECOND_ID = 2;
     private static final String FIRST_GROUP_NAME = "20Eng-1";
     private static final String FIRST_FACULTY_NAME = "Foreign Language";
+    private static final String SECOND_FACULTY_NAME = "Chemical Technology";
     private static final String NAME_DEAN = "Ivan";
     private static final String SURNAME_DEAN = "Petrov";
     private static final String PATRONYMIC_DEAN = "Sergeevich";
@@ -45,7 +47,6 @@ class GroupDaoImplTest {
     @Nested
     @DisplayName("test 'add' method")
     class addTest {
-
 
         @Test
         @DisplayName("add test group should CountRowsTable = 3")
@@ -73,7 +74,6 @@ class GroupDaoImplTest {
     @DisplayName("test 'getById' method")
     class getByIdTest {
 
-
         @Test
         @DisplayName("with id=1 should return group (1, '20Eng-1', faculty id=1, dean id=1)")
         void testGetByIdGroup() throws DAOException {
@@ -94,75 +94,71 @@ class GroupDaoImplTest {
             Group actualGroup = dao.getById(FIRST_ID).get();
             assertEquals(expectedGroup, actualGroup);
         }
-//
-//        @Test
-//        @DisplayName("with id=2 should return faculty (2, 'Chemical Technology', dean=null)")
-//        void testGetByIdFacultyWithoutDean() throws DAOException {
-//            Teacher emptyDean = new Teacher();
-//
-//            Faculty expectedFaculty = new Faculty();
-//            expectedFaculty.setId(SECOND_ID);
-//            expectedFaculty.setName(SECOND_FACULTY_NAME);
-//            expectedFaculty.setDean(emptyDean);
-//
-//            Faculty actualFaculty = dao.getById(SECOND_ID).get();
-//            assertEquals(expectedFaculty, actualFaculty);
-//        }
-//
-//        @Test
-//        @DisplayName("with id=4 should return 'Faculty not found: 4' and empty Optional")
-//        void testGetByIdFacultyException() throws DAOException {
-//
-//            Optional<Faculty> opt = dao.getById(4);
-//            assertFalse(opt.isPresent());
-//        }
+
+        @Test
+        @DisplayName("with id=4 should return DAOException 'Group not found: 4'")
+        void testGetByIdGroupException() throws DAOException {
+            DAOException exception = assertThrows(DAOException.class,
+                    () -> dao.getById(4));
+            assertEquals("Group not found: 4", exception.getMessage());
+        }
     }
-//
-//    @Nested
-//    @DisplayName("test 'getAll' method")
-//    class getAllTest {
-//
-//        @Test
-//        @DisplayName("should return List with size = 3")
-//        void testGetAllFaculties() {
-//            int expectedQuantityFaculties = JdbcTestUtils
-//                    .countRowsInTable(jdbcTemplate, TABLE_NAME);
-//            int actualQuantityFaculties = dao.getAll().size();
-//            assertEquals(expectedQuantityFaculties, actualQuantityFaculties);
-//        }
-//    }
-//
-//    @Nested
-//    @DisplayName("test 'update' method")
-//    class updateTest {
-//
-//        @Test
-//        @DisplayName("update name and dean_id (set to null) faculty id=1 should write new fields and getById(1) return this fields")
-//        void testUpdateFaculties() throws DAOException {
-//            Teacher dean = new Teacher();
-//            Faculty expectedFaculty = new Faculty(FIRST_ID, TEST_FACULTY_NAME,
-//                    dean);
-//            dao.update(expectedFaculty);
-//            Faculty actualFaculty = dao.getById(FIRST_ID).get();
-//            assertEquals(expectedFaculty, actualFaculty);
-//        }
-//    }
-//
-//    @Nested
-//    @DisplayName("test 'delete' method")
-//    class deleteTest {
-//
-//        @Test
-//        @DisplayName("delete faculty id=2 should delete one record and number records table should equals 1")
-//        void testDeleteFaculty() {
-//            int expectedQuantityFaculties = JdbcTestUtils
-//                    .countRowsInTable(jdbcTemplate, TABLE_NAME) - 1;
-//            Teacher dean = new Teacher();
-//            Faculty faculty = new Faculty(SECOND_ID, SECOND_FACULTY_NAME, dean);
-//            dao.delete(faculty);
-//            int actualQuantityRooms = JdbcTestUtils
-//                    .countRowsInTable(jdbcTemplate, TABLE_NAME);
-//            assertEquals(expectedQuantityFaculties, actualQuantityRooms);
-//        }
-//    }
+
+    @Nested
+    @DisplayName("test 'getAll' method")
+    class getAllTest {
+
+        @Test
+        @DisplayName("should return List with size = 2")
+        void testGetAllGroups() {
+            int expectedQuantityGroups = JdbcTestUtils
+                    .countRowsInTable(jdbcTemplate, TABLE_NAME);
+            int actualQuantityGroups = dao.getAll().size();
+            assertEquals(expectedQuantityGroups, actualQuantityGroups);
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'update' method")
+    class updateTest {
+
+        @Test
+        @DisplayName("update name and faculty_id faculty id=1 should write new fields and getById(1) return this fields")
+        void testUpdateGroup() throws DAOException {
+            Teacher dean = new Teacher();
+            Faculty expectedFaculty = new Faculty(SECOND_ID,
+                    SECOND_FACULTY_NAME,
+                    dean);
+            Group expectedGroup = new Group(FIRST_ID, TEST_GROUP_NAME,
+                    expectedFaculty);
+            dao.update(expectedGroup);
+            Group actualGroup = dao.getById(FIRST_ID).get();
+            assertEquals(expectedGroup, actualGroup);
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'delete' method")
+    class deleteTest {
+
+        @Test
+        @DisplayName("delete group id=1 should delete one record and number records table should equals 1")
+        void testDeleteGroup() {
+            int expectedQuantityGroups = JdbcTestUtils
+                    .countRowsInTable(jdbcTemplate, TABLE_NAME) - 1;
+            Teacher dean = new Teacher();
+            dean.setId(FIRST_ID);
+            dean.setFirstName(NAME_DEAN);
+            dean.setPatronymic(PATRONYMIC_DEAN);
+            dean.setLastName(SURNAME_DEAN);
+
+            Faculty faculty = new Faculty(FIRST_ID, FIRST_FACULTY_NAME, dean);
+
+            Group group = new Group(FIRST_ID, FIRST_GROUP_NAME, faculty);
+            dao.delete(group);
+            int actualQuantityGroups = JdbcTestUtils
+                    .countRowsInTable(jdbcTemplate, TABLE_NAME);
+            assertEquals(expectedQuantityGroups, actualQuantityGroups);
+        }
+    }
 }

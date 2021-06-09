@@ -113,7 +113,7 @@ class FacultyDaoImplTest {
     class getAllTest {
 
         @Test
-        @DisplayName("should return List with size = 3")
+        @DisplayName("should return List with size = 2")
         void testGetAllFaculties() {
             int expectedQuantityFaculties = JdbcTestUtils
                     .countRowsInTable(jdbcTemplate, TABLE_NAME);
@@ -150,9 +150,9 @@ class FacultyDaoImplTest {
             Teacher dean = new Teacher();
             Faculty faculty = new Faculty(SECOND_ID, SECOND_FACULTY_NAME, dean);
             dao.delete(faculty);
-            int actualQuantityRooms = JdbcTestUtils
+            int actualQuantityFaculties = JdbcTestUtils
                     .countRowsInTable(jdbcTemplate, TABLE_NAME);
-            assertEquals(expectedQuantityFaculties, actualQuantityRooms);
+            assertEquals(expectedQuantityFaculties, actualQuantityFaculties);
         }
     }
 }
