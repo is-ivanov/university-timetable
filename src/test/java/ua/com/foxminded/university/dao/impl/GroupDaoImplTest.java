@@ -37,6 +37,7 @@ class GroupDaoImplTest {
     private static final String NAME_DEAN = "Ivan";
     private static final String SURNAME_DEAN = "Petrov";
     private static final String PATRONYMIC_DEAN = "Sergeevich";
+    private static final String MESSAGE_EXCEPTION = "Group not found: 4";
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -100,7 +101,7 @@ class GroupDaoImplTest {
         void testGetByIdGroupException() throws DAOException {
             DAOException exception = assertThrows(DAOException.class,
                     () -> dao.getById(4));
-            assertEquals("Group not found: 4", exception.getMessage());
+            assertEquals(MESSAGE_EXCEPTION, exception.getMessage());
         }
     }
 
@@ -123,7 +124,7 @@ class GroupDaoImplTest {
     class updateTest {
 
         @Test
-        @DisplayName("update name and faculty_id faculty id=1 should write new fields and getById(1) return this fields")
+        @DisplayName("update name and faculty_id group id=1 should write new fields and getById(1) return this fields")
         void testUpdateGroup() throws DAOException {
             Teacher dean = new Teacher();
             Faculty expectedFaculty = new Faculty(SECOND_ID,

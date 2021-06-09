@@ -1,6 +1,7 @@
 package ua.com.foxminded.university.dao.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -17,6 +18,7 @@ import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.domain.entity.Teacher;
+import ua.com.foxminded.university.exception.DAOException;
 import ua.com.foxminded.university.springconfig.TestDbConfig;
 
 @ExtendWith(SpringExtension.class)
@@ -40,6 +42,9 @@ class StudentDaoImplTest {
     private static final String SURNAME_DEAN = "Petrov";
     private static final String PATRONYMIC_DEAN = "Sergeevich";
     private static final String FIRST_STUDENT_NAME = "Mike";
+    private static final String FIRST_STUDENT_LAST_NAME = "Smith";
+    private static final String FIRST_STUDENT_PATRONYMIC = "Jr";
+    private static final String MESSAGE_EXCEPTION = "Student not found: 4";
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -80,72 +85,86 @@ class StudentDaoImplTest {
         }
     }
 
-//    @Nested
-//    @DisplayName("test 'getById' method")
-//    class getByIdTest {
-//
-//        @Test
-//        @DisplayName("with id=1 should return group (1, '20Eng-1', faculty id=1, dean id=1)")
-//        void testGetByIdGroup() throws DAOException {
-//            Teacher expectedDean = new Teacher();
-//            expectedDean.setId(FIRST_ID);
-//            expectedDean.setFirstName(NAME_DEAN);
-//            expectedDean.setPatronymic(PATRONYMIC_DEAN);
-//            expectedDean.setLastName(SURNAME_DEAN);
-//
-//            Faculty expectedFaculty = new Faculty();
-//            expectedFaculty.setId(FIRST_ID);
-//            expectedFaculty.setName(FIRST_FACULTY_NAME);
-//            expectedFaculty.setDean(expectedDean);
-//
-//            Group expectedGroup = new Group(FIRST_ID, FIRST_GROUP_NAME,
-//                    expectedFaculty);
-//
-//            Group actualGroup = dao.getById(FIRST_ID).get();
-//            assertEquals(expectedGroup, actualGroup);
-//        }
-//
-//        @Test
-//        @DisplayName("with id=4 should return DAOException 'Group not found: 4'")
-//        void testGetByIdGroupException() throws DAOException {
-//            DAOException exception = assertThrows(DAOException.class,
-//                    () -> dao.getById(4));
-//            assertEquals("Group not found: 4", exception.getMessage());
-//        }
-//    }
-//
-//    @Nested
-//    @DisplayName("test 'getAll' method")
-//    class getAllTest {
-//
-//        @Test
-//        @DisplayName("should return List with size = 2")
-//        void testGetAllGroups() {
-//            int expectedQuantityGroups = JdbcTestUtils
-//                    .countRowsInTable(jdbcTemplate, TABLE_NAME);
-//            int actualQuantityGroups = dao.getAll().size();
-//            assertEquals(expectedQuantityGroups, actualQuantityGroups);
-//        }
-//    }
-//
-//    @Nested
-//    @DisplayName("test 'update' method")
-//    class updateTest {
-//
-//        @Test
-//        @DisplayName("update name and faculty_id faculty id=1 should write new fields and getById(1) return this fields")
-//        void testUpdateGroup() throws DAOException {
-//            Teacher dean = new Teacher();
-//            Faculty expectedFaculty = new Faculty(SECOND_ID,
-//                    SECOND_FACULTY_NAME,
-//                    dean);
-//            Group expectedGroup = new Group(FIRST_ID, TEST_GROUP_NAME,
-//                    expectedFaculty);
-//            dao.update(expectedGroup);
-//            Group actualGroup = dao.getById(FIRST_ID).get();
-//            assertEquals(expectedGroup, actualGroup);
-//        }
-//    }
+    @Nested
+    @DisplayName("test 'getById' method")
+    class getByIdTest {
+
+        @Test
+        @DisplayName("with id=1 should return expected student)")
+        void testGetByIdStudent() throws DAOException {
+            Teacher expectedDean = new Teacher();
+            expectedDean.setId(FIRST_ID);
+            expectedDean.setFirstName(NAME_DEAN);
+            expectedDean.setPatronymic(PATRONYMIC_DEAN);
+            expectedDean.setLastName(SURNAME_DEAN);
+
+            Faculty expectedFaculty = new Faculty();
+            expectedFaculty.setId(FIRST_ID);
+            expectedFaculty.setName(FIRST_FACULTY_NAME);
+            expectedFaculty.setDean(expectedDean);
+
+            Group expectedGroup = new Group();
+            expectedGroup.setId(FIRST_ID);
+            expectedGroup.setName(FIRST_GROUP_NAME);
+            expectedGroup.setFaculty(expectedFaculty);
+
+            Student expectedStudent = new Student();
+            expectedStudent.setId(FIRST_ID);
+            expectedStudent.setFirstName(FIRST_STUDENT_NAME);
+            expectedStudent.setLastName(FIRST_STUDENT_LAST_NAME);
+            expectedStudent.setPatronymic(FIRST_STUDENT_PATRONYMIC);
+            expectedStudent.setGroup(expectedGroup);
+
+            Student actualStudent = dao.getById(FIRST_ID).get();
+            assertEquals(expectedStudent, actualStudent);
+        }
+
+        @Test
+        @DisplayName("with id=4 should return DAOException 'Student not found: 4'")
+        void testGetByIdStudentException() throws DAOException {
+            DAOException exception = assertThrows(DAOException.class,
+                    () -> dao.getById(4));
+            assertEquals(MESSAGE_EXCEPTION, exception.getMessage());
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'getAll' method")
+    class getAllTest {
+
+        @Test
+        @DisplayName("should return List with size = 2")
+        void testGetAllStudents() {
+            int expectedQuantityStudents = JdbcTestUtils
+                    .countRowsInTable(jdbcTemplate, TABLE_NAME);
+            int actualQuantityStudents = dao.getAll().size();
+            assertEquals(expectedQuantityStudents, actualQuantityStudents);
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'update' method")
+    class updateTest {
+
+        @Test
+        @DisplayName("update properties student id=1 should write new fields and getById(1) return this fields")
+        void testUpdateStudent() throws DAOException {
+            Teacher dean = new Teacher();
+            Faculty expectedFaculty = new Faculty(SECOND_ID,
+                    SECOND_FACULTY_NAME, dean);
+            Group expectedGroup = new Group(SECOND_ID, TEST_GROUP_NAME,
+                    expectedFaculty);
+            Student expectedStudent = new Student();
+            expectedStudent.setId(FIRST_ID);
+            expectedStudent.setFirstName(TEST_STUDENT_FIRST_NAME);
+            expectedStudent.setLastName(TEST_STUDENT_LAST_NAME);
+            expectedStudent.setPatronymic(TEST_STUDENT_PATRONYMIC);
+            expectedStudent.setGroup(expectedGroup);
+            dao.update(expectedStudent);
+            Student actualStudent = dao.getById(FIRST_ID).get();
+            assertEquals(expectedStudent, actualStudent);
+        }
+    }
 //
 //    @Nested
 //    @DisplayName("test 'delete' method")
