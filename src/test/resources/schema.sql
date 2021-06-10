@@ -20,7 +20,6 @@ CREATE TABLE public.teachers (
 CREATE TABLE public.faculties (
     id serial NOT NULL,
     name varchar(255) NOT NULL,
-    dean_id integer UNIQUE,
     CONSTRAINT PK_faculties PRIMARY KEY (id)   
 );
 
@@ -34,7 +33,6 @@ CREATE TABLE public.groups (
 CREATE TABLE public.departments (
     id serial NOT NULL,
     name varchar(255) NOT NULL,
-    head_id integer UNIQUE,
     faculty_id integer NOT NULL,
     CONSTRAINT PK_departments PRIMARY KEY (id)
 );    
@@ -61,7 +59,7 @@ CREATE TABLE public.courses (
     CONSTRAINT PK_courses PRIMARY KEY (id)
 );
 
-CREATE TABLE lessons (
+CREATE TABLE public.lessons (
     id serial NOT NULL,
     teacher_id integer NOT NULL,
     course_id integer NOT NULL,
@@ -71,7 +69,7 @@ CREATE TABLE lessons (
     CONSTRAINT PK_lessons PRIMARY KEY (id)
 );
 
-CREATE TABLE students_lessons (
+CREATE TABLE public.students_lessons (
     student_id integer NOT NULL,
     lesson_id integer NOT NULL,
     CONSTRAINT PK_students_lessons PRIMARY KEY (student_id, lesson_id)
@@ -80,9 +78,6 @@ CREATE TABLE students_lessons (
 ALTER TABLE groups ADD CONSTRAINT FK_groups_faculty FOREIGN KEY (faculty_id) REFERENCES public.faculties (id) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE departments ADD CONSTRAINT FK_departments_faculty FOREIGN KEY (faculty_id) REFERENCES public.faculties (id) ON DELETE RESTRICT ON UPDATE RESTRICT;
-ALTER TABLE departments ADD CONSTRAINT FK_departments_head FOREIGN KEY (head_id) REFERENCES public.teachers (id) ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE faculties ADD CONSTRAINT FK_faculties_dean FOREIGN KEY (dean_id) REFERENCES public.teachers (id) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE teachers ADD CONSTRAINT FK_teachers_department FOREIGN KEY (department_id) REFERENCES public.departments (id) ON DELETE RESTRICT ON UPDATE RESTRICT;
         
