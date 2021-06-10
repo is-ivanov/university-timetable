@@ -36,6 +36,7 @@ class StudentDaoImplTest {
     private static final int FIRST_ID = 1;
     private static final int SECOND_ID = 2;
     private static final String FIRST_GROUP_NAME = "20Eng-1";
+    private static final String SECOND_GROUP_NAME = "21Ger-1";
     private static final String FIRST_FACULTY_NAME = "Foreign Language";
     private static final String SECOND_FACULTY_NAME = "Chemical Technology";
     private static final String NAME_DEAN = "Ivan";
@@ -151,8 +152,9 @@ class StudentDaoImplTest {
         void testUpdateStudent() throws DAOException {
             Teacher dean = new Teacher();
             Faculty expectedFaculty = new Faculty(SECOND_ID,
-                    SECOND_FACULTY_NAME, dean);
-            Group expectedGroup = new Group(SECOND_ID, TEST_GROUP_NAME,
+                    SECOND_FACULTY_NAME,
+                    dean);
+            Group expectedGroup = new Group(SECOND_ID, SECOND_GROUP_NAME,
                     expectedFaculty);
             Student expectedStudent = new Student();
             expectedStudent.setId(FIRST_ID);
@@ -165,29 +167,22 @@ class StudentDaoImplTest {
             assertEquals(expectedStudent, actualStudent);
         }
     }
-//
-//    @Nested
-//    @DisplayName("test 'delete' method")
-//    class deleteTest {
-//
-//        @Test
-//        @DisplayName("delete group id=1 should delete one record and number records table should equals 1")
-//        void testDeleteGroup() {
-//            int expectedQuantityGroups = JdbcTestUtils
-//                    .countRowsInTable(jdbcTemplate, TABLE_NAME) - 1;
-//            Teacher dean = new Teacher();
-//            dean.setId(FIRST_ID);
-//            dean.setFirstName(NAME_DEAN);
-//            dean.setPatronymic(PATRONYMIC_DEAN);
-//            dean.setLastName(SURNAME_DEAN);
-//
-//            Faculty faculty = new Faculty(FIRST_ID, FIRST_FACULTY_NAME, dean);
-//
-//            Group group = new Group(FIRST_ID, FIRST_GROUP_NAME, faculty);
-//            dao.delete(group);
-//            int actualQuantityGroups = JdbcTestUtils
-//                    .countRowsInTable(jdbcTemplate, TABLE_NAME);
-//            assertEquals(expectedQuantityGroups, actualQuantityGroups);
-//        }
-//    }
+
+    @Nested
+    @DisplayName("test 'delete' method")
+    class deleteTest {
+
+        @Test
+        @DisplayName("delete student id=1 should delete one record and number records table should equals 1")
+        void testDeleteStudent() {
+            int expectedQuantityStudents = JdbcTestUtils
+                    .countRowsInTable(jdbcTemplate, TABLE_NAME) - 1;
+            Student student = new Student();
+            student.setId(FIRST_ID);
+            dao.delete(student);
+            int actualQuantityStudents = JdbcTestUtils
+                    .countRowsInTable(jdbcTemplate, TABLE_NAME);
+            assertEquals(expectedQuantityStudents, actualQuantityStudents);
+        }
+    }
 }
