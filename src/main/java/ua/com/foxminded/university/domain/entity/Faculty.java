@@ -11,6 +11,5 @@ public class Faculty {
 
     private int id;
     private String name;
-    private Teacher dean;
 
 }
