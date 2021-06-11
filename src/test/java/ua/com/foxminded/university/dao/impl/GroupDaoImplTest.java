@@ -16,7 +16,6 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
-import ua.com.foxminded.university.domain.entity.Teacher;
 import ua.com.foxminded.university.exception.DAOException;
 import ua.com.foxminded.university.springconfig.TestDbConfig;
 
@@ -34,9 +33,6 @@ class GroupDaoImplTest {
     private static final String FIRST_GROUP_NAME = "20Eng-1";
     private static final String FIRST_FACULTY_NAME = "Foreign Language";
     private static final String SECOND_FACULTY_NAME = "Chemical Technology";
-    private static final String NAME_DEAN = "Ivan";
-    private static final String SURNAME_DEAN = "Petrov";
-    private static final String PATRONYMIC_DEAN = "Sergeevich";
     private static final String MESSAGE_EXCEPTION = "Group not found: 4";
 
     @Autowired
@@ -55,8 +51,6 @@ class GroupDaoImplTest {
             Faculty faculty = new Faculty();
             faculty.setId(FIRST_ID);
             faculty.setName(TEST_FACULTY_NAME);
-            Teacher dean = new Teacher();
-            faculty.setDean(dean);
 
             Group group = new Group();
             group.setName(TEST_GROUP_NAME);
@@ -76,18 +70,11 @@ class GroupDaoImplTest {
     class getByIdTest {
 
         @Test
-        @DisplayName("with id=1 should return group (1, '20Eng-1', faculty id=1, dean id=1)")
+        @DisplayName("with id=1 should return group (1, '20Eng-1', faculty id=1)")
         void testGetByIdGroup() throws DAOException {
-            Teacher expectedDean = new Teacher();
-            expectedDean.setId(FIRST_ID);
-            expectedDean.setFirstName(NAME_DEAN);
-            expectedDean.setPatronymic(PATRONYMIC_DEAN);
-            expectedDean.setLastName(SURNAME_DEAN);
-
             Faculty expectedFaculty = new Faculty();
             expectedFaculty.setId(FIRST_ID);
             expectedFaculty.setName(FIRST_FACULTY_NAME);
-            expectedFaculty.setDean(expectedDean);
 
             Group expectedGroup = new Group(FIRST_ID, FIRST_GROUP_NAME,
                     expectedFaculty);
@@ -126,10 +113,8 @@ class GroupDaoImplTest {
         @Test
         @DisplayName("update name and faculty_id group id=1 should write new fields and getById(1) return this fields")
         void testUpdateGroup() throws DAOException {
-            Teacher dean = new Teacher();
             Faculty expectedFaculty = new Faculty(SECOND_ID,
-                    SECOND_FACULTY_NAME,
-                    dean);
+                    SECOND_FACULTY_NAME);
             Group expectedGroup = new Group(FIRST_ID, TEST_GROUP_NAME,
                     expectedFaculty);
             dao.update(expectedGroup);
@@ -147,13 +132,8 @@ class GroupDaoImplTest {
         void testDeleteGroup() {
             int expectedQuantityGroups = JdbcTestUtils
                     .countRowsInTable(jdbcTemplate, TABLE_NAME) - 1;
-            Teacher dean = new Teacher();
-            dean.setId(FIRST_ID);
-            dean.setFirstName(NAME_DEAN);
-            dean.setPatronymic(PATRONYMIC_DEAN);
-            dean.setLastName(SURNAME_DEAN);
 
-            Faculty faculty = new Faculty(FIRST_ID, FIRST_FACULTY_NAME, dean);
+            Faculty faculty = new Faculty(FIRST_ID, FIRST_FACULTY_NAME);
 
             Group group = new Group(FIRST_ID, FIRST_GROUP_NAME, faculty);
             dao.delete(group);
