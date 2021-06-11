@@ -17,7 +17,6 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Student;
-import ua.com.foxminded.university.domain.entity.Teacher;
 import ua.com.foxminded.university.exception.DAOException;
 import ua.com.foxminded.university.springconfig.TestDbConfig;
 
@@ -39,9 +38,6 @@ class StudentDaoImplTest {
     private static final String SECOND_GROUP_NAME = "21Ger-1";
     private static final String FIRST_FACULTY_NAME = "Foreign Language";
     private static final String SECOND_FACULTY_NAME = "Chemical Technology";
-    private static final String NAME_DEAN = "Ivan";
-    private static final String SURNAME_DEAN = "Petrov";
-    private static final String PATRONYMIC_DEAN = "Sergeevich";
     private static final String FIRST_STUDENT_NAME = "Mike";
     private static final String FIRST_STUDENT_LAST_NAME = "Smith";
     private static final String FIRST_STUDENT_PATRONYMIC = "Jr";
@@ -63,8 +59,6 @@ class StudentDaoImplTest {
             Faculty faculty = new Faculty();
             faculty.setId(FIRST_ID);
             faculty.setName(TEST_FACULTY_NAME);
-            Teacher dean = new Teacher();
-            faculty.setDean(dean);
 
             Group group = new Group();
             group.setId(FIRST_ID);
@@ -93,16 +87,9 @@ class StudentDaoImplTest {
         @Test
         @DisplayName("with id=1 should return expected student)")
         void testGetByIdStudent() throws DAOException {
-            Teacher expectedDean = new Teacher();
-            expectedDean.setId(FIRST_ID);
-            expectedDean.setFirstName(NAME_DEAN);
-            expectedDean.setPatronymic(PATRONYMIC_DEAN);
-            expectedDean.setLastName(SURNAME_DEAN);
-
             Faculty expectedFaculty = new Faculty();
             expectedFaculty.setId(FIRST_ID);
             expectedFaculty.setName(FIRST_FACULTY_NAME);
-            expectedFaculty.setDean(expectedDean);
 
             Group expectedGroup = new Group();
             expectedGroup.setId(FIRST_ID);
@@ -150,10 +137,8 @@ class StudentDaoImplTest {
         @Test
         @DisplayName("update properties student id=1 should write new fields and getById(1) return this fields")
         void testUpdateStudent() throws DAOException {
-            Teacher dean = new Teacher();
             Faculty expectedFaculty = new Faculty(SECOND_ID,
-                    SECOND_FACULTY_NAME,
-                    dean);
+                    SECOND_FACULTY_NAME);
             Group expectedGroup = new Group(SECOND_ID, SECOND_GROUP_NAME,
                     expectedFaculty);
             Student expectedStudent = new Student();
