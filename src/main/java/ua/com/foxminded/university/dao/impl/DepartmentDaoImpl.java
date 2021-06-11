@@ -36,12 +36,8 @@ public class DepartmentDaoImpl implements DepartmentDao {
 
     @Override
     public void add(Department department) {
-        Integer headId = null;
-        if (department.getHead() != null) {
-            headId = department.getHead().getId();
-        }
         jdbcTemplate.update(env.getRequiredProperty(QUERY_ADD),
-                department.getName(), headId, department.getFaculty().getId());
+                department.getName(), department.getFaculty().getId());
     }
 
     @Override

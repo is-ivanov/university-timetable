@@ -15,7 +15,6 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
-import ua.com.foxminded.university.domain.entity.Teacher;
 import ua.com.foxminded.university.springconfig.TestDbConfig;
 
 @ExtendWith(SpringExtension.class)
@@ -57,14 +56,12 @@ class DepartmentDaoImplTest {
         @Test
         @DisplayName("add test department should CountRowsTable = 3")
         void testAddDepartment() {
-            Teacher head = new Teacher();
             Faculty faculty = new Faculty();
             faculty.setId(FIRST_ID);
             faculty.setName(FIRST_FACULTY_NAME);
             Department department = new Department();
             department.setName(TEST_DEPARTMENT_NAME);
             department.setFaculty(faculty);
-            department.setHead(head);
 
             dao.add(department);
             int expectedRowsInTable = 3;

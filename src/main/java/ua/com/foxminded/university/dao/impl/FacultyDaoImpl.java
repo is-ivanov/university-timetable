@@ -39,12 +39,8 @@ public class FacultyDaoImpl implements FacultyDao {
 
     @Override
     public void add(Faculty faculty) {
-        Integer deanId = null;
-        if (faculty.getDean() != null) {
-            deanId = faculty.getDean().getId();
-        }
         jdbcTemplate.update(env.getRequiredProperty(QUERY_ADD),
-                faculty.getName(), deanId);
+                faculty.getName());
     }
 
     @Override
@@ -69,7 +65,7 @@ public class FacultyDaoImpl implements FacultyDao {
     @Override
     public void update(Faculty faculty) {
         jdbcTemplate.update(env.getRequiredProperty(QUERY_UPDATE),
-                faculty.getName(), faculty.getDean().getId(), faculty.getId());
+                faculty.getName(), faculty.getId());
     }
 
     @Override
