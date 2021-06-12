@@ -6,11 +6,13 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import ua.com.foxminded.university.dao.interfaces.DepartmentDao;
 import ua.com.foxminded.university.domain.entity.Department;
+import ua.com.foxminded.university.domain.entity.mapper.DepartmentMapper;
 import ua.com.foxminded.university.exception.DAOException;
 
 @Component
@@ -42,26 +44,34 @@ public class DepartmentDaoImpl implements DepartmentDao {
 
     @Override
     public Optional<Department> getById(int id) throws DAOException {
-        // TODO Auto-generated method stub
-        return null;
+        Department result = null;
+        try {
+            result = jdbcTemplate.queryForObject(
+                    env.getRequiredProperty(QUERY_GET_BY_ID),
+                    new DepartmentMapper(), id);
+        } catch (DataAccessException e) {
+            throw new DAOException(MESSAGE_DEPARTMENT_NOT_FOUND + id, e);
+        }
+        return Optional.ofNullable(result);
     }
 
     @Override
     public List<Department> getAll() {
-        // TODO Auto-generated method stub
-        return null;
+        return jdbcTemplate.query(env.getRequiredProperty(QUERY_GET_ALL),
+                new DepartmentMapper());
     }
 
     @Override
-    public void update(Department t) {
-        // TODO Auto-generated method stub
-
+    public void update(Department department) {
+        jdbcTemplate.update(env.getRequiredProperty(QUERY_UPDATE),
+                department.getName(), department.getFaculty().getId(),
+                department.getId());
     }
 
     @Override
-    public void delete(Department t) {
-        // TODO Auto-generated method stub
-
+    public void delete(Department department) {
+        jdbcTemplate.update(env.getRequiredProperty(QUERY_DELETE),
+                department.getId());
     }
 
 }

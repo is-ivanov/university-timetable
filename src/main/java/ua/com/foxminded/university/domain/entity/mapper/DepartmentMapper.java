@@ -7,28 +7,27 @@ import org.springframework.jdbc.core.RowMapper;
 
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
-import ua.com.foxminded.university.domain.entity.Teacher;
 
 public class DepartmentMapper implements RowMapper<Department> {
 
     private static final String ID = "id";
     private static final String NAME = "name";
-    private static final String ID_DEAN = "dean_id";
-    private static final String FIRST_NAME_DEAN = "first_name";
-    private static final String PATRONYMIC_DEAN = "patronymic";
-    private static final String LAST_NAME_DEAN = "last_name";
+    private static final String FACULTY_ID = "faculty_id";
+    private static final String FACULTY_NAME = "faculty_name";
 
     @Override
     public Department mapRow(ResultSet rs, int rowNum) throws SQLException {
-
-        return null;
+        Department department = new Department();
+        department.setId(rs.getInt(ID));
+        department.setName(rs.getString(NAME));
+        department.setFaculty(createFaculty(rs));
+        return department;
     }
 
-    private Teacher createHead(ResultSet rs) {
-        return null;
-    }
-
-    private Faculty createFaculty(ResultSet rs) {
-        return null;
+    private Faculty createFaculty(ResultSet rs) throws SQLException {
+        Faculty faculty = new Faculty();
+        faculty.setId(rs.getInt(FACULTY_ID));
+        faculty.setName(rs.getString(FACULTY_NAME));
+        return faculty;
     }
 }
