@@ -16,6 +16,7 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
+import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.exception.DAOException;
 import ua.com.foxminded.university.springconfig.TestDbConfig;
@@ -54,7 +55,7 @@ class StudentDaoImplTest {
     class addTest {
 
         @Test
-        @DisplayName("add test student should CountRowsTable = 3")
+        @DisplayName("add test student should CountRowsTable = 4")
         void testAddStudent() {
             Faculty faculty = new Faculty();
             faculty.setId(FIRST_ID);
@@ -72,7 +73,7 @@ class StudentDaoImplTest {
             student.setGroup(group);
 
             dao.add(student);
-            int expectedRowsInTable = 3;
+            int expectedRowsInTable = 4;
             int actualRowsInTable = JdbcTestUtils.countRowsInTable(jdbcTemplate,
                     TABLE_NAME);
             assertEquals(expectedRowsInTable, actualRowsInTable);
@@ -121,7 +122,7 @@ class StudentDaoImplTest {
     class getAllTest {
 
         @Test
-        @DisplayName("should return List with size = 2")
+        @DisplayName("should return List with size = 3")
         void testGetAllStudents() {
             int expectedQuantityStudents = JdbcTestUtils
                     .countRowsInTable(jdbcTemplate, TABLE_NAME);
@@ -167,6 +168,22 @@ class StudentDaoImplTest {
             dao.delete(student);
             int actualQuantityStudents = JdbcTestUtils
                     .countRowsInTable(jdbcTemplate, TABLE_NAME);
+            assertEquals(expectedQuantityStudents, actualQuantityStudents);
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'getAllForLesson' method")
+    class getAllForLessonTest {
+
+        @Test
+        @DisplayName("should return List with size = 1")
+        void testGetAllStudentsForLesson() {
+            Lesson lesson = new Lesson();
+            lesson.setId(FIRST_ID);
+
+            int expectedQuantityStudents = 1;
+            int actualQuantityStudents = dao.getAllForLesson(lesson).size();
             assertEquals(expectedQuantityStudents, actualQuantityStudents);
         }
     }

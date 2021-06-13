@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import ua.com.foxminded.university.dao.interfaces.StudentDao;
+import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.domain.entity.mapper.StudentMapper;
 import ua.com.foxminded.university.exception.DAOException;
@@ -24,17 +25,18 @@ public class StudentDaoImpl implements StudentDao {
     private static final String QUERY_GET_BY_ID = "student.getById";
     private static final String QUERY_UPDATE = "student.update";
     private static final String QUERY_DELETE = "student.delete";
+    private static final String QUERY_GET_ALL_FOR_LESSON = "student.getAllForLesson";
     private static final String MESSAGE_STUDENT_NOT_FOUND = "Student not found: ";
 
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
+    private Environment env;
+
+    @Autowired
     public StudentDaoImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
-
-    @Autowired
-    private Environment env;
 
     @Override
     public void add(Student student) {
@@ -74,6 +76,13 @@ public class StudentDaoImpl implements StudentDao {
     public void delete(Student student) {
         jdbcTemplate.update(env.getRequiredProperty(QUERY_DELETE),
                 student.getId());
+    }
+
+    @Override
+    public List<Student> getAllForLesson(Lesson lesson) {
+        return jdbcTemplate.query(
+                env.getRequiredProperty(QUERY_GET_ALL_FOR_LESSON),
+                new StudentMapper(), lesson.getId());
     }
 
 }
