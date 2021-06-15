@@ -2,16 +2,21 @@ package ua.com.foxminded.university.domain.entity.mapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
 
 import ua.com.foxminded.university.domain.entity.Course;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Room;
+import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.domain.entity.Teacher;
 
+@Component
 public class LessonMapper implements RowMapper<Lesson> {
 
     private static final String ID = "id";
@@ -40,6 +45,8 @@ public class LessonMapper implements RowMapper<Lesson> {
         lesson.setRoom(createRoom(rs));
         lesson.setTimeStart(rs.getTimestamp(TIME_START).toLocalDateTime());
         lesson.setTimeEnd(rs.getTimestamp(TIME_END).toLocalDateTime());
+        List<Student> students = new ArrayList<>();
+        lesson.setStudents(students);
         return lesson;
     }
 

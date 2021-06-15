@@ -4,14 +4,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
 
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Student;
 
+@Component
 public class StudentMapper implements RowMapper<Student> {
 
-    private static final String ID = "id";
+    private static final String STUDENT_ID = "student_id";
     private static final String FIRST_NAME = "first_name";
     private static final String LAST_NAME = "last_name";
     private static final String PATRONYMIC = "patronymic";
@@ -23,7 +25,7 @@ public class StudentMapper implements RowMapper<Student> {
     @Override
     public Student mapRow(ResultSet rs, int rowNum) throws SQLException {
         Student student = new Student();
-        student.setId(rs.getInt(ID));
+        student.setId(rs.getInt(STUDENT_ID));
         student.setFirstName(rs.getString(FIRST_NAME));
         student.setLastName(rs.getString(LAST_NAME));
         student.setPatronymic(rs.getString(PATRONYMIC));

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 import ua.com.foxminded.university.dao.interfaces.LessonDao;
 import ua.com.foxminded.university.domain.entity.Lesson;
-import ua.com.foxminded.university.domain.entity.mapper.LessonMapper;
+import ua.com.foxminded.university.domain.entity.mapper.LessonExtractor;
 import ua.com.foxminded.university.exception.DAOException;
 
 @Component
@@ -27,13 +27,16 @@ public class LessonDaoImpl implements LessonDao {
     private static final String MESSAGE_LESSON_NOT_FOUND = "Lesson not found: ";
 
     private JdbcTemplate jdbcTemplate;
+    private LessonExtractor lessonExtractor;
 
     @Autowired
     private Environment env;
 
     @Autowired
-    public LessonDaoImpl(JdbcTemplate jdbcTemplate) {
+    public LessonDaoImpl(JdbcTemplate jdbcTemplate,
+            LessonExtractor lessonExtractor) {
         this.jdbcTemplate = jdbcTemplate;
+        this.lessonExtractor = lessonExtractor;
     }
 
     @Override
@@ -46,12 +49,16 @@ public class LessonDaoImpl implements LessonDao {
 
     @Override
     public Optional<Lesson> getById(int id) throws DAOException {
+        List<Lesson> lessons = null;
         Lesson result = null;
         try {
-            result = jdbcTemplate.queryForObject(
+            lessons = jdbcTemplate.query(
                     env.getRequiredProperty(QUERY_GET_BY_ID),
-                    new LessonMapper(), id);
-        } catch (DataAccessException e) {
+                    lessonExtractor, id);
+            if (lessons != null) {
+                result = lessons.get(0);
+            }
+        } catch (DataAccessException | IndexOutOfBoundsException e) {
             throw new DAOException(MESSAGE_LESSON_NOT_FOUND + id, e);
         }
         return Optional.ofNullable(result);
@@ -60,7 +67,7 @@ public class LessonDaoImpl implements LessonDao {
     @Override
     public List<Lesson> getAll() {
         return jdbcTemplate.query(env.getRequiredProperty(QUERY_GET_ALL),
-                new LessonMapper());
+                lessonExtractor);
     }
 
     @Override

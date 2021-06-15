@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -26,6 +27,7 @@ import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Room;
 import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.domain.entity.Teacher;
+import ua.com.foxminded.university.domain.entity.mapper.LessonExtractor;
 import ua.com.foxminded.university.exception.DAOException;
 import ua.com.foxminded.university.springconfig.TestDbConfig;
 
@@ -67,6 +69,9 @@ class LessonDaoImplTest {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    LessonExtractor lessonExtractor;
 
     @Autowired
     LessonDaoImpl dao;
@@ -136,7 +141,7 @@ class LessonDaoImplTest {
             group.setName(FIRST_GROUP_NAME);
             group.setFaculty(faculty);
 
-            List<Student> students = new ArrayList<>();
+            List<Student> students = new LinkedList<>();
             Student firstStudent = new Student();
             firstStudent.setId(FIRST_ID);
             firstStudent.setFirstName(FIRST_STUDENT_FIRST_NAME);
