@@ -11,7 +11,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import ua.com.foxminded.university.dao.interfaces.LessonDao;
-import ua.com.foxminded.university.dao.interfaces.StudentDao;
 import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.mapper.LessonMapper;
 import ua.com.foxminded.university.exception.DAOException;
@@ -28,15 +27,13 @@ public class LessonDaoImpl implements LessonDao {
     private static final String MESSAGE_LESSON_NOT_FOUND = "Lesson not found: ";
 
     private JdbcTemplate jdbcTemplate;
-    private StudentDao studentDao;
 
     @Autowired
     private Environment env;
 
     @Autowired
-    public LessonDaoImpl(JdbcTemplate jdbcTemplate, StudentDao studentDao) {
+    public LessonDaoImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        this.studentDao = studentDao;
     }
 
     @Override
@@ -53,7 +50,7 @@ public class LessonDaoImpl implements LessonDao {
         try {
             result = jdbcTemplate.queryForObject(
                     env.getRequiredProperty(QUERY_GET_BY_ID),
-                    new LessonMapper(studentDao), id);
+                    new LessonMapper(), id);
         } catch (DataAccessException e) {
             throw new DAOException(MESSAGE_LESSON_NOT_FOUND + id, e);
         }
@@ -63,7 +60,7 @@ public class LessonDaoImpl implements LessonDao {
     @Override
     public List<Lesson> getAll() {
         return jdbcTemplate.query(env.getRequiredProperty(QUERY_GET_ALL),
-                new LessonMapper(studentDao));
+                new LessonMapper());
     }
 
     @Override

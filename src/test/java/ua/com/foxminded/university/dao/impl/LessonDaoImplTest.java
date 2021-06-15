@@ -180,12 +180,12 @@ class LessonDaoImplTest {
     class getAllTest {
 
         @Test
-        @DisplayName("should return List with size = 2")
+        @DisplayName("should return List with size = 4")
         void testGetAllLessons() {
-            int expectedQuantityStudents = JdbcTestUtils
+            int expectedQuantityLessons = JdbcTestUtils
                     .countRowsInTable(jdbcTemplate, TABLE_NAME);
-            int actualQuantityStudents = dao.getAll().size();
-            assertEquals(expectedQuantityStudents, actualQuantityStudents);
+            int actualQuantityLessons = dao.getAll().size();
+            assertEquals(expectedQuantityLessons, actualQuantityLessons);
         }
     }
 

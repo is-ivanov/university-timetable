@@ -2,18 +2,14 @@ package ua.com.foxminded.university.domain.entity.mapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 
-import ua.com.foxminded.university.dao.interfaces.StudentDao;
 import ua.com.foxminded.university.domain.entity.Course;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Room;
-import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.domain.entity.Teacher;
 
 public class LessonMapper implements RowMapper<Lesson> {
@@ -27,20 +23,13 @@ public class LessonMapper implements RowMapper<Lesson> {
     private static final String TEACHER_PATRONYMIC = "teacher_patronymic";
     private static final String DEPARTMENT_ID = "department_id";
     private static final String DEPARTMENT_NAME = "department_name";
-    private static final String FACULTY_ID = "faculty_id";
-    private static final String FACULTY_NAME = "faculty_name";
+    private static final String TEACHER_FACULTY_ID = "teacher_faculty_id";
+    private static final String TEACHER_FACULTY_NAME = "teacher_faculty_name";
     private static final String COURSE_ID = "course_id";
     private static final String COURSE_NAME = "course_name";
     private static final String ROOM_ID = "room_id";
     private static final String BUILDING = "building";
     private static final String ROOM_NUMBER = "number";
-
-    private StudentDao studentDao;
-
-    @Autowired
-    public LessonMapper(StudentDao studentDao) {
-        this.studentDao = studentDao;
-    }
 
     @Override
     public Lesson mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -51,7 +40,6 @@ public class LessonMapper implements RowMapper<Lesson> {
         lesson.setRoom(createRoom(rs));
         lesson.setTimeStart(rs.getTimestamp(TIME_START).toLocalDateTime());
         lesson.setTimeEnd(rs.getTimestamp(TIME_END).toLocalDateTime());
-        lesson.setStudents(createStudents(lesson));
         return lesson;
     }
 
@@ -75,8 +63,8 @@ public class LessonMapper implements RowMapper<Lesson> {
 
     private Faculty createFaculty(ResultSet rs) throws SQLException {
         Faculty faculty = new Faculty();
-        faculty.setId(rs.getInt(FACULTY_ID));
-        faculty.setName(rs.getString(FACULTY_NAME));
+        faculty.setId(rs.getInt(TEACHER_FACULTY_ID));
+        faculty.setName(rs.getString(TEACHER_FACULTY_NAME));
         return faculty;
     }
 
@@ -93,10 +81,6 @@ public class LessonMapper implements RowMapper<Lesson> {
         room.setBuilding(rs.getString(BUILDING));
         room.setNumber(rs.getString(ROOM_NUMBER));
         return room;
-    }
-
-    private List<Student> createStudents(Lesson lesson) {
-        return studentDao.getAllForLesson(lesson);
     }
 
 }
