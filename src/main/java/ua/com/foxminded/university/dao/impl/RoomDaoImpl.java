@@ -27,14 +27,13 @@ public class RoomDaoImpl implements RoomDao {
     private static final String MESSAGE_ROOM_NOT_FOUND = "Room not found: ";
 
     private JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    public RoomDaoImpl(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
-
-    @Autowired
     private Environment env;
+
+    @Autowired
+    public RoomDaoImpl(JdbcTemplate jdbcTemplate, Environment env) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.env = env;
+    }
 
     @Override
     public void add(Room room) {

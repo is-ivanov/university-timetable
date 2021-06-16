@@ -27,14 +27,13 @@ public class DepartmentDaoImpl implements DepartmentDao {
     private static final String MESSAGE_DEPARTMENT_NOT_FOUND = "Department not found: ";
 
     private JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    public DepartmentDaoImpl(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
-
-    @Autowired
     private Environment env;
+
+    @Autowired
+    public DepartmentDaoImpl(JdbcTemplate jdbcTemplate, Environment env) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.env = env;
+    }
 
     @Override
     public void add(Department department) {

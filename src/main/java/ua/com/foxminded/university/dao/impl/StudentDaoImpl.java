@@ -29,13 +29,12 @@ public class StudentDaoImpl implements StudentDao {
     private static final String MESSAGE_STUDENT_NOT_FOUND = "Student not found: ";
 
     private JdbcTemplate jdbcTemplate;
-
-    @Autowired
     private Environment env;
 
     @Autowired
-    public StudentDaoImpl(JdbcTemplate jdbcTemplate) {
+    public StudentDaoImpl(JdbcTemplate jdbcTemplate, Environment env) {
         this.jdbcTemplate = jdbcTemplate;
+        this.env = env;
     }
 
     @Override

@@ -27,14 +27,13 @@ public class CourseDaoImpl implements CourseDao {
     private static final String MESSAGE_COURSE_NOT_FOUND = "Course not found: ";
 
     private JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    public CourseDaoImpl(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
-
-    @Autowired
     private Environment env;
+
+    @Autowired
+    public CourseDaoImpl(JdbcTemplate jdbcTemplate, Environment env) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.env = env;
+    }
 
     @Override
     public void add(Course course) {

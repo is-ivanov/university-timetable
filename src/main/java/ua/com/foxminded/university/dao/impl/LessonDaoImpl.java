@@ -28,15 +28,14 @@ public class LessonDaoImpl implements LessonDao {
 
     private JdbcTemplate jdbcTemplate;
     private LessonExtractor lessonExtractor;
-
-    @Autowired
     private Environment env;
 
     @Autowired
     public LessonDaoImpl(JdbcTemplate jdbcTemplate,
-            LessonExtractor lessonExtractor) {
+            LessonExtractor lessonExtractor, Environment env) {
         this.jdbcTemplate = jdbcTemplate;
         this.lessonExtractor = lessonExtractor;
+        this.env = env;
     }
 
     @Override

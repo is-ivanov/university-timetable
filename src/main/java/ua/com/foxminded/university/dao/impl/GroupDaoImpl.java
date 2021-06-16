@@ -27,14 +27,13 @@ public class GroupDaoImpl implements GroupDao {
     private static final String MESSAGE_GROUP_NOT_FOUND = "Group not found: ";
 
     private JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    public GroupDaoImpl(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
-
-    @Autowired
     private Environment env;
+
+    @Autowired
+    public GroupDaoImpl(JdbcTemplate jdbcTemplate, Environment env) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.env = env;
+    }
 
     @Override
     public void add(Group group) {

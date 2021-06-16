@@ -27,14 +27,13 @@ public class TeacherDaoImpl implements TeacherDao {
     private static final String MESSAGE_TEACHER_NOT_FOUND = "Teacher not found: ";
 
     private JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    public TeacherDaoImpl(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
-
-    @Autowired
     private Environment env;
+
+    @Autowired
+    public TeacherDaoImpl(JdbcTemplate jdbcTemplate, Environment env) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.env = env;
+    }
 
     @Override
     public void add(Teacher teacher) {

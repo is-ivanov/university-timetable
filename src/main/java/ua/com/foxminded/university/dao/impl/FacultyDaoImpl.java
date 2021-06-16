@@ -27,15 +27,13 @@ public class FacultyDaoImpl implements FacultyDao {
     private static final String MESSAGE_FACULTY_NOT_FOUND = "Faculty not found: ";
 
     private JdbcTemplate jdbcTemplate;
-
-
-    @Autowired
-    public FacultyDaoImpl(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
-
-    @Autowired
     private Environment env;
+
+    @Autowired
+    public FacultyDaoImpl(JdbcTemplate jdbcTemplate, Environment env) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.env = env;
+    }
 
     @Override
     public void add(Faculty faculty) {
