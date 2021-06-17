@@ -13,38 +13,36 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import ua.com.foxminded.university.domain.entity.Course;
+import ua.com.foxminded.university.domain.entity.Faculty;
 
 @ExtendWith(MockitoExtension.class)
-class CourseMapperTest {
+class FacultyMapperTest {
 
     private static final String ID = "id";
     private static final String NAME = "name";
     private static final int EXPECTED_ID = 1;
-    private static final String EXPECTED_NAME = "Course Test Name";
+    private static final String EXPECTED_NAME = "Faculty Test Name";
+    private static final int ROW_NUM = 1;
 
-    private CourseMapper mapper;
+    private FacultyMapper mapper;
 
     @Mock
     private ResultSet resultSetMock;
 
     @BeforeEach
     void setUp() throws Exception {
-        mapper = new CourseMapper();
+        mapper = new FacultyMapper();
     }
 
     @Test
-    @DisplayName("test should return expected Course")
-    void testMapRowShouldReturnExtendedCourse() throws SQLException {
-
-        Course expectedCourse = new Course(EXPECTED_ID, EXPECTED_NAME);
+    @DisplayName("test mapRow should return expected Faculty")
+    void testMapRowShoulReturnExpectedFaculty() throws SQLException {
+        Faculty expectedFaculty = new Faculty(EXPECTED_ID, EXPECTED_NAME);
         when(resultSetMock.getInt(ID)).thenReturn(EXPECTED_ID);
         when(resultSetMock.getString(NAME)).thenReturn(EXPECTED_NAME);
-        int rowNum = 1;
 
-        Course actualCourse = mapper.mapRow(resultSetMock, rowNum);
-
-        assertEquals(expectedCourse, actualCourse);
+        Faculty actualFaculty = mapper.mapRow(resultSetMock, ROW_NUM);
+        assertEquals(expectedFaculty, actualFaculty);
     }
 
 }

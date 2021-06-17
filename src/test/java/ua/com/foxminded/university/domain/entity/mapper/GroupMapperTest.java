@@ -13,38 +13,40 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import ua.com.foxminded.university.domain.entity.Course;
+import ua.com.foxminded.university.domain.entity.Faculty;
+import ua.com.foxminded.university.domain.entity.Group;
 
 @ExtendWith(MockitoExtension.class)
-class CourseMapperTest {
+class GroupMapperTest {
 
     private static final String ID = "id";
-    private static final String NAME = "name";
+    private static final String NAME = "group_name";
     private static final int EXPECTED_ID = 1;
-    private static final String EXPECTED_NAME = "Course Test Name";
+    private static final String EXPECTED_NAME = "Group Test Name";
+    private static final int ROW_NUM = 1;
 
-    private CourseMapper mapper;
+    private GroupMapper mapper;
 
     @Mock
     private ResultSet resultSetMock;
 
     @BeforeEach
     void setUp() throws Exception {
-        mapper = new CourseMapper();
+        mapper = new GroupMapper();
     }
 
     @Test
-    @DisplayName("test should return expected Course")
-    void testMapRowShouldReturnExtendedCourse() throws SQLException {
+    @DisplayName("test mapRow should return expected Group")
+    void testMapRowShoulReturnExpectedGroup() throws SQLException {
+        Faculty faculty = new Faculty();
+        Group expectedGroup = new Group(EXPECTED_ID, EXPECTED_NAME,
+                faculty);
 
-        Course expectedCourse = new Course(EXPECTED_ID, EXPECTED_NAME);
         when(resultSetMock.getInt(ID)).thenReturn(EXPECTED_ID);
         when(resultSetMock.getString(NAME)).thenReturn(EXPECTED_NAME);
-        int rowNum = 1;
 
-        Course actualCourse = mapper.mapRow(resultSetMock, rowNum);
-
-        assertEquals(expectedCourse, actualCourse);
+        Group actualGroup = mapper.mapRow(resultSetMock, ROW_NUM);
+        assertEquals(expectedGroup, actualGroup);
     }
 
 }
