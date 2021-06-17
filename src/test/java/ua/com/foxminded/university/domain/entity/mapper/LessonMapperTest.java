@@ -1,6 +1,7 @@
 package ua.com.foxminded.university.domain.entity.mapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import java.sql.ResultSet;
@@ -62,9 +63,10 @@ class LessonMapperTest {
                 .setTimeEnd(LocalDateTime.parse(EXPECTED_TIME_END, formatter));
         expectedLesson.setStudents(new ArrayList<Student>());
 
+        doReturn(EXPECTED_TIME_START).when(resultSetMock).getString(TIME_START);
         when(resultSetMock.getInt(ID)).thenReturn(EXPECTED_ID);
-        when(resultSetMock.getString(TIME_START))
-                .thenReturn(EXPECTED_TIME_START);
+//        when(resultSetMock.getString(TIME_START))
+//                .thenReturn(EXPECTED_TIME_START);
         when(resultSetMock.getString(TIME_END)).thenReturn(EXPECTED_TIME_END);
 
         Lesson actualLesson = mapper.mapRow(resultSetMock, ROW_NUM);
