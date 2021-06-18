@@ -6,6 +6,8 @@ import static org.mockito.Mockito.when;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,7 +22,8 @@ import ua.com.foxminded.university.domain.entity.Student;
 @ExtendWith(MockitoExtension.class)
 class LessonExtractorTest {
 
-    private final int ROW_NUM = 1;
+    private final int ROW_NUM = 0;
+    private static final String ID = "id";
 
     private LessonExtractor lessonExtractor;
 
@@ -43,12 +46,34 @@ class LessonExtractorTest {
     void testNumberCallsLessonMapperStudentMapper() throws SQLException {
         when(resultSetMock.next()).thenReturn(true).thenReturn(false);
         Lesson lesson = new Lesson();
+        List<Student> students = new ArrayList<>();
+        lesson.setStudents(students);
         when(lessonMapper.mapRow(resultSetMock, ROW_NUM)).thenReturn(lesson);
         Student student = new Student();
         when(studentMapper.mapRow(resultSetMock, ROW_NUM)).thenReturn(student);
         lessonExtractor.extractData(resultSetMock);
         verify(lessonMapper, times(1)).mapRow(resultSetMock, ROW_NUM);
         verify(studentMapper, times(1)).mapRow(resultSetMock, ROW_NUM);
+
+    }
+
+    @Test
+    @DisplayName("when RS contains 2 rows with equals lesson ID then should call LessonMapper once and StudentMapper twice")
+    void testNumberCallsLessonMapperOnceStudentMapperTwice()
+            throws SQLException {
+        when(resultSetMock.next()).thenReturn(true).thenReturn(true)
+                .thenReturn(false);
+        when(resultSetMock.getInt(ID)).thenReturn(1).thenReturn(1);
+        Lesson lesson = new Lesson();
+        lesson.setId(1);
+        List<Student> students = new ArrayList<>();
+        lesson.setStudents(students);
+        when(lessonMapper.mapRow(resultSetMock, ROW_NUM)).thenReturn(lesson);
+        Student student = new Student();
+        when(studentMapper.mapRow(resultSetMock, ROW_NUM)).thenReturn(student);
+        lessonExtractor.extractData(resultSetMock);
+        verify(lessonMapper, times(1)).mapRow(resultSetMock, ROW_NUM);
+        verify(studentMapper, times(2)).mapRow(resultSetMock, ROW_NUM);
 
     }
 
