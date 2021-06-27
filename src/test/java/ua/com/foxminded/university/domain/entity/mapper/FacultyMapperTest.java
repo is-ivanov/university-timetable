@@ -18,8 +18,8 @@ import ua.com.foxminded.university.domain.entity.Faculty;
 @ExtendWith(MockitoExtension.class)
 class FacultyMapperTest {
 
-    private static final String ID = "id";
-    private static final String NAME = "name";
+    private static final String ID = "faculty_id";
+    private static final String NAME = "faculty_name";
     private static final int EXPECTED_ID = 1;
     private static final String EXPECTED_NAME = "Faculty Test Name";
     private static final int ROW_NUM = 1;

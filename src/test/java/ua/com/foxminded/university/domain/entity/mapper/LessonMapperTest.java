@@ -33,7 +33,7 @@ class LessonMapperTest {
     private static final String TIME_END = "time_end";
     private static final String EXPECTED_STRING_TIME_START = "2021-05-14 14:00:00";
     private static final String EXPECTED_STRING_TIME_END = "2021-05-14 15:00:00";
-    private static final String ID = "id";
+    private static final String LESSON_ID = "lesson_id";
     private static final String TEACHER_ID = "teacher_id";
     private static final int EXPECTED_ID = 1;
     private static final int ROW_NUM = 1;
@@ -75,7 +75,7 @@ class LessonMapperTest {
         expectedLesson.setStudents(new ArrayList<Student>());
 
         when(resultSetMock.getInt(TEACHER_ID)).thenReturn(EXPECTED_ID);
-        when(resultSetMock.getInt(ID)).thenReturn(EXPECTED_ID);
+        when(resultSetMock.getInt(LESSON_ID)).thenReturn(EXPECTED_ID);
         when(resultSetMock.getTimestamp(TIME_START))
                 .thenReturn(Timestamp.valueOf(expectedTimeStart));
         when(resultSetMock.getTimestamp(TIME_END))

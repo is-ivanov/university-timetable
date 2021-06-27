@@ -10,8 +10,9 @@ import ua.com.foxminded.university.domain.entity.Group;
 
 public class GroupMapper implements RowMapper<Group> {
 
-    private static final String ID = "id";
-    private static final String GROUP_NAME = "group_name";
+    private static final String ID = "group_id";
+    private static final String NAME = "group_name";
+    private static final String ACTIVE = "group_active";
     private static final String FACULTY_ID = "faculty_id";
     private static final String FACULTY_NAME = "faculty_name";
 
@@ -19,7 +20,8 @@ public class GroupMapper implements RowMapper<Group> {
     public Group mapRow(ResultSet rs, int rowNum) throws SQLException {
         Group group = new Group();
         group.setId(rs.getInt(ID));
-        group.setName(rs.getString(GROUP_NAME));
+        group.setName(rs.getString(NAME));
+        group.setActive(rs.getBoolean(ACTIVE));
         group.setFaculty(createFaculty(rs));
         return group;
     }
@@ -30,4 +32,5 @@ public class GroupMapper implements RowMapper<Group> {
         faculty.setName(rs.getString(FACULTY_NAME));
         return faculty;
     }
+
 }

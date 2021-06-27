@@ -9,9 +9,9 @@ import ua.com.foxminded.university.domain.entity.Room;
 
 public class RoomMapper implements RowMapper<Room> {
 
-    private static final String ID = "id";
+    private static final String ID = "room_id";
     private static final String BUILDING = "building";
-    private static final String NUMBER = "number";
+    private static final String NUMBER = "room_number";
 
     @Override
     public Room mapRow(ResultSet rs, int rowNum) throws SQLException {

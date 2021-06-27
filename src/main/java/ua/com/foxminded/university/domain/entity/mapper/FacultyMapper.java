@@ -9,8 +9,8 @@ import ua.com.foxminded.university.domain.entity.Faculty;
 
 public class FacultyMapper implements RowMapper<Faculty> {
 
-    private static final String ID = "id";
-    private static final String NAME = "name";
+    private static final String ID = "faculty_id";
+    private static final String NAME = "faculty_name";
 
     @Override
     public Faculty mapRow(ResultSet rs, int rowNum) throws SQLException {

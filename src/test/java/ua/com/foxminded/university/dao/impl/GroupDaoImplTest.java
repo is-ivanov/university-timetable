@@ -30,6 +30,7 @@ class GroupDaoImplTest {
     private static final String TEST_FACULTY_NAME = "FacultyName";
     private static final int FIRST_ID = 1;
     private static final int SECOND_ID = 2;
+    private static final int THIRD_ID = 3;
     private static final String FIRST_GROUP_NAME = "20Eng-1";
     private static final String FIRST_FACULTY_NAME = "Foreign Language";
     private static final String SECOND_FACULTY_NAME = "Chemical Technology";
@@ -46,14 +47,15 @@ class GroupDaoImplTest {
     class addTest {
 
         @Test
-        @DisplayName("add test group should CountRowsTable = 3")
-        void testAddGroup() {
+        @DisplayName("after add test group should CountRowsTable = 3")
+        void testAddGroupCountRows() {
             Faculty faculty = new Faculty();
             faculty.setId(FIRST_ID);
             faculty.setName(TEST_FACULTY_NAME);
 
             Group group = new Group();
             group.setName(TEST_GROUP_NAME);
+            group.setActive(true);
             group.setFaculty(faculty);
 
             dao.add(group);
@@ -61,7 +63,24 @@ class GroupDaoImplTest {
             int actualRowsInTable = JdbcTestUtils.countRowsInTable(jdbcTemplate,
                     TABLE_NAME);
             assertEquals(expectedRowsInTable, actualRowsInTable);
+        }
 
+        @Test
+        @DisplayName("after add test group should getGroup id=3 equals test group")
+        void testAddGroupGetEqualsTestGroup() throws Exception {
+            Faculty expectedFaculty = new Faculty();
+            expectedFaculty.setId(FIRST_ID);
+            expectedFaculty.setName(FIRST_FACULTY_NAME);
+
+            Group expectedGroup = new Group();
+            expectedGroup.setId(THIRD_ID);
+            expectedGroup.setName(TEST_GROUP_NAME);
+            expectedGroup.setActive(true);
+            expectedGroup.setFaculty(expectedFaculty);
+
+            dao.add(expectedGroup);
+
+            assertEquals(expectedGroup, dao.getById(THIRD_ID).get());
         }
     }
 
@@ -70,14 +89,14 @@ class GroupDaoImplTest {
     class getByIdTest {
 
         @Test
-        @DisplayName("with id=1 should return group (1, '20Eng-1', faculty id=1)")
+        @DisplayName("with id=1 should return group (1, '20Eng-1', faculty id=1, true)")
         void testGetByIdGroup() throws DAOException {
             Faculty expectedFaculty = new Faculty();
             expectedFaculty.setId(FIRST_ID);
             expectedFaculty.setName(FIRST_FACULTY_NAME);
 
             Group expectedGroup = new Group(FIRST_ID, FIRST_GROUP_NAME,
-                    expectedFaculty);
+                    expectedFaculty, true);
 
             Group actualGroup = dao.getById(FIRST_ID).get();
             assertEquals(expectedGroup, actualGroup);
@@ -116,7 +135,7 @@ class GroupDaoImplTest {
             Faculty expectedFaculty = new Faculty(SECOND_ID,
                     SECOND_FACULTY_NAME);
             Group expectedGroup = new Group(FIRST_ID, TEST_GROUP_NAME,
-                    expectedFaculty);
+                    expectedFaculty, true);
             dao.update(expectedGroup);
             Group actualGroup = dao.getById(FIRST_ID).get();
             assertEquals(expectedGroup, actualGroup);
@@ -135,7 +154,7 @@ class GroupDaoImplTest {
 
             Faculty faculty = new Faculty(FIRST_ID, FIRST_FACULTY_NAME);
 
-            Group group = new Group(FIRST_ID, FIRST_GROUP_NAME, faculty);
+            Group group = new Group(FIRST_ID, FIRST_GROUP_NAME, faculty, true);
             dao.delete(group);
             int actualQuantityGroups = JdbcTestUtils
                     .countRowsInTable(jdbcTemplate, TABLE_NAME);

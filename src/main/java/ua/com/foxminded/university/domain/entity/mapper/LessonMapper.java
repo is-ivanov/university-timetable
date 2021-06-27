@@ -19,13 +19,14 @@ import ua.com.foxminded.university.domain.entity.Teacher;
 @Component
 public class LessonMapper implements RowMapper<Lesson> {
 
-    private static final String ID = "id";
+    private static final String ID = "lesson_id";
     private static final String TIME_START = "time_start";
     private static final String TIME_END = "time_end";
     private static final String TEACHER_ID = "teacher_id";
     private static final String TEACHER_FIRST_NAME = "teacher_first_name";
     private static final String TEACHER_LAST_NAME = "teacher_last_name";
     private static final String TEACHER_PATRONYMIC = "teacher_patronymic";
+    private static final String TEACHER_ACTIVE = "teacher_active";
     private static final String DEPARTMENT_ID = "department_id";
     private static final String DEPARTMENT_NAME = "department_name";
     private static final String TEACHER_FACULTY_ID = "teacher_faculty_id";
@@ -34,7 +35,7 @@ public class LessonMapper implements RowMapper<Lesson> {
     private static final String COURSE_NAME = "course_name";
     private static final String ROOM_ID = "room_id";
     private static final String BUILDING = "building";
-    private static final String ROOM_NUMBER = "number";
+    private static final String ROOM_NUMBER = "room_number";
 
     @Override
     public Lesson mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -56,6 +57,7 @@ public class LessonMapper implements RowMapper<Lesson> {
         teacher.setFirstName(rs.getString(TEACHER_FIRST_NAME));
         teacher.setLastName(rs.getString(TEACHER_LAST_NAME));
         teacher.setPatronymic(rs.getString(TEACHER_PATRONYMIC));
+        teacher.setActive(rs.getBoolean(TEACHER_ACTIVE));
         teacher.setDepartment(createDepartment(rs));
         return teacher;
     }

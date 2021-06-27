@@ -8,14 +8,14 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import ua.com.foxminded.university.dao.interfaces.GroupDao;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.mapper.GroupMapper;
 import ua.com.foxminded.university.exception.DAOException;
 
-@Component
+@Repository
 @PropertySource("classpath:sql_query.properties")
 public class GroupDaoImpl implements GroupDao {
 
@@ -38,7 +38,7 @@ public class GroupDaoImpl implements GroupDao {
     @Override
     public void add(Group group) {
         jdbcTemplate.update(env.getRequiredProperty(QUERY_ADD), group.getName(),
-                group.getFaculty().getId());
+                group.isActive(), group.getFaculty().getId());
     }
 
     @Override
@@ -46,8 +46,8 @@ public class GroupDaoImpl implements GroupDao {
         Group result = null;
         try {
             result = jdbcTemplate.queryForObject(
-                    env.getRequiredProperty(QUERY_GET_BY_ID), new GroupMapper(),
-                    id);
+                    env.getRequiredProperty(QUERY_GET_BY_ID),
+                    new GroupMapper(), id);
         } catch (DataAccessException e) {
             throw new DAOException(MESSAGE_GROUP_NOT_FOUND + id, e);
         }
@@ -63,7 +63,8 @@ public class GroupDaoImpl implements GroupDao {
     @Override
     public void update(Group group) {
         jdbcTemplate.update(env.getRequiredProperty(QUERY_UPDATE),
-                group.getName(), group.getFaculty().getId(), group.getId());
+                group.getName(), group.isActive(),
+                group.getFaculty().getId(), group.getId());
     }
 
     @Override
@@ -71,5 +72,6 @@ public class GroupDaoImpl implements GroupDao {
         jdbcTemplate.update(env.getRequiredProperty(QUERY_DELETE),
                 group.getId());
     }
+
 
 }

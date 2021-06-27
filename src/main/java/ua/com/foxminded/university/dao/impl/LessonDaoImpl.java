@@ -8,14 +8,14 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import ua.com.foxminded.university.dao.interfaces.LessonDao;
 import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.mapper.LessonExtractor;
 import ua.com.foxminded.university.exception.DAOException;
 
-@Component
+@Repository
 @PropertySource("classpath:sql_query.properties")
 public class LessonDaoImpl implements LessonDao {
 
@@ -24,6 +24,7 @@ public class LessonDaoImpl implements LessonDao {
     private static final String QUERY_GET_BY_ID = "lesson.getById";
     private static final String QUERY_UPDATE = "lesson.update";
     private static final String QUERY_DELETE = "lesson.delete";
+    private static final String QUERY_ADD_STUDENT_TO_LESSON = "lesson.addStudentToLesson";
     private static final String MESSAGE_LESSON_NOT_FOUND = "Lesson not found: ";
 
     private JdbcTemplate jdbcTemplate;
@@ -81,6 +82,13 @@ public class LessonDaoImpl implements LessonDao {
     public void delete(Lesson lesson) {
         jdbcTemplate.update(env.getRequiredProperty(QUERY_DELETE),
                 lesson.getId());
+    }
+
+    @Override
+    public void addStudentToLesson(int lessonId, int studentId) {
+        jdbcTemplate.update(
+                env.getRequiredProperty(QUERY_ADD_STUDENT_TO_LESSON),
+                lessonId, studentId);
     }
 
 }

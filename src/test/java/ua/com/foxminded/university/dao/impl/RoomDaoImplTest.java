@@ -36,7 +36,7 @@ class RoomDaoImplTest {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    RoomDaoImpl dao;
+    private RoomDaoImpl dao;
 
     @Nested
     @DisplayName("test 'add' method")

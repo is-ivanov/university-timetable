@@ -21,13 +21,15 @@ import ua.com.foxminded.university.domain.entity.Student;
 class StudentMapperTest {
 
     private static final String ID = "student_id";
-    private static final String FIRST_NAME = "first_name";
-    private static final String LAST_NAME = "last_name";
-    private static final String PATRONYMIC = "patronymic";
+    private static final String FIRST_NAME = "student_first_name";
+    private static final String LAST_NAME = "student_last_name";
+    private static final String PATRONYMIC = "student_patronymic";
+    private static final String ACTIVE = "student_active";
     private static final int EXPECTED_ID = 1;
     private static final String EXPECTED_FIRST_NAME = "Ivan";
     private static final String EXPECTED_LAST_NAME = "Ivanov";
     private static final String EXPECTED_PATRONYMIC = "Ivanovich";
+    private static final boolean EXPECTED_ACTIVE = true;
     private static final int ROW_NUM = 1;
 
     private StudentMapper mapper;
@@ -51,6 +53,7 @@ class StudentMapperTest {
         expectedStudent.setFirstName(EXPECTED_FIRST_NAME);
         expectedStudent.setLastName(EXPECTED_LAST_NAME);
         expectedStudent.setPatronymic(EXPECTED_PATRONYMIC);
+        expectedStudent.setActive(EXPECTED_ACTIVE);
         expectedStudent.setGroup(expectedGroup);
 
         when(resultSetMock.getInt(ID)).thenReturn(EXPECTED_ID);
@@ -59,6 +62,7 @@ class StudentMapperTest {
         when(resultSetMock.getString(LAST_NAME)).thenReturn(EXPECTED_LAST_NAME);
         when(resultSetMock.getString(PATRONYMIC))
                 .thenReturn(EXPECTED_PATRONYMIC);
+        when(resultSetMock.getBoolean(ACTIVE)).thenReturn(EXPECTED_ACTIVE);
         Student actualStudent = mapper.mapRow(resultSetMock, ROW_NUM);
         assertEquals(expectedStudent, actualStudent);
     }

@@ -37,7 +37,8 @@ import ua.com.foxminded.university.springconfig.TestDbConfig;
         "/schema.sql", "/lesson-test-data.sql" })
 class LessonDaoImplTest {
 
-    private static final String TABLE_NAME = "lessons";
+    private static final String TABLE_LESSONS = "lessons";
+    private static final String TABLE_STUDENTS_LESSON = "students_lessons";
     private static final int FIRST_ID = 1;
     private static final int SECOND_ID = 2;
     private static final int THIRD_ID = 3;
@@ -60,6 +61,7 @@ class LessonDaoImplTest {
     private static final String MESSAGE_EXCEPTION = "Lesson not found: 4";
     private static final String BUILDING = "building-1";
     private static final String ROOM_NUMBER = "812b";
+    private static final boolean ACTIVE = true;
     private static final int YEAR = 2021;
     private static final int MONTH = 6;
     private static final int DAY = 12;
@@ -80,7 +82,6 @@ class LessonDaoImplTest {
     @DisplayName("test 'add' method")
     class addTest {
 
-
         @Test
         @DisplayName("add test lesson should CountRowsTable must be one more than it was")
         void testAddLesson() {
@@ -98,10 +99,10 @@ class LessonDaoImplTest {
                     .room(room).timeStart(timeStart).timeEnd(timeEnd).build();
 
             int expectedRowsInTable = JdbcTestUtils
-                    .countRowsInTable(jdbcTemplate, TABLE_NAME) + 1;
+                    .countRowsInTable(jdbcTemplate, TABLE_LESSONS) + 1;
             dao.add(lesson);
             int actualRowsInTable = JdbcTestUtils.countRowsInTable(jdbcTemplate,
-                    TABLE_NAME);
+                    TABLE_LESSONS);
             assertEquals(expectedRowsInTable, actualRowsInTable);
         }
     }
@@ -127,6 +128,7 @@ class LessonDaoImplTest {
             teacher.setFirstName(FIRST_TEACHER_FIRST_NAME);
             teacher.setLastName(FIRST_TEACHER_LAST_NAME);
             teacher.setPatronymic(FIRST_TEACHER_PATRONYMIC);
+            teacher.setActive(ACTIVE);
             teacher.setDepartment(department);
 
             Course course = new Course(FIRST_ID, COURSE_NAME);
@@ -147,6 +149,7 @@ class LessonDaoImplTest {
             firstStudent.setFirstName(FIRST_STUDENT_FIRST_NAME);
             firstStudent.setLastName(FIRST_STUDENT_LAST_NAME);
             firstStudent.setPatronymic(FIRST_STUDENT_PATRONYMIC);
+            firstStudent.setActive(ACTIVE);
             firstStudent.setGroup(group);
             students.add(firstStudent);
             Student secondStudent = new Student();
@@ -154,6 +157,7 @@ class LessonDaoImplTest {
             secondStudent.setFirstName(SECOND_STUDENT_FIRST_NAME);
             secondStudent.setLastName(SECOND_STUDENT_LAST_NAME);
             secondStudent.setPatronymic(SECOND_STUDENT_PATRONYMIC);
+            secondStudent.setActive(ACTIVE);
             secondStudent.setGroup(group);
             students.add(secondStudent);
 
@@ -185,10 +189,10 @@ class LessonDaoImplTest {
     class getAllTest {
 
         @Test
-        @DisplayName("should return List with size = 4")
+        @DisplayName("should return List with size = 3")
         void testGetAllLessons() {
             int expectedQuantityLessons = JdbcTestUtils
-                    .countRowsInTable(jdbcTemplate, TABLE_NAME);
+                    .countRowsInTable(jdbcTemplate, TABLE_LESSONS);
             int actualQuantityLessons = dao.getAll().size();
             assertEquals(expectedQuantityLessons, actualQuantityLessons);
         }
@@ -209,6 +213,7 @@ class LessonDaoImplTest {
             teacher.setFirstName(SECOND_TEACHER_FIRST_NAME);
             teacher.setLastName(SECOND_TEACHER_LAST_NAME);
             teacher.setPatronymic(SECOND_TEACHER_PATRONYMIC);
+            teacher.setActive(ACTIVE);
             teacher.setDepartment(department);
 
             Course course = new Course(FIRST_ID, COURSE_NAME);
@@ -228,6 +233,7 @@ class LessonDaoImplTest {
             firstStudent.setFirstName(FIRST_STUDENT_FIRST_NAME);
             firstStudent.setLastName(FIRST_STUDENT_LAST_NAME);
             firstStudent.setPatronymic(FIRST_STUDENT_PATRONYMIC);
+            firstStudent.setActive(ACTIVE);
             firstStudent.setGroup(group);
             students.add(firstStudent);
             Student secondStudent = new Student();
@@ -235,6 +241,7 @@ class LessonDaoImplTest {
             secondStudent.setFirstName(SECOND_STUDENT_FIRST_NAME);
             secondStudent.setLastName(SECOND_STUDENT_LAST_NAME);
             secondStudent.setPatronymic(SECOND_STUDENT_PATRONYMIC);
+            secondStudent.setActive(ACTIVE);
             secondStudent.setGroup(group);
             students.add(secondStudent);
 
@@ -262,13 +269,30 @@ class LessonDaoImplTest {
         @DisplayName("delete lesson id=3 should delete one record and number records table should equals 2")
         void testDeleteLesson() {
             int expectedQuantityLessons = JdbcTestUtils
-                    .countRowsInTable(jdbcTemplate, TABLE_NAME) - 1;
+                    .countRowsInTable(jdbcTemplate, TABLE_LESSONS) - 1;
             Lesson lesson = new Lesson();
             lesson.setId(THIRD_ID);
             dao.delete(lesson);
             int actualQuantityLessons = JdbcTestUtils
-                    .countRowsInTable(jdbcTemplate, TABLE_NAME);
+                    .countRowsInTable(jdbcTemplate, TABLE_LESSONS);
             assertEquals(expectedQuantityLessons, actualQuantityLessons);
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'addStudentToLesson' method")
+    class addStudentToLessonTest{
+        
+        @Test
+        @DisplayName("after add studentId=1 to lessonId=2 should CountRowsTable must be one more than it was")
+        void testAddStudentToLesson() {
+            int expectedRowsInTable = JdbcTestUtils
+                    .countRowsInTable(jdbcTemplate, TABLE_STUDENTS_LESSON) + 1;
+            dao.addStudentToLesson(SECOND_ID, FIRST_ID);
+            int actualRowsInTable = JdbcTestUtils.countRowsInTable(jdbcTemplate,
+                    TABLE_STUDENTS_LESSON);
+            assertEquals(expectedRowsInTable, actualRowsInTable);
+
         }
     }
 }

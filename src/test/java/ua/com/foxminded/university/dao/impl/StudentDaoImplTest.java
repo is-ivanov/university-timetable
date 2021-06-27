@@ -70,6 +70,7 @@ class StudentDaoImplTest {
             student.setFirstName(TEST_STUDENT_FIRST_NAME);
             student.setLastName(TEST_STUDENT_LAST_NAME);
             student.setPatronymic(TEST_STUDENT_PATRONYMIC);
+            student.setActive(true);
             student.setGroup(group);
 
             dao.add(student);
@@ -102,6 +103,7 @@ class StudentDaoImplTest {
             expectedStudent.setFirstName(FIRST_STUDENT_NAME);
             expectedStudent.setLastName(FIRST_STUDENT_LAST_NAME);
             expectedStudent.setPatronymic(FIRST_STUDENT_PATRONYMIC);
+            expectedStudent.setActive(true);
             expectedStudent.setGroup(expectedGroup);
 
             Student actualStudent = dao.getById(FIRST_ID).get();
@@ -141,7 +143,7 @@ class StudentDaoImplTest {
             Faculty expectedFaculty = new Faculty(SECOND_ID,
                     SECOND_FACULTY_NAME);
             Group expectedGroup = new Group(SECOND_ID, SECOND_GROUP_NAME,
-                    expectedFaculty);
+                    expectedFaculty, false);
             Student expectedStudent = new Student();
             expectedStudent.setId(FIRST_ID);
             expectedStudent.setFirstName(TEST_STUDENT_FIRST_NAME);
@@ -173,17 +175,33 @@ class StudentDaoImplTest {
     }
 
     @Nested
-    @DisplayName("test 'getAllForLesson' method")
-    class getAllForLessonTest {
+    @DisplayName("test 'getStudentsByLesson' method")
+    class getStudentsByLessonTest {
 
         @Test
-        @DisplayName("should return List with size = 1")
-        void testGetAllStudentsForLesson() {
+        @DisplayName("when lesson_id=1 then should return List with size = 1")
+        void testGetAllStudentsByLesson() {
             Lesson lesson = new Lesson();
             lesson.setId(FIRST_ID);
 
             int expectedQuantityStudents = 1;
-            int actualQuantityStudents = dao.getAllForLesson(lesson).size();
+            int actualQuantityStudents = dao.getStudentsByLesson(lesson).size();
+            assertEquals(expectedQuantityStudents, actualQuantityStudents);
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'getStudentsByGroup' method")
+    class getStudentsByGroupTest {
+
+        @Test
+        @DisplayName("when group _id=1 then should return List with size = 2")
+        void testGetStudentsByGroup() {
+            Group group = new Group();
+            group.setId(FIRST_ID);
+
+            int expectedQuantityStudents = 2;
+            int actualQuantityStudents = dao.getStudentsByGroup(group).size();
             assertEquals(expectedQuantityStudents, actualQuantityStudents);
         }
     }

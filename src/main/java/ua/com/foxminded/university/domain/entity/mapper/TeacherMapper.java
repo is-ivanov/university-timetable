@@ -10,10 +10,11 @@ import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Teacher;
 
 public class TeacherMapper implements RowMapper<Teacher> {
-    private static final String ID = "id";
-    private static final String FIRST_NAME = "first_name";
-    private static final String LAST_NAME = "last_name";
-    private static final String PATRONYMIC = "patronymic";
+    private static final String TEACHER_ID = "teacher_id";
+    private static final String FIRST_NAME = "teacher_first_name";
+    private static final String LAST_NAME = "teacher_last_name";
+    private static final String PATRONYMIC = "teacher_patronymic";
+    private static final String ACTIVE = "teacher_active";
     private static final String DEPARTMENT_ID = "department_id";
     private static final String DEPARTMENT_NAME = "department_name";
     private static final String FACULTY_ID = "faculty_id";
@@ -22,10 +23,11 @@ public class TeacherMapper implements RowMapper<Teacher> {
     @Override
     public Teacher mapRow(ResultSet rs, int rowNum) throws SQLException {
         Teacher teacher = new Teacher();
-        teacher.setId(rs.getInt(ID));
+        teacher.setId(rs.getInt(TEACHER_ID));
         teacher.setFirstName(rs.getString(FIRST_NAME));
         teacher.setLastName(rs.getString(LAST_NAME));
         teacher.setPatronymic(rs.getString(PATRONYMIC));
+        teacher.setActive(rs.getBoolean(ACTIVE));
         teacher.setDepartment(createDepartment(rs));
         return teacher;
     }

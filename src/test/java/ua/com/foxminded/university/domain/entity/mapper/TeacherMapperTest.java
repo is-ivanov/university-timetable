@@ -20,14 +20,16 @@ import ua.com.foxminded.university.domain.entity.Teacher;
 @ExtendWith(MockitoExtension.class)
 class TeacherMapperTest {
 
-    private static final String ID = "id";
-    private static final String FIRST_NAME = "first_name";
-    private static final String LAST_NAME = "last_name";
-    private static final String PATRONYMIC = "patronymic";
+    private static final String ID = "teacher_id";
+    private static final String FIRST_NAME = "teacher_first_name";
+    private static final String LAST_NAME = "teacher_last_name";
+    private static final String PATRONYMIC = "teacher_patronymic";
+    private static final String ACTIVE = "teacher_active";
     private static final int EXPECTED_ID = 1;
     private static final String EXPECTED_FIRST_NAME = "Ivan";
     private static final String EXPECTED_LAST_NAME = "Ivanov";
     private static final String EXPECTED_PATRONYMIC = "Ivanovich";
+    private static final boolean EXPECTED_ACTIVE = true;
     private static final int ROW_NUM = 1;
 
     private TeacherMapper mapper;
@@ -51,6 +53,7 @@ class TeacherMapperTest {
         expectedTeacher.setFirstName(EXPECTED_FIRST_NAME);
         expectedTeacher.setLastName(EXPECTED_LAST_NAME);
         expectedTeacher.setPatronymic(EXPECTED_PATRONYMIC);
+        expectedTeacher.setActive(EXPECTED_ACTIVE);
         expectedTeacher.setDepartment(expectedDepartment);
 
         when(resultSetMock.getInt(ID)).thenReturn(EXPECTED_ID);
@@ -59,6 +62,7 @@ class TeacherMapperTest {
         when(resultSetMock.getString(LAST_NAME)).thenReturn(EXPECTED_LAST_NAME);
         when(resultSetMock.getString(PATRONYMIC))
                 .thenReturn(EXPECTED_PATRONYMIC);
+        when(resultSetMock.getBoolean(ACTIVE)).thenReturn(EXPECTED_ACTIVE);
         Teacher actualTeacher = mapper.mapRow(resultSetMock, ROW_NUM);
         assertEquals(expectedTeacher, actualTeacher);
     }

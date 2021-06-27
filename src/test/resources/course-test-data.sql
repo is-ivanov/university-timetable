@@ -1,3 +1,3 @@
-insert into courses (name) values ('English');
-insert into courses (name) values ('Java');
-insert into courses (name) values ('Chemistry');
+insert into courses (course_name) values ('English');
+insert into courses (course_name) values ('Java');
+insert into courses (course_name) values ('Chemistry');

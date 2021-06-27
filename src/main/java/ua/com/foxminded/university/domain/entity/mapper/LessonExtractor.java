@@ -15,7 +15,8 @@ import ua.com.foxminded.university.domain.entity.Lesson;
 @Component
 public class LessonExtractor implements ResultSetExtractor<List<Lesson>> {
 
-    private static final String ID = "id";
+    private static final String LESSON_ID = "lesson_id";
+    private static final int ROW_NUM = 0;
 
     private LessonMapper lessonMapper;
     private StudentMapper studentMapper;
@@ -33,14 +34,14 @@ public class LessonExtractor implements ResultSetExtractor<List<Lesson>> {
         List<Lesson> lessons = new ArrayList<>();
         Lesson currentLesson = null;
         while (rs.next()) {
-            int id = rs.getInt(ID);
+            int id = rs.getInt(LESSON_ID);
             if (currentLesson == null) {
-                currentLesson = lessonMapper.mapRow(rs, 0);
+                currentLesson = lessonMapper.mapRow(rs, ROW_NUM);
             } else if (currentLesson.getId() != id) {
                 lessons.add(currentLesson);
-                currentLesson = lessonMapper.mapRow(rs, 0);
+                currentLesson = lessonMapper.mapRow(rs, ROW_NUM);
             }
-            currentLesson.getStudents().add(studentMapper.mapRow(rs, 0));
+            currentLesson.getStudents().add(studentMapper.mapRow(rs, ROW_NUM));
         }
         if (currentLesson != null) {
             lessons.add(currentLesson);

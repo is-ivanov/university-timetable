@@ -20,11 +20,8 @@ public class DbConfig {
     private static final String LOGIN = "db.login";
     private static final String PASSWORD = "db.password";
 
-    @Autowired
-    private Environment env;
-
     @Bean
-    public DataSource dataSource() {
+    public DataSource dataSource(Environment env) {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(env.getRequiredProperty(DRIVER));
         dataSource.setUrl(env.getRequiredProperty(URL));

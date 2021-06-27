@@ -1,3 +1,3 @@
-insert into faculties (name) values ('Foreign Language');
-insert into faculties (name) values ('Chemical Technology');
+insert into faculties (faculty_name) values ('Foreign Language');
+insert into faculties (faculty_name) values ('Chemical Technology');
 
