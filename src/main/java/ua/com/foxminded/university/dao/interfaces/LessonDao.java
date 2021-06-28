@@ -6,4 +6,6 @@ public interface LessonDao extends Dao<Lesson> {
 
     void addStudentToLesson(int lessonId, int studentId);
 
+    void deleteAllStudentsFromLesson(int lessonId);
+
 }

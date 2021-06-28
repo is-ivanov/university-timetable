@@ -50,8 +50,9 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     public void delete(Lesson lesson) {
-        // TODO Auto-generated method stub
-
+        lessonDao.deleteAllStudentsFromLesson(lesson.getId());
+        lessonDao.delete(lesson);
     }
+
 
 }

@@ -25,6 +25,7 @@ public class LessonDaoImpl implements LessonDao {
     private static final String QUERY_UPDATE = "lesson.update";
     private static final String QUERY_DELETE = "lesson.delete";
     private static final String QUERY_ADD_STUDENT_TO_LESSON = "lesson.addStudentToLesson";
+    private static final String QUERY_DELETE_ALL_STUDENTS_FROM_LESSON = "lesson.deleteAllStudentsFromLesson";
     private static final String MESSAGE_LESSON_NOT_FOUND = "Lesson not found: ";
 
     private JdbcTemplate jdbcTemplate;
@@ -89,6 +90,13 @@ public class LessonDaoImpl implements LessonDao {
         jdbcTemplate.update(
                 env.getRequiredProperty(QUERY_ADD_STUDENT_TO_LESSON),
                 lessonId, studentId);
+    }
+
+    @Override
+    public void deleteAllStudentsFromLesson(int lessonId) {
+        jdbcTemplate.update(
+                env.getRequiredProperty(QUERY_DELETE_ALL_STUDENTS_FROM_LESSON),
+                lessonId);
     }
 
 }
