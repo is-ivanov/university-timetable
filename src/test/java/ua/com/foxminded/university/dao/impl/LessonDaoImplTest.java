@@ -282,7 +282,7 @@ class LessonDaoImplTest {
     @Nested
     @DisplayName("test 'addStudentToLesson' method")
     class addStudentToLessonTest{
-        
+
         @Test
         @DisplayName("after add studentId=1 to lessonId=2 should CountRowsTable must be one more than it was")
         void testAddStudentToLesson() {
@@ -293,6 +293,22 @@ class LessonDaoImplTest {
                     TABLE_STUDENTS_LESSON);
             assertEquals(expectedRowsInTable, actualRowsInTable);
 
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'deleteStudentsFromLesson' method")
+    class deleteStudentsFromLessonTest {
+
+        @Test
+        @DisplayName("after delete students from lesson_id=2 should CountRowsTable must be two less than it was")
+        void testDeleteStudentsFromLesson() {
+            int expectedRowsInTable = JdbcTestUtils
+                    .countRowsInTable(jdbcTemplate, TABLE_STUDENTS_LESSON) - 2;
+            dao.deleteAllStudentsFromLesson(SECOND_ID);
+            int actualRowsInTable = JdbcTestUtils.countRowsInTable(jdbcTemplate,
+                    TABLE_STUDENTS_LESSON);
+            assertEquals(expectedRowsInTable, actualRowsInTable);
         }
     }
 }
