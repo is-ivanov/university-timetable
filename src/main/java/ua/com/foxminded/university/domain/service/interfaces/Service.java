@@ -12,7 +12,7 @@ public interface Service<T> {
 
     List<T> getAll();
 
-    void update(T t);
+    void update(T t) throws ServiceException;
 
     void delete(T t);
 }

@@ -26,6 +26,9 @@ public class LessonDaoImpl implements LessonDao {
     private static final String QUERY_DELETE = "lesson.delete";
     private static final String QUERY_ADD_STUDENT_TO_LESSON = "lesson.addStudentToLesson";
     private static final String QUERY_DELETE_ALL_STUDENTS_FROM_LESSON = "lesson.deleteAllStudentsFromLesson";
+    private static final String QUERY_GET_ALL_BY_TEACHER = "lesson.getAllByTeacher";
+    private static final String QUERY_GET_ALL_BY_ROOM = "lesson.getAllByRoom";
+    private static final String QUERY_GET_ALL_BY_STUDENT = "lesson.getAllByStudent";
     private static final String MESSAGE_LESSON_NOT_FOUND = "Lesson not found: ";
 
     private JdbcTemplate jdbcTemplate;
@@ -97,6 +100,30 @@ public class LessonDaoImpl implements LessonDao {
         jdbcTemplate.update(
                 env.getRequiredProperty(QUERY_DELETE_ALL_STUDENTS_FROM_LESSON),
                 lessonId);
+    }
+
+    @Override
+    // TODO unit tests
+    public List<Lesson> getAllByTeacher(int teacherId) {
+        return jdbcTemplate.query(
+                env.getRequiredProperty(QUERY_GET_ALL_BY_TEACHER),
+                lessonExtractor, teacherId);
+    }
+
+    @Override
+    // TODO unit tests
+    public List<Lesson> getAllByRoom(int roomId) {
+        return jdbcTemplate.query(
+                env.getRequiredProperty(QUERY_GET_ALL_BY_ROOM),
+                lessonExtractor, roomId);
+    }
+
+    @Override
+    // TODO unit tests
+    public List<Lesson> getAllByStudent(int studentId) {
+        return jdbcTemplate.query(
+                env.getRequiredProperty(QUERY_GET_ALL_BY_STUDENT),
+                lessonExtractor, studentId);
     }
 
 }
