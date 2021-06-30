@@ -27,15 +27,7 @@ public class LessonServiceImpl implements LessonService {
     public void add(Lesson lesson) throws ServiceException {
         checkLesson(lesson);
         lessonDao.add(lesson);
-        int lessonId = lesson.getId();
-        for (Student student : lesson.getStudents()) {
-            if (!checkStudent(lesson, student)) {
-                throw new ServiceException(String.format(
-                        "Student %c is not available", student.toString()));
-            }
-            lessonDao.addStudentToLesson(lessonId, student.getId());
-
-        }
+        saveAllStudentsToLesson(lesson);
     }
 
     @Override
@@ -55,16 +47,61 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public void update(Lesson lesson) throws ServiceException {
-        checkLesson(lesson);
-        lessonDao.update(lesson);
-        // TODO update students in lesson
+    public void update(Lesson updatedLesson) throws ServiceException {
+        checkLesson(updatedLesson);
+        lessonDao.update(updatedLesson);
+        int lessonId = updatedLesson.getId();
+        // получить этот же урок из базы
+        try {
+            Lesson existingLesson = lessonDao.getById(lessonId).get();
+            // пройти по его студентам, если этого студента в изменённом уроке
+            // нет, то удаляем
+            existingLesson.getStudents().forEach(student -> {
+                boolean isStudentExistingOnUpdatedLesson = updatedLesson
+                        .getStudents()
+                        .stream().anyMatch(student::equals);
+                if (!isStudentExistingOnUpdatedLesson) {
+                    lessonDao.deleteStudentFromLesson(lessonId,
+                            student.getId());
+                }
+            });
+            // пройти по студентам изменённого урока,
+            for (Student student : updatedLesson.getStudents()) {
+                // делаем проверку, если непрошел то эксепшн
+                if (checkStudent(updatedLesson, student)) {
+
+                } else {
+                    throw new ServiceException();
+                }
+                // если проверку прошёл, то проверяем есть ли он в сущ. уроке.
+                // Если
+                // есть, то ничего
+                // если нет, то добавляем
+
+            }
+
+        } catch (DAOException e) {
+            throw new ServiceException(e);
+        };
     }
 
     @Override
     public void delete(Lesson lesson) {
         lessonDao.deleteAllStudentsFromLesson(lesson.getId());
         lessonDao.delete(lesson);
+    }
+
+    private void saveAllStudentsToLesson(Lesson lesson)
+            throws ServiceException {
+        int lessonId = lesson.getId();
+        for (Student student : lesson.getStudents()) {
+            if (!checkStudent(lesson, student)) {
+                throw new ServiceException(String.format(
+                        "Student %c is not available for this lesson",
+                        student.toString()));
+            }
+            lessonDao.addStudentToLesson(lessonId, student.getId());
+        }
     }
 
     private void checkLesson(Lesson lesson) throws ServiceException {
@@ -92,9 +129,12 @@ public class LessonServiceImpl implements LessonService {
         return checkTime(checkedLesson, lessonsByRoom);
     }
 
+    private List<Lesson> getLessonsByStudent(Student student) {
+        return lessonDao.getAllByStudent(student.getId());
+    }
+
     private boolean checkStudent(Lesson checkedLesson, Student checkedStudent) {
-        List<Lesson> lessonsByStudent = lessonDao
-                .getAllByStudent(checkedStudent.getId());
+        List<Lesson> lessonsByStudent = getLessonsByStudent(checkedStudent);
         return checkTime(checkedLesson, lessonsByStudent);
     }
 

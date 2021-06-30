@@ -102,6 +102,12 @@ public class LessonDaoImpl implements LessonDao {
                 lessonId);
     }
 
+    // TODO method
+    @Override
+    public void deleteStudentFromLesson(int lessonId, int studentId) {
+
+    }
+
     @Override
     // TODO unit tests
     public List<Lesson> getAllByTeacher(int teacherId) {
