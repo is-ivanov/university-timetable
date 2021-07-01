@@ -26,6 +26,7 @@ public class LessonDaoImpl implements LessonDao {
     private static final String QUERY_DELETE = "lesson.delete";
     private static final String QUERY_ADD_STUDENT_TO_LESSON = "lesson.addStudentToLesson";
     private static final String QUERY_DELETE_ALL_STUDENTS_FROM_LESSON = "lesson.deleteAllStudentsFromLesson";
+    private static final String QUERY_DELETE_STUDENT_FROM_LESSON = "lesson.deleteStudentFromLesson";
     private static final String QUERY_GET_ALL_BY_TEACHER = "lesson.getAllByTeacher";
     private static final String QUERY_GET_ALL_BY_ROOM = "lesson.getAllByRoom";
     private static final String QUERY_GET_ALL_BY_STUDENT = "lesson.getAllByStudent";
@@ -102,14 +103,14 @@ public class LessonDaoImpl implements LessonDao {
                 lessonId);
     }
 
-    // TODO method
     @Override
     public void deleteStudentFromLesson(int lessonId, int studentId) {
-
+        jdbcTemplate.update(
+                env.getRequiredProperty(QUERY_DELETE_STUDENT_FROM_LESSON),
+                lessonId, studentId);
     }
 
     @Override
-    // TODO unit tests
     public List<Lesson> getAllByTeacher(int teacherId) {
         return jdbcTemplate.query(
                 env.getRequiredProperty(QUERY_GET_ALL_BY_TEACHER),
@@ -117,7 +118,6 @@ public class LessonDaoImpl implements LessonDao {
     }
 
     @Override
-    // TODO unit tests
     public List<Lesson> getAllByRoom(int roomId) {
         return jdbcTemplate.query(
                 env.getRequiredProperty(QUERY_GET_ALL_BY_ROOM),
@@ -125,7 +125,6 @@ public class LessonDaoImpl implements LessonDao {
     }
 
     @Override
-    // TODO unit tests
     public List<Lesson> getAllByStudent(int studentId) {
         return jdbcTemplate.query(
                 env.getRequiredProperty(QUERY_GET_ALL_BY_STUDENT),
