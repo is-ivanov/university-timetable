@@ -31,17 +31,47 @@ public class LessonServiceImpl implements LessonService {
         int lessonId = lesson.getId();
         List<Student> unavailableStudents = new ArrayList<>();
         for (Student student : lesson.getStudents()) {
-            List<Lesson> lessonsByStudent = getLessonsByStudent(student);
-            if (checkTime(lesson, lessonsByStudent)) {
+            if (checkAvailableStudentInLesson(lesson, student)) {
                 lessonDao.addStudentToLesson(lessonId, student.getId());
             } else {
                 unavailableStudents.add(student);
             }
         }
-        if (!unavailableStudents.isEmpty()) {
-            throw new ServiceException(
-                    String.format("Students %s are not available",
-                            unavailableStudents.toString()));
+        checkUnavailableStudents(unavailableStudents);
+    }
+
+    @Override
+    public void update(Lesson updatedLesson) throws ServiceException {
+        checkLesson(updatedLesson);
+        lessonDao.update(updatedLesson);
+        int lessonId = updatedLesson.getId();
+        try {
+            Lesson originalLesson = lessonDao.getById(lessonId)
+                    .orElseThrow(() -> new ServiceException(String.format(
+                            "There is not lesson with id=%d in base",
+                            lessonId)));
+            // пройти по студентам сущ. урока
+            originalLesson.getStudents().forEach(student -> {
+                if (!checkExistsStudentInLesson(student, updatedLesson)) {
+                    lessonDao.deleteStudentFromLesson(lessonId,
+                            student.getId());
+                }
+            });
+            List<Student> unavailableStudents = new ArrayList<>();
+            // пройти по студентам изменённого урока,
+            updatedLesson.getStudents().forEach(updStudent -> {
+                List<Lesson> lessonsByStudent = getLessonsByStudent(updStudent);
+                if (checkTime(updatedLesson, lessonsByStudent)) {
+                    if (!checkExistsStudentInLesson(updStudent, originalLesson)) {
+                        lessonDao.addStudentToLesson(lessonId, updStudent.getId());
+                    }
+                } else {
+                    unavailableStudents.add(updStudent);
+                }
+            });
+            checkUnavailableStudents(unavailableStudents);
+        } catch (DAOException e) {
+            throw new ServiceException(e);
         }
     }
 
@@ -59,53 +89,6 @@ public class LessonServiceImpl implements LessonService {
     @Override
     public List<Lesson> getAll() {
         return lessonDao.getAll();
-    }
-
-    @Override
-    public void update(Lesson updatedLesson) throws ServiceException {
-        checkLesson(updatedLesson);
-        lessonDao.update(updatedLesson);
-        int lessonId = updatedLesson.getId();
-        try {
-            Lesson existingLesson = lessonDao.getById(lessonId)
-                    .orElseThrow(() -> new ServiceException(String.format(
-                            "There is not lesson with id=%d in base",
-                            lessonId)));
-            // пройти по студентам сущ. урока
-            existingLesson.getStudents().forEach(student -> {
-                boolean isStudentExistingOnUpdatedLesson = updatedLesson
-                        .getStudents()
-                        .stream().anyMatch(student::equals);
-                if (!isStudentExistingOnUpdatedLesson) {
-                    lessonDao.deleteStudentFromLesson(lessonId,
-                            student.getId());
-                }
-            });
-            List<Student> unavailableStudents = new ArrayList<>();
-            // пройти по студентам изменённого урока,
-            updatedLesson.getStudents().forEach(updStudent -> {
-                List<Lesson> lessonsByStudent = getLessonsByStudent(updStudent);
-                if (checkTime(updatedLesson, lessonsByStudent)) {
-                    // если проверку прошёл, то проверяем есть ли он в сущ. уроке.
-                    boolean isStudentExistingOnExistedLesson = existingLesson
-                            .getStudents().stream().anyMatch(updStudent::equals);
-                    if (!isStudentExistingOnExistedLesson) {
-                        //если нет, то сохраняем в базу
-                        lessonDao.addStudentToLesson(lessonId, updStudent.getId());
-                    }
-                } else {
-                    //если проверку не прошёл, то сохраняем в список недоступных студентов
-                    unavailableStudents.add(updStudent);
-                }
-            });
-            if (!unavailableStudents.isEmpty()) {
-                throw new ServiceException(
-                        String.format("Students %s are not available",
-                                unavailableStudents.toString()));
-            }
-        } catch (DAOException e) {
-            throw new ServiceException(e);
-        }
     }
 
     @Override
@@ -139,15 +122,23 @@ public class LessonServiceImpl implements LessonService {
         return checkTime(checkedLesson, lessonsByRoom);
     }
 
-    private boolean checkStudent(Lesson checkedLesson, Student checkedStudent)
-            throws ServiceException {
+    private boolean checkAvailableStudentInLesson(Lesson checkedLesson,
+            Student checkedStudent) {
         List<Lesson> lessonsByStudent = getLessonsByStudent(checkedStudent);
-        if (!checkTime(checkedLesson, lessonsByStudent)) {
+        return checkTime(checkedLesson, lessonsByStudent);
+    }
+
+    private boolean checkExistsStudentInLesson(Student checkedStudent,
+            Lesson lesson) {
+        return lesson.getStudents().stream().anyMatch(checkedStudent::equals);
+    }
+
+    private void checkUnavailableStudents(List<Student> unavailableStudents)
+            throws ServiceException {
+        if (!unavailableStudents.isEmpty()) {
             throw new ServiceException(
-                    String.format("Student %c is not available for this lesson",
-                            checkedStudent.toString()));
-        } else {
-            return true;
+                    String.format("Students %s are not available",
+                            unavailableStudents.toString()));
         }
     }
 
