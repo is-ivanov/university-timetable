@@ -1,6 +1,7 @@
 package ua.com.foxminded.university.domain.service.impl;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,21 @@ public class LessonServiceImpl implements LessonService {
     public void add(Lesson lesson) throws ServiceException {
         checkLesson(lesson);
         lessonDao.add(lesson);
-        saveAllStudentsToLesson(lesson);
+        int lessonId = lesson.getId();
+        List<Student> unavailableStudents = new ArrayList<>();
+        for (Student student : lesson.getStudents()) {
+            List<Lesson> lessonsByStudent = getLessonsByStudent(student);
+            if (checkTime(lesson, lessonsByStudent)) {
+                lessonDao.addStudentToLesson(lessonId, student.getId());
+            } else {
+                unavailableStudents.add(student);
+            }
+        }
+        if (!unavailableStudents.isEmpty()) {
+            throw new ServiceException(
+                    String.format("Students %s are not available",
+                            unavailableStudents.toString()));
+        }
     }
 
     @Override
@@ -51,11 +66,12 @@ public class LessonServiceImpl implements LessonService {
         checkLesson(updatedLesson);
         lessonDao.update(updatedLesson);
         int lessonId = updatedLesson.getId();
-        // получить этот же урок из базы
         try {
-            Lesson existingLesson = lessonDao.getById(lessonId).get();
-            // пройти по его студентам, если этого студента в изменённом уроке
-            // нет, то удаляем
+            Lesson existingLesson = lessonDao.getById(lessonId)
+                    .orElseThrow(() -> new ServiceException(String.format(
+                            "There is not lesson with id=%d in base",
+                            lessonId)));
+            // пройти по студентам сущ. урока
             existingLesson.getStudents().forEach(student -> {
                 boolean isStudentExistingOnUpdatedLesson = updatedLesson
                         .getStudents()
@@ -65,43 +81,37 @@ public class LessonServiceImpl implements LessonService {
                             student.getId());
                 }
             });
+            List<Student> unavailableStudents = new ArrayList<>();
             // пройти по студентам изменённого урока,
-            for (Student student : updatedLesson.getStudents()) {
-                // делаем проверку, если непрошел то эксепшн
-                if (checkStudent(updatedLesson, student)) {
-
+            updatedLesson.getStudents().forEach(updStudent -> {
+                List<Lesson> lessonsByStudent = getLessonsByStudent(updStudent);
+                if (checkTime(updatedLesson, lessonsByStudent)) {
+                    // если проверку прошёл, то проверяем есть ли он в сущ. уроке.
+                    boolean isStudentExistingOnExistedLesson = existingLesson
+                            .getStudents().stream().anyMatch(updStudent::equals);
+                    if (!isStudentExistingOnExistedLesson) {
+                        //если нет, то сохраняем в базу
+                        lessonDao.addStudentToLesson(lessonId, updStudent.getId());
+                    }
                 } else {
-                    throw new ServiceException();
+                    //если проверку не прошёл, то сохраняем в список недоступных студентов
+                    unavailableStudents.add(updStudent);
                 }
-                // если проверку прошёл, то проверяем есть ли он в сущ. уроке.
-                // Если
-                // есть, то ничего
-                // если нет, то добавляем
-
+            });
+            if (!unavailableStudents.isEmpty()) {
+                throw new ServiceException(
+                        String.format("Students %s are not available",
+                                unavailableStudents.toString()));
             }
-
         } catch (DAOException e) {
             throw new ServiceException(e);
-        };
+        }
     }
 
     @Override
     public void delete(Lesson lesson) {
         lessonDao.deleteAllStudentsFromLesson(lesson.getId());
         lessonDao.delete(lesson);
-    }
-
-    private void saveAllStudentsToLesson(Lesson lesson)
-            throws ServiceException {
-        int lessonId = lesson.getId();
-        for (Student student : lesson.getStudents()) {
-            if (!checkStudent(lesson, student)) {
-                throw new ServiceException(String.format(
-                        "Student %c is not available for this lesson",
-                        student.toString()));
-            }
-            lessonDao.addStudentToLesson(lessonId, student.getId());
-        }
     }
 
     private void checkLesson(Lesson lesson) throws ServiceException {
@@ -129,25 +139,32 @@ public class LessonServiceImpl implements LessonService {
         return checkTime(checkedLesson, lessonsByRoom);
     }
 
+    private boolean checkStudent(Lesson checkedLesson, Student checkedStudent)
+            throws ServiceException {
+        List<Lesson> lessonsByStudent = getLessonsByStudent(checkedStudent);
+        if (!checkTime(checkedLesson, lessonsByStudent)) {
+            throw new ServiceException(
+                    String.format("Student %c is not available for this lesson",
+                            checkedStudent.toString()));
+        } else {
+            return true;
+        }
+    }
+
     private List<Lesson> getLessonsByStudent(Student student) {
         return lessonDao.getAllByStudent(student.getId());
     }
 
-    private boolean checkStudent(Lesson checkedLesson, Student checkedStudent) {
-        List<Lesson> lessonsByStudent = getLessonsByStudent(checkedStudent);
-        return checkTime(checkedLesson, lessonsByStudent);
-    }
-
     private boolean checkTime(Lesson checkedLesson, List<Lesson> lessons) {
-        LocalDateTime timeStartNewLesson = checkedLesson.getTimeStart();
-        LocalDateTime timeEndNewLesson = checkedLesson.getTimeEnd();
+        LocalDateTime timeStartCheckedLesson = checkedLesson.getTimeStart();
+        LocalDateTime timeEndCheckedLesson = checkedLesson.getTimeEnd();
         for (Lesson lesson : lessons) {
             LocalDateTime timeStartLesson = lesson.getTimeStart();
             LocalDateTime timeEndLesson = lesson.getTimeEnd();
-            if (timeStartNewLesson.isAfter(timeStartLesson)
-                    || timeStartNewLesson.isBefore(timeEndLesson)
-                    || timeEndNewLesson.isAfter(timeStartLesson)
-                    || timeEndNewLesson.isBefore(timeEndLesson)) {
+            if (timeStartCheckedLesson.isAfter(timeStartLesson)
+                    || timeStartCheckedLesson.isBefore(timeEndLesson)
+                    || timeEndCheckedLesson.isAfter(timeStartLesson)
+                    || timeEndCheckedLesson.isBefore(timeEndLesson)) {
                 return false;
             }
         }
