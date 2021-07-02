@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -29,12 +31,12 @@ class CourseServiceImplTest {
     private CourseDao courseDaoMock;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         courseService = new CourseServiceImpl(courseDaoMock);
     }
 
     @Test
-    @DisplayName("when call add method then shoud call courseDao once")
+    @DisplayName("test 'add' when call add method then should call courseDao once")
     void testAdd_CallDaoOnce() {
         Course course = new Course();
         courseService.add(course);
@@ -65,12 +67,36 @@ class CourseServiceImplTest {
         }
         
         @Test
-        @DisplayName("when Dao return DAOException then methed should throw ServiceException")
+        @DisplayName("when Dao return DAOException then method should throw ServiceException")
         void testThrowException() throws Exception {
             when(courseDaoMock.getById(1)).thenThrow(DAOException.class);
             assertThrows(ServiceException.class,
                     () -> courseService.getById(1));
         }
+    }
+
+    @Test
+    @DisplayName("test 'getAll' when Dao return List courses then method return this List")
+    void testGetAll_ReturnListCourses(){
+        List<Course> expectedCourses = new ArrayList<>();
+        when(courseDaoMock.getAll()).thenReturn(expectedCourses);
+        assertEquals(expectedCourses, courseService.getAll());
+    }
+
+    @Test
+    @DisplayName("test 'update' when call update method then should call courseDao once")
+    void testUpdate_CallDaoOnce(){
+        Course course = new Course();
+        courseService.update(course);
+        verify(courseDaoMock).update(course);
+    }
+
+    @Test
+    @DisplayName("test 'delete' when call update method then should call courseDao once")
+    void testDelete_CallDaoOnce(){
+        Course course = new Course();
+        courseService.delete(course);
+        verify(courseDaoMock).delete(course);
     }
 
 }
