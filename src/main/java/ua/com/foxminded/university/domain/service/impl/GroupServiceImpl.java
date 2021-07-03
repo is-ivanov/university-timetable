@@ -18,8 +18,8 @@ import ua.com.foxminded.university.exception.ServiceException;
 @Service
 public class GroupServiceImpl implements GroupService {
 
-    private GroupDao groupDao;
-    private StudentDao studentDao;
+    private final GroupDao groupDao;
+    private final StudentDao studentDao;
 
     @Autowired
     public GroupServiceImpl(GroupDao groupDao, StudentDao studentDao) {
@@ -34,7 +34,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public Group getById(int id) throws ServiceException {
-        Group group = null;
+        Group group;
         try {
             group = groupDao.getById(id).orElse(new Group());
         } catch (DAOException e) {

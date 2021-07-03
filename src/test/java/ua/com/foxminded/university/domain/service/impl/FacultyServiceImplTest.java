@@ -67,7 +67,7 @@ class FacultyServiceImplTest {
         }
 
         @Test
-        @DisplayName("when Dao return DAOException then method should throw " +
+        @DisplayName("when Dao throw DAOException then method should throw " +
             "ServiceException")
         void testThrowException() throws Exception {
             when(facultyDaoMock.getById(anyInt())).thenThrow(DAOException.class);
