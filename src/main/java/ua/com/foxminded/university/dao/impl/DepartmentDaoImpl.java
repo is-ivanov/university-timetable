@@ -26,8 +26,8 @@ public class DepartmentDaoImpl implements DepartmentDao {
     private static final String QUERY_DELETE = "department.delete";
     private static final String MESSAGE_DEPARTMENT_NOT_FOUND = "Department not found: ";
 
-    private JdbcTemplate jdbcTemplate;
-    private Environment env;
+    private final JdbcTemplate jdbcTemplate;
+    private final Environment env;
 
     @Autowired
     public DepartmentDaoImpl(JdbcTemplate jdbcTemplate, Environment env) {
@@ -43,7 +43,7 @@ public class DepartmentDaoImpl implements DepartmentDao {
 
     @Override
     public Optional<Department> getById(int id) throws DAOException {
-        Department result = null;
+        Department result;
         try {
             result = jdbcTemplate.queryForObject(
                     env.getRequiredProperty(QUERY_GET_BY_ID),

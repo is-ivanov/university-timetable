@@ -78,7 +78,13 @@ class CourseServiceImplTest {
     @Test
     @DisplayName("test 'getAll' when Dao return List courses then method return this List")
     void testGetAll_ReturnListCourses(){
+        Course course1 = new Course();
+        course1.setId(1);
+        Course course2 = new Course();
+        course2.setId(2);
         List<Course> expectedCourses = new ArrayList<>();
+        expectedCourses.add(course1);
+        expectedCourses.add(course2);
         when(courseDaoMock.getAll()).thenReturn(expectedCourses);
         assertEquals(expectedCourses, courseService.getAll());
     }

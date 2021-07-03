@@ -14,7 +14,7 @@ import ua.com.foxminded.university.exception.ServiceException;
 @Service
 public class CourseServiceImpl implements CourseService {
 
-    private CourseDao courseDao;
+    private final CourseDao courseDao;
 
     @Autowired
     public CourseServiceImpl(CourseDao courseDao) {
@@ -28,7 +28,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Course getById(int id) throws ServiceException {
-        Course course = null;
+        Course course;
         try {
             course = courseDao.getById(id).orElse(new Course());
         } catch (DAOException e) {

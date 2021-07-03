@@ -14,7 +14,7 @@ import ua.com.foxminded.university.exception.ServiceException;
 @Service
 public class DepartmentServiceImpl implements DepartmentService {
 
-    private DepartmentDao departmentDao;
+    private final DepartmentDao departmentDao;
 
     @Autowired
     public DepartmentServiceImpl(DepartmentDao departmentDao) {
@@ -28,7 +28,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public Department getById(int id) throws ServiceException {
-        Department department = null;
+        Department department;
         try {
             department = departmentDao.getById(id).orElse(new Department());
         } catch (DAOException e) {
