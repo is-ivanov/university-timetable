@@ -8,7 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.foxminded.university.dao.interfaces.RoomDao;
-import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Room;
 import ua.com.foxminded.university.exception.DAOException;
 import ua.com.foxminded.university.exception.ServiceException;
@@ -17,7 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -92,10 +92,20 @@ class RoomServiceImplTest {
     }
 
     @Test
-    void update() {
+    @DisplayName("test 'update' when call update method then should call " +
+        "roomDao once")
+    void testUpdate_CallDaoOnce() {
+        Room room = new Room();
+        roomService.update(room);
+        verify(roomDaoMock).update(room);
     }
 
     @Test
-    void delete() {
+    @DisplayName("test 'delete' when call delete method then should call " +
+        "roomDao once")
+    void testDelete_CallDaoOnce() {
+        Room room = new Room();
+        roomService.delete(room);
+        verify(roomDaoMock).delete(room);
     }
 }

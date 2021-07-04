@@ -14,7 +14,7 @@ import ua.com.foxminded.university.exception.ServiceException;
 @Service
 public class RoomServiceImpl implements RoomService {
 
-    private RoomDao roomDao;
+    private final RoomDao roomDao;
 
     @Autowired
     public RoomServiceImpl(RoomDao roomDao) {
@@ -28,7 +28,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public Room getById(int id) throws ServiceException {
-        Room room = null;
+        Room room;
         try {
             room = roomDao.getById(id).orElse(new Room());
         } catch (DAOException e) {
