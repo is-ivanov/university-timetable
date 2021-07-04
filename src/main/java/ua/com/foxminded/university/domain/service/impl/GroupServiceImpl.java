@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import org.springframework.transaction.annotation.Transactional;
 import ua.com.foxminded.university.dao.interfaces.GroupDao;
 import ua.com.foxminded.university.dao.interfaces.StudentDao;
 import ua.com.foxminded.university.domain.entity.Faculty;
@@ -72,14 +73,12 @@ public class GroupServiceImpl implements GroupService {
         newGroup.setFaculty(facultyNewGroup);
         newGroup.setActive(true);
         groupDao.add(newGroup);
-        List<Student> studentsFromGroups = new ArrayList<>();
         groups.forEach(group -> {
-            studentsFromGroups.addAll(studentDao.getStudentsByGroup(group));
+            studentDao.getStudentsByGroup(group).forEach(student -> {
+                student.setGroup(newGroup);
+                studentDao.update(student);
+            });
             deactivateGroup(group);
-        });
-        studentsFromGroups.forEach(student -> {
-            student.setGroup(newGroup);
-            studentDao.update(student);
         });
         return newGroup;
     }
