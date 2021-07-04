@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.foxminded.university.dao.interfaces.GroupDao;
@@ -18,8 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -118,8 +118,28 @@ class GroupServiceImplTest {
         verify(groupDaoMock).delete(group);
     }
 
-    @Test
-    void deactivateGroup() {
+    @Nested
+    @DisplayName("test 'deactivateGroup' method")
+    class deactivateGroupTest {
+
+        @Test
+        @DisplayName("should call groupDao.update once")
+        void testCallGroupDaoOnce() {
+            Group group = new Group();
+            groupService.deactivateGroup(group);
+            verify(groupDaoMock).update(group);
+        }
+
+        @Test
+        @DisplayName("should update group with active = false")
+        void testSetGroupActiveFalse(){
+            Group group = new Group();
+            groupService.deactivateGroup(group);
+            ArgumentCaptor<Group> argumentCaptor =
+                ArgumentCaptor.forClass(Group.class);
+            verify(groupDaoMock).update(argumentCaptor.capture());
+            assertFalse(argumentCaptor.getValue().isActive());
+        }
     }
 
     @Test
