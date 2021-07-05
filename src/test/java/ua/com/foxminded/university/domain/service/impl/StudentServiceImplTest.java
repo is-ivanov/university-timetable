@@ -127,7 +127,7 @@ class StudentServiceImplTest {
     }
 
     @Nested
-    @DisplayName("test 'deactivateGroup' method")
+    @DisplayName("test 'deactivateStudent' method")
     class deactivateStudentTest {
 
         @Test
