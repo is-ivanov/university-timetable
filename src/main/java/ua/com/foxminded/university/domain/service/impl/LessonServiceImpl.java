@@ -23,7 +23,8 @@ public class LessonServiceImpl implements LessonService {
     private static final String MESSAGE_TEACHER_NOT_AVAILABLE = "Teacher %s is not available";
     private static final String MESSAGE_ROOM_NOT_AVAILABLE = "Room %s is not available";
     private static final String MESSAGE_STUDENT_NOT_AVAILABLE = "Students %s are not available";
-    private LessonDao lessonDao;
+
+    private final LessonDao lessonDao;
 
     @Autowired
     public LessonServiceImpl(LessonDao lessonDao) {
@@ -57,7 +58,7 @@ public class LessonServiceImpl implements LessonService {
                             MESSAGE_LESSON_NOT_FOUND,
                             lessonId)));
             originalLesson.getStudents().forEach(student -> {
-                if (!checkExistsStudentInLesson(student, updatedLesson)) {
+                if (checkStudentNoneExistsInLesson(student, updatedLesson)) {
                     lessonDao.deleteStudentFromLesson(lessonId,
                             student.getId());
                 }
@@ -66,7 +67,7 @@ public class LessonServiceImpl implements LessonService {
             updatedLesson.getStudents().forEach(updStudent -> {
                 List<Lesson> lessonsByStudent = getLessonsByStudent(updStudent);
                 if (checkTime(updatedLesson, lessonsByStudent)) {
-                    if (!checkExistsStudentInLesson(updStudent, originalLesson)) {
+                    if (checkStudentNoneExistsInLesson(updStudent, originalLesson)) {
                         lessonDao.addStudentToLesson(lessonId, updStudent.getId());
                     }
                 } else {
@@ -81,7 +82,7 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     public Lesson getById(int id) throws ServiceException {
-        Lesson lesson = null;
+        Lesson lesson;
         try {
             lesson = lessonDao.getById(id).orElse(new Lesson());
         } catch (DAOException e) {
@@ -132,9 +133,9 @@ public class LessonServiceImpl implements LessonService {
         return checkTime(checkedLesson, lessonsByStudent);
     }
 
-    private boolean checkExistsStudentInLesson(Student checkedStudent,
-            Lesson lesson) {
-        return lesson.getStudents().stream().anyMatch(checkedStudent::equals);
+    private boolean checkStudentNoneExistsInLesson(Student checkedStudent,
+                                                   Lesson lesson) {
+        return lesson.getStudents().stream().noneMatch(checkedStudent::equals);
     }
 
     private void checkUnavailableStudents(List<Student> unavailableStudents)

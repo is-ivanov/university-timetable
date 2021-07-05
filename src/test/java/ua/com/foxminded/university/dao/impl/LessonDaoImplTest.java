@@ -344,6 +344,13 @@ class LessonDaoImplTest {
         void testGetAllByTeacherId2ReturnOneLessons() {
             assertEquals(1, dao.getAllByTeacher(ID2).size());
         }
+
+        @Test
+        @DisplayName("when teacher_id = 3 then should return empty List")
+        void testGetAllByTeacherId3ReturnEmptyList(){
+            List<Lesson> lessons = new ArrayList<>();
+            assertEquals(lessons, dao.getAllByTeacher(3));
+        }
     }
 
     @Nested
