@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.foxminded.university.dao.interfaces.StudentDao;
@@ -18,8 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -60,7 +60,7 @@ class StudentServiceImplTest {
             expectedStudent.setActive(true);
             expectedStudent.setGroup(new Group());
             when(studentDaoMock.getById(1)).thenReturn(Optional.of(expectedStudent));
-            assertEquals(expectedStudent, studentDaoMock.getById(1));
+            assertEquals(expectedStudent, studentService.getById(1));
         }
 
         @Test
@@ -126,15 +126,77 @@ class StudentServiceImplTest {
         verify(studentDaoMock).delete(student);
     }
 
-    @Test
-    void deactivateStudent() {
+    @Nested
+    @DisplayName("test 'deactivateGroup' method")
+    class deactivateStudentTest {
+
+        @Test
+        @DisplayName("should call studentDao.update once")
+        void testCallStudentDaoOnce() {
+            Student student = new Student();
+            studentService.deactivateStudent(student);
+            verify(studentDaoMock).update(student);
+        }
+
+        @Test
+        @DisplayName("should update student with active = false")
+        void testSetStudentActiveFalse() {
+            Student student = new Student();
+            studentService.deactivateStudent(student);
+            ArgumentCaptor<Student> captor =
+                ArgumentCaptor.forClass(Student.class);
+            verify(studentDaoMock).update(captor.capture());
+            assertFalse(captor.getValue().isActive());
+        }
     }
 
-    @Test
-    void activateStudent() {
+    @Nested
+    @DisplayName("test 'activateStudent' method")
+    class activateStudentTest {
+
+        @Test
+        @DisplayName("should call studentDao.update once")
+        void testCallStudentDaoOnce() {
+            Student student = new Student();
+            studentService.deactivateStudent(student);
+            verify(studentDaoMock).update(student);
+        }
+
+        @Test
+        @DisplayName("should update student with active = true")
+        void testSetStudentActiveTrue() {
+            studentService.activateStudent(new Student(), new Group());
+            ArgumentCaptor<Student> captor =
+                ArgumentCaptor.forClass(Student.class);
+            verify(studentDaoMock).update(captor.capture());
+            assertTrue(captor.getValue().isActive());
+        }
     }
 
-    @Test
-    void transferStudentToGroup() {
+    @Nested
+    @DisplayName("test 'transferStudentToGroup' method")
+    class transferStudentToGroupTest {
+
+        @Test
+        @DisplayName("should call studentDao.update once")
+        void testCallStudentDaoOnce() {
+            Student student = new Student();
+            studentService.transferStudentToGroup(student, new Group());
+                verify(studentDaoMock).update(student);
+        }
+
+        @Test
+        @DisplayName("should update student with group from parameter")
+        void testSetStudentGroupEqualsExpectedGroup(){
+            Group expectedGroup = new Group();
+            expectedGroup.setId(1);
+            expectedGroup.setName("Test group name");
+            Student student = new Student();
+            studentService.transferStudentToGroup(student, expectedGroup);
+            ArgumentCaptor<Student> captor =
+                ArgumentCaptor.forClass(Student.class);
+            verify(studentDaoMock).update(captor.capture());
+            assertEquals(expectedGroup, captor.getValue().getGroup());
+        }
     }
 }
