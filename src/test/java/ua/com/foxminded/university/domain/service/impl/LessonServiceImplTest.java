@@ -8,7 +8,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.foxminded.university.dao.interfaces.LessonDao;
-import ua.com.foxminded.university.domain.entity.*;
+import ua.com.foxminded.university.domain.entity.Course;
+import ua.com.foxminded.university.domain.entity.Lesson;
+import ua.com.foxminded.university.domain.entity.Room;
+import ua.com.foxminded.university.domain.entity.Teacher;
 import ua.com.foxminded.university.exception.ServiceException;
 
 import java.time.LocalDateTime;
@@ -16,8 +19,10 @@ import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class LessonServiceImplTest {
@@ -40,80 +45,37 @@ class LessonServiceImplTest {
     class addTest {
 
         @Test
-        @DisplayName("should call lessonDao.add once")
+        @DisplayName("when checks return true should call lessonDao.add " +
+            "once")
         void testAdd_CallDaoOnce() throws Exception {
-            Teacher teacher = new Teacher();
-            teacher.setId(1);
-            Course course = new Course();
-            course.setId(1);
-            Room room = new Room();
-            room.setId(2);
-            LocalDateTime startLesson = LocalDateTime.of(2021, Month.JANUARY,
-                3, 12, 0);
-            LocalDateTime endLesson =
-                startLesson.plusMinutes(90);
-            Student student = new Student();
-            student.setId(1);
-            List<Student> students = new ArrayList<>();
-            students.add(student);
-            Lesson lesson = Lesson.builder()
-                .id(1)
-                .teacher(teacher)
-                .course(course)
-                .room(room)
-                .students(students)
-                .timeStart(startLesson)
-                .timeEnd(endLesson)
-                .build();
+            Lesson testLesson = createTestLesson();
             when(lessonDaoMock.getAllByTeacher(1))
                 .thenReturn(new ArrayList<>());
-            lessonService.add(lesson);
-            verify(lessonDaoMock).add(lesson);
+            lessonService.add(testLesson);
+            verify(lessonDaoMock).add(testLesson);
         }
 
         @Test
         @DisplayName("if teacher's time is busy then should throw " +
             "ServiceException with message")
         void testTeacherBusy_ThrowException() {
-            Teacher teacher = new Teacher();
-            teacher.setId(1);
-            Course course = new Course();
-            course.setId(1);
-            Room room = new Room();
-            room.setId(2);
-            LocalDateTime startLesson = LocalDateTime.of(2021, Month.JANUARY,
-                3, 12, 0);
-            LocalDateTime endLesson =
-                startLesson.plusMinutes(90L);
-            Student student = new Student();
-            student.setId(1);
-            List<Student> students = new ArrayList<>();
-            students.add(student);
-            Lesson lesson = Lesson.builder()
-                .id(1)
-                .teacher(teacher)
-                .course(course)
-                .room(room)
-                .students(students)
-                .timeStart(startLesson)
-                .timeEnd(endLesson)
-                .build();
-            LocalDateTime startSecondLesson = LocalDateTime.of(2021,
+            Lesson testLesson = createTestLesson();
+            LocalDateTime startSecondLessonThisTeacher = LocalDateTime.of(2021,
                 Month.JANUARY, 3, 11, 0);
-            LocalDateTime endSecondLesson =
-                startSecondLesson.plusMinutes(90);
-            Lesson anotherLessonThisTeacher = Lesson.builder()
-                .timeStart(startSecondLesson)
-                .timeEnd(endSecondLesson)
+            LocalDateTime endSecondLessonThisTeacher =
+                startSecondLessonThisTeacher.plusMinutes(90);
+            Lesson secondLessonThisTeacher = Lesson.builder()
+                .timeStart(startSecondLessonThisTeacher)
+                .timeEnd(endSecondLessonThisTeacher)
                 .build();
             List<Lesson> lessonsThisTeacher = new ArrayList<>();
-            lessonsThisTeacher.add(anotherLessonThisTeacher);
+            lessonsThisTeacher.add(secondLessonThisTeacher);
             when(lessonDaoMock.getAllByTeacher(1))
                 .thenReturn(lessonsThisTeacher);
             ServiceException e = assertThrows(ServiceException.class,
-                () -> lessonService.add(lesson));
+                () -> lessonService.add(testLesson));
             String expectedMessage =
-                String.format(MESSAGE_TEACHER_NOT_AVAILABLE, teacher);
+                String.format(MESSAGE_TEACHER_NOT_AVAILABLE, testLesson.getTeacher());
             assertEquals(expectedMessage, e.getMessage());
         }
 
@@ -141,32 +103,6 @@ class LessonServiceImplTest {
             assertEquals(expectedMessage, e.getMessage());
         }
 
-        private Lesson createTestLesson(){
-            Teacher teacher = new Teacher();
-            teacher.setId(1);
-            Course course = new Course();
-            course.setId(1);
-            Room room = new Room();
-            room.setId(2);
-            LocalDateTime startLesson = LocalDateTime.of(2021, Month.JANUARY,
-                3, 12, 0);
-            LocalDateTime endLesson =
-                startLesson.plusMinutes(90);
-            Student student = new Student();
-            student.setId(1);
-            List<Student> students = new ArrayList<>();
-            students.add(student);
-            Lesson lesson = Lesson.builder()
-                .id(1)
-                .teacher(teacher)
-                .course(course)
-                .room(room)
-                .students(students)
-                .timeStart(startLesson)
-                .timeEnd(endLesson)
-                .build();
-            return lesson;
-        }
     }
 
     @Nested
@@ -191,5 +127,26 @@ class LessonServiceImplTest {
     @DisplayName("test 'delete' method")
     class deleteTest {
 
+    }
+
+    private Lesson createTestLesson(){
+        Teacher teacher = new Teacher();
+        teacher.setId(1);
+        Course course = new Course();
+        course.setId(1);
+        Room room = new Room();
+        room.setId(2);
+        LocalDateTime startLesson = LocalDateTime.of(2021, Month.JANUARY,
+            3, 12, 0);
+        LocalDateTime endLesson =
+            startLesson.plusMinutes(90);
+        return Lesson.builder()
+            .id(1)
+            .teacher(teacher)
+            .course(course)
+            .room(room)
+            .timeStart(startLesson)
+            .timeEnd(endLesson)
+            .build();
     }
 }

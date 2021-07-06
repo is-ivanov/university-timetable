@@ -118,10 +118,10 @@ public class LessonServiceImpl implements LessonService {
         for (Lesson lesson : lessons) {
             LocalDateTime timeStartLesson = lesson.getTimeStart();
             LocalDateTime timeEndLesson = lesson.getTimeEnd();
-            if (timeStartCheckedLesson.isAfter(timeStartLesson)
-                || timeStartCheckedLesson.isBefore(timeEndLesson)
-                || timeEndCheckedLesson.isAfter(timeStartLesson)
-                || timeEndCheckedLesson.isBefore(timeEndLesson)) {
+            if ((timeStartCheckedLesson.isAfter(timeStartLesson)
+                && timeStartCheckedLesson.isBefore(timeEndLesson))
+                || (timeEndCheckedLesson.isAfter(timeStartLesson)
+                && timeEndCheckedLesson.isBefore(timeEndLesson))) {
                 return false;
             }
         }
