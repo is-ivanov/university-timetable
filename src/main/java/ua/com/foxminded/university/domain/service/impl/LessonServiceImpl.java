@@ -1,12 +1,7 @@
 package ua.com.foxminded.university.domain.service.impl;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import ua.com.foxminded.university.dao.interfaces.LessonDao;
 import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Room;
@@ -16,13 +11,15 @@ import ua.com.foxminded.university.domain.service.interfaces.LessonService;
 import ua.com.foxminded.university.exception.DAOException;
 import ua.com.foxminded.university.exception.ServiceException;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Service
 public class LessonServiceImpl implements LessonService {
 
-    private static final String MESSAGE_LESSON_NOT_FOUND = "There is not lesson with id=%d in base";
     private static final String MESSAGE_TEACHER_NOT_AVAILABLE = "Teacher %s is not available";
     private static final String MESSAGE_ROOM_NOT_AVAILABLE = "Room %s is not available";
-    private static final String MESSAGE_STUDENT_NOT_AVAILABLE = "Students %s are not available";
+    private static final String MESSAGE_STUDENT_NOT_AVAILABLE = "Student %s is not available";
 
     private final LessonDao lessonDao;
 
@@ -35,49 +32,12 @@ public class LessonServiceImpl implements LessonService {
     public void add(Lesson lesson) throws ServiceException {
         checkLesson(lesson);
         lessonDao.add(lesson);
-        int lessonId = lesson.getId();
-        List<Student> unavailableStudents = new ArrayList<>();
-        for (Student student : lesson.getStudents()) {
-            if (checkAvailableStudentInLesson(lesson, student)) {
-                lessonDao.addStudentToLesson(lessonId, student.getId());
-            } else {
-                unavailableStudents.add(student);
-            }
-        }
-        checkUnavailableStudents(unavailableStudents);
     }
 
     @Override
     public void update(Lesson updatedLesson) throws ServiceException {
         checkLesson(updatedLesson);
         lessonDao.update(updatedLesson);
-        int lessonId = updatedLesson.getId();
-        try {
-            Lesson originalLesson = lessonDao.getById(lessonId)
-                .orElseThrow(() -> new ServiceException(String.format(
-                    MESSAGE_LESSON_NOT_FOUND,
-                    lessonId)));
-            originalLesson.getStudents().forEach(student -> {
-                if (checkStudentNoneExistsInLesson(student, updatedLesson)) {
-                    lessonDao.deleteStudentFromLesson(lessonId,
-                        student.getId());
-                }
-            });
-            List<Student> unavailableStudents = new ArrayList<>();
-            updatedLesson.getStudents().forEach(updStudent -> {
-                List<Lesson> lessonsByStudent = getLessonsByStudent(updStudent);
-                if (checkTime(updatedLesson, lessonsByStudent)) {
-                    if (checkStudentNoneExistsInLesson(updStudent, originalLesson)) {
-                        lessonDao.addStudentToLesson(lessonId, updStudent.getId());
-                    }
-                } else {
-                    unavailableStudents.add(updStudent);
-                }
-            });
-            checkUnavailableStudents(unavailableStudents);
-        } catch (DAOException e) {
-            throw new ServiceException(e);
-        }
     }
 
     @Override
@@ -103,8 +63,12 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public void addStudentToLesson(Lesson lesson, int studentId){
-
+    public void addStudentToLesson(Lesson lesson, Student student) throws ServiceException {
+        if (checkAvailableStudentForLesson(lesson, student)) {
+            lessonDao.addStudentToLesson(lesson.getId(), student.getId());
+        } else {
+            throw new ServiceException(String.format(MESSAGE_STUDENT_NOT_AVAILABLE, student));
+        }
     }
 
     private void checkLesson(Lesson lesson) throws ServiceException {
@@ -138,24 +102,10 @@ public class LessonServiceImpl implements LessonService {
         return checkTime(checkedLesson, lessonsByRoom);
     }
 
-    private boolean checkAvailableStudentInLesson(Lesson checkedLesson,
-                                                  Student checkedStudent) {
+    private boolean checkAvailableStudentForLesson(Lesson checkedLesson,
+                                                   Student checkedStudent) {
         List<Lesson> lessonsByStudent = getLessonsByStudent(checkedStudent);
         return checkTime(checkedLesson, lessonsByStudent);
-    }
-
-    private boolean checkStudentNoneExistsInLesson(Student checkedStudent,
-                                                   Lesson lesson) {
-        return lesson.getStudents().stream().noneMatch(checkedStudent::equals);
-    }
-
-    private void checkUnavailableStudents(List<Student> unavailableStudents)
-        throws ServiceException {
-        if (!unavailableStudents.isEmpty()) {
-            throw new ServiceException(
-                String.format(MESSAGE_STUDENT_NOT_AVAILABLE,
-                    unavailableStudents.toString()));
-        }
     }
 
     private List<Lesson> getLessonsByStudent(Student student) {
@@ -177,6 +127,5 @@ public class LessonServiceImpl implements LessonService {
         }
         return true;
     }
-
 
 }
