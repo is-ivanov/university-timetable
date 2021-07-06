@@ -1,8 +1,5 @@
 package ua.com.foxminded.university.dao.impl;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -31,10 +28,12 @@ import ua.com.foxminded.university.domain.entity.mapper.LessonExtractor;
 import ua.com.foxminded.university.exception.DAOException;
 import ua.com.foxminded.university.springconfig.TestDbConfig;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestDbConfig.class)
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
-        "/schema.sql", "/lesson-test-data.sql" })
+    "/schema.sql", "/lesson-test-data.sql"})
 class LessonDaoImplTest {
 
     private static final String TABLE_LESSONS = "lessons";
@@ -67,8 +66,8 @@ class LessonDaoImplTest {
     private static final int MONTH = 6;
     private static final int DAY = 12;
     private static final int HOUR = 14;
-    private static final int MINUTE = 00;
-    private static final int SECOND = 00;
+    private static final int MINUTE = 0;
+    private static final int SECOND = 0;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -93,17 +92,17 @@ class LessonDaoImplTest {
             Room room = new Room();
             room.setId(ID1);
             LocalDateTime timeStart = LocalDateTime.of(YEAR, MONTH, DAY, HOUR,
-                    MINUTE, SECOND);
+                MINUTE, SECOND);
             LocalDateTime timeEnd = timeStart.plusHours(1).plusMinutes(30);
 
             Lesson lesson = Lesson.builder().teacher(teacher).course(course)
-                    .room(room).timeStart(timeStart).timeEnd(timeEnd).build();
+                .room(room).timeStart(timeStart).timeEnd(timeEnd).build();
 
             int expectedRowsInTable = JdbcTestUtils
-                    .countRowsInTable(jdbcTemplate, TABLE_LESSONS) + 1;
+                .countRowsInTable(jdbcTemplate, TABLE_LESSONS) + 1;
             dao.add(lesson);
             int actualRowsInTable = JdbcTestUtils.countRowsInTable(jdbcTemplate,
-                    TABLE_LESSONS);
+                TABLE_LESSONS);
             assertEquals(expectedRowsInTable, actualRowsInTable);
         }
     }
@@ -121,8 +120,8 @@ class LessonDaoImplTest {
             faculty.setName(FACULTY_NAME);
 
             Department department = new Department(ID1,
-                    DEPARTMENT_NAME,
-                    faculty);
+                DEPARTMENT_NAME,
+                faculty);
 
             Teacher teacher = new Teacher();
             teacher.setId(ID1);
@@ -136,7 +135,7 @@ class LessonDaoImplTest {
             Room room = new Room(ID1, BUILDING, ROOM_NUMBER);
 
             LocalDateTime timeStart = LocalDateTime.of(YEAR, MONTH, DAY, HOUR,
-                    MINUTE, SECOND);
+                MINUTE, SECOND);
             LocalDateTime timeEnd = timeStart.plusHours(1).plusMinutes(30);
 
             Group group = new Group();
@@ -163,14 +162,14 @@ class LessonDaoImplTest {
             students.add(secondStudent);
 
             Lesson expectedLesson = Lesson.builder()
-                    .id(ID1)
-                    .teacher(teacher)
-                    .course(course)
-                    .room(room)
-                    .students(students)
-                    .timeStart(timeStart)
-                    .timeEnd(timeEnd)
-                    .build();
+                .id(ID1)
+                .teacher(teacher)
+                .course(course)
+                .room(room)
+                .students(students)
+                .timeStart(timeStart)
+                .timeEnd(timeEnd)
+                .build();
 
             Lesson actualLesson = dao.getById(ID1).get();
             assertEquals(expectedLesson, actualLesson);
@@ -180,7 +179,7 @@ class LessonDaoImplTest {
         @DisplayName("with id=4 should return DAOException 'Lesson not found: 4'")
         void testGetByIdLessonException() throws DAOException {
             DAOException exception = assertThrows(DAOException.class,
-                    () -> dao.getById(4));
+                () -> dao.getById(4));
             assertEquals(MESSAGE_EXCEPTION, exception.getMessage());
         }
     }
@@ -193,7 +192,7 @@ class LessonDaoImplTest {
         @DisplayName("should return List with size = 3")
         void testGetAllLessons() {
             int expectedQuantityLessons = JdbcTestUtils
-                    .countRowsInTable(jdbcTemplate, TABLE_LESSONS);
+                .countRowsInTable(jdbcTemplate, TABLE_LESSONS);
             int actualQuantityLessons = dao.getAll().size();
             assertEquals(expectedQuantityLessons, actualQuantityLessons);
         }
@@ -208,7 +207,7 @@ class LessonDaoImplTest {
         void testUpdateLesson() throws DAOException {
             Faculty faculty = new Faculty(ID1, FACULTY_NAME);
             Department department = new Department(ID1, DEPARTMENT_NAME,
-                    faculty);
+                faculty);
             Teacher teacher = new Teacher();
             teacher.setId(ID2);
             teacher.setFirstName(SECOND_TEACHER_FIRST_NAME);
@@ -220,7 +219,7 @@ class LessonDaoImplTest {
             Course course = new Course(ID1, COURSE_NAME);
             Room room = new Room(ID1, BUILDING, ROOM_NUMBER);
             LocalDateTime timeStart = LocalDateTime.of(YEAR, MONTH + 1, DAY - 1,
-                    HOUR - 2, MINUTE, SECOND);
+                HOUR - 2, MINUTE, SECOND);
             LocalDateTime timeEnd = timeStart.plusHours(2);
 
             Group group = new Group();
@@ -247,14 +246,14 @@ class LessonDaoImplTest {
             students.add(secondStudent);
 
             Lesson expectedLesson = Lesson.builder()
-                    .id(ID1)
-                    .teacher(teacher)
-                    .students(students)
-                    .course(course)
-                    .room(room)
-                    .timeStart(timeStart)
-                    .timeEnd(timeEnd)
-                    .build();
+                .id(ID1)
+                .teacher(teacher)
+                .students(students)
+                .course(course)
+                .room(room)
+                .timeStart(timeStart)
+                .timeEnd(timeEnd)
+                .build();
             dao.update(expectedLesson);
 
             Lesson actualLesson = dao.getById(ID1).get();
@@ -270,28 +269,28 @@ class LessonDaoImplTest {
         @DisplayName("delete lesson id=3 should delete one record and number records table should equals 2")
         void testDeleteLesson() {
             int expectedQuantityLessons = JdbcTestUtils
-                    .countRowsInTable(jdbcTemplate, TABLE_LESSONS) - 1;
+                .countRowsInTable(jdbcTemplate, TABLE_LESSONS) - 1;
             Lesson lesson = new Lesson();
             lesson.setId(ID3);
             dao.delete(lesson);
             int actualQuantityLessons = JdbcTestUtils
-                    .countRowsInTable(jdbcTemplate, TABLE_LESSONS);
+                .countRowsInTable(jdbcTemplate, TABLE_LESSONS);
             assertEquals(expectedQuantityLessons, actualQuantityLessons);
         }
     }
 
     @Nested
     @DisplayName("test 'addStudentToLesson' method")
-    class addStudentToLessonTest{
+    class addStudentToLessonTest {
 
         @Test
         @DisplayName("after add studentId=1 to lessonId=2 should CountRowsTable must be one more than it was")
         void testAddStudentToLesson() {
             int expectedRowsInTable = JdbcTestUtils
-                    .countRowsInTable(jdbcTemplate, TABLE_STUDENTS_LESSON) + 1;
+                .countRowsInTable(jdbcTemplate, TABLE_STUDENTS_LESSON) + 1;
             dao.addStudentToLesson(ID2, ID1);
             int actualRowsInTable = JdbcTestUtils.countRowsInTable(jdbcTemplate,
-                    TABLE_STUDENTS_LESSON);
+                TABLE_STUDENTS_LESSON);
             assertEquals(expectedRowsInTable, actualRowsInTable);
 
         }
@@ -305,14 +304,14 @@ class LessonDaoImplTest {
         @DisplayName("after delete students from lesson_id=2 should CountRowsTable must be two less than it was")
         void testDeleteAllStudentsFromLesson() {
             int expectedRowsInTable = JdbcTestUtils
-                    .countRowsInTable(jdbcTemplate, TABLE_STUDENTS_LESSON) - 2;
+                .countRowsInTable(jdbcTemplate, TABLE_STUDENTS_LESSON) - 2;
             dao.deleteAllStudentsFromLesson(ID2);
             int actualRowsInTable = JdbcTestUtils.countRowsInTable(jdbcTemplate,
-                    TABLE_STUDENTS_LESSON);
+                TABLE_STUDENTS_LESSON);
             assertEquals(expectedRowsInTable, actualRowsInTable);
         }
     }
-    
+
     @Nested
     @DisplayName("test 'deleteStudentFromLesson' method")
     class deleteStudentFromLessonTest {
@@ -321,10 +320,10 @@ class LessonDaoImplTest {
         @DisplayName("after delete student_id=1 from lesson_id=1 should CountRowsTable must be one less than it was")
         void testDeleteStudentFromLesson() {
             int expectedRowsInTable = JdbcTestUtils
-                    .countRowsInTable(jdbcTemplate, TABLE_STUDENTS_LESSON) - 1;
+                .countRowsInTable(jdbcTemplate, TABLE_STUDENTS_LESSON) - 1;
             dao.deleteStudentFromLesson(ID1, ID1);
             int actualRowsInTable = JdbcTestUtils.countRowsInTable(jdbcTemplate,
-                    TABLE_STUDENTS_LESSON);
+                TABLE_STUDENTS_LESSON);
             assertEquals(expectedRowsInTable, actualRowsInTable);
         }
     }
@@ -347,9 +346,8 @@ class LessonDaoImplTest {
 
         @Test
         @DisplayName("when teacher_id = 3 then should return empty List")
-        void testGetAllByTeacherId3ReturnEmptyList(){
-            List<Lesson> lessons = new ArrayList<>();
-            assertEquals(lessons, dao.getAllByTeacher(3));
+        void testGetAllByTeacherId3ReturnEmptyList() {
+            assertTrue(dao.getAllByTeacher(3).isEmpty());
         }
     }
 

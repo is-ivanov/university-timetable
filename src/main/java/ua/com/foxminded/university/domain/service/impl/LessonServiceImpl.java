@@ -54,13 +54,13 @@ public class LessonServiceImpl implements LessonService {
         int lessonId = updatedLesson.getId();
         try {
             Lesson originalLesson = lessonDao.getById(lessonId)
-                    .orElseThrow(() -> new ServiceException(String.format(
-                            MESSAGE_LESSON_NOT_FOUND,
-                            lessonId)));
+                .orElseThrow(() -> new ServiceException(String.format(
+                    MESSAGE_LESSON_NOT_FOUND,
+                    lessonId)));
             originalLesson.getStudents().forEach(student -> {
                 if (checkStudentNoneExistsInLesson(student, updatedLesson)) {
                     lessonDao.deleteStudentFromLesson(lessonId,
-                            student.getId());
+                        student.getId());
                 }
             });
             List<Student> unavailableStudents = new ArrayList<>();
@@ -102,33 +102,44 @@ public class LessonServiceImpl implements LessonService {
         lessonDao.delete(lesson);
     }
 
+    @Override
+    public void addStudentToLesson(Lesson lesson, int studentId){
+
+    }
+
     private void checkLesson(Lesson lesson) throws ServiceException {
         if (!checkTeacher(lesson)) {
             throw new ServiceException(
-                    String.format(MESSAGE_TEACHER_NOT_AVAILABLE,
-                            lesson.getTeacher().toString()));
+                String.format(MESSAGE_TEACHER_NOT_AVAILABLE,
+                    lesson.getTeacher().toString()));
         }
         if (!checkRoom(lesson)) {
             throw new ServiceException(String.format(MESSAGE_ROOM_NOT_AVAILABLE,
-                    lesson.getRoom().toString()));
+                lesson.getRoom().toString()));
         }
     }
 
     private boolean checkTeacher(Lesson checkedLesson) {
         Teacher teacher = checkedLesson.getTeacher();
         List<Lesson> lessonsByTeacher = lessonDao
-                .getAllByTeacher(teacher.getId());
+            .getAllByTeacher(teacher.getId());
+        if (lessonsByTeacher.isEmpty()) {
+            return true;
+        }
         return checkTime(checkedLesson, lessonsByTeacher);
     }
 
     private boolean checkRoom(Lesson checkedLesson) {
         Room room = checkedLesson.getRoom();
         List<Lesson> lessonsByRoom = lessonDao.getAllByRoom(room.getId());
+        if (lessonsByRoom.isEmpty()){
+            return true;
+        }
         return checkTime(checkedLesson, lessonsByRoom);
     }
 
     private boolean checkAvailableStudentInLesson(Lesson checkedLesson,
-            Student checkedStudent) {
+                                                  Student checkedStudent) {
         List<Lesson> lessonsByStudent = getLessonsByStudent(checkedStudent);
         return checkTime(checkedLesson, lessonsByStudent);
     }
@@ -139,11 +150,11 @@ public class LessonServiceImpl implements LessonService {
     }
 
     private void checkUnavailableStudents(List<Student> unavailableStudents)
-            throws ServiceException {
+        throws ServiceException {
         if (!unavailableStudents.isEmpty()) {
             throw new ServiceException(
-                    String.format(MESSAGE_STUDENT_NOT_AVAILABLE,
-                            unavailableStudents.toString()));
+                String.format(MESSAGE_STUDENT_NOT_AVAILABLE,
+                    unavailableStudents.toString()));
         }
     }
 
@@ -158,9 +169,9 @@ public class LessonServiceImpl implements LessonService {
             LocalDateTime timeStartLesson = lesson.getTimeStart();
             LocalDateTime timeEndLesson = lesson.getTimeEnd();
             if (timeStartCheckedLesson.isAfter(timeStartLesson)
-                    || timeStartCheckedLesson.isBefore(timeEndLesson)
-                    || timeEndCheckedLesson.isAfter(timeStartLesson)
-                    || timeEndCheckedLesson.isBefore(timeEndLesson)) {
+                || timeStartCheckedLesson.isBefore(timeEndLesson)
+                || timeEndCheckedLesson.isAfter(timeStartLesson)
+                || timeEndCheckedLesson.isBefore(timeEndLesson)) {
                 return false;
             }
         }

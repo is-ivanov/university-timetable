@@ -8,10 +8,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.foxminded.university.dao.interfaces.LessonDao;
-import ua.com.foxminded.university.domain.entity.Course;
-import ua.com.foxminded.university.domain.entity.Lesson;
-import ua.com.foxminded.university.domain.entity.Room;
-import ua.com.foxminded.university.domain.entity.Teacher;
+import ua.com.foxminded.university.domain.entity.*;
+import ua.com.foxminded.university.exception.ServiceException;
+
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -19,22 +22,25 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class LessonServiceImplTest {
 
+    private static final String MESSAGE_TEACHER_NOT_AVAILABLE = "Teacher %s is not available";
+    private static final String MESSAGE_ROOM_NOT_AVAILABLE = "Room %s is not available";
+
     private LessonServiceImpl lessonService;
 
     @Mock
     private LessonDao lessonDaoMock;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         lessonService = new LessonServiceImpl(lessonDaoMock);
     }
 
     @Nested
     @DisplayName("test 'add' method")
-    class addTest{
+    class addTest {
 
         @Test
-        @DisplayName("should call Dao.add once")
+        @DisplayName("should call lessonDao.add once")
         void testAdd_CallDaoOnce() throws Exception {
             Teacher teacher = new Teacher();
             teacher.setId(1);
@@ -42,38 +48,148 @@ class LessonServiceImplTest {
             course.setId(1);
             Room room = new Room();
             room.setId(2);
-
-
-            Lesson lesson = new Lesson();
-            lesson.setTeacher(new Teacher());
-            lesson.setRoom(new Room());
-            when(lessonDaoMock.getAllByTeacher(0)).thenReturn(null);
+            LocalDateTime startLesson = LocalDateTime.of(2021, Month.JANUARY,
+                3, 12, 0);
+            LocalDateTime endLesson =
+                startLesson.plusMinutes(90);
+            Student student = new Student();
+            student.setId(1);
+            List<Student> students = new ArrayList<>();
+            students.add(student);
+            Lesson lesson = Lesson.builder()
+                .id(1)
+                .teacher(teacher)
+                .course(course)
+                .room(room)
+                .students(students)
+                .timeStart(startLesson)
+                .timeEnd(endLesson)
+                .build();
+            when(lessonDaoMock.getAllByTeacher(1))
+                .thenReturn(new ArrayList<>());
             lessonService.add(lesson);
             verify(lessonDaoMock).add(lesson);
+        }
+
+        @Test
+        @DisplayName("if teacher's time is busy then should throw " +
+            "ServiceException with message")
+        void testTeacherBusy_ThrowException() {
+            Teacher teacher = new Teacher();
+            teacher.setId(1);
+            Course course = new Course();
+            course.setId(1);
+            Room room = new Room();
+            room.setId(2);
+            LocalDateTime startLesson = LocalDateTime.of(2021, Month.JANUARY,
+                3, 12, 0);
+            LocalDateTime endLesson =
+                startLesson.plusMinutes(90L);
+            Student student = new Student();
+            student.setId(1);
+            List<Student> students = new ArrayList<>();
+            students.add(student);
+            Lesson lesson = Lesson.builder()
+                .id(1)
+                .teacher(teacher)
+                .course(course)
+                .room(room)
+                .students(students)
+                .timeStart(startLesson)
+                .timeEnd(endLesson)
+                .build();
+            LocalDateTime startSecondLesson = LocalDateTime.of(2021,
+                Month.JANUARY, 3, 11, 0);
+            LocalDateTime endSecondLesson =
+                startSecondLesson.plusMinutes(90);
+            Lesson anotherLessonThisTeacher = Lesson.builder()
+                .timeStart(startSecondLesson)
+                .timeEnd(endSecondLesson)
+                .build();
+            List<Lesson> lessonsThisTeacher = new ArrayList<>();
+            lessonsThisTeacher.add(anotherLessonThisTeacher);
+            when(lessonDaoMock.getAllByTeacher(1))
+                .thenReturn(lessonsThisTeacher);
+            ServiceException e = assertThrows(ServiceException.class,
+                () -> lessonService.add(lesson));
+            String expectedMessage =
+                String.format(MESSAGE_TEACHER_NOT_AVAILABLE, teacher);
+            assertEquals(expectedMessage, e.getMessage());
+        }
+
+        @Test
+        @DisplayName("if room's time is busy then should throw " +
+            "ServiceException with message")
+        void testRoomBusy_ThrowException() {
+            Lesson testLesson = createTestLesson();
+            LocalDateTime startSecondLesson = LocalDateTime.of(2021,
+                Month.JANUARY, 3, 11, 0);
+            LocalDateTime endSecondLesson =
+                startSecondLesson.plusMinutes(90);
+            Lesson anotherLessonThisRoom = Lesson.builder()
+                .timeStart(startSecondLesson)
+                .timeEnd(endSecondLesson)
+                .build();
+            List<Lesson> lessonsThisRoom = new ArrayList<>();
+            lessonsThisRoom.add(anotherLessonThisRoom);
+
+            when(lessonDaoMock.getAllByRoom(2)).thenReturn(lessonsThisRoom);
+            Exception e = assertThrows(ServiceException.class,
+                () -> lessonService.add(testLesson));
+            String expectedMessage =
+                String.format(MESSAGE_ROOM_NOT_AVAILABLE, testLesson.getRoom());
+            assertEquals(expectedMessage, e.getMessage());
+        }
+
+        private Lesson createTestLesson(){
+            Teacher teacher = new Teacher();
+            teacher.setId(1);
+            Course course = new Course();
+            course.setId(1);
+            Room room = new Room();
+            room.setId(2);
+            LocalDateTime startLesson = LocalDateTime.of(2021, Month.JANUARY,
+                3, 12, 0);
+            LocalDateTime endLesson =
+                startLesson.plusMinutes(90);
+            Student student = new Student();
+            student.setId(1);
+            List<Student> students = new ArrayList<>();
+            students.add(student);
+            Lesson lesson = Lesson.builder()
+                .id(1)
+                .teacher(teacher)
+                .course(course)
+                .room(room)
+                .students(students)
+                .timeStart(startLesson)
+                .timeEnd(endLesson)
+                .build();
+            return lesson;
         }
     }
 
     @Nested
     @DisplayName("test 'update' method")
-    class updateTest{
+    class updateTest {
 
     }
 
     @Nested
     @DisplayName("test 'getById' method")
-    class getByIdTest{
+    class getByIdTest {
 
     }
 
     @Nested
     @DisplayName("test 'getAll' method")
-    class getAllTest{
+    class getAllTest {
 
     }
 
     @Nested
     @DisplayName("test 'delete' method")
-    class deleteTest{
+    class deleteTest {
 
     }
 }
