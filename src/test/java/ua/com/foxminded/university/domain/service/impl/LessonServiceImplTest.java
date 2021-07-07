@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.foxminded.university.dao.interfaces.LessonDao;
@@ -24,8 +25,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class LessonServiceImplTest {
@@ -180,7 +180,8 @@ class LessonServiceImplTest {
     }
 
     @Test
-    @DisplayName("test 'getAll' method")
+    @DisplayName("test 'getAll' when Dao return List lessons then method " +
+        "should return this List")
     void testGetAll_ReturnListLessons() {
         Lesson firstLesson = createTestLesson();
         Lesson secondLesson = createLessonWithBusyTime();
@@ -191,11 +192,19 @@ class LessonServiceImplTest {
         assertEquals(expectedLessons, lessonService.getAll());
     }
 
-    @Nested
-    @DisplayName("test 'delete' method")
-    class deleteTest {
-
+    @Test
+    @DisplayName("test 'delete' when call delete method then should call " +
+        "lessonDao in Order")
+    void testDelete_CallDaoInOrder () {
+        Lesson testLesson = createTestLesson();
+        InOrder inOrder = inOrder(lessonDaoMock);
+        lessonService.delete(testLesson);
+        inOrder.verify(lessonDaoMock).deleteAllStudentsFromLesson(testLesson.getId());
+        inOrder.verify(lessonDaoMock).delete(testLesson);
     }
+
+    @Test
+    @DisplayName("test 'addStudentToLesson' ")
 
     private Lesson createTestLesson(){
         Teacher teacher = new Teacher();
