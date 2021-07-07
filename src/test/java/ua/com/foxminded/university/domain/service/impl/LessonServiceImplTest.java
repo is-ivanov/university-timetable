@@ -9,10 +9,7 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.foxminded.university.dao.interfaces.LessonDao;
-import ua.com.foxminded.university.domain.entity.Course;
-import ua.com.foxminded.university.domain.entity.Lesson;
-import ua.com.foxminded.university.domain.entity.Room;
-import ua.com.foxminded.university.domain.entity.Teacher;
+import ua.com.foxminded.university.domain.entity.*;
 import ua.com.foxminded.university.exception.DAOException;
 import ua.com.foxminded.university.exception.ServiceException;
 
@@ -32,6 +29,7 @@ class LessonServiceImplTest {
 
     private static final String MESSAGE_TEACHER_NOT_AVAILABLE = "Teacher %s is not available";
     private static final String MESSAGE_ROOM_NOT_AVAILABLE = "Room %s is not available";
+    private static final String MESSAGE_STUDENT_NOT_AVAILABLE = "Student %s is not available";
     public static final int ID1 = 1;
     public static final int ID2 = 2;
     public static final LocalDateTime TIME_START_CHECKED_LESSON = LocalDateTime.of(2021, Month.JANUARY,
@@ -195,7 +193,7 @@ class LessonServiceImplTest {
     @Test
     @DisplayName("test 'delete' when call delete method then should call " +
         "lessonDao in Order")
-    void testDelete_CallDaoInOrder () {
+    void testDelete_CallDaoInOrder() {
         Lesson testLesson = createTestLesson();
         InOrder inOrder = inOrder(lessonDaoMock);
         lessonService.delete(testLesson);
@@ -203,10 +201,42 @@ class LessonServiceImplTest {
         inOrder.verify(lessonDaoMock).delete(testLesson);
     }
 
-    @Test
-    @DisplayName("test 'addStudentToLesson' ")
+    @Nested
+    @DisplayName("test 'addStudentToLesson' method")
+    class addStudentToLessonTest {
 
-    private Lesson createTestLesson(){
+        @Test
+        @DisplayName("when checks return true then method call lessonDao once")
+        void testChecksTrue_CallDaoOnce() throws ServiceException {
+            Lesson testLesson = createTestLesson();
+            Student student = new Student();
+            student.setId(ID1);
+            lessonService.addStudentToLesson(testLesson, student);
+            verify(lessonDaoMock).addStudentToLesson(testLesson.getId(),
+                student.getId());
+        }
+
+        @Test
+        @DisplayName("when checks return false then method throw " +
+            "ServiceException with message")
+        void testCheckFalse_ThrowServiceException() {
+            Lesson testLesson = createTestLesson();
+            Lesson lessonWithBusyTime = createLessonWithBusyTime();
+            Student student = new Student();
+            student.setId(ID1);
+            List<Lesson> lessonsAddingStudent = new ArrayList<>();
+            lessonsAddingStudent.add(lessonWithBusyTime);
+            when(lessonDaoMock.getAllByStudent(ID1))
+                .thenReturn(lessonsAddingStudent);
+            Exception e = assertThrows(ServiceException.class,
+                () -> lessonService.addStudentToLesson(testLesson, student));
+            String expectedMessage =
+                String.format(MESSAGE_STUDENT_NOT_AVAILABLE, student);
+            assertEquals(expectedMessage, e.getMessage());
+        }
+    }
+
+    private Lesson createTestLesson() {
         Teacher teacher = new Teacher();
         teacher.setId(ID1);
         Course course = new Course();
