@@ -27,6 +27,8 @@ class TeacherServiceImplTest {
 
     public static final String FIRST_NAME = "FirstName";
     public static final String LAST_NAME = "LastName";
+    public static final int ID1 = 1;
+    public static final int ID2 = 2;
 
     private TeacherServiceImpl teacherService;
 
@@ -55,13 +57,13 @@ class TeacherServiceImplTest {
             "should return this Teacher")
         void testReturnExpectedTeacher() throws Exception {
             Teacher expectedTeacher = new Teacher();
-            expectedTeacher.setId(1);
+            expectedTeacher.setId(ID1);
             expectedTeacher.setFirstName(FIRST_NAME);
             expectedTeacher.setLastName(LAST_NAME);
             expectedTeacher.setActive(true);
             expectedTeacher.setDepartment(new Department());
-            when(teacherDaoMock.getById(1)).thenReturn(Optional.of(expectedTeacher));
-            assertEquals(expectedTeacher, teacherService.getById(1));
+            when(teacherDaoMock.getById(ID1)).thenReturn(Optional.of(expectedTeacher));
+            assertEquals(expectedTeacher, teacherService.getById(ID1));
         }
 
         @Test
@@ -88,19 +90,19 @@ class TeacherServiceImplTest {
         "should return this List")
     void testGetAll_ReturnListTeachers() {
         Faculty faculty = new Faculty();
-        faculty.setId(1);
+        faculty.setId(ID1);
         Department department = new Department();
-        department.setId(1);
+        department.setId(ID1);
         department.setFaculty(faculty);
         Teacher teacher1 = new Teacher();
-        teacher1.setId(1);
+        teacher1.setId(ID1);
         teacher1.setActive(true);
         teacher1.setFirstName(FIRST_NAME);
         teacher1.setDepartment(department);
         List<Teacher> expectedTeachers = new ArrayList<>();
         expectedTeachers.add(teacher1);
         Teacher teacher2 = new Teacher();
-        teacher2.setId(2);
+        teacher2.setId(ID2);
         teacher2.setActive(false);
         teacher2.setDepartment(department);
         expectedTeachers.add(teacher2);
@@ -191,7 +193,7 @@ class TeacherServiceImplTest {
         @DisplayName("should update Teacher with Departments from parameter")
         void testSetTeacherDepartmentEqualsExpectedDepartment(){
             Department expectedDepartment = new Department();
-            expectedDepartment.setId(1);
+            expectedDepartment.setId(ID1);
             expectedDepartment.setName("Test department name");
             Teacher teacher = new Teacher();
             teacherService.transferTeacherToDepartment(teacher, expectedDepartment);

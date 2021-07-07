@@ -25,6 +25,10 @@ import ua.com.foxminded.university.exception.ServiceException;
 @ExtendWith(MockitoExtension.class)
 class CourseServiceImplTest {
 
+    public static final String COURSE_NAME = "Course name";
+    public static final int ID1 = 1;
+    public static final int ID2 = 2;
+
     private CourseServiceImpl courseService;
 
     @Mock
@@ -51,27 +55,27 @@ class CourseServiceImplTest {
         @DisplayName("when Dao return Optional with Course then method should return Course")
         void testReturnExpectedCourse() throws Exception {
             Course expectedCourse = new Course();
-            expectedCourse.setId(1);
-            expectedCourse.setName("Course name");
-            when(courseDaoMock.getById(1))
+            expectedCourse.setId(ID1);
+            expectedCourse.setName(COURSE_NAME);
+            when(courseDaoMock.getById(ID1))
                     .thenReturn(Optional.of(expectedCourse));
-            assertEquals(expectedCourse, courseService.getById(1));
+            assertEquals(expectedCourse, courseService.getById(ID1));
         }
         
         @Test
         @DisplayName("when Dao return empty Optional then method should return empty Course")
         void testReturnEmptyCourse() throws Exception {
             Optional<Course> optional = Optional.empty();
-            when(courseDaoMock.getById(1)).thenReturn(optional);
-            assertEquals(new Course(), courseService.getById(1));
+            when(courseDaoMock.getById(ID1)).thenReturn(optional);
+            assertEquals(new Course(), courseService.getById(ID1));
         }
         
         @Test
         @DisplayName("when Dao return DAOException then method should throw ServiceException")
         void testThrowException() throws Exception {
-            when(courseDaoMock.getById(1)).thenThrow(DAOException.class);
+            when(courseDaoMock.getById(ID1)).thenThrow(DAOException.class);
             assertThrows(ServiceException.class,
-                    () -> courseService.getById(1));
+                    () -> courseService.getById(ID1));
         }
     }
 
@@ -79,9 +83,9 @@ class CourseServiceImplTest {
     @DisplayName("test 'getAll' when Dao return List courses then method return this List")
     void testGetAll_ReturnListCourses(){
         Course course1 = new Course();
-        course1.setId(1);
+        course1.setId(ID1);
         Course course2 = new Course();
-        course2.setId(2);
+        course2.setId(ID2);
         List<Course> expectedCourses = new ArrayList<>();
         expectedCourses.add(course1);
         expectedCourses.add(course2);

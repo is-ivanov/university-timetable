@@ -23,6 +23,11 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class RoomServiceImplTest {
 
+    public static final int ID1 = 1;
+    public static final int ID2 = 2;
+    public static final String NUMBER_ROOM = "123b";
+    public static final String BUILDING = "453C";
+
     private RoomServiceImpl roomService;
 
     @Mock
@@ -45,16 +50,17 @@ class RoomServiceImplTest {
     @DisplayName("test 'getById' method")
     class getByIdTest {
 
+
         @Test
         @DisplayName("when Dao return Optional with Room then method should " +
             "return this Room")
         void testReturnExpectedRoom() throws Exception {
             Room expectedRoom = new Room();
-            expectedRoom.setId(1);
-            expectedRoom.setNumber("123b");
-            expectedRoom.setBuilding("453C");
-            when(roomDaoMock.getById(1)).thenReturn(Optional.of(expectedRoom));
-            assertEquals(expectedRoom, roomService.getById(1));
+            expectedRoom.setId(ID1);
+            expectedRoom.setNumber(NUMBER_ROOM);
+            expectedRoom.setBuilding(BUILDING);
+            when(roomDaoMock.getById(ID1)).thenReturn(Optional.of(expectedRoom));
+            assertEquals(expectedRoom, roomService.getById(ID1));
         }
 
         @Test
@@ -81,9 +87,9 @@ class RoomServiceImplTest {
         "return this List")
     void testGetAll_ReturnListRooms() {
         Room room1 = new Room();
-        room1.setId(1);
+        room1.setId(ID1);
         Room room2 = new Room();
-        room1.setId(2);
+        room1.setId(ID2);
         List<Room> expectedRooms = new ArrayList<>();
         expectedRooms.add(room1);
         expectedRooms.add(room2);

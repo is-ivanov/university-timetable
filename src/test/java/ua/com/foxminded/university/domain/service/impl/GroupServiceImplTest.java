@@ -26,8 +26,10 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class GroupServiceImplTest {
 
-    public static final String NAME_NEW_GROUP = "Name new Group";
+    public static final String NAME_GROUP = "Group name";
     public static final String FACULTY_NAME = "Faculty name";
+    public static final int ID1 = 1;
+    public static final int ID2 = 2;
 
     private GroupServiceImpl groupService;
 
@@ -58,12 +60,12 @@ class GroupServiceImplTest {
             "return this Group")
         void testReturnExpectedGroup() throws Exception {
             Group expectedGroup = new Group();
-            expectedGroup.setId(1);
-            expectedGroup.setName("Group name");
+            expectedGroup.setId(ID1);
+            expectedGroup.setName(NAME_GROUP);
             expectedGroup.setActive(true);
             expectedGroup.setFaculty(new Faculty());
-            when(groupDaoMock.getById(1)).thenReturn(Optional.of(expectedGroup));
-            assertEquals(expectedGroup, groupService.getById(1));
+            when(groupDaoMock.getById(ID1)).thenReturn(Optional.of(expectedGroup));
+            assertEquals(expectedGroup, groupService.getById(ID1));
         }
 
         @Test
@@ -90,12 +92,12 @@ class GroupServiceImplTest {
         "should return this List")
     void testGetAll_ReturnListGroups() {
         Faculty faculty = new Faculty();
-        faculty.setId(1);
+        faculty.setId(ID1);
         Group group1 = new Group();
-        group1.setId(1);
+        group1.setId(ID1);
         group1.setFaculty(faculty);
         Group group2 = new Group();
-        group2.setId(2);
+        group2.setId(ID2);
         group2.setFaculty(faculty);
         List<Group> expectedGroups = new ArrayList<>();
         expectedGroups.add(group1);
@@ -159,12 +161,12 @@ class GroupServiceImplTest {
             List<Group> groups = new ArrayList<>();
             groups.add(group1);
             groups.add(group2);
-            Faculty expectedFaculty = new Faculty(1, FACULTY_NAME);
+            Faculty expectedFaculty = new Faculty(ID1, FACULTY_NAME);
             Group expectedGroup = new Group();
             expectedGroup.setActive(true);
             expectedGroup.setFaculty(expectedFaculty);
-            expectedGroup.setName(NAME_NEW_GROUP);
-            Group actualGroup = groupService.joinGroups(groups, NAME_NEW_GROUP,
+            expectedGroup.setName(NAME_GROUP);
+            Group actualGroup = groupService.joinGroups(groups, NAME_GROUP,
                 expectedFaculty);
             assertEquals(expectedGroup, actualGroup);
         }
@@ -179,12 +181,12 @@ class GroupServiceImplTest {
             List<Group> groups = new ArrayList<>();
             groups.add(group1);
             groups.add(group2);
-            Faculty expectedFaculty = new Faculty(1, FACULTY_NAME);
+            Faculty expectedFaculty = new Faculty(ID1, FACULTY_NAME);
             Group expectedGroup = new Group();
             expectedGroup.setActive(true);
             expectedGroup.setFaculty(expectedFaculty);
-            expectedGroup.setName(NAME_NEW_GROUP);
-            groupService.joinGroups(groups, NAME_NEW_GROUP, expectedFaculty);
+            expectedGroup.setName(NAME_GROUP);
+            groupService.joinGroups(groups, NAME_GROUP, expectedFaculty);
             verify(groupDaoMock).add(expectedGroup);
         }
 
@@ -196,7 +198,7 @@ class GroupServiceImplTest {
             groups.add(new Group());
             groups.add(new Group());
             groups.add(new Group());
-            groupService.joinGroups(groups, NAME_NEW_GROUP, new Faculty());
+            groupService.joinGroups(groups, NAME_GROUP, new Faculty());
             verify(studentDaoMock, times(groups.size()))
                 .getStudentsByGroup(any());
         }
@@ -222,7 +224,7 @@ class GroupServiceImplTest {
             groups.add(group2);
             when(studentDaoMock.getStudentsByGroup(any()))
                 .thenReturn(studentsGroup1).thenReturn(studentsGroup2);
-            groupService.joinGroups(groups, NAME_NEW_GROUP, new Faculty());
+            groupService.joinGroups(groups, NAME_GROUP, new Faculty());
             verify(studentDaoMock,
                 times(quantityStudentsInGroup1 + quantityStudentsInGroup2))
                 .update(any());

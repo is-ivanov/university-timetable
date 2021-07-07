@@ -27,6 +27,9 @@ class StudentServiceImplTest {
 
     public static final String FIRST_NAME = "FirstName";
     public static final String LAST_NAME = "LastName";
+    public static final int ID1 = 1;
+    public static final int ID2 = 2;
+
     private StudentServiceImpl studentService;
 
     @Mock
@@ -54,13 +57,13 @@ class StudentServiceImplTest {
             "should return this Student")
         void testReturnExpectedStudent() throws Exception {
             Student expectedStudent = new Student();
-            expectedStudent.setId(1);
+            expectedStudent.setId(ID1);
             expectedStudent.setFirstName(FIRST_NAME);
             expectedStudent.setLastName(LAST_NAME);
             expectedStudent.setActive(true);
             expectedStudent.setGroup(new Group());
-            when(studentDaoMock.getById(1)).thenReturn(Optional.of(expectedStudent));
-            assertEquals(expectedStudent, studentService.getById(1));
+            when(studentDaoMock.getById(ID1)).thenReturn(Optional.of(expectedStudent));
+            assertEquals(expectedStudent, studentService.getById(ID1));
         }
 
         @Test
@@ -87,19 +90,19 @@ class StudentServiceImplTest {
         "should return this List")
     void testGetAll_ReturnListStudents() {
         Faculty faculty = new Faculty();
-        faculty.setId(1);
+        faculty.setId(ID1);
         Group group = new Group();
-        group.setId(1);
+        group.setId(ID1);
         group.setFaculty(faculty);
         Student student1 = new Student();
-        student1.setId(1);
+        student1.setId(ID1);
         student1.setActive(true);
         student1.setFirstName(FIRST_NAME);
         student1.setGroup(group);
         List<Student> expectedStudents = new ArrayList<>();
         expectedStudents.add(student1);
         Student student2 = new Student();
-        student2.setId(2);
+        student2.setId(ID2);
         student2.setActive(false);
         student2.setGroup(group);
         expectedStudents.add(student2);

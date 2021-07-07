@@ -17,11 +17,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class DepartmentServiceImplTest {
+
+    public static final String DEPARTMENT_NAME = "Department name";
+    public static final int ID1 = 1;
 
     private DepartmentServiceImpl departmentService;
 
@@ -50,12 +55,12 @@ class DepartmentServiceImplTest {
             "should return this Department")
         void testReturnExpectedDepartment() throws Exception {
             Department expectedDepartment = new Department();
-            expectedDepartment.setId(1);
-            expectedDepartment.setName("Department name");
+            expectedDepartment.setId(ID1);
+            expectedDepartment.setName(DEPARTMENT_NAME);
             expectedDepartment.setFaculty(new Faculty());
-            when(departmentDaoMock.getById(1))
+            when(departmentDaoMock.getById(ID1))
                 .thenReturn(Optional.of(expectedDepartment));
-            assertEquals(expectedDepartment, departmentService.getById(1));
+            assertEquals(expectedDepartment, departmentService.getById(ID1));
         }
 
         @Test
@@ -63,8 +68,8 @@ class DepartmentServiceImplTest {
             " empty Department")
         void testReturnEmptyDepartment() throws Exception {
             Optional<Department> optional = Optional.empty();
-            when(departmentDaoMock.getById(1)).thenReturn(optional);
-            assertEquals(new Department(), departmentService.getById(1));
+            when(departmentDaoMock.getById(ID1)).thenReturn(optional);
+            assertEquals(new Department(), departmentService.getById(ID1));
         }
 
         @Test
@@ -73,7 +78,7 @@ class DepartmentServiceImplTest {
         void testThrowException() throws Exception {
             when(departmentDaoMock.getById(1)).thenThrow(DAOException.class);
             assertThrows(ServiceException.class,
-                () -> departmentService.getById(1));
+                () -> departmentService.getById(ID1));
         }
     }
 
@@ -82,9 +87,9 @@ class DepartmentServiceImplTest {
         "method should return this List")
     void testGetAll_ReturnListDepartments() {
         Department department1 = new Department();
-        department1.setId(1);
+        department1.setId(ID1);
         Department department2 = new Department();
-        department2.setId(1);
+        department2.setId(ID1);
         List<Department> expectedDepartments = new ArrayList<>();
         expectedDepartments.add(department1);
         expectedDepartments.add(department2);

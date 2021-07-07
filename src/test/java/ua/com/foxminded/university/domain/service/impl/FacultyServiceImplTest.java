@@ -8,7 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.foxminded.university.dao.interfaces.FacultyDao;
-import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.exception.DAOException;
 import ua.com.foxminded.university.exception.ServiceException;
@@ -17,11 +16,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class FacultyServiceImplTest {
+
+    public static final String FACULTY_NAME = "Faculty name";
+    public static final int ID1 = 1;
 
     private FacultyServiceImpl facultyService;
 
@@ -50,11 +53,11 @@ class FacultyServiceImplTest {
             "should return this Faculty")
         void testReturnExpectedFaculty() throws Exception {
             Faculty expectedFaculty = new Faculty();
-            expectedFaculty.setId(1);
-            expectedFaculty.setName("Faculty name");
-            when(facultyDaoMock.getById(1))
+            expectedFaculty.setId(ID1);
+            expectedFaculty.setName(FACULTY_NAME);
+            when(facultyDaoMock.getById(ID1))
                 .thenReturn(Optional.of(expectedFaculty));
-            assertEquals(expectedFaculty, facultyService.getById(1));
+            assertEquals(expectedFaculty, facultyService.getById(ID1));
         }
 
         @Test
@@ -62,8 +65,8 @@ class FacultyServiceImplTest {
             " empty Faculty")
         void testReturnEmptyFaculty() throws Exception {
             Optional<Faculty> optional = Optional.empty();
-            when(facultyDaoMock.getById(1)).thenReturn(optional);
-            assertEquals(new Faculty(), facultyService.getById(1));
+            when(facultyDaoMock.getById(ID1)).thenReturn(optional);
+            assertEquals(new Faculty(), facultyService.getById(ID1));
         }
 
         @Test
