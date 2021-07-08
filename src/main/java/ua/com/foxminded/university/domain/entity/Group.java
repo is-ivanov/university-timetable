@@ -12,5 +12,6 @@ public class Group {
     private int id;
     private String name;
     private Faculty faculty;
+    private boolean active;
 
 }

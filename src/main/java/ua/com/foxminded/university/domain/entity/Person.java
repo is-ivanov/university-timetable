@@ -9,5 +9,6 @@ public abstract class Person {
     private String firstName;
     private String patronymic;
     private String lastName;
+    private boolean active;
 
 }

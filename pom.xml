@@ -12,8 +12,9 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.ver>8</java.ver>
-		<spring.ver>5.3.7</spring.ver>
-		<mockito.ver>3.9.0</mockito.ver>
+		<spring.ver>5.3.8</spring.ver>
+		<mockito.ver>3.11.2</mockito.ver>
+        <junit.ver>5.8.0-M1</junit.ver>
 	</properties>
 
 	<dependencies>
@@ -47,7 +48,7 @@
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
-			<version>5.8.0-M1</version>
+			<version>${junit.ver}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -65,7 +66,7 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.2.20</version>
+			<version>42.2.22</version>
 		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>

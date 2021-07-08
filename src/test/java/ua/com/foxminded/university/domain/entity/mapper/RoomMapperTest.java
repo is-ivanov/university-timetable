@@ -18,8 +18,8 @@ import ua.com.foxminded.university.domain.entity.Room;
 @ExtendWith(MockitoExtension.class)
 class RoomMapperTest {
 
-    private static final String ID = "id";
-    private static final String NUMBER = "number";
+    private static final String ID = "room_id";
+    private static final String NUMBER = "room_number";
     private static final String BUILDING = "building";
     private static final int EXPECTED_ID = 1;
     private static final String EXPECTED_ROOM_NUMBER = "111b";

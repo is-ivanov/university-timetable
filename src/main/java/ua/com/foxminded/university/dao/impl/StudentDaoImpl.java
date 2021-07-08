@@ -8,15 +8,16 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import ua.com.foxminded.university.dao.interfaces.StudentDao;
+import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.domain.entity.mapper.StudentMapper;
 import ua.com.foxminded.university.exception.DAOException;
 
-@Component
+@Repository
 @PropertySource("classpath:sql_query.properties")
 public class StudentDaoImpl implements StudentDao {
 
@@ -25,7 +26,8 @@ public class StudentDaoImpl implements StudentDao {
     private static final String QUERY_GET_BY_ID = "student.getById";
     private static final String QUERY_UPDATE = "student.update";
     private static final String QUERY_DELETE = "student.delete";
-    private static final String QUERY_GET_ALL_FOR_LESSON = "student.getAllForLesson";
+    private static final String QUERY_GET_ALL_BY_LESSON = "student.getStudentsByLesson";
+    private static final String QUERY_GET_ALL_BY_GROUP = "student.getStudentsByGroup";
     private static final String MESSAGE_STUDENT_NOT_FOUND = "Student not found: ";
 
     private JdbcTemplate jdbcTemplate;
@@ -41,7 +43,8 @@ public class StudentDaoImpl implements StudentDao {
     public void add(Student student) {
         jdbcTemplate.update(env.getRequiredProperty(QUERY_ADD),
                 student.getFirstName(), student.getLastName(),
-                student.getPatronymic(), student.getGroup().getId());
+                student.getPatronymic(), student.isActive(),
+                student.getGroup().getId());
     }
 
     @Override
@@ -67,7 +70,8 @@ public class StudentDaoImpl implements StudentDao {
     public void update(Student student) {
         jdbcTemplate.update(env.getRequiredProperty(QUERY_UPDATE),
                 student.getFirstName(), student.getLastName(),
-                student.getPatronymic(), student.getGroup().getId(),
+                student.getPatronymic(), student.isActive(),
+                student.getGroup().getId(),
                 student.getId());
     }
 
@@ -78,10 +82,17 @@ public class StudentDaoImpl implements StudentDao {
     }
 
     @Override
-    public List<Student> getAllForLesson(Lesson lesson) {
+    public List<Student> getStudentsByLesson(Lesson lesson) {
         return jdbcTemplate.query(
-                env.getRequiredProperty(QUERY_GET_ALL_FOR_LESSON),
+                env.getRequiredProperty(QUERY_GET_ALL_BY_LESSON),
                 new StudentMapper(), lesson.getId());
+    }
+
+    @Override
+    public List<Student> getStudentsByGroup(Group group) {
+        return jdbcTemplate.query(
+                env.getRequiredProperty(QUERY_GET_ALL_BY_GROUP),
+                new StudentMapper(), group.getId());
     }
 
 }

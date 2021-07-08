@@ -19,10 +19,12 @@ import ua.com.foxminded.university.domain.entity.Group;
 @ExtendWith(MockitoExtension.class)
 class GroupMapperTest {
 
-    private static final String ID = "id";
+    private static final String ID = "group_id";
     private static final String NAME = "group_name";
+    private static final String GROUP_ACTIVE = "group_active";
     private static final int EXPECTED_ID = 1;
     private static final String EXPECTED_NAME = "Group Test Name";
+    private static final boolean EXPECTED_ACTIVE = true;
     private static final int ROW_NUM = 1;
 
     private GroupMapper mapper;
@@ -38,12 +40,14 @@ class GroupMapperTest {
     @Test
     @DisplayName("test mapRow should return expected Group")
     void testMapRowShoulReturnExpectedGroup() throws SQLException {
-        Faculty faculty = new Faculty();
+        Faculty expectedFaculty = new Faculty();
         Group expectedGroup = new Group(EXPECTED_ID, EXPECTED_NAME,
-                faculty);
+                expectedFaculty, EXPECTED_ACTIVE);
 
         when(resultSetMock.getInt(ID)).thenReturn(EXPECTED_ID);
         when(resultSetMock.getString(NAME)).thenReturn(EXPECTED_NAME);
+        when(resultSetMock.getBoolean(GROUP_ACTIVE))
+                .thenReturn(EXPECTED_ACTIVE);
 
         Group actualGroup = mapper.mapRow(resultSetMock, ROW_NUM);
         assertEquals(expectedGroup, actualGroup);

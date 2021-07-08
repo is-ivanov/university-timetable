@@ -39,6 +39,7 @@ class TeacherDaoImplTest {
     private static final String FIRST_TEACHER_NAME = "Mike";
     private static final String FIRST_TEACHER_LAST_NAME = "Smith";
     private static final String FIRST_TEACHER_PATRONYMIC = "Jr";
+    private static final boolean FIRST_TEACHER_ACTIVE = true;
     private static final String MESSAGE_EXCEPTION = "Teacher not found: 4";
 
     @Autowired
@@ -62,6 +63,7 @@ class TeacherDaoImplTest {
             teacher.setFirstName(TEST_TEACHER_FIRST_NAME);
             teacher.setLastName(TEST_TEACHER_LAST_NAME);
             teacher.setPatronymic(TEST_TEACHER_PATRONYMIC);
+            teacher.setActive(FIRST_TEACHER_ACTIVE);
             teacher.setDepartment(department);
 
             dao.add(teacher);
@@ -94,6 +96,7 @@ class TeacherDaoImplTest {
             expectedTeacher.setFirstName(FIRST_TEACHER_NAME);
             expectedTeacher.setLastName(FIRST_TEACHER_LAST_NAME);
             expectedTeacher.setPatronymic(FIRST_TEACHER_PATRONYMIC);
+            expectedTeacher.setActive(FIRST_TEACHER_ACTIVE);
             expectedTeacher.setDepartment(expectedDepartment);
 
             Teacher actualTeacher = dao.getById(FIRST_ID).get();

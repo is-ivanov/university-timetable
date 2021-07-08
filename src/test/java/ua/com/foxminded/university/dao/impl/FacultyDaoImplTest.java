@@ -36,7 +36,7 @@ class FacultyDaoImplTest {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    FacultyDaoImpl dao;
+    private FacultyDaoImpl dao;
 
     @Nested
     @DisplayName("test 'add' method")

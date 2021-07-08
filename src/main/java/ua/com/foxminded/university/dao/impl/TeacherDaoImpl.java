@@ -8,14 +8,14 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import ua.com.foxminded.university.dao.interfaces.TeacherDao;
 import ua.com.foxminded.university.domain.entity.Teacher;
 import ua.com.foxminded.university.domain.entity.mapper.TeacherMapper;
 import ua.com.foxminded.university.exception.DAOException;
 
-@Component
+@Repository
 @PropertySource("classpath:sql_query.properties")
 public class TeacherDaoImpl implements TeacherDao {
 
@@ -39,7 +39,8 @@ public class TeacherDaoImpl implements TeacherDao {
     public void add(Teacher teacher) {
         jdbcTemplate.update(env.getRequiredProperty(QUERY_ADD),
                 teacher.getFirstName(), teacher.getLastName(),
-                teacher.getPatronymic(), teacher.getDepartment().getId());
+                teacher.getPatronymic(), teacher.isActive(),
+                teacher.getDepartment().getId());
     }
 
     @Override
@@ -65,8 +66,8 @@ public class TeacherDaoImpl implements TeacherDao {
     public void update(Teacher teacher) {
         jdbcTemplate.update(env.getRequiredProperty(QUERY_UPDATE),
                 teacher.getFirstName(), teacher.getLastName(),
-                teacher.getPatronymic(), teacher.getDepartment().getId(),
-                teacher.getId());
+                teacher.getPatronymic(), teacher.isActive(),
+                teacher.getDepartment().getId(), teacher.getId());
     }
 
     @Override

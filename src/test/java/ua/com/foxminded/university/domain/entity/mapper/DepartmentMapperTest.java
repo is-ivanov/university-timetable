@@ -19,12 +19,11 @@ import ua.com.foxminded.university.domain.entity.Faculty;
 @ExtendWith(MockitoExtension.class)
 class DepartmentMapperTest {
 
-    private static final String ID = "id";
-    private static final String NAME = "name";
+    private static final String ID = "department_id";
+    private static final String NAME = "department_name";
     private static final int EXPECTED_ID = 1;
     private static final String EXPECTED_NAME = "Department Test Name";
     private static final int ROW_NUM = 1;
-
 
     private DepartmentMapper mapper;
 
@@ -39,15 +38,15 @@ class DepartmentMapperTest {
     @Test
     @DisplayName("test mapRow should return expected Department")
     void testMapRowShouldReturnExpectedDepartment() throws SQLException {
-        Faculty faculty = new Faculty();
-        Department expecteDepartment = new Department(EXPECTED_ID,
-                EXPECTED_NAME, faculty);
+        Faculty expectedFaculty = new Faculty();
+        Department expectedDepartment = new Department(EXPECTED_ID,
+                EXPECTED_NAME, expectedFaculty);
         when(resultSetMock.getInt(ID)).thenReturn(EXPECTED_ID);
         when(resultSetMock.getString(NAME)).thenReturn(EXPECTED_NAME);
 
         Department actualDepartment = mapper.mapRow(resultSetMock, ROW_NUM);
 
-        assertEquals(expecteDepartment, actualDepartment);
+        assertEquals(expectedDepartment, actualDepartment);
     }
 
 }

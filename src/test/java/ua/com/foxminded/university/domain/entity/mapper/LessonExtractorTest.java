@@ -22,8 +22,8 @@ import ua.com.foxminded.university.domain.entity.Student;
 @ExtendWith(MockitoExtension.class)
 class LessonExtractorTest {
 
-    private final int ROW_NUM = 0;
-    private static final String ID = "id";
+    private static final int ROW_NUM = 0;
+    private static final String ID = "lesson_id";
 
     private LessonExtractor lessonExtractor;
 

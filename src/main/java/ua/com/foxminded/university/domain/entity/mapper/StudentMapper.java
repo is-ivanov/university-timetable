@@ -14,9 +14,10 @@ import ua.com.foxminded.university.domain.entity.Student;
 public class StudentMapper implements RowMapper<Student> {
 
     private static final String STUDENT_ID = "student_id";
-    private static final String FIRST_NAME = "first_name";
-    private static final String LAST_NAME = "last_name";
-    private static final String PATRONYMIC = "patronymic";
+    private static final String FIRST_NAME = "student_first_name";
+    private static final String LAST_NAME = "student_last_name";
+    private static final String PATRONYMIC = "student_patronymic";
+    private static final String ACTIVE = "student_active";
     private static final String GROUP_ID = "group_id";
     private static final String GROUP_NAME = "group_name";
     private static final String FACULTY_ID = "faculty_id";
@@ -29,8 +30,8 @@ public class StudentMapper implements RowMapper<Student> {
         student.setFirstName(rs.getString(FIRST_NAME));
         student.setLastName(rs.getString(LAST_NAME));
         student.setPatronymic(rs.getString(PATRONYMIC));
+        student.setActive(rs.getBoolean(ACTIVE));
         student.setGroup(createGroup(rs));
-
         return student;
     }
 

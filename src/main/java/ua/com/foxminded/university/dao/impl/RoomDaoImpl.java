@@ -8,14 +8,14 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import ua.com.foxminded.university.dao.interfaces.RoomDao;
 import ua.com.foxminded.university.domain.entity.Room;
 import ua.com.foxminded.university.domain.entity.mapper.RoomMapper;
 import ua.com.foxminded.university.exception.DAOException;
 
-@Component
+@Repository
 @PropertySource("classpath:sql_query.properties")
 public class RoomDaoImpl implements RoomDao {
 

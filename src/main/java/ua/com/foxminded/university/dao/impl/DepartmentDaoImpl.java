@@ -8,14 +8,14 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import ua.com.foxminded.university.dao.interfaces.DepartmentDao;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.mapper.DepartmentMapper;
 import ua.com.foxminded.university.exception.DAOException;
 
-@Component
+@Repository
 @PropertySource("classpath:sql_query.properties")
 public class DepartmentDaoImpl implements DepartmentDao {
 
@@ -26,8 +26,8 @@ public class DepartmentDaoImpl implements DepartmentDao {
     private static final String QUERY_DELETE = "department.delete";
     private static final String MESSAGE_DEPARTMENT_NOT_FOUND = "Department not found: ";
 
-    private JdbcTemplate jdbcTemplate;
-    private Environment env;
+    private final JdbcTemplate jdbcTemplate;
+    private final Environment env;
 
     @Autowired
     public DepartmentDaoImpl(JdbcTemplate jdbcTemplate, Environment env) {
@@ -43,7 +43,7 @@ public class DepartmentDaoImpl implements DepartmentDao {
 
     @Override
     public Optional<Department> getById(int id) throws DAOException {
-        Department result = null;
+        Department result;
         try {
             result = jdbcTemplate.queryForObject(
                     env.getRequiredProperty(QUERY_GET_BY_ID),

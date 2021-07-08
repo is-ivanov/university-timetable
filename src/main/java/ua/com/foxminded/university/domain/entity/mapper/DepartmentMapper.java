@@ -10,8 +10,8 @@ import ua.com.foxminded.university.domain.entity.Faculty;
 
 public class DepartmentMapper implements RowMapper<Department> {
 
-    private static final String ID = "id";
-    private static final String NAME = "name";
+    private static final String ID = "department_id";
+    private static final String NAME = "department_name";
     private static final String FACULTY_ID = "faculty_id";
     private static final String FACULTY_NAME = "faculty_name";
 
@@ -30,4 +30,5 @@ public class DepartmentMapper implements RowMapper<Department> {
         faculty.setName(rs.getString(FACULTY_NAME));
         return faculty;
     }
+
 }
