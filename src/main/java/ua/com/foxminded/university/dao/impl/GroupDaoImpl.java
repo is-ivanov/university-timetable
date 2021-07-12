@@ -26,8 +26,8 @@ public class GroupDaoImpl implements GroupDao {
     private static final String QUERY_DELETE = "group.delete";
     private static final String MESSAGE_GROUP_NOT_FOUND = "Group not found: ";
 
-    private JdbcTemplate jdbcTemplate;
-    private Environment env;
+    private final JdbcTemplate jdbcTemplate;
+    private final Environment env;
 
     @Autowired
     public GroupDaoImpl(JdbcTemplate jdbcTemplate, Environment env) {
@@ -42,8 +42,8 @@ public class GroupDaoImpl implements GroupDao {
     }
 
     @Override
-    public Optional<Group> getById(int id) throws DAOException {
-        Group result = null;
+    public Optional<Group> getById(int id) {
+        Group result;
         try {
             result = jdbcTemplate.queryForObject(
                     env.getRequiredProperty(QUERY_GET_BY_ID),

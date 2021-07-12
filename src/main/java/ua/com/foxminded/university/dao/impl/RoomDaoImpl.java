@@ -26,8 +26,8 @@ public class RoomDaoImpl implements RoomDao {
     private static final String QUERY_DELETE = "room.delete";
     private static final String MESSAGE_ROOM_NOT_FOUND = "Room not found: ";
 
-    private JdbcTemplate jdbcTemplate;
-    private Environment env;
+    private final JdbcTemplate jdbcTemplate;
+    private final Environment env;
 
     @Autowired
     public RoomDaoImpl(JdbcTemplate jdbcTemplate, Environment env) {
@@ -42,8 +42,8 @@ public class RoomDaoImpl implements RoomDao {
     }
 
     @Override
-    public Optional<Room> getById(int id) throws DAOException {
-        Room result = null;
+    public Optional<Room> getById(int id) {
+        Room result;
         try {
             result = jdbcTemplate.queryForObject(
                     env.getRequiredProperty(QUERY_GET_BY_ID), new RoomMapper(),

@@ -32,9 +32,9 @@ public class LessonDaoImpl implements LessonDao {
     private static final String QUERY_GET_ALL_BY_STUDENT = "lesson.getAllByStudent";
     private static final String MESSAGE_LESSON_NOT_FOUND = "Lesson not found: ";
 
-    private JdbcTemplate jdbcTemplate;
-    private LessonExtractor lessonExtractor;
-    private Environment env;
+    private final JdbcTemplate jdbcTemplate;
+    private final LessonExtractor lessonExtractor;
+    private final Environment env;
 
     @Autowired
     public LessonDaoImpl(JdbcTemplate jdbcTemplate,
@@ -53,8 +53,8 @@ public class LessonDaoImpl implements LessonDao {
     }
 
     @Override
-    public Optional<Lesson> getById(int id) throws DAOException {
-        List<Lesson> lessons = null;
+    public Optional<Lesson> getById(int id) {
+        List<Lesson> lessons;
         Lesson result = null;
         try {
             lessons = jdbcTemplate.query(

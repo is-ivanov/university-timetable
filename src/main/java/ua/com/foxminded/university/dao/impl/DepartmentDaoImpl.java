@@ -42,7 +42,7 @@ public class DepartmentDaoImpl implements DepartmentDao {
     }
 
     @Override
-    public Optional<Department> getById(int id) throws DAOException {
+    public Optional<Department> getById(int id) {
         Department result;
         try {
             result = jdbcTemplate.queryForObject(

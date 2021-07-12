@@ -18,8 +18,8 @@ public class LessonExtractor implements ResultSetExtractor<List<Lesson>> {
     private static final String LESSON_ID = "lesson_id";
     private static final int ROW_NUM = 0;
 
-    private LessonMapper lessonMapper;
-    private StudentMapper studentMapper;
+    private final LessonMapper lessonMapper;
+    private final StudentMapper studentMapper;
 
     @Autowired
     public LessonExtractor(LessonMapper lessonMapper,

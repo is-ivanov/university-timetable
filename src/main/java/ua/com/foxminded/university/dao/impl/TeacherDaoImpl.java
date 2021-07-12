@@ -26,8 +26,8 @@ public class TeacherDaoImpl implements TeacherDao {
     private static final String QUERY_DELETE = "teacher.delete";
     private static final String MESSAGE_TEACHER_NOT_FOUND = "Teacher not found: ";
 
-    private JdbcTemplate jdbcTemplate;
-    private Environment env;
+    private final JdbcTemplate jdbcTemplate;
+    private final Environment env;
 
     @Autowired
     public TeacherDaoImpl(JdbcTemplate jdbcTemplate, Environment env) {
@@ -44,8 +44,8 @@ public class TeacherDaoImpl implements TeacherDao {
     }
 
     @Override
-    public Optional<Teacher> getById(int id) throws DAOException {
-        Teacher result = null;
+    public Optional<Teacher> getById(int id) {
+        Teacher result;
         try {
             result = jdbcTemplate.queryForObject(
                     env.getRequiredProperty(QUERY_GET_BY_ID),

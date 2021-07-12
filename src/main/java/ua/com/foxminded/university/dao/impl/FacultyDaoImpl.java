@@ -26,8 +26,8 @@ public class FacultyDaoImpl implements FacultyDao {
     private static final String QUERY_DELETE = "faculty.delete";
     private static final String MESSAGE_FACULTY_NOT_FOUND = "Faculty not found: ";
 
-    private JdbcTemplate jdbcTemplate;
-    private Environment env;
+    private final JdbcTemplate jdbcTemplate;
+    private final Environment env;
 
     @Autowired
     public FacultyDaoImpl(JdbcTemplate jdbcTemplate, Environment env) {
@@ -42,8 +42,8 @@ public class FacultyDaoImpl implements FacultyDao {
     }
 
     @Override
-    public Optional<Faculty> getById(int id) throws DAOException {
-        Faculty result = null;
+    public Optional<Faculty> getById(int id) {
+        Faculty result;
         try {
             result = jdbcTemplate.queryForObject(
                     env.getRequiredProperty(QUERY_GET_BY_ID),

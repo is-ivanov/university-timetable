@@ -30,8 +30,8 @@ public class StudentDaoImpl implements StudentDao {
     private static final String QUERY_GET_ALL_BY_GROUP = "student.getStudentsByGroup";
     private static final String MESSAGE_STUDENT_NOT_FOUND = "Student not found: ";
 
-    private JdbcTemplate jdbcTemplate;
-    private Environment env;
+    private final JdbcTemplate jdbcTemplate;
+    private final Environment env;
 
     @Autowired
     public StudentDaoImpl(JdbcTemplate jdbcTemplate, Environment env) {
@@ -48,8 +48,8 @@ public class StudentDaoImpl implements StudentDao {
     }
 
     @Override
-    public Optional<Student> getById(int id) throws DAOException {
-        Student result = null;
+    public Optional<Student> getById(int id) {
+        Student result;
         try {
             result = jdbcTemplate.queryForObject(
                     env.getRequiredProperty(QUERY_GET_BY_ID),

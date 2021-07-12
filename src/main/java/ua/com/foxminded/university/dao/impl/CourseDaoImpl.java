@@ -46,7 +46,7 @@ public class CourseDaoImpl implements CourseDao {
     }
 
     @Override
-    public Optional<Course> getById(int id) throws DAOException {
+    public Optional<Course> getById(int id) {
         log.debug("Get course by id({})",id);
         Course result;
         try {
