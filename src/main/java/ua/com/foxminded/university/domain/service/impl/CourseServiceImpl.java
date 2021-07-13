@@ -27,7 +27,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Course getById(int id) throws ServiceException {
+    public Course getById(int id) {
         Course course;
         try {
             course = courseDao.getById(id).orElse(new Course());

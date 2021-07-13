@@ -41,43 +41,57 @@ public class CourseDaoImpl implements CourseDao {
     public void add(Course course) {
         log.debug("Adding {}", course);
         jdbcTemplate.update(env.getRequiredProperty(QUERY_ADD),
-                course.getName());
-        log.debug("{} added successfully", course);
+            course.getName());
+        log.info("{} added successfully", course);
     }
 
     @Override
     public Optional<Course> getById(int id) {
-        log.debug("Get course by id({})",id);
+        log.debug("Getting course by id({})", id);
         Course result;
         try {
             result = jdbcTemplate.queryForObject(
-                    env.getRequiredProperty(QUERY_GET_BY_ID),
-                    new CourseMapper(), id);
+                env.getRequiredProperty(QUERY_GET_BY_ID),
+                new CourseMapper(), id);
         } catch (DataAccessException e) {
             log.error("Course id({}) not found", id, e);
             throw new DAOException(MESSAGE_COURSE_NOT_FOUND + id, e);
         }
-        log.debug("Found {}", result);
+        log.info("Found {}", result);
         return Optional.ofNullable(result);
     }
 
     @Override
     public List<Course> getAll() {
-        return jdbcTemplate.query(env.getRequiredProperty(QUERY_GET_ALL),
-                new CourseMapper());
+        log.debug("Getting all courses");
+        List<Course> courses = jdbcTemplate.query(env.getRequiredProperty(QUERY_GET_ALL),
+            new CourseMapper());
+        log.info("Found {} courses", courses.size());
+        return courses;
     }
 
     @Override
     public void update(Course course) {
-        jdbcTemplate.update(env.getRequiredProperty(QUERY_UPDATE),
-                course.getName(), course.getId());
+        log.debug("Updating {}", course);
+        int numberUpdatedRows = jdbcTemplate.update(env.getRequiredProperty(QUERY_UPDATE),
+            course.getName(), course.getId());
+        if (numberUpdatedRows == 0) {
+            log.warn("Can't update {}", course);
+        } else {
+            log.info("Update {} course. {}", numberUpdatedRows, course);
+        }
     }
 
     @Override
     public void delete(Course course) {
-        jdbcTemplate.update(env.getRequiredProperty(QUERY_DELETE),
-                course.getId());
+        log.debug("Deleting {}", course);
+        int numberDeletedRows = jdbcTemplate.update(env.getRequiredProperty(QUERY_DELETE),
+            course.getId());
+        if (numberDeletedRows == 0) {
+            log.warn("Can't delete {}", course);
+        } else {
+            log.info("Delete {} course. {}", numberDeletedRows, course);
+        }
     }
-
 
 }
