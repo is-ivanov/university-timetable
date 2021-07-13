@@ -39,20 +39,15 @@ public class CourseDaoImpl implements CourseDao {
 
     @Override
     public void add(Course course) {
-        log.debug("Start adding {}", course);
+        log.debug("Adding {}", course);
         try {
-            int numberAddedRows = jdbcTemplate.update(env.getRequiredProperty(QUERY_ADD),
+            jdbcTemplate.update(env.getRequiredProperty(QUERY_ADD),
                 course.getName());
-
-            if (numberAddedRows == 0) {
-                log.warn("{} not added", course);
-            }else {
-                log.info("{} added successfully", course);
-            }
         } catch (DataAccessException e) {
             log.error("An error occurred while adding the {}", course, e);
             throw new DAOException(e.getMessage(), e);
         }
+        log.info("{} added successfully", course);
     }
 
     @Override
@@ -88,7 +83,7 @@ public class CourseDaoImpl implements CourseDao {
         if (numberUpdatedRows == 0) {
             log.warn("Can't update {}", course);
         } else {
-            log.info("Update {} course. {}", numberUpdatedRows, course);
+            log.info("Update {}", course);
         }
     }
 
