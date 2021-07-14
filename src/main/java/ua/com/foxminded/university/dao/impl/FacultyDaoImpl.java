@@ -3,6 +3,7 @@ package ua.com.foxminded.university.dao.impl;
 import java.util.List;
 import java.util.Optional;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
@@ -15,6 +16,7 @@ import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.mapper.FacultyMapper;
 import ua.com.foxminded.university.exception.DAOException;
 
+@Slf4j
 @Repository
 @PropertySource("classpath:sql_query.properties")
 public class FacultyDaoImpl implements FacultyDao {
@@ -37,8 +39,15 @@ public class FacultyDaoImpl implements FacultyDao {
 
     @Override
     public void add(Faculty faculty) {
-        jdbcTemplate.update(env.getRequiredProperty(QUERY_ADD),
-                faculty.getName());
+        log.debug("Adding {}", faculty);
+        try {
+            jdbcTemplate.update(env.getRequiredProperty(QUERY_ADD),
+                    faculty.getName());
+        } catch (DataAccessException e) {
+            log.error("An error occurred while adding the {}", faculty, e);
+            throw new DAOException(e.getMessage(), e);
+        }
+        log.info("{} added successfully", faculty);
     }
 
     @Override

@@ -26,8 +26,9 @@ class FacultyDaoImplTest {
 
     private static final String TABLE_NAME = "faculties";
     private static final String TEST_FACULTY_NAME = "FacultyName";
-    private static final int FIRST_ID = 1;
-    private static final int SECOND_ID = 2;
+    private static final int ID1 = 1;
+    private static final int ID2 = 2;
+    private static final int ID3 = 3;
     private static final String FIRST_FACULTY_NAME = "Foreign Language";
     private static final String SECOND_FACULTY_NAME = "Chemical Technology";
     private static final String MESSAGE_EXCEPTION = "Faculty not found: 4";
@@ -64,10 +65,10 @@ class FacultyDaoImplTest {
         @DisplayName("with id=1 should return faculty (1, 'Foreign Language')")
         void testGetByIdFaculty() throws DAOException {
             Faculty expectedFaculty = new Faculty();
-            expectedFaculty.setId(FIRST_ID);
+            expectedFaculty.setId(ID1);
             expectedFaculty.setName(FIRST_FACULTY_NAME);
 
-            Faculty actualFaculty = dao.getById(FIRST_ID).get();
+            Faculty actualFaculty = dao.getById(ID1).get();
             assertEquals(expectedFaculty, actualFaculty);
         }
 
@@ -102,9 +103,9 @@ class FacultyDaoImplTest {
         @Test
         @DisplayName("update name faculty id=1 should write new fields and getById(1) return this fields")
         void testUpdateFaculties() throws DAOException {
-            Faculty expectedFaculty = new Faculty(FIRST_ID, TEST_FACULTY_NAME);
+            Faculty expectedFaculty = new Faculty(ID1, TEST_FACULTY_NAME);
             dao.update(expectedFaculty);
-            Faculty actualFaculty = dao.getById(FIRST_ID).get();
+            Faculty actualFaculty = dao.getById(ID1).get();
             assertEquals(expectedFaculty, actualFaculty);
         }
     }
@@ -118,7 +119,7 @@ class FacultyDaoImplTest {
         void testDeleteFaculty() {
             int expectedQuantityFaculties = JdbcTestUtils
                     .countRowsInTable(jdbcTemplate, TABLE_NAME) - 1;
-            Faculty faculty = new Faculty(SECOND_ID, SECOND_FACULTY_NAME);
+            Faculty faculty = new Faculty(ID2, SECOND_FACULTY_NAME);
             dao.delete(faculty);
             int actualQuantityFaculties = JdbcTestUtils
                     .countRowsInTable(jdbcTemplate, TABLE_NAME);
