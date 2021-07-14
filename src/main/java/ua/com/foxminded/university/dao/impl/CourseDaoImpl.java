@@ -26,7 +26,7 @@ public class CourseDaoImpl implements CourseDao {
     private static final String QUERY_GET_BY_ID = "course.getById";
     private static final String QUERY_UPDATE = "course.update";
     private static final String QUERY_DELETE = "course.delete";
-    private static final String MESSAGE_COURSE_NOT_FOUND = "Course not found: ";
+    private static final String MESSAGE_COURSE_NOT_FOUND = "Course id=%s not found";
 
     private final JdbcTemplate jdbcTemplate;
     private final Environment env;
@@ -60,7 +60,7 @@ public class CourseDaoImpl implements CourseDao {
                 new CourseMapper(), id);
         } catch (DataAccessException e) {
             log.error("Course id({}) not found", id, e);
-            throw new DAOException(MESSAGE_COURSE_NOT_FOUND + id, e);
+            throw new DAOException(String.format(MESSAGE_COURSE_NOT_FOUND, id), e);
         }
         log.info("Found {}", result);
         return Optional.ofNullable(result);
@@ -69,7 +69,8 @@ public class CourseDaoImpl implements CourseDao {
     @Override
     public List<Course> getAll() {
         log.debug("Getting all courses");
-        List<Course> courses = jdbcTemplate.query(env.getRequiredProperty(QUERY_GET_ALL),
+        List<Course> courses = jdbcTemplate.query(
+            env.getRequiredProperty(QUERY_GET_ALL),
             new CourseMapper());
         log.info("Found {} courses", courses.size());
         return courses;
@@ -78,7 +79,8 @@ public class CourseDaoImpl implements CourseDao {
     @Override
     public void update(Course course) {
         log.debug("Updating {}", course);
-        int numberUpdatedRows = jdbcTemplate.update(env.getRequiredProperty(QUERY_UPDATE),
+        int numberUpdatedRows = jdbcTemplate.update(
+            env.getRequiredProperty(QUERY_UPDATE),
             course.getName(), course.getId());
         if (numberUpdatedRows == 0) {
             log.warn("Can't update {}", course);
@@ -90,12 +92,12 @@ public class CourseDaoImpl implements CourseDao {
     @Override
     public void delete(Course course) {
         log.debug("Deleting {}", course);
-        int numberDeletedRows = jdbcTemplate.update(env.getRequiredProperty(QUERY_DELETE),
-            course.getId());
+        int numberDeletedRows = jdbcTemplate.update(
+            env.getRequiredProperty(QUERY_DELETE), course.getId());
         if (numberDeletedRows == 0) {
             log.warn("Can't delete {}", course);
         } else {
-            log.info("Delete {} course. {}", numberDeletedRows, course);
+            log.info("Delete {}", course);
         }
     }
 

@@ -31,7 +31,9 @@ class CourseDaoImplTest {
     private static final int ID1 = 1;
     private static final int ID4 = 4;
     private static final String FIRST_COURSE_NAME = "English";
-    private static final String MESSAGE_EXCEPTION = "Course not found: 4";
+    private static final String MESSAGE_EXCEPTION = "Course id=4 not found";
+    public static final String MESSAGE_UPDATE_MASK = "Can't update %s";
+    public static final String MESSAGE_DELETE_MASK = "Can't delete %s";
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -70,10 +72,10 @@ class CourseDaoImplTest {
         }
 
         @Test
-        @DisplayName("with id=4 should return DAOException 'Course not found: 4'")
+        @DisplayName("with id=4 should return DAOException")
         void testGetByIdCourseException() throws DAOException {
             DAOException exception = assertThrows(DAOException.class,
-                () -> dao.getById(4));
+                () -> dao.getById(ID4));
             assertEquals(MESSAGE_EXCEPTION, exception.getMessage());
         }
     }
@@ -97,8 +99,9 @@ class CourseDaoImplTest {
     class updateTest {
 
         @Test
-        @DisplayName("update name course id=1 should write new name and getById(1) return this name")
-        void testUpdateCourses() throws DAOException {
+        @DisplayName("with course id=1 should write new name and getById(1) " +
+            "return this name")
+        void testUpdateExistingCourse_WriteNewName() throws DAOException {
             Course course = new Course(ID1, TEST_COURSE_NAME);
             dao.update(course);
             String actualName = dao.getById(ID1).orElse(new Course()).getName();
@@ -106,11 +109,12 @@ class CourseDaoImplTest {
         }
 
         @Test
-        @DisplayName("update course id=4 should write new log.warn with expected message")
+        @DisplayName("with course id=4 should write new log.warn with " +
+            "expected message")
         void testUpdateNonExistingCourse_WriteLogWarn() {
             LogCaptor logCaptor = LogCaptor.forClass(CourseDaoImpl.class);
             Course course = new Course(ID4, TEST_COURSE_NAME);
-            String expectedLog = String.format("Can't update %s", course);
+            String expectedLog = String.format(MESSAGE_UPDATE_MASK, course);
             dao.update(course);
             assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
         }
@@ -121,8 +125,9 @@ class CourseDaoImplTest {
     class deleteTest {
 
         @Test
-        @DisplayName("delete course id=1 should delete one record and number records table should equals 2")
-        void testUpdateCourses() {
+        @DisplayName("with course id=1 should delete one record and number " +
+            "records table should equals 2")
+        void testDeleteExistingCourse_ReduceNumberRowsInTable() {
             int expectedQuantityCourses = JdbcTestUtils
                 .countRowsInTable(jdbcTemplate, TABLE_NAME) - 1;
             Course course = new Course(ID1, FIRST_COURSE_NAME);
@@ -130,6 +135,17 @@ class CourseDaoImplTest {
             int actualQuantityCourses = JdbcTestUtils
                 .countRowsInTable(jdbcTemplate, TABLE_NAME);
             assertEquals(expectedQuantityCourses, actualQuantityCourses);
+        }
+
+        @Test
+        @DisplayName("with course id=4 should write new log.warn with " +
+            "expected message")
+        void testDeleteNonExistingCourse_WriteLogWarn() {
+            LogCaptor logCaptor = LogCaptor.forClass(CourseDaoImpl.class);
+            Course course = new Course(ID4, TEST_COURSE_NAME);
+            String expectedLog = String.format(MESSAGE_DELETE_MASK, course);
+            dao.delete(course);
+            assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
         }
     }
 
