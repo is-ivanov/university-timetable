@@ -32,9 +32,13 @@ class DepartmentDaoImplTest {
     private static final String FIRST_FACULTY_NAME = "Chemical Technology";
     private static final String TEST_DEPARTMENT_NAME = "Test Department";
     private static final String FIRST_DEPARTMENT_NAME = "Chemistry";
-    private static final String MESSAGE_EXCEPTION = "Department id=3 not found";
+    private static final String MESSAGE_EXCEPTION = "Department id(3) not found";
     public static final String MESSAGE_UPDATE_MASK = "Can't update %s";
     public static final String MESSAGE_DELETE_MASK = "Can't delete %s";
+    public static final String MESSAGE_UPDATE_EXCEPTION = "Can't update because " +
+        "department id(3) not found";
+    public static final String MESSAGE_DELETE_EXCEPTION = "Can't delete because " +
+        "department id(3) not found";
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -114,7 +118,7 @@ class DepartmentDaoImplTest {
         @Test
         @DisplayName("with department id=1 should write new fields and " +
             "getById(1) return expected department")
-        void testUpdateExistingDepartment_WriteNewDepartment() throws DAOException {
+        void testUpdateExistingDepartment_WriteNewDepartmentFields() throws DAOException {
             Faculty expectedFaculty = new Faculty(ID1, FIRST_FACULTY_NAME);
             Department expectedDepartment = new Department(ID1,
                 TEST_DEPARTMENT_NAME, expectedFaculty);
@@ -124,15 +128,17 @@ class DepartmentDaoImplTest {
         }
 
         @Test
-        @DisplayName("with department id=3 should write new log.warn with " +
-            "expected message")
-        void testUpdateNonExistingDepartment_WriteLogWarn() {
+        @DisplayName("with department id=3 should write new log.warn and throw " +
+            "new DAOException")
+        void testUpdateNonExistingDepartment_ExceptionAndWriteLogWarn() {
             LogCaptor logCaptor = LogCaptor.forClass(DepartmentDaoImpl.class);
             Department department = new Department(ID3, TEST_DEPARTMENT_NAME,
                 new Faculty());
             String expectedLog = String.format(MESSAGE_UPDATE_MASK, department);
-            dao.update(department);
+            Exception ex = assertThrows(DAOException.class,
+                () -> dao.update(department));
             assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
+            assertEquals(MESSAGE_UPDATE_EXCEPTION, ex.getMessage());
         }
     }
 
@@ -155,15 +161,17 @@ class DepartmentDaoImplTest {
         }
 
         @Test
-        @DisplayName("with department id=3 should write new log.warn with " +
-            "expected message")
-        void testDeleteNonExistingDepartment_WriteLogWarn() {
+        @DisplayName("with department id=3 should write new log.warn and throw " +
+            "new DAOException")
+        void testDeleteNonExistingDepartment_ExceptionWriteLogWarn() {
             LogCaptor logCaptor = LogCaptor.forClass(DepartmentDaoImpl.class);
             Department department = new Department(ID3, TEST_DEPARTMENT_NAME,
                 new Faculty());
             String expectedLog = String.format(MESSAGE_DELETE_MASK, department);
-            dao.delete(department);
+            Exception ex = assertThrows(DAOException.class,
+                () -> dao.delete(department));
             assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
+            assertEquals(MESSAGE_DELETE_EXCEPTION, ex.getMessage());
         }
     }
 
