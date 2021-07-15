@@ -64,8 +64,7 @@ public class GroupDaoImpl implements GroupDao {
                 new GroupMapper(), id);
         } catch (DataAccessException e) {
             log.error("Group id({}) not found", id, e);
-            throw new DAOException(String.format(MESSAGE_GROUP_NOT_FOUND,
-                id), e);
+            throw new DAOException(String.format(MESSAGE_GROUP_NOT_FOUND, id), e);
         }
         log.info("Found {}", result);
         return Optional.ofNullable(result);
@@ -74,7 +73,6 @@ public class GroupDaoImpl implements GroupDao {
     @Override
     public List<Group> getAll() {
         log.debug("Getting all groups");
-
         List<Group> groups = jdbcTemplate.query(
             env.getRequiredProperty(QUERY_GET_ALL), new GroupMapper());
         log.info("Found {} groups", groups.size());
