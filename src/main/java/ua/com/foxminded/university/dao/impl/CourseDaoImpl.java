@@ -27,6 +27,10 @@ public class CourseDaoImpl implements CourseDao {
     private static final String QUERY_UPDATE = "course.update";
     private static final String QUERY_DELETE = "course.delete";
     private static final String MESSAGE_COURSE_NOT_FOUND = "Course id=%s not found";
+    private static final String MESSAGE_UPDATE_COURSE_NOT_FOUND = "Can't " +
+        "update because course id=%s not found";
+    private static final String MESSAGE_DELETE_COURSE_NOT_FOUND = "Can't " +
+        "delete because course id=%s not found";
 
     private final JdbcTemplate jdbcTemplate;
     private final Environment env;
@@ -84,6 +88,8 @@ public class CourseDaoImpl implements CourseDao {
             course.getName(), course.getId());
         if (numberUpdatedRows == 0) {
             log.warn("Can't update {}", course);
+            throw new DAOException(String.format(MESSAGE_UPDATE_COURSE_NOT_FOUND,
+                course.getId()));
         } else {
             log.info("Update {}", course);
         }
@@ -96,6 +102,8 @@ public class CourseDaoImpl implements CourseDao {
             env.getRequiredProperty(QUERY_DELETE), course.getId());
         if (numberDeletedRows == 0) {
             log.warn("Can't delete {}", course);
+            throw new DAOException(String.format(MESSAGE_DELETE_COURSE_NOT_FOUND,
+                course.getId()));
         } else {
             log.info("Delete {}", course);
         }

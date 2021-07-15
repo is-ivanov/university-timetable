@@ -27,6 +27,10 @@ public class DepartmentDaoImpl implements DepartmentDao {
     private static final String QUERY_UPDATE = "department.update";
     private static final String QUERY_DELETE = "department.delete";
     private static final String MESSAGE_DEPARTMENT_NOT_FOUND = "Department id=%s not found";
+    private static final String MESSAGE_UPDATE_DEPARTMENT_NOT_FOUND =
+        "Can't update because department id=%s not found";
+    private static final String MESSAGE_DELETE_DEPARTMENT_NOT_FOUND =
+        "Can't delete because department id=%s not found";
 
     private final JdbcTemplate jdbcTemplate;
     private final Environment env;
@@ -85,6 +89,8 @@ public class DepartmentDaoImpl implements DepartmentDao {
             department.getId());
         if (numberUpdatedRows == 0) {
             log.warn("Can't update {}", department);
+            throw new DAOException(String.format(MESSAGE_UPDATE_DEPARTMENT_NOT_FOUND,
+                department.getId()));
         } else {
             log.info("Update {}", department);
         }
@@ -97,6 +103,9 @@ public class DepartmentDaoImpl implements DepartmentDao {
             env.getRequiredProperty(QUERY_DELETE), department.getId());
         if (numberDeletedRows == 0) {
             log.warn("Can't delete {}", department);
+            throw new DAOException(String
+                .format(MESSAGE_DELETE_DEPARTMENT_NOT_FOUND,
+                    department.getId()));
         } else {
             log.info("Delete {}", department);
         }
