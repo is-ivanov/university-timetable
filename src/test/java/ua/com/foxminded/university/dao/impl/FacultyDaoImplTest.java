@@ -3,6 +3,7 @@ package ua.com.foxminded.university.dao.impl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import nl.altindag.log.LogCaptor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.jdbc.JdbcTestUtils;
 
+import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.exception.DAOException;
 import ua.com.foxminded.university.springconfig.TestDbConfig;
@@ -31,7 +33,13 @@ class FacultyDaoImplTest {
     private static final int ID3 = 3;
     private static final String FIRST_FACULTY_NAME = "Foreign Language";
     private static final String SECOND_FACULTY_NAME = "Chemical Technology";
-    private static final String MESSAGE_EXCEPTION = "Faculty not found: 4";
+    private static final String MESSAGE_EXCEPTION = "Faculty id(3) not found";
+    private static final String MESSAGE_UPDATE_MASK = "Can't update %s";
+    private static final String MESSAGE_DELETE_MASK = "Can't delete %s";
+    public static final String MESSAGE_UPDATE_EXCEPTION = "Can't update because " +
+        "faculty id(3) not found";
+    public static final String MESSAGE_DELETE_EXCEPTION = "Can't delete because " +
+        "faculty id(3) not found";
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -68,16 +76,15 @@ class FacultyDaoImplTest {
             expectedFaculty.setId(ID1);
             expectedFaculty.setName(FIRST_FACULTY_NAME);
 
-            Faculty actualFaculty = dao.getById(ID1).get();
+            Faculty actualFaculty = dao.getById(ID1).orElse(null);
             assertEquals(expectedFaculty, actualFaculty);
         }
 
-
         @Test
-        @DisplayName("with id=4 should return DAOException 'Faculty not found: 4'")
+        @DisplayName("with id=3 should return DAOException")
         void testGetByIdFacultyException() throws DAOException {
             DAOException exception = assertThrows(DAOException.class,
-                    () -> dao.getById(4));
+                    () -> dao.getById(ID3));
             assertEquals(MESSAGE_EXCEPTION, exception.getMessage());
         }
     }
@@ -101,12 +108,24 @@ class FacultyDaoImplTest {
     class updateTest {
 
         @Test
-        @DisplayName("update name faculty id=1 should write new fields and getById(1) return this fields")
-        void testUpdateFaculties() throws DAOException {
+        @DisplayName("with faculty id=1 should write new fields and" +
+            " getById(1) return expected faculty")
+        void testUpdateExistingFaculty_WriteNewFacultyName() throws DAOException {
             Faculty expectedFaculty = new Faculty(ID1, TEST_FACULTY_NAME);
             dao.update(expectedFaculty);
-            Faculty actualFaculty = dao.getById(ID1).get();
+            Faculty actualFaculty = dao.getById(ID1).orElse(new Faculty());
             assertEquals(expectedFaculty, actualFaculty);
+        }
+
+        @Test
+        @DisplayName("with faculty id=3 should write new log.warn with " +
+            "expected message")
+        void testUpdateNonExistingFaculty_WriteLogWarn(){
+            LogCaptor logCaptor = LogCaptor.forClass(FacultyDaoImpl.class);
+            Faculty faculty = new Faculty(ID3, TEST_FACULTY_NAME);
+            String expectedLog = String.format(MESSAGE_UPDATE_MASK, faculty);
+            dao.update(faculty);
+            assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
         }
     }
 
