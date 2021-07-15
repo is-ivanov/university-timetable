@@ -26,11 +26,12 @@ public class DepartmentDaoImpl implements DepartmentDao {
     private static final String QUERY_GET_BY_ID = "department.getById";
     private static final String QUERY_UPDATE = "department.update";
     private static final String QUERY_DELETE = "department.delete";
-    private static final String MESSAGE_DEPARTMENT_NOT_FOUND = "Department id=%s not found";
+    private static final String MESSAGE_DEPARTMENT_NOT_FOUND = "Department id" +
+        "(%s) not found";
     private static final String MESSAGE_UPDATE_DEPARTMENT_NOT_FOUND =
-        "Can't update because department id=%s not found";
+        "Can't update because department id(%s) not found";
     private static final String MESSAGE_DELETE_DEPARTMENT_NOT_FOUND =
-        "Can't delete because department id=%s not found";
+        "Can't delete because department id(%s) not found";
 
     private final JdbcTemplate jdbcTemplate;
     private final Environment env;
@@ -64,7 +65,8 @@ public class DepartmentDaoImpl implements DepartmentDao {
                 new DepartmentMapper(), id);
         } catch (DataAccessException e) {
             log.error("Department id({}) not found", id, e);
-            throw new DAOException(String.format(MESSAGE_DEPARTMENT_NOT_FOUND, id), e);
+            throw new DAOException(String.format(MESSAGE_DEPARTMENT_NOT_FOUND,
+                id), e);
         }
         log.info("Found {}", result);
         return Optional.ofNullable(result);
