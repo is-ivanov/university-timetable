@@ -36,10 +36,10 @@ class FacultyDaoImplTest {
     private static final String MESSAGE_EXCEPTION = "Faculty id(3) not found";
     private static final String MESSAGE_UPDATE_MASK = "Can't update %s";
     private static final String MESSAGE_DELETE_MASK = "Can't delete %s";
-    public static final String MESSAGE_UPDATE_EXCEPTION = "Can't update because " +
-        "faculty id(3) not found";
-    public static final String MESSAGE_DELETE_EXCEPTION = "Can't delete because " +
-        "faculty id(3) not found";
+    private static final String MESSAGE_UPDATE_EXCEPTION = "Can't update " +
+        "because faculty id(3) not found";
+    private static final String MESSAGE_DELETE_EXCEPTION = "Can't delete " +
+        "because faculty id(3) not found";
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -120,12 +120,14 @@ class FacultyDaoImplTest {
         @Test
         @DisplayName("with faculty id=3 should write new log.warn with " +
             "expected message")
-        void testUpdateNonExistingFaculty_WriteLogWarn(){
+        void testUpdateNonExistingFaculty_ExceptionWriteLogWarn(){
             LogCaptor logCaptor = LogCaptor.forClass(FacultyDaoImpl.class);
             Faculty faculty = new Faculty(ID3, TEST_FACULTY_NAME);
             String expectedLog = String.format(MESSAGE_UPDATE_MASK, faculty);
-            dao.update(faculty);
+            Exception ex = assertThrows(DAOException.class,
+                () -> dao.update(faculty));
             assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
+            assertEquals(MESSAGE_UPDATE_EXCEPTION, ex.getMessage());
         }
     }
 
@@ -134,8 +136,9 @@ class FacultyDaoImplTest {
     class deleteTest {
 
         @Test
-        @DisplayName("delete faculty id=2 should delete one record and number records table should equals 1")
-        void testDeleteFaculty() {
+        @DisplayName("with faculty id=2 should delete one record and number " +
+            "records table should equals 1")
+        void testDeleteExistingFaculty_ReduceNumberRowsInTable() {
             int expectedQuantityFaculties = JdbcTestUtils
                     .countRowsInTable(jdbcTemplate, TABLE_NAME) - 1;
             Faculty faculty = new Faculty(ID2, SECOND_FACULTY_NAME);
@@ -143,6 +146,19 @@ class FacultyDaoImplTest {
             int actualQuantityFaculties = JdbcTestUtils
                     .countRowsInTable(jdbcTemplate, TABLE_NAME);
             assertEquals(expectedQuantityFaculties, actualQuantityFaculties);
+        }
+
+        @Test
+        @DisplayName("with faculty id=3 should write new log.warn with " +
+            "expected message")
+        void testDeleteNonExistingFaculty_ExceptionWriteLogWarn() {
+            LogCaptor logCaptor = LogCaptor.forClass(FacultyDaoImpl.class);
+            Faculty faculty = new Faculty(ID3, TEST_FACULTY_NAME);
+            String expectedLog = String.format(MESSAGE_DELETE_MASK, faculty);
+            Exception ex = assertThrows(DAOException.class,
+                () -> dao.delete(faculty));
+            assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
+            assertEquals(MESSAGE_DELETE_EXCEPTION, ex.getMessage());
         }
     }
 }

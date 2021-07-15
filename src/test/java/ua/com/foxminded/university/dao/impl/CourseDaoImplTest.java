@@ -32,11 +32,11 @@ class CourseDaoImplTest {
     private static final int ID4 = 4;
     private static final String FIRST_COURSE_NAME = "English";
     private static final String MESSAGE_EXCEPTION = "Course id(4) not found";
-    public static final String MESSAGE_UPDATE_MASK = "Can't update %s";
-    public static final String MESSAGE_DELETE_MASK = "Can't delete %s";
-    public static final String MESSAGE_DELETE_EXCEPTION = "Can't delete because " +
+    private static final String MESSAGE_UPDATE_MASK = "Can't update %s";
+    private static final String MESSAGE_DELETE_MASK = "Can't delete %s";
+    private static final String MESSAGE_DELETE_EXCEPTION = "Can't delete because " +
         "course id(4) not found";
-    public static final String MESSAGE_UPDATE_EXCEPTION = "Can't update because " +
+    private static final String MESSAGE_UPDATE_EXCEPTION = "Can't update because " +
         "course id(4) not found";
 
     @Autowired

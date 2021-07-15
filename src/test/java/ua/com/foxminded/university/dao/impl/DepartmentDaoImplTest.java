@@ -33,11 +33,11 @@ class DepartmentDaoImplTest {
     private static final String TEST_DEPARTMENT_NAME = "Test Department";
     private static final String FIRST_DEPARTMENT_NAME = "Chemistry";
     private static final String MESSAGE_EXCEPTION = "Department id(3) not found";
-    public static final String MESSAGE_UPDATE_MASK = "Can't update %s";
-    public static final String MESSAGE_DELETE_MASK = "Can't delete %s";
-    public static final String MESSAGE_UPDATE_EXCEPTION = "Can't update because " +
+    private static final String MESSAGE_UPDATE_MASK = "Can't update %s";
+    private static final String MESSAGE_DELETE_MASK = "Can't delete %s";
+    private static final String MESSAGE_UPDATE_EXCEPTION = "Can't update because " +
         "department id(3) not found";
-    public static final String MESSAGE_DELETE_EXCEPTION = "Can't delete because " +
+    private static final String MESSAGE_DELETE_EXCEPTION = "Can't delete because " +
         "department id(3) not found";
 
     @Autowired
