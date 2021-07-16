@@ -3,6 +3,7 @@ package ua.com.foxminded.university.dao.impl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import nl.altindag.log.LogCaptor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -24,7 +25,7 @@ import ua.com.foxminded.university.springconfig.TestDbConfig;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestDbConfig.class)
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
-        "/schema.sql", "/student-test-data.sql" })
+    "/schema.sql", "/student-test-data.sql"})
 class StudentDaoImplTest {
 
     private static final String TABLE_NAME = "students";
@@ -33,8 +34,9 @@ class StudentDaoImplTest {
     private static final String TEST_STUDENT_FIRST_NAME = "Student First Name";
     private static final String TEST_STUDENT_LAST_NAME = "Student Last Name";
     private static final String TEST_STUDENT_PATRONYMIC = "Student patronymic";
-    private static final int FIRST_ID = 1;
-    private static final int SECOND_ID = 2;
+    private static final int ID1 = 1;
+    private static final int ID2 = 2;
+    private static final int ID4 = 4;
     private static final String FIRST_GROUP_NAME = "20Eng-1";
     private static final String SECOND_GROUP_NAME = "21Ger-1";
     private static final String FIRST_FACULTY_NAME = "Foreign Language";
@@ -42,13 +44,21 @@ class StudentDaoImplTest {
     private static final String FIRST_STUDENT_NAME = "Mike";
     private static final String FIRST_STUDENT_LAST_NAME = "Smith";
     private static final String FIRST_STUDENT_PATRONYMIC = "Jr";
-    private static final String MESSAGE_EXCEPTION = "Student not found: 4";
+    private static final String MESSAGE_EXCEPTION = "Student id(4) not found";
+    private static final String MESSAGE_UPDATE_MASK = "Can't update student " +
+        "id(%s)";
+    private static final String MESSAGE_DELETE_MASK = "Can't delete student " +
+        "id(%s)";
+    private static final String MESSAGE_UPDATE_EXCEPTION = "Can't update " +
+        "because student id(4) not found";
+    private static final String MESSAGE_DELETE_EXCEPTION = "Can't delete " +
+        "because student id(4) not found";
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    StudentDaoImpl dao;
+    private StudentDaoImpl dao;
 
     @Nested
     @DisplayName("test 'add' method")
@@ -58,11 +68,11 @@ class StudentDaoImplTest {
         @DisplayName("add test student should CountRowsTable = 4")
         void testAddStudent() {
             Faculty faculty = new Faculty();
-            faculty.setId(FIRST_ID);
+            faculty.setId(ID1);
             faculty.setName(TEST_FACULTY_NAME);
 
             Group group = new Group();
-            group.setId(FIRST_ID);
+            group.setId(ID1);
             group.setName(TEST_GROUP_NAME);
             group.setFaculty(faculty);
 
@@ -76,7 +86,7 @@ class StudentDaoImplTest {
             dao.add(student);
             int expectedRowsInTable = 4;
             int actualRowsInTable = JdbcTestUtils.countRowsInTable(jdbcTemplate,
-                    TABLE_NAME);
+                TABLE_NAME);
             assertEquals(expectedRowsInTable, actualRowsInTable);
 
         }
@@ -90,31 +100,31 @@ class StudentDaoImplTest {
         @DisplayName("with id=1 should return expected student)")
         void testGetByIdStudent() throws DAOException {
             Faculty expectedFaculty = new Faculty();
-            expectedFaculty.setId(FIRST_ID);
+            expectedFaculty.setId(ID1);
             expectedFaculty.setName(FIRST_FACULTY_NAME);
 
             Group expectedGroup = new Group();
-            expectedGroup.setId(FIRST_ID);
+            expectedGroup.setId(ID1);
             expectedGroup.setName(FIRST_GROUP_NAME);
             expectedGroup.setFaculty(expectedFaculty);
 
             Student expectedStudent = new Student();
-            expectedStudent.setId(FIRST_ID);
+            expectedStudent.setId(ID1);
             expectedStudent.setFirstName(FIRST_STUDENT_NAME);
             expectedStudent.setLastName(FIRST_STUDENT_LAST_NAME);
             expectedStudent.setPatronymic(FIRST_STUDENT_PATRONYMIC);
             expectedStudent.setActive(true);
             expectedStudent.setGroup(expectedGroup);
 
-            Student actualStudent = dao.getById(FIRST_ID).get();
+            Student actualStudent = dao.getById(ID1).orElse(null);
             assertEquals(expectedStudent, actualStudent);
         }
 
         @Test
-        @DisplayName("with id=4 should return DAOException 'Student not found: 4'")
+        @DisplayName("with id=4 should return DAOException")
         void testGetByIdStudentException() throws DAOException {
             DAOException exception = assertThrows(DAOException.class,
-                    () -> dao.getById(4));
+                () -> dao.getById(ID4));
             assertEquals(MESSAGE_EXCEPTION, exception.getMessage());
         }
     }
@@ -127,7 +137,7 @@ class StudentDaoImplTest {
         @DisplayName("should return List with size = 3")
         void testGetAllStudents() {
             int expectedQuantityStudents = JdbcTestUtils
-                    .countRowsInTable(jdbcTemplate, TABLE_NAME);
+                .countRowsInTable(jdbcTemplate, TABLE_NAME);
             int actualQuantityStudents = dao.getAll().size();
             assertEquals(expectedQuantityStudents, actualQuantityStudents);
         }
@@ -138,21 +148,38 @@ class StudentDaoImplTest {
     class updateTest {
 
         @Test
-        @DisplayName("update properties student id=1 should write new fields and getById(1) return this fields")
-        void testUpdateStudent() throws DAOException {
-            Faculty expectedFaculty = new Faculty(SECOND_ID,
-                    SECOND_FACULTY_NAME);
-            Group expectedGroup = new Group(SECOND_ID, SECOND_GROUP_NAME,
-                    expectedFaculty, false);
+        @DisplayName("with student id=1 should write new fields and " +
+            "getById(1) return expected student")
+        void testUpdateExistingStudent_WriteNewFields() throws DAOException {
+            Faculty expectedFaculty = new Faculty(ID2, SECOND_FACULTY_NAME);
+            Group expectedGroup = new Group(ID2, SECOND_GROUP_NAME,
+                expectedFaculty, false);
             Student expectedStudent = new Student();
-            expectedStudent.setId(FIRST_ID);
+            expectedStudent.setId(ID1);
             expectedStudent.setFirstName(TEST_STUDENT_FIRST_NAME);
             expectedStudent.setLastName(TEST_STUDENT_LAST_NAME);
             expectedStudent.setPatronymic(TEST_STUDENT_PATRONYMIC);
             expectedStudent.setGroup(expectedGroup);
             dao.update(expectedStudent);
-            Student actualStudent = dao.getById(FIRST_ID).get();
+            Student actualStudent = dao.getById(ID1).orElse(null);
             assertEquals(expectedStudent, actualStudent);
+        }
+
+        @Test
+        @DisplayName("with student id=4 should write new log.warn with " +
+            "expected message")
+        void testUpdateNonExistingStudent_ExceptionWriteLogWarn() {
+            LogCaptor logCaptor = LogCaptor.forClass(StudentDaoImpl.class);
+            Student student = new Student();
+            student.setId(ID4);
+            student.setGroup(new Group(ID1, TEST_GROUP_NAME, new Faculty(),
+                true));
+            String expectedLog = String.format(MESSAGE_UPDATE_MASK,
+                student.getId());
+            Exception ex = assertThrows(DAOException.class,
+                () -> dao.update(student));
+            assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
+            assertEquals(MESSAGE_UPDATE_EXCEPTION, ex.getMessage());
         }
     }
 
@@ -161,16 +188,34 @@ class StudentDaoImplTest {
     class deleteTest {
 
         @Test
-        @DisplayName("delete student id=1 should delete one record and number records table should equals 1")
-        void testDeleteStudent() {
+        @DisplayName("with student id=1 should delete one record and number " +
+            "records table should equals 1")
+        void testDeleteExistingStudent_ReduceNumberRowsInTable() {
             int expectedQuantityStudents = JdbcTestUtils
-                    .countRowsInTable(jdbcTemplate, TABLE_NAME) - 1;
+                .countRowsInTable(jdbcTemplate, TABLE_NAME) - 1;
             Student student = new Student();
-            student.setId(FIRST_ID);
+            student.setId(ID1);
             dao.delete(student);
             int actualQuantityStudents = JdbcTestUtils
-                    .countRowsInTable(jdbcTemplate, TABLE_NAME);
+                .countRowsInTable(jdbcTemplate, TABLE_NAME);
             assertEquals(expectedQuantityStudents, actualQuantityStudents);
+        }
+
+        @Test
+        @DisplayName("with student id=4 should write new log.warn with " +
+            "expected message")
+        void testDeleteNonExistingStudent_ExceptionWriteLogWarn() {
+            LogCaptor logCaptor = LogCaptor.forClass(StudentDaoImpl.class);
+            Student student = new Student();
+            student.setId(ID4);
+            student.setGroup(new Group(ID1, TEST_GROUP_NAME, new Faculty(),
+                true));
+            String expectedLog = String.format(MESSAGE_DELETE_MASK,
+                student.getId());
+            Exception ex = assertThrows(DAOException.class,
+                () -> dao.delete(student));
+            assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
+            assertEquals(MESSAGE_DELETE_EXCEPTION, ex.getMessage());
         }
     }
 
@@ -182,7 +227,7 @@ class StudentDaoImplTest {
         @DisplayName("when lesson_id=1 then should return List with size = 1")
         void testGetAllStudentsByLesson() {
             Lesson lesson = new Lesson();
-            lesson.setId(FIRST_ID);
+            lesson.setId(ID1);
 
             int expectedQuantityStudents = 1;
             int actualQuantityStudents = dao.getStudentsByLesson(lesson).size();
@@ -198,7 +243,7 @@ class StudentDaoImplTest {
         @DisplayName("when group _id=1 then should return List with size = 2")
         void testGetStudentsByGroup() {
             Group group = new Group();
-            group.setId(FIRST_ID);
+            group.setId(ID1);
 
             int expectedQuantityStudents = 2;
             int actualQuantityStudents = dao.getStudentsByGroup(group).size();

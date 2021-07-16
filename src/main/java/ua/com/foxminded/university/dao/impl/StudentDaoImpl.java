@@ -3,6 +3,7 @@ package ua.com.foxminded.university.dao.impl;
 import java.util.List;
 import java.util.Optional;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
@@ -17,6 +18,7 @@ import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.domain.entity.mapper.StudentMapper;
 import ua.com.foxminded.university.exception.DAOException;
 
+@Slf4j
 @Repository
 @PropertySource("classpath:sql_query.properties")
 public class StudentDaoImpl implements StudentDao {
@@ -28,7 +30,12 @@ public class StudentDaoImpl implements StudentDao {
     private static final String QUERY_DELETE = "student.delete";
     private static final String QUERY_GET_ALL_BY_LESSON = "student.getStudentsByLesson";
     private static final String QUERY_GET_ALL_BY_GROUP = "student.getStudentsByGroup";
-    private static final String MESSAGE_STUDENT_NOT_FOUND = "Student not found: ";
+    private static final String MESSAGE_STUDENT_NOT_FOUND = "Student id(%d) not " +
+        "found";
+    private static final String MESSAGE_UPDATE_STUDENT_NOT_FOUND = "Can't " +
+        "update because student id(%d) not found";
+    private static final String MESSAGE_DELETE_STUDENT_NOT_FOUND = "Can't " +
+        "delete because student id(%d) not found";
 
     private final JdbcTemplate jdbcTemplate;
     private final Environment env;
@@ -41,58 +48,104 @@ public class StudentDaoImpl implements StudentDao {
 
     @Override
     public void add(Student student) {
-        jdbcTemplate.update(env.getRequiredProperty(QUERY_ADD),
+        log.debug("Adding student [{} {} {}, active={}, group {}]",
+            student.getFirstName(), student.getPatronymic(),
+            student.getLastName(), student.isActive(), student.getGroup().getName());
+        try {
+            jdbcTemplate.update(env.getRequiredProperty(QUERY_ADD),
                 student.getFirstName(), student.getLastName(),
                 student.getPatronymic(), student.isActive(),
                 student.getGroup().getId());
+        } catch (DataAccessException e) {
+            log.error("An error occurred while adding the {}", student, e);
+            throw new DAOException(e.getMessage(), e);
+        }
+        log.info("Student [{} {} {}, active={}, group {}] added successfully"
+            , student.getFirstName(), student.getPatronymic(),
+            student.getLastName(), student.isActive(), student.getGroup().getName());
     }
 
     @Override
     public Optional<Student> getById(int id) {
+        log.debug("Getting student by id({})", id);
         Student result;
         try {
             result = jdbcTemplate.queryForObject(
-                    env.getRequiredProperty(QUERY_GET_BY_ID),
-                    new StudentMapper(), id);
+                env.getRequiredProperty(QUERY_GET_BY_ID),
+                new StudentMapper(), id);
         } catch (DataAccessException e) {
-            throw new DAOException(MESSAGE_STUDENT_NOT_FOUND + id, e);
+            log.error("Student id({}) not found", id, e);
+            throw new DAOException(String.format(MESSAGE_STUDENT_NOT_FOUND,
+                id), e);
         }
+        log.info("Found {}", result);
         return Optional.ofNullable(result);
     }
 
     @Override
     public List<Student> getAll() {
-        return jdbcTemplate.query(env.getRequiredProperty(QUERY_GET_ALL),
-                new StudentMapper());
+        log.debug("Getting all students");
+        List<Student> students = jdbcTemplate.query(
+            env.getRequiredProperty(QUERY_GET_ALL), new StudentMapper());
+        log.info("Found {} students", students.size());
+        return students;
     }
 
     @Override
     public void update(Student student) {
-        jdbcTemplate.update(env.getRequiredProperty(QUERY_UPDATE),
-                student.getFirstName(), student.getLastName(),
-                student.getPatronymic(), student.isActive(),
-                student.getGroup().getId(),
-                student.getId());
+        log.debug("Updating student [id={}, {} {} {}, active={}]",
+            student.getId(), student.getFirstName(), student.getPatronymic(),
+            student.getLastName(), student.isActive());
+        int numberUpdatedRows = jdbcTemplate.update(env.getRequiredProperty(QUERY_UPDATE),
+            student.getFirstName(), student.getLastName(),
+            student.getPatronymic(), student.isActive(),
+            student.getGroup().getId(),
+            student.getId());
+        if (numberUpdatedRows == 0) {
+            log.warn("Can't update student id({})", student.getId());
+            throw new DAOException(String.format(MESSAGE_UPDATE_STUDENT_NOT_FOUND,
+                student.getId()));
+        } else {
+            log.info("Update student id({})", student.getId());
+        }
     }
 
     @Override
     public void delete(Student student) {
-        jdbcTemplate.update(env.getRequiredProperty(QUERY_DELETE),
-                student.getId());
+        log.debug("Deleting student [id={}, {} {} {}, active={}]",
+            student.getId(), student.getFirstName(), student.getPatronymic(),
+            student.getLastName(), student.isActive());
+        int numberDeletedRows = jdbcTemplate.update(
+            env.getRequiredProperty(QUERY_DELETE), student.getId());
+        if (numberDeletedRows == 0) {
+            log.warn("Can't delete student id({})", student.getId());
+            throw new DAOException(String.format(MESSAGE_DELETE_STUDENT_NOT_FOUND,
+                student.getId()));
+        } else {
+            log.info("Delete student id({})", student.getId());
+        }
     }
 
     @Override
     public List<Student> getStudentsByLesson(Lesson lesson) {
-        return jdbcTemplate.query(
-                env.getRequiredProperty(QUERY_GET_ALL_BY_LESSON),
-                new StudentMapper(), lesson.getId());
+        log.debug("Getting students by lesson id({})",lesson.getId());
+        List<Student> students = jdbcTemplate.query(
+            env.getRequiredProperty(QUERY_GET_ALL_BY_LESSON),
+            new StudentMapper(), lesson.getId());
+        log.info("Found {} students from lesson id({})", students.size(),
+            lesson.getId());
+        return students;
     }
 
     @Override
     public List<Student> getStudentsByGroup(Group group) {
-        return jdbcTemplate.query(
-                env.getRequiredProperty(QUERY_GET_ALL_BY_GROUP),
-                new StudentMapper(), group.getId());
+        log.debug("Getting students by group id({})",group.getId());
+        List<Student> students = jdbcTemplate.query(
+            env.getRequiredProperty(QUERY_GET_ALL_BY_GROUP),
+            new StudentMapper(), group.getId());
+        log.info("Found {} students from group id({})", students.size(),
+            group.getId());
+        return students;
     }
 
 }
