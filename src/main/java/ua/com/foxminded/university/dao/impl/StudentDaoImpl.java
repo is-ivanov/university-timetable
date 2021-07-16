@@ -50,7 +50,8 @@ public class StudentDaoImpl implements StudentDao {
     public void add(Student student) {
         log.debug("Adding student [{} {} {}, active={}, group {}]",
             student.getFirstName(), student.getPatronymic(),
-            student.getLastName(), student.isActive(), student.getGroup().getName());
+            student.getLastName(), student.isActive(),
+            student.getGroup().getName());
         try {
             jdbcTemplate.update(env.getRequiredProperty(QUERY_ADD),
                 student.getFirstName(), student.getLastName(),
@@ -60,9 +61,10 @@ public class StudentDaoImpl implements StudentDao {
             log.error("An error occurred while adding the {}", student, e);
             throw new DAOException(e.getMessage(), e);
         }
-        log.info("Student [{} {} {}, active={}, group {}] added successfully"
-            , student.getFirstName(), student.getPatronymic(),
-            student.getLastName(), student.isActive(), student.getGroup().getName());
+        log.info("Student [{} {} {}, active={}, group {}] added successfully",
+            student.getFirstName(), student.getPatronymic(),
+            student.getLastName(), student.isActive(),
+            student.getGroup().getName());
     }
 
     @Override
@@ -75,8 +77,8 @@ public class StudentDaoImpl implements StudentDao {
                 new StudentMapper(), id);
         } catch (DataAccessException e) {
             log.error("Student id({}) not found", id, e);
-            throw new DAOException(String.format(MESSAGE_STUDENT_NOT_FOUND,
-                id), e);
+            throw new DAOException(String.format(MESSAGE_STUDENT_NOT_FOUND, id),
+                e);
         }
         log.info("Found {}", result);
         return Optional.ofNullable(result);
@@ -96,7 +98,8 @@ public class StudentDaoImpl implements StudentDao {
         log.debug("Updating student [id={}, {} {} {}, active={}]",
             student.getId(), student.getFirstName(), student.getPatronymic(),
             student.getLastName(), student.isActive());
-        int numberUpdatedRows = jdbcTemplate.update(env.getRequiredProperty(QUERY_UPDATE),
+        int numberUpdatedRows = jdbcTemplate.update(
+            env.getRequiredProperty(QUERY_UPDATE),
             student.getFirstName(), student.getLastName(),
             student.getPatronymic(), student.isActive(),
             student.getGroup().getId(),
