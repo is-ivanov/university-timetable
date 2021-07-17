@@ -174,8 +174,7 @@ class StudentDaoImplTest {
             student.setId(ID4);
             student.setGroup(new Group(ID1, TEST_GROUP_NAME, new Faculty(),
                 true));
-            String expectedLog = String.format(MESSAGE_UPDATE_MASK,
-                student.getId());
+            String expectedLog = String.format(MESSAGE_UPDATE_MASK, ID4);
             Exception ex = assertThrows(DAOException.class,
                 () -> dao.update(student));
             assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
