@@ -168,7 +168,7 @@ class TeacherDaoImplTest {
             teacher.setDepartment(new Department(ID1, TEST_DEPARTMENT_NAME,
                 new Faculty()));
             String expectedLog = String.format(MESSAGE_UPDATE_MASK, ID4);
-            DAOException ex = assertThrows(DAOException.class,
+            Exception ex = assertThrows(DAOException.class,
                 () -> dao.update(teacher));
             assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
             assertEquals(MESSAGE_UPDATE_EXCEPTION, ex.getMessage());
