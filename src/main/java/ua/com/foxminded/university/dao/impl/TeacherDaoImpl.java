@@ -113,9 +113,9 @@ public class TeacherDaoImpl implements TeacherDao {
         log.debug("Deleting teacher [id={}, {} {} {}, active={}]",
             teacher.getId(), teacher.getFirstName(), teacher.getPatronymic(),
             teacher.getLastName(), teacher.isActive());
-        int numberDeletingRows = jdbcTemplate.update(
+        int numberDeletedRows = jdbcTemplate.update(
             env.getRequiredProperty(QUERY_DELETE), teacher.getId());
-        if (numberDeletingRows == 0) {
+        if (numberDeletedRows == 0) {
             log.warn("Can't delete teacher id({})", teacher.getId());
             throw new DAOException(String.format(MESSAGE_DELETE_TEACHER_NOT_FOUND,
                 teacher.getId()));

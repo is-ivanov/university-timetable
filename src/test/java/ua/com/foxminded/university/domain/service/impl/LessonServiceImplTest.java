@@ -69,7 +69,7 @@ class LessonServiceImplTest {
             Lesson lessonWithTeacherBusyTime = createLessonWithBusyTime();
             List<Lesson> lessonsThisTeacher = new ArrayList<>();
             lessonsThisTeacher.add(lessonWithTeacherBusyTime);
-            when(lessonDaoMock.getAllByTeacher(ID1))
+            when(lessonDaoMock.getAllForTeacher(ID1))
                 .thenReturn(lessonsThisTeacher);
             ServiceException e = assertThrows(ServiceException.class,
                 () -> lessonService.add(testLesson));
@@ -87,7 +87,7 @@ class LessonServiceImplTest {
             List<Lesson> lessonsThisRoom = new ArrayList<>();
             lessonsThisRoom.add(lessonWithRoomBusyTime);
 
-            when(lessonDaoMock.getAllByRoom(ID2)).thenReturn(lessonsThisRoom);
+            when(lessonDaoMock.getAllForRoom(ID2)).thenReturn(lessonsThisRoom);
             Exception e = assertThrows(ServiceException.class,
                 () -> lessonService.add(testLesson));
             String expectedMessage =
@@ -118,7 +118,7 @@ class LessonServiceImplTest {
             Lesson lessonWithTeacherBusyTime = createLessonWithBusyTime();
             List<Lesson> lessonsThisTeacher = new ArrayList<>();
             lessonsThisTeacher.add(lessonWithTeacherBusyTime);
-            when(lessonDaoMock.getAllByTeacher(ID1))
+            when(lessonDaoMock.getAllForTeacher(ID1))
                 .thenReturn(lessonsThisTeacher);
             ServiceException e = assertThrows(ServiceException.class,
                 () -> lessonService.update(testLesson));
@@ -136,7 +136,7 @@ class LessonServiceImplTest {
             List<Lesson> lessonsThisRoom = new ArrayList<>();
             lessonsThisRoom.add(lessonWithRoomBusyTime);
 
-            when(lessonDaoMock.getAllByRoom(ID2)).thenReturn(lessonsThisRoom);
+            when(lessonDaoMock.getAllForRoom(ID2)).thenReturn(lessonsThisRoom);
             Exception e = assertThrows(ServiceException.class,
                 () -> lessonService.update(testLesson));
             String expectedMessage =
@@ -226,7 +226,7 @@ class LessonServiceImplTest {
             student.setId(ID1);
             List<Lesson> lessonsAddingStudent = new ArrayList<>();
             lessonsAddingStudent.add(lessonWithBusyTime);
-            when(lessonDaoMock.getAllByStudent(ID1))
+            when(lessonDaoMock.getAllForStudent(ID1))
                 .thenReturn(lessonsAddingStudent);
             Exception e = assertThrows(ServiceException.class,
                 () -> lessonService.addStudentToLesson(testLesson, student));

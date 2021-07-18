@@ -86,7 +86,7 @@ public class LessonServiceImpl implements LessonService {
     private boolean checkTeacher(Lesson checkedLesson) {
         Teacher teacher = checkedLesson.getTeacher();
         List<Lesson> lessonsByTeacher = lessonDao
-            .getAllByTeacher(teacher.getId());
+            .getAllForTeacher(teacher.getId());
         if (lessonsByTeacher.isEmpty()) {
             return true;
         }
@@ -95,7 +95,7 @@ public class LessonServiceImpl implements LessonService {
 
     private boolean checkRoom(Lesson checkedLesson) {
         Room room = checkedLesson.getRoom();
-        List<Lesson> lessonsByRoom = lessonDao.getAllByRoom(room.getId());
+        List<Lesson> lessonsByRoom = lessonDao.getAllForRoom(room.getId());
         if (lessonsByRoom.isEmpty()){
             return true;
         }
@@ -109,7 +109,7 @@ public class LessonServiceImpl implements LessonService {
     }
 
     private List<Lesson> getLessonsByStudent(Student student) {
-        return lessonDao.getAllByStudent(student.getId());
+        return lessonDao.getAllForStudent(student.getId());
     }
 
     private boolean checkTime(Lesson checkedLesson, List<Lesson> lessons) {

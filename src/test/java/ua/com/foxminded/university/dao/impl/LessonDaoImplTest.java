@@ -58,7 +58,7 @@ class LessonDaoImplTest {
     private static final String SECOND_STUDENT_FIRST_NAME = "Petr";
     private static final String SECOND_STUDENT_LAST_NAME = "Petrov";
     private static final String SECOND_STUDENT_PATRONYMIC = "Petrovich";
-    private static final String MESSAGE_EXCEPTION = "Lesson not found: 4";
+    private static final String MESSAGE_EXCEPTION = "Lesson id(4) not found";
     private static final String BUILDING = "building-1";
     private static final String ROOM_NUMBER = "812b";
     private static final boolean ACTIVE = true;
@@ -73,10 +73,10 @@ class LessonDaoImplTest {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    LessonExtractor lessonExtractor;
+    private LessonExtractor lessonExtractor;
 
     @Autowired
-    LessonDaoImpl dao;
+    private LessonDaoImpl dao;
 
     @Nested
     @DisplayName("test 'add' method")
@@ -335,19 +335,19 @@ class LessonDaoImplTest {
         @Test
         @DisplayName("when teacher_id = 1 then should return 2 lessons")
         void testGetAllByTeacherId1ReturnTwoLessons() {
-            assertEquals(2, dao.getAllByTeacher(ID1).size());
+            assertEquals(2, dao.getAllForTeacher(ID1).size());
         }
 
         @Test
         @DisplayName("when teacher_id = 2 then should return 1 lesson")
         void testGetAllByTeacherId2ReturnOneLessons() {
-            assertEquals(1, dao.getAllByTeacher(ID2).size());
+            assertEquals(1, dao.getAllForTeacher(ID2).size());
         }
 
         @Test
         @DisplayName("when teacher_id = 3 then should return empty List")
         void testGetAllByTeacherId3ReturnEmptyList() {
-            assertTrue(dao.getAllByTeacher(3).isEmpty());
+            assertTrue(dao.getAllForTeacher(3).isEmpty());
         }
     }
 
@@ -358,13 +358,13 @@ class LessonDaoImplTest {
         @Test
         @DisplayName("when room_id = 1 then should return 3 lessons")
         void testRoomId1_ReturnThreeLessons() {
-            assertEquals(3, dao.getAllByRoom(ID1).size());
+            assertEquals(3, dao.getAllForRoom(ID1).size());
         }
 
         @Test
         @DisplayName("when room_id = 2 then should return empty List")
         void testRoomId1_ReturnEmptyListLessons() {
-            assertEquals(true, dao.getAllByRoom(ID2).isEmpty());
+            assertEquals(true, dao.getAllForRoom(ID2).isEmpty());
         }
     }
 
@@ -375,13 +375,13 @@ class LessonDaoImplTest {
         @Test
         @DisplayName("when student_id = 1 then should return 1 lesson")
         void testStudentId1_ReturnOneLessons() {
-            assertEquals(1, dao.getAllByStudent(ID1).size());
+            assertEquals(1, dao.getAllForStudent(ID1).size());
         }
 
         @Test
         @DisplayName("when student_id = 5 then should return empty List")
         void testStudentId5_ReturnEmptyListLessons() {
-            assertEquals(true, dao.getAllByStudent(ID5).isEmpty());
+            assertEquals(true, dao.getAllForStudent(ID5).isEmpty());
         }
     }
 }

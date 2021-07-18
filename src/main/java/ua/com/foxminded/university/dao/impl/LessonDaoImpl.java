@@ -3,6 +3,7 @@ package ua.com.foxminded.university.dao.impl;
 import java.util.List;
 import java.util.Optional;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
@@ -15,6 +16,7 @@ import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.mapper.LessonExtractor;
 import ua.com.foxminded.university.exception.DAOException;
 
+@Slf4j
 @Repository
 @PropertySource("classpath:sql_query.properties")
 public class LessonDaoImpl implements LessonDao {
@@ -30,7 +32,11 @@ public class LessonDaoImpl implements LessonDao {
     private static final String QUERY_GET_ALL_BY_TEACHER = "lesson.getAllByTeacher";
     private static final String QUERY_GET_ALL_BY_ROOM = "lesson.getAllByRoom";
     private static final String QUERY_GET_ALL_BY_STUDENT = "lesson.getAllByStudent";
-    private static final String MESSAGE_LESSON_NOT_FOUND = "Lesson not found: ";
+    private static final String MESSAGE_LESSON_NOT_FOUND = "Lesson id(%d) not found";
+    private static final String MESSAGE_UPDATE_LESSON_NOT_FOUND = "Can't update because lesson id(%d) not found";
+    private static final String MESSAGE_DELETE_LESSON_NOT_FOUND = "Can't delete because lesson id(%d) not found";
+    private static final String MESSAGE_STUDENT_NOT_FOUND_IN_LESSON = "Can't delete because student id(%d) not found in lesson id(%d)";
+    private static final String FOUND_LESSONS = "Found {} lessons";
 
     private final JdbcTemplate jdbcTemplate;
     private final LessonExtractor lessonExtractor;
@@ -38,7 +44,7 @@ public class LessonDaoImpl implements LessonDao {
 
     @Autowired
     public LessonDaoImpl(JdbcTemplate jdbcTemplate,
-            LessonExtractor lessonExtractor, Environment env) {
+                         LessonExtractor lessonExtractor, Environment env) {
         this.jdbcTemplate = jdbcTemplate;
         this.lessonExtractor = lessonExtractor;
         this.env = env;
@@ -46,89 +52,152 @@ public class LessonDaoImpl implements LessonDao {
 
     @Override
     public void add(Lesson lesson) {
-        jdbcTemplate.update(env.getRequiredProperty(QUERY_ADD),
+        log.debug("Adding lesson id({})", lesson.getId());
+        try {
+            jdbcTemplate.update(env.getRequiredProperty(QUERY_ADD),
                 lesson.getTeacher().getId(), lesson.getCourse().getId(),
                 lesson.getRoom().getId(), lesson.getTimeStart(),
                 lesson.getTimeEnd());
+        } catch (DataAccessException e) {
+            log.error("An error occurred while adding the {}", lesson, e);
+            throw new DAOException(e.getMessage(), e);
+        }
+        log.info("Lesson id({}) added successfully", lesson.getId());
     }
 
     @Override
     public Optional<Lesson> getById(int id) {
+        log.debug("Getting lesson by id({})", id);
         List<Lesson> lessons;
         Lesson result = null;
         try {
             lessons = jdbcTemplate.query(
-                    env.getRequiredProperty(QUERY_GET_BY_ID),
-                    lessonExtractor, id);
+                env.getRequiredProperty(QUERY_GET_BY_ID),
+                lessonExtractor, id);
             if (lessons != null) {
                 result = lessons.get(0);
             }
         } catch (DataAccessException | IndexOutOfBoundsException e) {
-            throw new DAOException(MESSAGE_LESSON_NOT_FOUND + id, e);
+            log.error("Lesson id({}) not found", id, e);
+            throw new DAOException(String.format(MESSAGE_LESSON_NOT_FOUND, id),
+                e);
         }
+        log.info("Found {}", result);
         return Optional.ofNullable(result);
     }
 
     @Override
     public List<Lesson> getAll() {
-        return jdbcTemplate.query(env.getRequiredProperty(QUERY_GET_ALL),
-                lessonExtractor);
+        log.debug("Getting all lessons");
+        List<Lesson> lessons = jdbcTemplate.query(
+            env.getRequiredProperty(QUERY_GET_ALL), lessonExtractor);
+        log.info(FOUND_LESSONS, lessons.size());
+        return lessons;
     }
 
     @Override
     public void update(Lesson lesson) {
-        jdbcTemplate.update(env.getRequiredProperty(QUERY_UPDATE),
-                lesson.getTeacher().getId(), lesson.getCourse().getId(),
-                lesson.getRoom().getId(), lesson.getTimeStart(),
-                lesson.getTimeEnd(), lesson.getId());
+        log.debug("Updating lesson id({})", lesson.getId());
+        int numberUpdatedRows = jdbcTemplate.update(
+            env.getRequiredProperty(QUERY_UPDATE),
+            lesson.getTeacher().getId(), lesson.getCourse().getId(),
+            lesson.getRoom().getId(), lesson.getTimeStart(),
+            lesson.getTimeEnd(), lesson.getId());
+        if (numberUpdatedRows == 0) {
+            log.warn("Can't update lesson id({})", lesson.getId());
+            throw new DAOException(String.format(MESSAGE_UPDATE_LESSON_NOT_FOUND,
+                lesson.getId()));
+        } else {
+            log.info("Update lesson id({})", lesson.getId());
+        }
     }
 
     @Override
     public void delete(Lesson lesson) {
-        jdbcTemplate.update(env.getRequiredProperty(QUERY_DELETE),
-                lesson.getId());
+        log.debug("Deleting lesson id({})", lesson.getId());
+        int numberDeletedRows = jdbcTemplate.update(
+            env.getRequiredProperty(QUERY_DELETE), lesson.getId());
+        if (numberDeletedRows == 0) {
+            log.warn("Can't delete lesson id({})", lesson.getId());
+            throw new DAOException(String.format(MESSAGE_DELETE_LESSON_NOT_FOUND,
+                lesson.getId()));
+        } else {
+            log.info("Delete lesson id({})", lesson.getId());
+        }
     }
 
     @Override
     public void addStudentToLesson(int lessonId, int studentId) {
-        jdbcTemplate.update(
+        log.debug("Adding student id({}) to lesson id({})", studentId, lessonId);
+        try {
+            jdbcTemplate.update(
                 env.getRequiredProperty(QUERY_ADD_STUDENT_TO_LESSON),
                 lessonId, studentId);
+        } catch (DataAccessException e) {
+            log.error("An error occurred while adding student id({}) to " +
+                "lesson id({})", studentId, lessonId);
+            throw new DAOException(e.getMessage(), e);
+        }
+        log.info("Student id({}) added to lesson({}) successfully", studentId,
+            lessonId);
     }
 
     @Override
     public void deleteAllStudentsFromLesson(int lessonId) {
-        jdbcTemplate.update(
-                env.getRequiredProperty(QUERY_DELETE_ALL_STUDENTS_FROM_LESSON),
-                lessonId);
+        log.debug("Deleting all students from lesson id({})", lessonId);
+        int numberDeletedRows = jdbcTemplate.update(
+            env.getRequiredProperty(QUERY_DELETE_ALL_STUDENTS_FROM_LESSON),
+            lessonId);
+        log.info("Delete {} students from lesson id({})", numberDeletedRows,
+            lessonId);
     }
 
     @Override
     public void deleteStudentFromLesson(int lessonId, int studentId) {
-        jdbcTemplate.update(
-                env.getRequiredProperty(QUERY_DELETE_STUDENT_FROM_LESSON),
-                lessonId, studentId);
+        log.debug("Deleting student id({}) from lesson id({})", studentId, lessonId);
+        int numberDeletedRows = jdbcTemplate.update(
+            env.getRequiredProperty(QUERY_DELETE_STUDENT_FROM_LESSON),
+            lessonId, studentId);
+        if (numberDeletedRows == 0) {
+
+            log.warn("Can't delete student id({}) from lesson id({})",
+                studentId, lessonId);
+            throw new DAOException(String.format(
+                MESSAGE_STUDENT_NOT_FOUND_IN_LESSON, studentId, lessonId));
+        } else {
+            log.info("Student id({}) successfully deleted from lesson id({})",
+                studentId, lessonId);
+        }
     }
 
     @Override
-    public List<Lesson> getAllByTeacher(int teacherId) {
-        return jdbcTemplate.query(
-                env.getRequiredProperty(QUERY_GET_ALL_BY_TEACHER),
-                lessonExtractor, teacherId);
+    public List<Lesson> getAllForTeacher(int teacherId) {
+        log.debug("Getting all lessons for teacher id({})", teacherId);
+        List<Lesson> lessons = jdbcTemplate.query(
+            env.getRequiredProperty(QUERY_GET_ALL_BY_TEACHER),
+            lessonExtractor, teacherId);
+        log.info(FOUND_LESSONS, lessons.size());
+        return lessons;
     }
 
     @Override
-    public List<Lesson> getAllByRoom(int roomId) {
-        return jdbcTemplate.query(
-                env.getRequiredProperty(QUERY_GET_ALL_BY_ROOM),
-                lessonExtractor, roomId);
+    public List<Lesson> getAllForRoom(int roomId) {
+        log.debug("Getting all lessons for room id({})", roomId);
+        List<Lesson> lessons = jdbcTemplate.query(
+            env.getRequiredProperty(QUERY_GET_ALL_BY_ROOM),
+            lessonExtractor, roomId);
+        log.info(FOUND_LESSONS, lessons.size());
+        return lessons;
     }
 
     @Override
-    public List<Lesson> getAllByStudent(int studentId) {
-        return jdbcTemplate.query(
-                env.getRequiredProperty(QUERY_GET_ALL_BY_STUDENT),
-                lessonExtractor, studentId);
+    public List<Lesson> getAllForStudent(int studentId) {
+        log.debug("Getting all lessons for student id({})", studentId);
+        List<Lesson> lessons = jdbcTemplate.query(
+            env.getRequiredProperty(QUERY_GET_ALL_BY_STUDENT),
+            lessonExtractor, studentId);
+        log.info(FOUND_LESSONS, lessons.size());
+        return lessons;
     }
 
 }

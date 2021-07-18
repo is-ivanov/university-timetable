@@ -23,14 +23,14 @@ public class LessonExtractor implements ResultSetExtractor<List<Lesson>> {
 
     @Autowired
     public LessonExtractor(LessonMapper lessonMapper,
-            StudentMapper studentMapper) {
+                           StudentMapper studentMapper) {
         this.lessonMapper = lessonMapper;
         this.studentMapper = studentMapper;
     }
 
     @Override
     public List<Lesson> extractData(ResultSet rs)
-            throws SQLException, DataAccessException {
+        throws SQLException, DataAccessException {
         List<Lesson> lessons = new ArrayList<>();
         Lesson currentLesson = null;
         while (rs.next()) {
@@ -41,7 +41,9 @@ public class LessonExtractor implements ResultSetExtractor<List<Lesson>> {
                 lessons.add(currentLesson);
                 currentLesson = lessonMapper.mapRow(rs, ROW_NUM);
             }
-            currentLesson.getStudents().add(studentMapper.mapRow(rs, ROW_NUM));
+            if (currentLesson != null) {
+                currentLesson.getStudents().add(studentMapper.mapRow(rs, ROW_NUM));
+            }
         }
         if (currentLesson != null) {
             lessons.add(currentLesson);
