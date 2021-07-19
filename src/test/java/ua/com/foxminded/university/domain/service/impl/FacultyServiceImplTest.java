@@ -9,16 +9,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.foxminded.university.dao.interfaces.FacultyDao;
 import ua.com.foxminded.university.domain.entity.Faculty;
-import ua.com.foxminded.university.exception.DAOException;
-import ua.com.foxminded.university.exception.ServiceException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class FacultyServiceImplTest {
@@ -51,7 +49,7 @@ class FacultyServiceImplTest {
         @Test
         @DisplayName("when Dao return Optional with Faculty then method " +
             "should return this Faculty")
-        void testReturnExpectedFaculty() throws Exception {
+        void testReturnExpectedFaculty() {
             Faculty expectedFaculty = new Faculty();
             expectedFaculty.setId(ID1);
             expectedFaculty.setName(FACULTY_NAME);
@@ -63,19 +61,10 @@ class FacultyServiceImplTest {
         @Test
         @DisplayName("when Dao return empty Optional then method should return" +
             " empty Faculty")
-        void testReturnEmptyFaculty() throws Exception {
+        void testReturnEmptyFaculty() {
             Optional<Faculty> optional = Optional.empty();
             when(facultyDaoMock.getById(ID1)).thenReturn(optional);
             assertEquals(new Faculty(), facultyService.getById(ID1));
-        }
-
-        @Test
-        @DisplayName("when Dao throw DAOException then method should throw " +
-            "ServiceException")
-        void testThrowException() throws Exception {
-            when(facultyDaoMock.getById(anyInt())).thenThrow(DAOException.class);
-            assertThrows(ServiceException.class,
-                () -> facultyService.getById(anyInt()));
         }
     }
 
