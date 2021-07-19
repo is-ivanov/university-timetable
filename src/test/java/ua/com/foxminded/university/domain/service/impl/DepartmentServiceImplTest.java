@@ -10,15 +10,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.foxminded.university.dao.interfaces.DepartmentDao;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
-import ua.com.foxminded.university.exception.DAOException;
-import ua.com.foxminded.university.exception.ServiceException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -53,7 +50,7 @@ class DepartmentServiceImplTest {
         @Test
         @DisplayName("when Dao return Optional with Department then method " +
             "should return this Department")
-        void testReturnExpectedDepartment() throws Exception {
+        void testReturnExpectedDepartment() {
             Department expectedDepartment = new Department();
             expectedDepartment.setId(ID1);
             expectedDepartment.setName(DEPARTMENT_NAME);
@@ -66,19 +63,10 @@ class DepartmentServiceImplTest {
         @Test
         @DisplayName("when Dao return empty Optional then method should return" +
             " empty Department")
-        void testReturnEmptyDepartment() throws Exception {
+        void testReturnEmptyDepartment() {
             Optional<Department> optional = Optional.empty();
             when(departmentDaoMock.getById(ID1)).thenReturn(optional);
             assertEquals(new Department(), departmentService.getById(ID1));
-        }
-
-        @Test
-        @DisplayName("when Dao return DAOException then method should throw " +
-            "ServiceException")
-        void testThrowException() throws Exception {
-            when(departmentDaoMock.getById(1)).thenThrow(DAOException.class);
-            assertThrows(ServiceException.class,
-                () -> departmentService.getById(ID1));
         }
     }
 
