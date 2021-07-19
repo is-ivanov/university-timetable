@@ -12,8 +12,6 @@ import ua.com.foxminded.university.dao.interfaces.StudentDao;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Student;
-import ua.com.foxminded.university.exception.DAOException;
-import ua.com.foxminded.university.exception.ServiceException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +42,9 @@ class StudentServiceImplTest {
     @DisplayName("test 'add' when call add method then should call Dao once")
     void testAdd_CallDaoOnce() {
         Student student = new Student();
+        Group group = new Group();
+        group.setName(anyString());
+        student.setGroup(group);
         studentService.add(student);
         verify(studentDaoMock).add(student);
     }
@@ -55,7 +56,7 @@ class StudentServiceImplTest {
         @Test
         @DisplayName("when Dao return Optional with Student then method " +
             "should return this Student")
-        void testReturnExpectedStudent() throws Exception {
+        void testReturnExpectedStudent() {
             Student expectedStudent = new Student();
             expectedStudent.setId(ID1);
             expectedStudent.setFirstName(FIRST_NAME);
@@ -69,19 +70,10 @@ class StudentServiceImplTest {
         @Test
         @DisplayName("when Dao return empty Optional then method should " +
             "return empty Student")
-        void testReturnEmptyStudent() throws Exception {
+        void testReturnEmptyStudent() {
             Optional<Student> optional = Optional.empty();
             when(studentDaoMock.getById(anyInt())).thenReturn(optional);
             assertEquals(new Student(), studentService.getById(anyInt()));
-        }
-
-        @Test
-        @DisplayName("when Dao throw DAOException then method should throw " +
-            "ServiceException")
-        void testThrowException() throws Exception {
-            when(studentDaoMock.getById(anyInt())).thenThrow(DAOException.class);
-            assertThrows(ServiceException.class,
-                () -> studentService.getById(anyInt()));
         }
     }
 
