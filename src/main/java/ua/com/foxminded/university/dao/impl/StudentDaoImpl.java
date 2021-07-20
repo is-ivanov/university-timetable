@@ -30,12 +30,9 @@ public class StudentDaoImpl implements StudentDao {
     private static final String QUERY_DELETE = "student.delete";
     private static final String QUERY_GET_ALL_BY_LESSON = "student.getStudentsByLesson";
     private static final String QUERY_GET_ALL_BY_GROUP = "student.getStudentsByGroup";
-    private static final String MESSAGE_STUDENT_NOT_FOUND = "Student id(%d) not " +
-        "found";
-    private static final String MESSAGE_UPDATE_STUDENT_NOT_FOUND = "Can't " +
-        "update because student id(%d) not found";
-    private static final String MESSAGE_DELETE_STUDENT_NOT_FOUND = "Can't " +
-        "delete because student id(%d) not found";
+    private static final String MESSAGE_STUDENT_NOT_FOUND = "Student id(%d) not found";
+    private static final String MESSAGE_UPDATE_STUDENT_NOT_FOUND = "Can't update because student id(%d) not found";
+    private static final String MESSAGE_DELETE_STUDENT_NOT_FOUND = "Can't delete because student id(%d) not found";
 
     private final JdbcTemplate jdbcTemplate;
     private final Environment env;

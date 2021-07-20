@@ -8,30 +8,13 @@
         </encoder>
     </appender>
 
-    <appender name="FILE"
-              class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${HOME_LOG}</file>
-        <rollingPolicy
-            class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>app.%d{yyyy-MM-dd}.log.zip</fileNamePattern>
-            <maxHistory>90</maxHistory>
-            <totalSizeCap>10GB</totalSizeCap>
-        </rollingPolicy>
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{20} - %msg%n</pattern>
-        </encoder>
-    </appender>
-
-    <logger name="ua.com.foxminded.university" level="debug"
-            additivity="false">
+    <logger name="ua.com.foxminded.university" level="debug" additivity="false">
         <appender-ref ref="STDOUT"/>
-        <appender-ref ref="FILE"/>
     </logger>
     <logger name="org.springframework" level="info" additivity="false">
         <appender-ref ref="STDOUT"/>
-        <appender-ref ref="FILE"/>
     </logger>
     <root level="info">
-        <appender-ref ref="STDOUT" />
+        <appender-ref ref="STDOUT"/>
     </root>
 </configuration>

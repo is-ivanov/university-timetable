@@ -25,12 +25,9 @@ public class GroupDaoImpl implements GroupDao {
     private static final String QUERY_GET_BY_ID = "group.getById";
     private static final String QUERY_UPDATE = "group.update";
     private static final String QUERY_DELETE = "group.delete";
-    private static final String MESSAGE_GROUP_NOT_FOUND = "Group id(%d) not " +
-        "found";
-    private static final String MESSAGE_UPDATE_GROUP_NOT_FOUND = "Can't " +
-        "update because group id(%d) not found";
-    private static final String MESSAGE_DELETE_GROUP_NOT_FOUND = "Can't " +
-        "delete because group id(%d) not found";
+    private static final String MESSAGE_GROUP_NOT_FOUND = "Group id(%d) not found";
+    private static final String MESSAGE_UPDATE_GROUP_NOT_FOUND = "Can't update because group id(%d) not found";
+    private static final String MESSAGE_DELETE_GROUP_NOT_FOUND = "Can't delete because group id(%d) not found";
 
     private final JdbcTemplate jdbcTemplate;
     private final Environment env;

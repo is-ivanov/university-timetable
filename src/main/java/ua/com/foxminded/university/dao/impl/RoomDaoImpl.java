@@ -25,12 +25,9 @@ public class RoomDaoImpl implements RoomDao {
     private static final String QUERY_GET_BY_ID = "room.getById";
     private static final String QUERY_UPDATE = "room.update";
     private static final String QUERY_DELETE = "room.delete";
-    private static final String MESSAGE_ROOM_NOT_FOUND = "Room id(%d) not " +
-        "found";
-    private static final String MESSAGE_UPDATE_ROOM_NOT_FOUND = "Can't " +
-        "update because room id(%d) not found";
-    private static final String MESSAGE_DELETE_ROOM_NOT_FOUND = "Can't " +
-        "delete because room id(%d) not found";
+    private static final String MESSAGE_ROOM_NOT_FOUND = "Room id(%d) not found";
+    private static final String MESSAGE_UPDATE_ROOM_NOT_FOUND = "Can't update because room id(%d) not found";
+    private static final String MESSAGE_DELETE_ROOM_NOT_FOUND = "Can't delete because room id(%d) not found";
 
     private final JdbcTemplate jdbcTemplate;
     private final Environment env;

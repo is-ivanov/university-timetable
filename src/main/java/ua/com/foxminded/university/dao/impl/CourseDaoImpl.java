@@ -26,12 +26,9 @@ public class CourseDaoImpl implements CourseDao {
     private static final String QUERY_GET_BY_ID = "course.getById";
     private static final String QUERY_UPDATE = "course.update";
     private static final String QUERY_DELETE = "course.delete";
-    private static final String MESSAGE_COURSE_NOT_FOUND = "Course id(%s) not" +
-        " found";
-    private static final String MESSAGE_UPDATE_COURSE_NOT_FOUND = "Can't " +
-        "update because course id(%s) not found";
-    private static final String MESSAGE_DELETE_COURSE_NOT_FOUND = "Can't " +
-        "delete because course id(%s) not found";
+    private static final String MESSAGE_COURSE_NOT_FOUND = "Course id(%s) not found";
+    private static final String MESSAGE_UPDATE_COURSE_NOT_FOUND = "Can't update because course id(%s) not found";
+    private static final String MESSAGE_DELETE_COURSE_NOT_FOUND = "Can't delete because course id(%s) not found";
 
     private final JdbcTemplate jdbcTemplate;
     private final Environment env;

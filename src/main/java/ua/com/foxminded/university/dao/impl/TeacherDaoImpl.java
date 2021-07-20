@@ -26,12 +26,9 @@ public class TeacherDaoImpl implements TeacherDao {
     private static final String QUERY_GET_BY_ID = "teacher.getById";
     private static final String QUERY_UPDATE = "teacher.update";
     private static final String QUERY_DELETE = "teacher.delete";
-    private static final String MESSAGE_TEACHER_NOT_FOUND = "Teacher id(%d) not " +
-        "found";
-    private static final String MESSAGE_UPDATE_TEACHER_NOT_FOUND = "Can't " +
-        "update because teacher id(%d) not found";
-    private static final String MESSAGE_DELETE_TEACHER_NOT_FOUND = "Can't " +
-        "delete because teacher id(%d) not found";
+    private static final String MESSAGE_TEACHER_NOT_FOUND = "Teacher id(%d) not found";
+    private static final String MESSAGE_UPDATE_TEACHER_NOT_FOUND = "Can't update because teacher id(%d) not found";
+    private static final String MESSAGE_DELETE_TEACHER_NOT_FOUND = "Can't delete because teacher id(%d) not found";
 
     private final JdbcTemplate jdbcTemplate;
     private final Environment env;

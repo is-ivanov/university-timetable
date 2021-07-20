@@ -26,12 +26,9 @@ public class FacultyDaoImpl implements FacultyDao {
     private static final String QUERY_GET_BY_ID = "faculty.getById";
     private static final String QUERY_UPDATE = "faculty.update";
     private static final String QUERY_DELETE = "faculty.delete";
-    private static final String MESSAGE_FACULTY_NOT_FOUND = "Faculty id(%d) not " +
-        "found";
-    private static final String MESSAGE_UPDATE_FACULTY_NOT_FOUND =
-        "Can't update because faculty id(%d) not found";
-    private static final String MESSAGE_DELETE_FACULTY_NOT_FOUND =
-        "Can't delete because faculty id(%d) not found";
+    private static final String MESSAGE_FACULTY_NOT_FOUND = "Faculty id(%d) not found";
+    private static final String MESSAGE_UPDATE_FACULTY_NOT_FOUND = "Can't update because faculty id(%d) not found";
+    private static final String MESSAGE_DELETE_FACULTY_NOT_FOUND = "Can't delete because faculty id(%d) not found";
 
     private final JdbcTemplate jdbcTemplate;
     private final Environment env;
