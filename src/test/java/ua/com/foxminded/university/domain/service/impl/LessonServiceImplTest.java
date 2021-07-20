@@ -10,7 +10,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.foxminded.university.dao.interfaces.LessonDao;
 import ua.com.foxminded.university.domain.entity.*;
-import ua.com.foxminded.university.exception.DAOException;
 import ua.com.foxminded.university.exception.ServiceException;
 
 import java.time.LocalDateTime;
@@ -55,7 +54,7 @@ class LessonServiceImplTest {
         @Test
         @DisplayName("when checks return true should call lessonDao.add " +
             "once")
-        void testAdd_CallDaoOnce() throws Exception {
+        void testAdd_CallDaoOnce() {
             Lesson testLesson = createTestLesson();
             lessonService.add(testLesson);
             verify(lessonDaoMock).add(testLesson);
@@ -69,7 +68,7 @@ class LessonServiceImplTest {
             Lesson lessonWithTeacherBusyTime = createLessonWithBusyTime();
             List<Lesson> lessonsThisTeacher = new ArrayList<>();
             lessonsThisTeacher.add(lessonWithTeacherBusyTime);
-            when(lessonDaoMock.getAllByTeacher(ID1))
+            when(lessonDaoMock.getAllForTeacher(ID1))
                 .thenReturn(lessonsThisTeacher);
             ServiceException e = assertThrows(ServiceException.class,
                 () -> lessonService.add(testLesson));
@@ -87,7 +86,7 @@ class LessonServiceImplTest {
             List<Lesson> lessonsThisRoom = new ArrayList<>();
             lessonsThisRoom.add(lessonWithRoomBusyTime);
 
-            when(lessonDaoMock.getAllByRoom(ID2)).thenReturn(lessonsThisRoom);
+            when(lessonDaoMock.getAllForRoom(ID2)).thenReturn(lessonsThisRoom);
             Exception e = assertThrows(ServiceException.class,
                 () -> lessonService.add(testLesson));
             String expectedMessage =
@@ -118,7 +117,7 @@ class LessonServiceImplTest {
             Lesson lessonWithTeacherBusyTime = createLessonWithBusyTime();
             List<Lesson> lessonsThisTeacher = new ArrayList<>();
             lessonsThisTeacher.add(lessonWithTeacherBusyTime);
-            when(lessonDaoMock.getAllByTeacher(ID1))
+            when(lessonDaoMock.getAllForTeacher(ID1))
                 .thenReturn(lessonsThisTeacher);
             ServiceException e = assertThrows(ServiceException.class,
                 () -> lessonService.update(testLesson));
@@ -136,7 +135,7 @@ class LessonServiceImplTest {
             List<Lesson> lessonsThisRoom = new ArrayList<>();
             lessonsThisRoom.add(lessonWithRoomBusyTime);
 
-            when(lessonDaoMock.getAllByRoom(ID2)).thenReturn(lessonsThisRoom);
+            when(lessonDaoMock.getAllForRoom(ID2)).thenReturn(lessonsThisRoom);
             Exception e = assertThrows(ServiceException.class,
                 () -> lessonService.update(testLesson));
             String expectedMessage =
@@ -152,7 +151,7 @@ class LessonServiceImplTest {
         @Test
         @DisplayName("when Dao return Optional with Lesson then method should" +
             " return this Lesson")
-        void testReturnExpectedLesson() throws Exception {
+        void testReturnExpectedLesson() {
             Lesson expectedLesson = createTestLesson();
             when(lessonDaoMock.getById(anyInt())).thenReturn(Optional.of(expectedLesson));
             assertEquals(expectedLesson, lessonService.getById(anyInt()));
@@ -161,19 +160,10 @@ class LessonServiceImplTest {
         @Test
         @DisplayName("when Dao return empty Optional then method should " +
             "return empty Lesson")
-        void testReturnEmptyLesson() throws Exception {
+        void testReturnEmptyLesson() {
             Optional<Lesson> optional = Optional.empty();
             when(lessonDaoMock.getById(anyInt())).thenReturn(optional);
             assertEquals(new Lesson(), lessonService.getById(anyInt()));
-        }
-
-        @Test
-        @DisplayName("when Dao throw DAOException then method should throw " +
-            "ServiceException")
-        void testThrowException() throws Exception{
-            when(lessonDaoMock.getById(anyInt())).thenThrow(DAOException.class);
-            assertThrows(ServiceException.class,
-                () -> lessonService.getById(anyInt()));
         }
     }
 
@@ -226,7 +216,7 @@ class LessonServiceImplTest {
             student.setId(ID1);
             List<Lesson> lessonsAddingStudent = new ArrayList<>();
             lessonsAddingStudent.add(lessonWithBusyTime);
-            when(lessonDaoMock.getAllByStudent(ID1))
+            when(lessonDaoMock.getAllForStudent(ID1))
                 .thenReturn(lessonsAddingStudent);
             Exception e = assertThrows(ServiceException.class,
                 () -> lessonService.addStudentToLesson(testLesson, student));

@@ -1,10 +1,6 @@
 package ua.com.foxminded.university.dao.impl;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
+import nl.altindag.log.LogCaptor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -15,18 +11,14 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.jdbc.JdbcTestUtils;
-
-import ua.com.foxminded.university.domain.entity.Course;
-import ua.com.foxminded.university.domain.entity.Department;
-import ua.com.foxminded.university.domain.entity.Faculty;
-import ua.com.foxminded.university.domain.entity.Group;
-import ua.com.foxminded.university.domain.entity.Lesson;
-import ua.com.foxminded.university.domain.entity.Room;
-import ua.com.foxminded.university.domain.entity.Student;
-import ua.com.foxminded.university.domain.entity.Teacher;
-import ua.com.foxminded.university.domain.entity.mapper.LessonExtractor;
+import ua.com.foxminded.university.domain.entity.*;
 import ua.com.foxminded.university.exception.DAOException;
 import ua.com.foxminded.university.springconfig.TestDbConfig;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -58,7 +50,15 @@ class LessonDaoImplTest {
     private static final String SECOND_STUDENT_FIRST_NAME = "Petr";
     private static final String SECOND_STUDENT_LAST_NAME = "Petrov";
     private static final String SECOND_STUDENT_PATRONYMIC = "Petrovich";
-    private static final String MESSAGE_EXCEPTION = "Lesson not found: 4";
+    private static final String MESSAGE_EXCEPTION = "Lesson id(5) not found";
+    private static final String MESSAGE_UPDATE_MASK = "Can't update lesson " +
+        "id(%s)";
+    private static final String MESSAGE_DELETE_MASK = "Can't delete lesson " +
+        "id(%s)";
+    private static final String MESSAGE_UPDATE_EXCEPTION = "Can't update " +
+        "because lesson id(5) not found";
+    private static final String MESSAGE_DELETE_EXCEPTION = "Can't delete " +
+        "because lesson id(5) not found";
     private static final String BUILDING = "building-1";
     private static final String ROOM_NUMBER = "812b";
     private static final boolean ACTIVE = true;
@@ -73,10 +73,7 @@ class LessonDaoImplTest {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    LessonExtractor lessonExtractor;
-
-    @Autowired
-    LessonDaoImpl dao;
+    private LessonDaoImpl dao;
 
     @Nested
     @DisplayName("test 'add' method")
@@ -171,15 +168,15 @@ class LessonDaoImplTest {
                 .timeEnd(timeEnd)
                 .build();
 
-            Lesson actualLesson = dao.getById(ID1).get();
+            Lesson actualLesson = dao.getById(ID1).orElse(null);
             assertEquals(expectedLesson, actualLesson);
         }
 
         @Test
-        @DisplayName("with id=4 should return DAOException 'Lesson not found: 4'")
+        @DisplayName("with id=5 should return DAOException")
         void testGetByIdLessonException() throws DAOException {
             DAOException exception = assertThrows(DAOException.class,
-                () -> dao.getById(4));
+                () -> dao.getById(ID5));
             assertEquals(MESSAGE_EXCEPTION, exception.getMessage());
         }
     }
@@ -203,8 +200,9 @@ class LessonDaoImplTest {
     class updateTest {
 
         @Test
-        @DisplayName("update properties lesson id=1 should write new fields and getById(1) return this fields")
-        void testUpdateLesson() throws DAOException {
+        @DisplayName("with lesson id=1 should write new fields and getById(1) " +
+            "return this fields")
+        void testUpdateExistingLesson_WriteNewFields() throws DAOException {
             Faculty faculty = new Faculty(ID1, FACULTY_NAME);
             Department department = new Department(ID1, DEPARTMENT_NAME,
                 faculty);
@@ -256,8 +254,32 @@ class LessonDaoImplTest {
                 .build();
             dao.update(expectedLesson);
 
-            Lesson actualLesson = dao.getById(ID1).get();
+            Lesson actualLesson = dao.getById(ID1).orElse(null);
             assertEquals(expectedLesson, actualLesson);
+        }
+
+        @Test
+        @DisplayName("with lesson id=5 should write new log.warn with " +
+            "expected message")
+        void testUpdateNonExistingLesson_ExceptionWriteLogWarn() {
+            LogCaptor logCaptor = LogCaptor.forClass(LessonDaoImpl.class);
+            Lesson lesson = new Lesson();
+            lesson.setId(ID5);
+            Teacher teacher = new Teacher();
+            teacher.setId(ID1);
+            lesson.setTeacher(teacher);
+            Course course = new Course();
+            course.setId(ID2);
+            lesson.setCourse(course);
+            Room room = new Room();
+            room.setId(ID3);
+            lesson.setRoom(room);
+            String expectedLog = String.format(MESSAGE_UPDATE_MASK, ID5);
+            Exception ex = assertThrows(DAOException.class,
+                () -> dao.update(lesson));
+            assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
+            assertEquals(MESSAGE_UPDATE_EXCEPTION, ex.getMessage());
+
         }
     }
 
@@ -276,6 +298,20 @@ class LessonDaoImplTest {
             int actualQuantityLessons = JdbcTestUtils
                 .countRowsInTable(jdbcTemplate, TABLE_LESSONS);
             assertEquals(expectedQuantityLessons, actualQuantityLessons);
+        }
+
+        @Test
+        @DisplayName("with lesson id=5 should write new log.warn with " +
+            "expected message")
+        void testDeleteNonExistingLesson_ExceptionWriteLogWarn() {
+            LogCaptor logCaptor = LogCaptor.forClass(LessonDaoImpl.class);
+            Lesson lesson = new Lesson();
+            lesson.setId(ID5);
+            String expectedLog = String.format(MESSAGE_DELETE_MASK, ID5);
+            Exception ex = assertThrows(DAOException.class,
+                () -> dao.delete(lesson));
+            assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
+            assertEquals(MESSAGE_DELETE_EXCEPTION, ex.getMessage());
         }
     }
 
@@ -335,19 +371,19 @@ class LessonDaoImplTest {
         @Test
         @DisplayName("when teacher_id = 1 then should return 2 lessons")
         void testGetAllByTeacherId1ReturnTwoLessons() {
-            assertEquals(2, dao.getAllByTeacher(ID1).size());
+            assertEquals(2, dao.getAllForTeacher(ID1).size());
         }
 
         @Test
         @DisplayName("when teacher_id = 2 then should return 1 lesson")
         void testGetAllByTeacherId2ReturnOneLessons() {
-            assertEquals(1, dao.getAllByTeacher(ID2).size());
+            assertEquals(1, dao.getAllForTeacher(ID2).size());
         }
 
         @Test
         @DisplayName("when teacher_id = 3 then should return empty List")
         void testGetAllByTeacherId3ReturnEmptyList() {
-            assertTrue(dao.getAllByTeacher(3).isEmpty());
+            assertTrue(dao.getAllForTeacher(3).isEmpty());
         }
     }
 
@@ -358,13 +394,13 @@ class LessonDaoImplTest {
         @Test
         @DisplayName("when room_id = 1 then should return 3 lessons")
         void testRoomId1_ReturnThreeLessons() {
-            assertEquals(3, dao.getAllByRoom(ID1).size());
+            assertEquals(3, dao.getAllForRoom(ID1).size());
         }
 
         @Test
         @DisplayName("when room_id = 2 then should return empty List")
         void testRoomId1_ReturnEmptyListLessons() {
-            assertEquals(true, dao.getAllByRoom(ID2).isEmpty());
+            assertTrue(dao.getAllForRoom(ID2).isEmpty());
         }
     }
 
@@ -375,13 +411,13 @@ class LessonDaoImplTest {
         @Test
         @DisplayName("when student_id = 1 then should return 1 lesson")
         void testStudentId1_ReturnOneLessons() {
-            assertEquals(1, dao.getAllByStudent(ID1).size());
+            assertEquals(1, dao.getAllForStudent(ID1).size());
         }
 
         @Test
         @DisplayName("when student_id = 5 then should return empty List")
         void testStudentId5_ReturnEmptyListLessons() {
-            assertEquals(true, dao.getAllByStudent(ID5).isEmpty());
+            assertTrue(dao.getAllForStudent(ID5).isEmpty());
         }
     }
 }

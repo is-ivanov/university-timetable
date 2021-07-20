@@ -1,7 +1,7 @@
 package ua.com.foxminded.university.exception;
 
 @SuppressWarnings("serial")
-public class ServiceException extends Exception {
+public class ServiceException extends RuntimeException {
 
     public ServiceException() {
         super();

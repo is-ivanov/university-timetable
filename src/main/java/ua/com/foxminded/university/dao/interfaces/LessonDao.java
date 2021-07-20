@@ -10,11 +10,11 @@ public interface LessonDao extends Dao<Lesson> {
 
     void deleteAllStudentsFromLesson(int lessonId);
 
-    List<Lesson> getAllByTeacher(int teacherId);
+    List<Lesson> getAllForTeacher(int teacherId);
 
-    List<Lesson> getAllByRoom(int roomId);
+    List<Lesson> getAllForRoom(int roomId);
 
-    List<Lesson> getAllByStudent(int studentId);
+    List<Lesson> getAllForStudent(int studentId);
 
     void deleteStudentFromLesson(int lessonId, int studentId);
 

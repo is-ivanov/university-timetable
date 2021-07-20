@@ -1,8 +1,6 @@
 package ua.com.foxminded.university.dao.impl;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
+import nl.altindag.log.LogCaptor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -13,34 +11,42 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.jdbc.JdbcTestUtils;
-
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.exception.DAOException;
 import ua.com.foxminded.university.springconfig.TestDbConfig;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestDbConfig.class)
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
-        "/schema.sql", "/group-test-data.sql" })
+    "/schema.sql", "/group-test-data.sql"})
 class GroupDaoImplTest {
 
     private static final String TABLE_NAME = "groups";
     private static final String TEST_GROUP_NAME = "GroupName";
     private static final String TEST_FACULTY_NAME = "FacultyName";
-    private static final int FIRST_ID = 1;
-    private static final int SECOND_ID = 2;
-    private static final int THIRD_ID = 3;
+    private static final int ID1 = 1;
+    private static final int ID2 = 2;
+    private static final int ID3 = 3;
     private static final String FIRST_GROUP_NAME = "20Eng-1";
     private static final String FIRST_FACULTY_NAME = "Foreign Language";
     private static final String SECOND_FACULTY_NAME = "Chemical Technology";
-    private static final String MESSAGE_EXCEPTION = "Group not found: 4";
+    private static final String MESSAGE_EXCEPTION = "Group id(3) not found";
+    private static final String MESSAGE_UPDATE_MASK = "Can't update %s";
+    private static final String MESSAGE_DELETE_MASK = "Can't delete %s";
+    private static final String MESSAGE_UPDATE_EXCEPTION = "Can't update " +
+        "because group id(3) not found";
+    private static final String MESSAGE_DELETE_EXCEPTION = "Can't delete " +
+        "because group id(3) not found";
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    GroupDaoImpl dao;
+    private GroupDaoImpl dao;
 
     @Nested
     @DisplayName("test 'add' method")
@@ -50,7 +56,7 @@ class GroupDaoImplTest {
         @DisplayName("after add test group should CountRowsTable = 3")
         void testAddGroupCountRows() {
             Faculty faculty = new Faculty();
-            faculty.setId(FIRST_ID);
+            faculty.setId(ID1);
             faculty.setName(TEST_FACULTY_NAME);
 
             Group group = new Group();
@@ -61,26 +67,26 @@ class GroupDaoImplTest {
             dao.add(group);
             int expectedRowsInTable = 3;
             int actualRowsInTable = JdbcTestUtils.countRowsInTable(jdbcTemplate,
-                    TABLE_NAME);
+                TABLE_NAME);
             assertEquals(expectedRowsInTable, actualRowsInTable);
         }
 
         @Test
         @DisplayName("after add test group should getGroup id=3 equals test group")
-        void testAddGroupGetEqualsTestGroup() throws Exception {
+        void testAddGroupGetEqualsTestGroup() {
             Faculty expectedFaculty = new Faculty();
-            expectedFaculty.setId(FIRST_ID);
+            expectedFaculty.setId(ID1);
             expectedFaculty.setName(FIRST_FACULTY_NAME);
 
             Group expectedGroup = new Group();
-            expectedGroup.setId(THIRD_ID);
+            expectedGroup.setId(ID3);
             expectedGroup.setName(TEST_GROUP_NAME);
             expectedGroup.setActive(true);
             expectedGroup.setFaculty(expectedFaculty);
 
             dao.add(expectedGroup);
 
-            assertEquals(expectedGroup, dao.getById(THIRD_ID).get());
+            assertEquals(expectedGroup, dao.getById(ID3).orElse(null));
         }
     }
 
@@ -92,21 +98,21 @@ class GroupDaoImplTest {
         @DisplayName("with id=1 should return group (1, '20Eng-1', faculty id=1, true)")
         void testGetByIdGroup() throws DAOException {
             Faculty expectedFaculty = new Faculty();
-            expectedFaculty.setId(FIRST_ID);
+            expectedFaculty.setId(ID1);
             expectedFaculty.setName(FIRST_FACULTY_NAME);
 
-            Group expectedGroup = new Group(FIRST_ID, FIRST_GROUP_NAME,
-                    expectedFaculty, true);
+            Group expectedGroup = new Group(ID1, FIRST_GROUP_NAME,
+                expectedFaculty, true);
 
-            Group actualGroup = dao.getById(FIRST_ID).get();
+            Group actualGroup = dao.getById(ID1).orElse(null);
             assertEquals(expectedGroup, actualGroup);
         }
 
         @Test
-        @DisplayName("with id=4 should return DAOException 'Group not found: 4'")
+        @DisplayName("with id=3 should return DAOException")
         void testGetByIdGroupException() throws DAOException {
             DAOException exception = assertThrows(DAOException.class,
-                    () -> dao.getById(4));
+                () -> dao.getById(ID3));
             assertEquals(MESSAGE_EXCEPTION, exception.getMessage());
         }
     }
@@ -119,7 +125,7 @@ class GroupDaoImplTest {
         @DisplayName("should return List with size = 2")
         void testGetAllGroups() {
             int expectedQuantityGroups = JdbcTestUtils
-                    .countRowsInTable(jdbcTemplate, TABLE_NAME);
+                .countRowsInTable(jdbcTemplate, TABLE_NAME);
             int actualQuantityGroups = dao.getAll().size();
             assertEquals(expectedQuantityGroups, actualQuantityGroups);
         }
@@ -130,15 +136,28 @@ class GroupDaoImplTest {
     class updateTest {
 
         @Test
-        @DisplayName("update name and faculty_id group id=1 should write new fields and getById(1) return this fields")
-        void testUpdateGroup() throws DAOException {
-            Faculty expectedFaculty = new Faculty(SECOND_ID,
-                    SECOND_FACULTY_NAME);
-            Group expectedGroup = new Group(FIRST_ID, TEST_GROUP_NAME,
-                    expectedFaculty, true);
+        @DisplayName("with group id=1 should write new fields and getById(1) " +
+            "return expected group")
+        void testUpdateExistingGroup_WriteExpectedGroup() throws DAOException {
+            Faculty expectedFaculty = new Faculty(ID2, SECOND_FACULTY_NAME);
+            Group expectedGroup = new Group(ID1, TEST_GROUP_NAME,
+                expectedFaculty, true);
             dao.update(expectedGroup);
-            Group actualGroup = dao.getById(FIRST_ID).get();
+            Group actualGroup = dao.getById(ID1).orElse(new Group());
             assertEquals(expectedGroup, actualGroup);
+        }
+
+        @Test
+        @DisplayName("with group id=3 should write new log.warn with expected" +
+            " message")
+        void testUpdateNonExistingGroup_ExceptionWriteLogWarn() {
+            LogCaptor logCaptor = LogCaptor.forClass(GroupDaoImpl.class);
+            Group group = new Group(ID3, TEST_GROUP_NAME, new Faculty(), true);
+            String expectedLog = String.format(MESSAGE_UPDATE_MASK, group);
+            Exception ex = assertThrows(DAOException.class,
+                () -> dao.update(group));
+            assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
+            assertEquals(MESSAGE_UPDATE_EXCEPTION, ex.getMessage());
         }
     }
 
@@ -147,18 +166,30 @@ class GroupDaoImplTest {
     class deleteTest {
 
         @Test
-        @DisplayName("delete group id=1 should delete one record and number records table should equals 1")
-        void testDeleteGroup() {
+        @DisplayName("with group id=1 should delete one record and number " +
+            "records table should equals 1")
+        void testDeleteExistingGroup_ReduceNumberRowsInTable() {
             int expectedQuantityGroups = JdbcTestUtils
-                    .countRowsInTable(jdbcTemplate, TABLE_NAME) - 1;
-
-            Faculty faculty = new Faculty(FIRST_ID, FIRST_FACULTY_NAME);
-
-            Group group = new Group(FIRST_ID, FIRST_GROUP_NAME, faculty, true);
+                .countRowsInTable(jdbcTemplate, TABLE_NAME) - 1;
+            Faculty faculty = new Faculty(ID1, FIRST_FACULTY_NAME);
+            Group group = new Group(ID1, FIRST_GROUP_NAME, faculty, true);
             dao.delete(group);
             int actualQuantityGroups = JdbcTestUtils
-                    .countRowsInTable(jdbcTemplate, TABLE_NAME);
+                .countRowsInTable(jdbcTemplate, TABLE_NAME);
             assertEquals(expectedQuantityGroups, actualQuantityGroups);
+        }
+
+        @Test
+        @DisplayName("with group id=3 should write new log.warn with " +
+            "expected message")
+        void testDeleteNonExistingGroup_ExceptionWriteLogWarn() {
+            LogCaptor logCaptor = LogCaptor.forClass(GroupDaoImpl.class);
+            Group group = new Group(ID3, TEST_GROUP_NAME, new Faculty(), true);
+            String expectedLog = String.format(MESSAGE_DELETE_MASK, group);
+            Exception ex = assertThrows(DAOException.class,
+                () -> dao.delete(group));
+            assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
+            assertEquals(MESSAGE_DELETE_EXCEPTION, ex.getMessage());
         }
     }
 }

@@ -9,15 +9,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.foxminded.university.dao.interfaces.RoomDao;
 import ua.com.foxminded.university.domain.entity.Room;
-import ua.com.foxminded.university.exception.DAOException;
-import ua.com.foxminded.university.exception.ServiceException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -54,7 +51,7 @@ class RoomServiceImplTest {
         @Test
         @DisplayName("when Dao return Optional with Room then method should " +
             "return this Room")
-        void testReturnExpectedRoom() throws Exception {
+        void testReturnExpectedRoom() {
             Room expectedRoom = new Room();
             expectedRoom.setId(ID1);
             expectedRoom.setNumber(NUMBER_ROOM);
@@ -66,19 +63,10 @@ class RoomServiceImplTest {
         @Test
         @DisplayName("when Dao return empty Optional then method should " +
             "return empty Room")
-        void testReturnEmptyRoom() throws Exception {
+        void testReturnEmptyRoom() {
             Optional<Room> optional = Optional.empty();
             when(roomDaoMock.getById(anyInt())).thenReturn(optional);
             assertEquals(new Room(), roomService.getById(anyInt()));
-        }
-
-        @Test
-        @DisplayName("when Dao throw DAOException then method should throw " +
-            "ServiceException")
-        void testThrowException() throws Exception {
-            when(roomDaoMock.getById(anyInt())).thenThrow(DAOException.class);
-            assertThrows(ServiceException.class,
-                () -> roomService.getById(anyInt()));
         }
     }
 

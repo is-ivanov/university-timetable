@@ -29,3 +29,6 @@ hs_err_pid*
 
 # Backup Visual-Paradigm Files
 *.vpp.bak*
+
+# Log file
+*.log

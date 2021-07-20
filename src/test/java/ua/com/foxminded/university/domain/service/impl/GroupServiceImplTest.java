@@ -13,14 +13,13 @@ import ua.com.foxminded.university.dao.interfaces.StudentDao;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Student;
-import ua.com.foxminded.university.exception.DAOException;
-import ua.com.foxminded.university.exception.ServiceException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -58,7 +57,7 @@ class GroupServiceImplTest {
         @Test
         @DisplayName("when Dao return Optional with Group then method should " +
             "return this Group")
-        void testReturnExpectedGroup() throws Exception {
+        void testReturnExpectedGroup() {
             Group expectedGroup = new Group();
             expectedGroup.setId(ID1);
             expectedGroup.setName(NAME_GROUP);
@@ -71,19 +70,10 @@ class GroupServiceImplTest {
         @Test
         @DisplayName("when Dao return empty Optional then method should " +
             "return empty Group")
-        void testReturnEmptyGroup() throws Exception {
+        void testReturnEmptyGroup() {
             Optional<Group> optional = Optional.empty();
             when(groupDaoMock.getById(anyInt())).thenReturn(optional);
             assertEquals(new Group(), groupService.getById(anyInt()));
-        }
-
-        @Test
-        @DisplayName("when Dao throw DAOException then method should throw " +
-            "ServiceException")
-        void testThrowException() throws Exception {
-            when(groupDaoMock.getById(anyInt())).thenThrow(DAOException.class);
-            assertThrows(ServiceException.class,
-                () -> groupService.getById(anyInt()));
         }
     }
 

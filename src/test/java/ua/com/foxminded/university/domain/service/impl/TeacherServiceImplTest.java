@@ -9,9 +9,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.foxminded.university.dao.interfaces.TeacherDao;
-import ua.com.foxminded.university.domain.entity.*;
-import ua.com.foxminded.university.exception.DAOException;
-import ua.com.foxminded.university.exception.ServiceException;
+import ua.com.foxminded.university.domain.entity.Department;
+import ua.com.foxminded.university.domain.entity.Faculty;
+import ua.com.foxminded.university.domain.entity.Teacher;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +19,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -44,6 +45,9 @@ class TeacherServiceImplTest {
     @DisplayName("test 'add' when call add method then should call Dao once")
     void testAdd_CallDaoOnce() {
         Teacher teacher = new Teacher();
+        Department department = new Department();
+        department.setName(anyString());
+        teacher.setDepartment(department);
         teacherService.add(teacher);
         verify(teacherDaoMock).add(teacher);
     }
@@ -55,7 +59,7 @@ class TeacherServiceImplTest {
         @Test
         @DisplayName("when Dao return Optional with Teacher then method " +
             "should return this Teacher")
-        void testReturnExpectedTeacher() throws Exception {
+        void testReturnExpectedTeacher() {
             Teacher expectedTeacher = new Teacher();
             expectedTeacher.setId(ID1);
             expectedTeacher.setFirstName(FIRST_NAME);
@@ -69,19 +73,10 @@ class TeacherServiceImplTest {
         @Test
         @DisplayName("when Dao return empty Optional then method should " +
             "return empty Teacher")
-        void testReturnEmptyTeacher() throws Exception {
+        void testReturnEmptyTeacher() {
             Optional<Teacher> optional = Optional.empty();
             when(teacherDaoMock.getById(anyInt())).thenReturn(optional);
             assertEquals(new Teacher(), teacherService.getById(anyInt()));
-        }
-
-        @Test
-        @DisplayName("when Dao throw DAOException then method should throw " +
-            "ServiceException")
-        void testThrowException() throws Exception {
-            when(teacherDaoMock.getById(anyInt())).thenThrow(DAOException.class);
-            assertThrows(ServiceException.class,
-                () -> teacherService.getById(anyInt()));
         }
     }
 
