@@ -5,19 +5,20 @@
     <groupId>ua.com.foxminded.javaspring</groupId>
     <artifactId>university</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>University</name>
+    <name>University Timetable</name>
     <description>Application university timetable</description>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>8</java.version>
-        <spring.version>5.3.8</spring.version>
+        <spring.version>5.3.9</spring.version>
         <mockito.version>3.11.2</mockito.version>
         <junit.version>5.8.0-M1</junit.version>
         <slf4j.version>1.7.31</slf4j.version>
         <logback.version>1.2.3</logback.version>
         <lombok.version>1.18.20</lombok.version>
+        <thymeleaf.version>3.0.12.RELEASE</thymeleaf.version>
     </properties>
 
     <dependencies>
@@ -55,10 +56,27 @@
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <version>${spring.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.thymeleaf</groupId>
+            <artifactId>thymeleaf-spring5</artifactId>
+            <version>${thymeleaf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>4.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
