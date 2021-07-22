@@ -1,27 +1,29 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}" lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Faculties</title>
 </head>
 <body>
-<h1>Faculties HERE</h1>
-<div>
-    <table border="1">
-        <thead>
-
-        <tr>
-            <th>id</th>
-            <th>Faculty Name</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="faculty : ${faculties}">
-            <td th:utext="${faculty.getId()}">...</td>
-            <td th:utext="${faculty.getName()}">...</td>
-        </tr>
-        </tbody>
-    </table>
-</div>
+<section layout:fragment="content">
+    <h1>Faculties HERE</h1>
+    <div>
+        <table border="1">
+            <thead>
+            <tr>
+                <th>id</th>
+                <th>Faculty Name</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="faculty : ${faculties}">
+                <td th:utext="${faculty.getId()}">...</td>
+                <td th:utext="${faculty.getName()}">...</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
 </body>
 </html>

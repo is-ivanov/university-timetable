@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th=”http://www.thymeleaf.org” lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE">SomeXXXXX </title>
+    <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/5.0.2/css/bootstrap.min.css}"/>
+</head>
+<body>
+<div th:replace="fragments/header :: header"> This header content is going to be replaced.</div>
+<div class="container">
+    <div layout:fragment="content">
+        <h1>This is the Layout's main section</h1>
+        <p>This content will be replaced if the page
+            using the layout also defines a layout:fragment="content" segment. </p>
+    </div>
+</div>
+<footer th:insert="fragments/footer :: footer" class="footer">
+    This content will remain, but other content will be inserted after it.
+</footer>
+<script th:src="@{/webjars/bootstrap/5.0.2/js/bootstrap.min.js}"></script>
+</body>
+</html>
