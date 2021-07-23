@@ -21,6 +21,6 @@ public class FacultyController {
     @GetMapping
     public String faculties(Model model) {
         model.addAttribute("faculties", facultyService.getAll());
-        return "faculties";
+        return "faculty";
     }
 }
