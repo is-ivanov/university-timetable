@@ -1,29 +1,29 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/layout}" lang="en">
+      layout:decorate="~{layouts/layout}">
 <head>
     <meta charset="UTF-8">
     <title>Faculties</title>
 </head>
 <body>
-<section layout:fragment="content">
+<div layout:fragment="content">
     <h1>Faculties HERE</h1>
     <div>
-        <table border="1">
+        <table class="table table-hover">
             <thead>
             <tr>
-                <th>id</th>
+                <th type="hidden">id</th>
                 <th>Faculty Name</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="faculty : ${faculties}">
-                <td th:utext="${faculty.getId()}">...</td>
-                <td th:utext="${faculty.getName()}">...</td>
+                <td type="hidden" th:utext="${faculty.id}">...</td>
+                <td th:utext="${faculty.name}">...</td>
             </tr>
             </tbody>
         </table>
     </div>
-</section>
+</div>
 </body>
 </html>

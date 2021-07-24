@@ -11,7 +11,7 @@ import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 @RequestMapping("/faculty")
 public class FacultyController {
 
-    private FacultyService facultyService;
+    private final FacultyService facultyService;
 
     @Autowired
     public FacultyController(FacultyService facultyService) {
