@@ -1,29 +1,29 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout}">
 <head>
-    <meta charset="UTF-8">
-    <title>Faculties</title>
+  <meta charset="UTF-8">
+  <title>Faculties</title>
 </head>
 <body>
 <div layout:fragment="content">
-    <h1>Faculties HERE</h1>
-    <div>
-        <table class="table table-hover">
-            <thead>
-            <tr>
-                <th type="hidden">id</th>
-                <th>Faculty Name</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="faculty : ${faculties}">
-                <td type="hidden" th:utext="${faculty.id}">...</td>
-                <td th:utext="${faculty.name}">...</td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
+  <h3>Faculties</h3>
+  <div class="table-responsive-md">
+    <table class="table table-striped table-hover table-sortable">
+      <thead class="bg-success">
+      <tr>
+        <th scope="col" class="col-1">id</th>
+        <th scope="col" class="col-6">Faculty Name</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="faculty : ${faculties}">
+        <td th:utext="${faculty.id}">...</td>
+        <td th:utext="${faculty.name}">...</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 </body>
 </html>
