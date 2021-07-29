@@ -16,7 +16,7 @@
         <mockito.version>3.11.2</mockito.version>
         <junit.version>5.8.0-M1</junit.version>
         <slf4j.version>1.7.31</slf4j.version>
-        <logback.version>1.2.3</logback.version>
+        <logback.version>1.2.4</logback.version>
         <lombok.version>1.18.20</lombok.version>
         <thymeleaf.version>3.0.12.RELEASE</thymeleaf.version>
     </properties>
@@ -117,7 +117,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.2.22</version>
+            <version>42.2.23.jre7</version>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
