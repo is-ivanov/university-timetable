@@ -6,41 +6,56 @@
   <title>Groups</title>
 </head>
 <body>
-<section layout:fragment="content">
-  <h3>Groups HERE</h3>
-  <div>
-    <form action="" class="my-2">
-      <label>Faculty</label>
-      <select>
-        <option >Please select...</option>
-        <option value="Chemichal Engineering Faculty">Chemichal Engineering Faculty</option>
-        <option value="General Faculty">General Faculty</option>
-        <option value="Foreign Language Faculty">Foreign Language Faculty</option>
-        <option value="Building Faculty">Building Faculty</option>
-        <option value="Physics Faculty">Physics Faculty</option>
-      </select>
-    </form>
-  </div>
-  <div>
-    <table class="table table-striped table-hover">
+<div layout:fragment="content">
+  <h3 th:utext="${facultySelected ne null} ? 'Groups from ' + ${facultySelected.name} : 'Groups'"></h3>
+  <form action="#" th:action="@{/group}" class="my-2">
+    <div class="row align-items-center">
+      <div class="col-1">
+        <label for="selectFaculty" class="col-form-label">Faculty</label>
+      </div>
+      <div class="col">
+        <select class="form-select" id="selectFaculty" name="facultyId">
+          <option disabled th:selected="${facultySelected eq null}">Please select...</option>
+          <option th:each="faculty : ${faculties}" th:value="${faculty.id}" th:utext="${faculty.name}"
+                  th:selected="${facultySelected ne null and faculty.id eq facultySelected.id}">...</option>
+        </select>
+      </div>
+      <div class="col">
+        <input class="btn btn-success" type="submit" value="Show groups">
+      </div>
+      <div class="col-auto form-check form-switch ml-5">
+        <input class="form-check-input" type="checkbox" id="flexSwitchShowInactive" onclick="checkbox()"
+               name="isShowInactive" th:checked="${isShowInactive}">
+        <label class="form-check-label" for="flexSwitchShowInactive">Show inactive groups</label>
+      </div>
+    </div>
+  </form>
+  <div class="table-responsive-md">
+    <table class="table table-hover table-sortable" id="mainTable"
+           th:classappend="${facultySelected == null} ? 'd-none'">
+      <caption>List of groups</caption>
       <thead class="bg-success">
       <tr>
-        <th>id</th>
-        <th>Group Name</th>
-        <th>Faculty Name</th>
-        <th class="d-none">Faculty Id</th>
+        <th scope="col" class="col-1">id</th>
+        <th scope="col" class="col-2">Group Name</th>
+        <th scope="col">Faculty Name</th>
+        <th scope="col" class="text-center">Status</th>
+        <th scope="col" class="d-none">Faculty Id</th>
       </tr>
       </thead>
       <tbody>
-      <tr th:each="group : ${groups}">
+      <tr th:each="group : ${groups}"
+          th:classappend="${group.active} ? 'active' : (${isShowInactive}? 'inactive' : 'inactive hide-row')">
         <td th:utext="${group.id}">...</td>
         <td th:utext="${group.name}">...</td>
         <td th:utext="${group.faculty.name}">...</td>
+        <td th:utext="${group.active} ? 'active' : 'inactive'" class="text-center"
+            th:classappend="${group.active} ? 'active' : 'inactive'">...</td>
         <td th:utext="${group.faculty.id}" class="d-none">...</td>
       </tr>
       </tbody>
     </table>
   </div>
-</section>
+</div>
 </body>
 </html>

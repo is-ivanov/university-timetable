@@ -12,4 +12,5 @@ public interface GroupService extends Service<Group> {
     Group joinGroups(List<Group> groups, String nameNewGroup,
             Faculty facultyNewGroup);
 
+    List<Group> getAllByFacultyId(int facultyId);
 }
