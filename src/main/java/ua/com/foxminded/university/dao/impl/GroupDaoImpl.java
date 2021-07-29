@@ -22,6 +22,7 @@ public class GroupDaoImpl implements GroupDao {
 
     private static final String QUERY_ADD = "group.add";
     private static final String QUERY_GET_ALL = "group.getAll";
+    private static final String QUERY_GET_ALL_BY_FACULTY = "group.getAllByFaculty";
     private static final String QUERY_GET_BY_ID = "group.getById";
     private static final String QUERY_UPDATE = "group.update";
     private static final String QUERY_DELETE = "group.delete";
@@ -103,6 +104,16 @@ public class GroupDaoImpl implements GroupDao {
         } else {
             log.info("Delete {}", group);
         }
+    }
+
+    @Override
+    public List<Group> getAllByFacultyId(int facultyId) {
+        log.debug("Getting all groups by faculty id({})", facultyId);
+        List<Group> groups = jdbcTemplate.query(
+            env.getRequiredProperty(QUERY_GET_ALL_BY_FACULTY), new GroupMapper(),
+            facultyId);
+        log.info("Found {} groups", groups.size());
+        return groups;
     }
 
 

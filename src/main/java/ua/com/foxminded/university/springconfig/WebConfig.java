@@ -11,9 +11,9 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 
-@Configuration
 @ComponentScan("ua.com.foxminded.university")
 @EnableWebMvc
+@Configuration
 public class WebConfig implements WebMvcConfigurer {
 
     private final ApplicationContext applicationContext;
@@ -48,11 +48,14 @@ public class WebConfig implements WebMvcConfigurer {
         resolver.setTemplateEngine(templateEngine());
         registry.viewResolver(resolver);
     }
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry
-            .addResourceHandler("/webjars/**")
-            .addResourceLocations("/webjars/").resourceChain(false);
+            .addResourceHandler("/webjars/**", "/css/**", "/js/**", "/img/**")
+            .addResourceLocations("/webjars/", "/WEB-INF/resources/css/",
+                "/WEB-INF/resources/js/", "/WEB-INF/resources/img/")
+            .resourceChain(false);
     }
 
     @Override

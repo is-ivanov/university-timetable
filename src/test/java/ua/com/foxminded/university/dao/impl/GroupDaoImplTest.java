@@ -10,17 +10,18 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.exception.DAOException;
 import ua.com.foxminded.university.springconfig.TestDbConfig;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestDbConfig.class)
+@WebAppConfiguration
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
     "/schema.sql", "/group-test-data.sql"})
 class GroupDaoImplTest {
@@ -190,6 +191,25 @@ class GroupDaoImplTest {
                 () -> dao.delete(group));
             assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
             assertEquals(MESSAGE_DELETE_EXCEPTION, ex.getMessage());
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'getByFacultyId' method")
+    class getByFacultyIdTest {
+
+        @Test
+        @DisplayName("with faculty id=1 should return List with size = 2")
+        void testGetGroupsByFacultyId1() {
+            int expectedQuantityGroups = 2;
+            int actualQuantityGroups = dao.getAllByFacultyId(ID1).size();
+            assertEquals(expectedQuantityGroups, actualQuantityGroups);
+        }
+
+        @Test
+        @DisplayName("with faculty id=2 should return empty List")
+        void testGetGroupsByFacultyId2() {
+            assertTrue(dao.getAllByFacultyId(ID2).isEmpty());
         }
     }
 }

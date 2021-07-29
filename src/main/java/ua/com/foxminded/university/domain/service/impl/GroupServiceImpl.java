@@ -97,5 +97,11 @@ public class GroupServiceImpl implements GroupService {
         return newGroup;
     }
 
-
+    @Override
+    public List<Group> getAllByFacultyId(int facultyId) {
+        log.debug("Getting all groups by faculty id({})", facultyId);
+        List<Group> groups = groupDao.getAllByFacultyId(facultyId);
+        log.info("Found {} groups", groups.size());
+        return groups;
+    }
 }
