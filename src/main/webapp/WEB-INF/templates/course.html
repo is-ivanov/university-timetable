@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head>
+  <meta charset="UTF-8">
+  <title>Courses</title>
+</head>
+<body>
+<div layout:fragment="content">
+  <h3>Courses</h3>
+  <div class="table-responsive-md">
+    <table class="table table-striped table-hover table-sortable">
+      <caption>List of courses</caption>
+      <thead class="bg-success">
+      <tr>
+        <th scope="col" class="col-1">id</th>
+        <th scope="col" class="col-6">Name</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="course : ${courses}">
+        <td th:utext="${course.id}">...</td>
+        <td th:utext="${course.name}">...</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</body>
+</html>
