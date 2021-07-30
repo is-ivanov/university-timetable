@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head>
+  <meta charset="UTF-8">
+  <title>Departments</title>
+</head>
+<body>
+<div layout:fragment="content">
+  <h3 th:utext="${facultySelected ne null} ? 'Departments from ' + ${facultySelected.name} : 'Departments'"></h3>
+  <form action="#" th:action="@{/department}" class="my-2">
+    <div class="row align-items-center">
+      <div class="col-1">
+        <label for="selectFaculty" class="col-form-label">Faculty</label>
+      </div>
+      <div class="col">
+        <select class="form-select" id="selectFaculty" name="facultyId">
+          <option disabled th:selected="${facultySelected eq null}">Please select...</option>
+          <option th:each="faculty : ${faculties}" th:value="${faculty.id}" th:utext="${faculty.name}"
+                  th:selected="${facultySelected ne null and faculty.id eq facultySelected.id}">...</option>
+        </select>
+      </div>
+      <div class="col">
+        <input class="btn btn-success" type="submit" value="Show departments">
+      </div>
+    </div>
+  </form>
+  <div class="table-responsive-md">
+    <table class="table table-hover table-sortable" id="mainTable"
+           th:classappend="${facultySelected == null} ? 'd-none'">
+      <caption>List of departments</caption>
+      <thead class="bg-success">
+      <tr>
+        <th scope="col" class="col-1">id</th>
+        <th scope="col" class="col-2">Department Name</th>
+        <th scope="col">Faculty Name</th>
+        <th scope="col" class="d-none">Faculty Id</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="department : ${departments}">
+        <td th:utext="${department.id}">...</td>
+        <td th:utext="${department.name}">...</td>
+        <td th:utext="${department.faculty.name}">...</td>
+        <td th:utext="${department.faculty.id}" class="d-none">...</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</body>
+</html>
