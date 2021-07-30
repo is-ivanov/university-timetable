@@ -7,6 +7,7 @@ import ua.com.foxminded.university.dao.interfaces.FacultyDao;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Slf4j
@@ -57,4 +58,13 @@ public class FacultyServiceImpl implements FacultyService {
         log.info("Delete {}", faculty);
     }
 
+    @Override
+    public List<Faculty> getAllSortedAscByName() {
+        log.debug("Getting all faculties");
+        List<Faculty> faculties = facultyDao.getAll();
+        log.info("Found {} faculties", faculties.size());
+        faculties.sort(Comparator.comparing(Faculty::getName));
+        log.info("Faculties sorted");
+        return faculties;
+    }
 }
