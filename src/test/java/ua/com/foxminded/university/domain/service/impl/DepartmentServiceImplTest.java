@@ -102,4 +102,20 @@ class DepartmentServiceImplTest {
         departmentService.delete(department);
         verify(departmentDaoMock).delete(department);
     }
+
+    @Test
+    @DisplayName("test 'getAllByFacultyId' when Dao return List departments " +
+        "then method should return this List")
+    void testGetAllByFacultyId_ReturnListDepartments() {
+        Department department1 = new Department();
+        department1.setId(ID1);
+        Department department2 = new Department();
+        department2.setId(ID1);
+        List<Department> expectedDepartments = new ArrayList<>();
+        expectedDepartments.add(department1);
+        expectedDepartments.add(department2);
+        when(departmentDaoMock.getAllByFacultyId(ID1)).thenReturn(expectedDepartments);
+        assertEquals(expectedDepartments,
+            departmentService.getAllByFacultyId(ID1));
+    }
 }

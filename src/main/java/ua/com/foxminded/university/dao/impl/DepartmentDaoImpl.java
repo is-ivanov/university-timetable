@@ -1,8 +1,5 @@
 package ua.com.foxminded.university.dao.impl;
 
-import java.util.List;
-import java.util.Optional;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
@@ -10,11 +7,13 @@ import org.springframework.core.env.Environment;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-
 import ua.com.foxminded.university.dao.interfaces.DepartmentDao;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.mapper.DepartmentMapper;
 import ua.com.foxminded.university.exception.DAOException;
+
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Repository
@@ -23,6 +22,7 @@ public class DepartmentDaoImpl implements DepartmentDao {
 
     private static final String QUERY_ADD = "department.add";
     private static final String QUERY_GET_ALL = "department.getAll";
+    private static final String QUERY_GET_ALL_BY_FACULTY = "department.getAllByFacultyId";
     private static final String QUERY_GET_BY_ID = "department.getById";
     private static final String QUERY_UPDATE = "department.update";
     private static final String QUERY_DELETE = "department.delete";
@@ -110,4 +110,13 @@ public class DepartmentDaoImpl implements DepartmentDao {
         }
     }
 
+    @Override
+    public List<Department> getAllByFacultyId(int facultyId) {
+        log.debug("Getting all departments by faculty id({})", facultyId);
+        List<Department> departments =
+            jdbcTemplate.query(env.getRequiredProperty(QUERY_GET_ALL_BY_FACULTY),
+                new DepartmentMapper(), facultyId);
+        log.info("Found {} departments", departments.size());
+        return departments;
+    }
 }

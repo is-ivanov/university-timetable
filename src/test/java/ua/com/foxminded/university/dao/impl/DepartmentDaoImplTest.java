@@ -1,8 +1,5 @@
 package ua.com.foxminded.university.dao.impl;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import nl.altindag.log.LogCaptor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -13,15 +10,20 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.jdbc.JdbcTestUtils;
 
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.exception.DAOException;
 import ua.com.foxminded.university.springconfig.TestDbConfig;
+import ua.com.foxminded.university.springconfig.WebConfig;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TestDbConfig.class)
+@ContextConfiguration(classes = {TestDbConfig.class, WebConfig.class})
+@WebAppConfiguration
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
     "/schema.sql", "/department-test-data.sql"})
 class DepartmentDaoImplTest {
@@ -172,6 +174,27 @@ class DepartmentDaoImplTest {
                 () -> dao.delete(department));
             assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
             assertEquals(MESSAGE_DELETE_EXCEPTION, ex.getMessage());
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'getAllByFacultyId' method")
+    class getAllByFacultyIdTest {
+
+        @Test
+        @DisplayName("with faculty id=1 should return List with size = 2")
+        void testGetAllDepartmentsByFacultyId1() {
+            int expectedQuantityDepartments = 2;
+            int actualQuantityDepartments =
+                dao.getAllByFacultyId(ID1).size();
+            assertEquals(expectedQuantityDepartments,
+                actualQuantityDepartments);
+        }
+
+        @Test
+        @DisplayName("with faculty id=3 should return empty List")
+        void testGetAllDepartmentsByFacultyId3() {
+            assertTrue(dao.getAllByFacultyId(ID3).isEmpty());
         }
     }
 

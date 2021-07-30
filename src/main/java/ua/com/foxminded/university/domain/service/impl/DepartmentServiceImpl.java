@@ -58,4 +58,11 @@ public class DepartmentServiceImpl implements DepartmentService {
         log.info("Delete {}", department);
     }
 
+    @Override
+    public List<Department> getAllByFacultyId(int facultyId) {
+        log.debug("Getting all departments from faculty id({})", facultyId);
+        List<Department> departments = departmentDao.getAllByFacultyId(facultyId);
+        log.info("Found {} departments", departments.size());
+        return departments;
+    }
 }
