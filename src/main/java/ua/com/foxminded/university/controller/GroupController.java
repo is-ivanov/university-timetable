@@ -27,24 +27,20 @@ public class GroupController {
     }
 
     @GetMapping
-    public String groups(@RequestParam(value = "facultyId", required = false) Integer facultyId,
-                         @RequestParam(value = "isShowInactive", required =
-                             false) String isShowInactive,
-                         Model model) {
+    public String showGroups(@RequestParam(value = "facultyId", required = false) Integer facultyId,
+                             @RequestParam(value = "isShowInactive", required =
+                                 false) String isShowInactive,
+                             Model model) {
         if (isShowInactive != null && isShowInactive.equals("on")) {
             model.addAttribute("isShowInactive", true);
         }
-        List<Faculty> allFaculties = facultyService.getAllSortedAscByName();
+        List<Faculty> allFaculties = facultyService.getAllSortedByNameAsc();
         model.addAttribute("faculties", allFaculties);
-        Faculty facultySelected = null;
         if (facultyId != null) {
             List<Group> groups = groupService.getAllByFacultyId(facultyId);
             model.addAttribute("groups", groups);
-            facultySelected = allFaculties.stream()
-                .filter(faculty -> faculty.getId() == facultyId)
-                .findFirst().orElse(null);
         }
-        model.addAttribute("facultySelected", facultySelected);
+        model.addAttribute("facultyIdSelect", facultyId);
         return "group";
     }
 }
