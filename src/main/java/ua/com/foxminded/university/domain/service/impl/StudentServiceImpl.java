@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.com.foxminded.university.dao.interfaces.StudentDao;
+import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.domain.service.interfaces.StudentService;
@@ -98,5 +99,31 @@ public class StudentServiceImpl implements StudentService {
         return student;
     }
 
+    @Override //TODO add unit tests
+    public List<Student> getStudentsByGroup(Group group) {
+        log.debug("Getting all students from group ({})", group);
+        List<Student> students = studentDao.getStudentsByGroup(group);
+        log.info("Found {} students from group {}", students.size(), group);
+        return students;
+    }
+
+    @Override //TODO add unit tests
+    public List<Student> getStudentsByGroup(int groupId) {
+        log.debug("Getting all students from group id({})", groupId);
+        Group group = new Group();
+        group.setId(groupId);
+        List<Student> students = studentDao.getStudentsByGroup(group);
+        log.info("Found {} students from group id({})", students.size(), groupId);
+        return students;
+    }
+
+    @Override //TODO add unit test
+    public List<Student> getStudentsByFaculty(int facultyId) {
+        log.debug("Getting all students from faculty id({})", facultyId);
+        Faculty faculty = new Faculty(facultyId, null);
+        List<Student> students = studentDao.getStudentsByFaculty(faculty);
+        log.info("Found {} student from faculty id({})", students.size(), facultyId);
+        return students;
+    }
 
 }

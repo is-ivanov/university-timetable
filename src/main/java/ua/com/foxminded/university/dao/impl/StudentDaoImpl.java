@@ -1,8 +1,5 @@
 package ua.com.foxminded.university.dao.impl;
 
-import java.util.List;
-import java.util.Optional;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
@@ -10,13 +7,16 @@ import org.springframework.core.env.Environment;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-
 import ua.com.foxminded.university.dao.interfaces.StudentDao;
+import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.domain.entity.mapper.StudentMapper;
 import ua.com.foxminded.university.exception.DAOException;
+
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Repository
@@ -30,6 +30,7 @@ public class StudentDaoImpl implements StudentDao {
     private static final String QUERY_DELETE = "student.delete";
     private static final String QUERY_GET_ALL_BY_LESSON = "student.getStudentsByLesson";
     private static final String QUERY_GET_ALL_BY_GROUP = "student.getStudentsByGroup";
+    private static final String QUERY_GET_ALL_BY_FACULTY = "student.getStudentsByFaculty";
     private static final String MESSAGE_STUDENT_NOT_FOUND = "Student id(%d) not found";
     private static final String MESSAGE_UPDATE_STUDENT_NOT_FOUND = "Can't update because student id(%d) not found";
     private static final String MESSAGE_DELETE_STUDENT_NOT_FOUND = "Can't delete because student id(%d) not found";
@@ -128,7 +129,7 @@ public class StudentDaoImpl implements StudentDao {
 
     @Override
     public List<Student> getStudentsByLesson(Lesson lesson) {
-        log.debug("Getting students by lesson id({})",lesson.getId());
+        log.debug("Getting students by lesson id({})", lesson.getId());
         List<Student> students = jdbcTemplate.query(
             env.getRequiredProperty(QUERY_GET_ALL_BY_LESSON),
             new StudentMapper(), lesson.getId());
@@ -139,7 +140,7 @@ public class StudentDaoImpl implements StudentDao {
 
     @Override
     public List<Student> getStudentsByGroup(Group group) {
-        log.debug("Getting students by group id({})",group.getId());
+        log.debug("Getting students by group id({})", group.getId());
         List<Student> students = jdbcTemplate.query(
             env.getRequiredProperty(QUERY_GET_ALL_BY_GROUP),
             new StudentMapper(), group.getId());
@@ -148,4 +149,13 @@ public class StudentDaoImpl implements StudentDao {
         return students;
     }
 
+    @Override //TODO add unit test
+    public List<Student> getStudentsByFaculty(Faculty faculty) {
+        log.debug("Getting students from ({})", faculty);
+        List<Student> students = jdbcTemplate.query(
+            env.getRequiredProperty(QUERY_GET_ALL_BY_FACULTY),
+            new StudentMapper(), faculty.getId());
+        log.info("Found {} students from ({})", students.size(), faculty);
+        return students;
+    }
 }
