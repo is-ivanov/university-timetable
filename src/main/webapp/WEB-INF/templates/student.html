@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head>
+  <meta charset="UTF-8">
+  <title>Students</title>
+</head>
+<body>
+<div layout:fragment="content">
+  <h3
+    th:utext="${groupIdSelect ne null}? 'Students from ' + ${students.get(0).group.name} :
+                (${facultyIdSelect ne null}? 'Students from ' + ${students.get(0).group.faculty.name} : 'Students')">
+    Students
+    from</h3>
+  <!--  Form -->
+  <form action="#" th:action="@{/student}" class="my-2">
+    <!--    Faculty selecy-->
+    <div class="row mb-3">
+      <div class="col-1">
+        <label for="selectFaculty" class="col-form-label">Faculty</label>
+      </div>
+      <div class="col-md ps-1">
+        <select class="form-select" id="selectFaculty" name="facultyId" onchange="fillSelectGroups()">
+          <option disabled th:selected="${facultyIdSelect eq null}">Please select faculty...</option>
+          <option th:each="faculty : ${faculties}"
+                  th:value="${faculty.id}"
+                  th:utext="${faculty.name}"
+                  th:selected="${facultyIdSelect ne null and faculty.id eq facultyIdSelect}">...
+          </option>
+        </select>
+      </div>
+    </div>
+    <!--    Group select -->
+    <div class="row align-items-center mb-3">
+      <div class="col-1">
+        <label for="selectGroup" class="col-form-label">Group</label>
+      </div>
+      <div class="col-md-4 ps-1">
+        <select class="form-select" id="selectGroup" name="groupId">
+          <option disabled selected>Please select group...</option>
+          <option th:each="group : ${groups}"
+                  th:value="${group.id}"
+                  th:utext="${group.name} + (${group.active}? '' : ' - inactive')"
+                  th:classappend="${group.active}? 'active' : (${isShowInactiveGroups}?
+                                                'inactive' : 'inactive d-none')"
+                  th:selected="${groupIdSelect ne null and group.id eq groupIdSelect}">...
+          </option>
+        </select>
+      </div>
+
+      <div class="col-auto form-check form-switch ms-3">
+        <input class="form-check-input" type="checkbox" id="switchShowInactiveGroups"
+               onclick="showInactiveGroupsInSelect()"
+               name="isShowInactiveGroups" th:checked="${isShowInactiveGroups}">
+        <label class="form-check-label" for="switchShowInactiveGroups">Show inactive groups</label>
+      </div>
+    </div>
+    <!--    Submit button and checkbox show inactive students -->
+    <div class="row mt-2">
+      <div class="col-sm">
+        <input class="btn btn-success" type="submit" value="Show students">
+      </div>
+      <div class="col-sm-auto form-check form-switch ms-5">
+        <!--        TODO onclick checkbox()-->
+        <input class="form-check-input" type="checkbox" id="switchShowInactiveStudentsMainTable"
+               onclick="showInactiveStudentsInTable()" name="isShowInactiveStudents"
+               th:checked="${isShowInactiveStudents}">
+        <label class="form-check-label" for="switchShowInactiveStudentsMainTable">Show inactive students</label>
+      </div>
+    </div>
+  </form>
+  <!--  Form-->
+  <!--  Main Table-->
+  <div class="table-responsive-md">
+    <table class="table table-hover table-sortable" id="mainTable"
+           th:classappend="${facultyIdSelect == null and groupIdSelect == null } ? 'd-none'">
+      <caption>List of students</caption>
+      <thead class="bg-success">
+      <tr>
+        <th scope="col" class="col">id</th>
+        <th scope="col" class="col">First Name</th>
+        <th scope="col" class="col">Patronymic</th>
+        <th scope="col" class="col">Last Name</th>
+        <th scope="col" class="col">Group Name</th>
+        <th scope="col" class="col text-center">Status</th>
+        <th scope="col" class="d-none">Group Id</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="student : ${students}"
+          th:classappend="${student.active} ? 'active' : (${isShowInactiveStudents}? 'inactive' : 'inactive d-none')">
+        <td th:utext="${student.id}">...</td>
+        <td th:utext="${student.firstName}">...</td>
+        <td th:utext="${student.patronymic}">...</td>
+        <td th:utext="${student.lastName}">...</td>
+        <td th:utext="${student.group.name}">...</td>
+        <td th:utext="${student.active} ? 'active' : 'inactive'" class="text-center"
+            th:classappend="${student.active} ? 'active' : 'inactive'">active
+        </td>
+        <td th:utext="${student.group.id}" class="d-none">...</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <!--  Main Table End-->
+</div>
+<!--Scripts-->
+<script layout:fragment="script">
+  function showInactiveGroupsInSelect() {
+    const check = document.getElementById('switchShowInactiveGroups');
+    const select = document.getElementById('selectGroup');
+    showInactiveSelectOption(select, check);
+  }
+
+  function showInactiveStudentsInTable() {
+    const table = document.getElementById('mainTable');
+    const check = document.getElementById('switchShowInactiveStudentsMainTable');
+    showInactiveTableRow(table, check);
+  }
+</script>
+<!--Delete after complete design-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+<script src="../resources/js/tablesort.js" th:src="@{/js/tablesort.js}"></script>
+<script src="../resources/js/show_inactive.js" th:src="@{/js/show_inactive.js}"></script>
+<script src="../resources/js/fill_select.js" th:src="@{/js/fill_select.js}"></script>
+<!--Delete after complete design-->
+</body>
+</html>

@@ -12,8 +12,8 @@ function sortTableByColumn(table, column, asc = true) {
 
     // Sort each row
     const sortedRows = rows.sort((a, b) => {
-        let aColText = a.querySelector(`td:nth-child(${column + 1})`).textContent.trim();
-        let bColText = b.querySelector(`td:nth-child(${column + 1})`).textContent.trim();
+        let aColText = a.querySelector(`td:nth-child(${column + 1})`).textContent.trim().toLowerCase();
+        let bColText = b.querySelector(`td:nth-child(${column + 1})`).textContent.trim().toLowerCase();
 
         if (!isNaN(parseFloat(aColText))&& !isNaN(parseFloat((bColText)))) {
             aColText = parseFloat(aColText);
