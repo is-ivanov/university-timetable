@@ -23,6 +23,7 @@ public class FacultyDaoImpl implements FacultyDao {
 
     private static final String QUERY_ADD = "faculty.add";
     private static final String QUERY_GET_ALL = "faculty.getAll";
+    private static final String QUERY_GET_ALL_SORTED_NAME_ASC = "faculty.getAllSortedByNameAsc";
     private static final String QUERY_GET_BY_ID = "faculty.getById";
     private static final String QUERY_UPDATE = "faculty.update";
     private static final String QUERY_DELETE = "faculty.delete";
@@ -105,6 +106,17 @@ public class FacultyDaoImpl implements FacultyDao {
         } else {
             log.info("Delete {}", faculty);
         }
+    }
+
+    //TODO test for this method
+    @Override
+    public List<Faculty> getAllSortedByNameAsc() {
+        log.debug("Getting all faculties sorted by name ascending");
+        List<Faculty> faculties = jdbcTemplate.query(
+            env.getRequiredProperty(QUERY_GET_ALL_SORTED_NAME_ASC),
+            new FacultyMapper());
+        log.info("Found {} sorted faculties", faculties.size());
+        return faculties;
     }
 
 }

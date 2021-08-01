@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface FacultyService extends Service<Faculty> {
 
-    List<Faculty> getAllSortedAscByName();
+    List<Faculty> getAllSortedByNameAsc();
 }

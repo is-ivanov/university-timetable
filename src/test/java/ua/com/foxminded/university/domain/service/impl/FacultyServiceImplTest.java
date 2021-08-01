@@ -117,6 +117,6 @@ class FacultyServiceImplTest {
         LinkedList<Faculty> expectedFaculties = new LinkedList<>();
         expectedFaculties.add(firstFaculty);
         expectedFaculties.add(secondFaculty);
-        assertEquals(expectedFaculties, facultyService.getAllSortedAscByName());
+        assertEquals(expectedFaculties, facultyService.getAllSortedByNameAsc());
     }
 }

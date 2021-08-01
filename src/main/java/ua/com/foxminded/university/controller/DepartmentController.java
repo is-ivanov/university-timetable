@@ -30,7 +30,7 @@ public class DepartmentController {
     @GetMapping
     public String groups(@RequestParam(value = "facultyId", required = false) Integer facultyId,
                          Model model) {
-        List<Faculty> allFaculties = facultyService.getAllSortedAscByName();
+        List<Faculty> allFaculties = facultyService.getAllSortedByNameAsc();
         model.addAttribute("faculties", allFaculties);
         Faculty facultySelected = null;
         if (facultyId != null) {

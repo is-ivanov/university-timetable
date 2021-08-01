@@ -58,13 +58,12 @@ public class FacultyServiceImpl implements FacultyService {
         log.info("Delete {}", faculty);
     }
 
+    //TODO change unit test
     @Override
-    public List<Faculty> getAllSortedAscByName() {
-        log.debug("Getting all faculties");
-        List<Faculty> faculties = facultyDao.getAll();
-        log.info("Found {} faculties", faculties.size());
-        faculties.sort(Comparator.comparing(Faculty::getName));
-        log.info("Faculties sorted");
+    public List<Faculty> getAllSortedByNameAsc() {
+        log.debug("Getting all faculties sorted by name ascending");
+        List<Faculty> faculties = facultyDao.getAllSortedByNameAsc();
+        log.info("Found {} sorted faculties", faculties.size());
         return faculties;
     }
 }
