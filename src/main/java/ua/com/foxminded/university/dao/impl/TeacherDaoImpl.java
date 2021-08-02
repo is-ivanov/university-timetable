@@ -121,4 +121,12 @@ public class TeacherDaoImpl implements TeacherDao {
         }
     }
 
+    @Override //TODO unit test
+    public List<Teacher> getAllByDepartment(int departmentId) {
+        log.debug("Getting all teachers");
+        List<Teacher> teachers = jdbcTemplate.query(
+            env.getRequiredProperty(QUERY_GET_ALL), new TeacherMapper());
+        log.info("Found {} teachers", teachers.size());
+        return teachers;
+    }
 }

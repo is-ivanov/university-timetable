@@ -10,11 +10,10 @@
   <h3
     th:utext="${groupIdSelect ne null}? 'Students from ' + ${students.get(0).group.name} :
                 (${facultyIdSelect ne null}? 'Students from ' + ${students.get(0).group.faculty.name} : 'Students')">
-    Students
-    from</h3>
+    Students from</h3>
   <!--  Form -->
   <form action="#" th:action="@{/student}" class="my-2">
-    <!--    Faculty selecy-->
+    <!--    Faculty select-->
     <div class="row mb-3">
       <div class="col-1">
         <label for="selectFaculty" class="col-form-label">Faculty</label>
@@ -51,20 +50,19 @@
       <div class="col-auto form-check form-switch ms-3">
         <input class="form-check-input" type="checkbox" id="switchShowInactiveGroups"
                onclick="showInactiveGroupsInSelect()"
-               name="isShowInactiveGroups" th:checked="${isShowInactiveGroups}">
+               name="isShowInactiveGroups" th:checked="${isShowInactiveGroups}"/>
         <label class="form-check-label" for="switchShowInactiveGroups">Show inactive groups</label>
       </div>
     </div>
     <!--    Submit button and checkbox show inactive students -->
     <div class="row mt-2">
       <div class="col-sm">
-        <input class="btn btn-success" type="submit" value="Show students">
+        <input class="btn btn-success" type="submit" value="Show students"/>
       </div>
       <div class="col-sm-auto form-check form-switch ms-5">
-        <!--        TODO onclick checkbox()-->
         <input class="form-check-input" type="checkbox" id="switchShowInactiveStudentsMainTable"
                onclick="showInactiveStudentsInTable()" name="isShowInactiveStudents"
-               th:checked="${isShowInactiveStudents}">
+               th:checked="${isShowInactiveStudents}"/>
         <label class="form-check-label" for="switchShowInactiveStudentsMainTable">Show inactive students</label>
       </div>
     </div>
