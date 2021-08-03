@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface DepartmentService extends Service<Department> {
 
-    List<Department> getAllByFacultyId(int facultyId);
+    List<Department> getAllByFaculty(int facultyId);
 }

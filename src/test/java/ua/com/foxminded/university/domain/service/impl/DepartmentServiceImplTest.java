@@ -116,6 +116,6 @@ class DepartmentServiceImplTest {
         expectedDepartments.add(department2);
         when(departmentDaoMock.getAllByFacultyId(ID1)).thenReturn(expectedDepartments);
         assertEquals(expectedDepartments,
-            departmentService.getAllByFacultyId(ID1));
+            departmentService.getAllByFaculty(ID1));
     }
 }

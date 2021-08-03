@@ -34,7 +34,7 @@ public class DepartmentController {
         model.addAttribute("faculties", allFaculties);
         Faculty facultySelected = null;
         if (facultyId != null) {
-            List<Department> departments = departmentService.getAllByFacultyId(facultyId);
+            List<Department> departments = departmentService.getAllByFaculty(facultyId);
             model.addAttribute("departments", departments);
             facultySelected = allFaculties.stream()
                 .filter(faculty -> faculty.getId() == facultyId)
