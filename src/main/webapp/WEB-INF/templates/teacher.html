@@ -76,7 +76,7 @@
         </thead>
         <tbody>
         <tr th:each="student : ${teachers}"
-            th:classappend="${student.active} ? 'active' : (${isShowInactiveStudents}? 'inactive' : 'inactive d-none')">
+            th:classappend="${student.active} ? 'active' : (${isShowInactiveTeachers}? 'inactive' : 'inactive d-none')">
           <td th:utext="${student.id}">...</td>
           <td th:utext="${student.firstName}">...</td>
           <td th:utext="${student.patronymic}">...</td>

@@ -26,6 +26,8 @@ public class TeacherDaoImpl implements TeacherDao {
     private static final String QUERY_GET_BY_ID = "teacher.getById";
     private static final String QUERY_UPDATE = "teacher.update";
     private static final String QUERY_DELETE = "teacher.delete";
+    private static final String QUERY_GET_ALL_BY_DEPARTMENT = "teacher.getTeachersByDepartment";
+    private static final String QUERY_GET_ALL_BY_FACULTY = "teacher.getTeachersByFaculty";
     private static final String MESSAGE_TEACHER_NOT_FOUND = "Teacher id(%d) not found";
     private static final String MESSAGE_UPDATE_TEACHER_NOT_FOUND = "Can't update because teacher id(%d) not found";
     private static final String MESSAGE_DELETE_TEACHER_NOT_FOUND = "Can't delete because teacher id(%d) not found";
@@ -121,12 +123,23 @@ public class TeacherDaoImpl implements TeacherDao {
         }
     }
 
-    @Override //TODO unit test
+    @Override
     public List<Teacher> getAllByDepartment(int departmentId) {
-        log.debug("Getting all teachers");
+        log.debug("Getting all teachers by department id({})", departmentId);
         List<Teacher> teachers = jdbcTemplate.query(
-            env.getRequiredProperty(QUERY_GET_ALL), new TeacherMapper());
-        log.info("Found {} teachers", teachers.size());
+            env.getRequiredProperty(QUERY_GET_ALL_BY_DEPARTMENT),
+            new TeacherMapper(), departmentId);
+        log.info("Found {} teachers from department id({})", teachers.size(), departmentId);
+        return teachers;
+    }
+
+    @Override
+    public List<Teacher> getAllByFaculty(int facultyId) {
+        log.debug("Getting all teachers by faculty id({})", facultyId);
+        List<Teacher> teachers = jdbcTemplate.query(
+            env.getRequiredProperty(QUERY_GET_ALL_BY_FACULTY),
+            new TeacherMapper(), facultyId);
+        log.info("Found {} teachers from faculty id({})", teachers.size(), facultyId);
         return teachers;
     }
 }

@@ -1,8 +1,5 @@
 package ua.com.foxminded.university.dao.impl;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import nl.altindag.log.LogCaptor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -13,6 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.jdbc.JdbcTestUtils;
 
 import ua.com.foxminded.university.domain.entity.Department;
@@ -21,8 +19,13 @@ import ua.com.foxminded.university.domain.entity.Teacher;
 import ua.com.foxminded.university.exception.DAOException;
 import ua.com.foxminded.university.springconfig.TestDbConfig;
 
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestDbConfig.class)
+@WebAppConfiguration
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
     "/schema.sql", "/teacher-test-data.sql"})
 class TeacherDaoImplTest {
@@ -43,10 +46,8 @@ class TeacherDaoImplTest {
     private static final String FIRST_TEACHER_PATRONYMIC = "Jr";
     private static final boolean FIRST_TEACHER_ACTIVE = true;
     private static final String MESSAGE_EXCEPTION = "Teacher id(4) not found";
-    private static final String MESSAGE_UPDATE_MASK = "Can't update teacher " +
-        "id(%s)";
-    private static final String MESSAGE_DELETE_MASK = "Can't delete teacher " +
-        "id(%s)";
+    private static final String MESSAGE_UPDATE_MASK = "Can't update teacher id(%s)";
+    private static final String MESSAGE_DELETE_MASK = "Can't delete teacher id(%s)";
     private static final String MESSAGE_UPDATE_EXCEPTION = "Can't update " +
         "because teacher id(4) not found";
     private static final String MESSAGE_DELETE_EXCEPTION = "Can't delete " +
@@ -207,6 +208,47 @@ class TeacherDaoImplTest {
                 () -> dao.delete(teacher));
             assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
             assertEquals(MESSAGE_DELETE_EXCEPTION, ex.getMessage());
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'getAllByDepartment' method")
+    class getAllByDepartmentTest {
+
+        @Test
+        @DisplayName("with department id=1 should return List with size = 1")
+        void testGetAllTeachersByDepartmentId1() {
+            int expectedQuantityTeachers = 1;
+            List<Teacher> actualTeachers = dao.getAllByDepartment(ID1);
+            assertEquals(expectedQuantityTeachers, actualTeachers.size());
+            assertEquals(FIRST_TEACHER_NAME, actualTeachers.get(0).getFirstName());
+            assertEquals(FIRST_TEACHER_LAST_NAME,
+                actualTeachers.get(0).getLastName());
+        }
+
+        @Test
+        @DisplayName("with department id=4 should return empty List")
+        void testGetAllTeachersByDepartmentId4() {
+            assertTrue(dao.getAllByDepartment(ID4).isEmpty());
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'getAllByFaculty' method")
+    class getAllByFacultyTest {
+
+        @Test
+        @DisplayName("with faculty id=1 should return List with size = 2")
+        void testGetAllTeachersByFacultyId1() {
+            int expectedQuantityTeachers = 2;
+            List<Teacher> actualTeachers = dao.getAllByFaculty(ID1);
+            assertEquals(expectedQuantityTeachers, actualTeachers.size());
+        }
+
+        @Test
+        @DisplayName("with faculty id=2 should return empty List")
+        void testGetAllTeachersByFacultyId2() {
+            assertTrue(dao.getAllByFaculty(ID2).isEmpty());
         }
     }
 }

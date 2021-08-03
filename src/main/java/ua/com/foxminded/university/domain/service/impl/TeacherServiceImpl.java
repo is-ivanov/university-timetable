@@ -98,4 +98,20 @@ public class TeacherServiceImpl implements TeacherService {
         return teacher;
     }
 
+    @Override //TODO unit test
+    public List<Teacher> getAllByDepartment(int departmentId) {
+        log.debug("Getting all teachers from department id({})", departmentId);
+        List<Teacher> teachers = teacherDao.getAllByDepartment(departmentId);
+        log.info("Found {} teachers from department id({})", teachers.size(), departmentId);
+        return teachers;
+    }
+
+    @Override //TODO unit test
+    public List<Teacher> getAllByFaculty(int facultyId) {
+        log.debug("Getting all teachers from faculty id({})", facultyId);
+        List<Teacher> teachers = teacherDao.getAllByFaculty(facultyId);
+        log.info("Found {} teachers from faculty id({})", teachers.size(), facultyId);
+        return teachers;
+    }
+
 }

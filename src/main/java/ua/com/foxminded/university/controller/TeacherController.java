@@ -30,25 +30,23 @@ public class TeacherController {
 
     @GetMapping
     public String showDepartments(@RequestParam(value = "facultyId", required = false)
-                                   Integer facultyId,
-                               @RequestParam(value = "departmentId", required = false)
-                                   Integer departmentId,
-                               @RequestParam(value = "isShowInactiveTeachers",
-                                   required = false) String isShowInactiveTeachers,
-                               Model model) {
+                                      Integer facultyId,
+                                  @RequestParam(value = "departmentId", required = false)
+                                      Integer departmentId,
+                                  @RequestParam(value = "isShowInactiveTeachers",
+                                      required = false) String isShowInactiveTeachers,
+                                  Model model) {
         if (isShowInactiveTeachers != null && isShowInactiveTeachers.equals("on")) {
             model.addAttribute("isShowInactiveTeachers", true);
         }
         model.addAttribute("faculties", facultyService.getAllSortedByNameAsc());
         if (departmentId != null) {
-            model.addAttribute("students",
-                teacherService.getStudentsByGroup(groupId));
+            model.addAttribute("teachers", teacherService.getAllByDepartment(departmentId));
         } else if (facultyId != null) {
-            model.addAttribute("students",
-                teacherService.getStudentsByFaculty(facultyId));
+            model.addAttribute("teachers", teacherService.getAllByFaculty(facultyId));
         }
         if (facultyId != null) {
-            model.addAttribute("departments", departmentService.getAllByFacultyId(facultyId));
+            model.addAttribute("departments", departmentService.getAllByFaculty(facultyId));
         } else {
             model.addAttribute("departments", departmentService.getAll());
         }
@@ -60,6 +58,6 @@ public class TeacherController {
     @GetMapping(value = "/faculty")
     @ResponseBody
     public List getDepartments(@RequestParam Integer facultyId) {
-        return departmentService.getAllByFacultyId(facultyId);
+        return departmentService.getAllByFaculty(facultyId);
     }
 }

@@ -3,6 +3,8 @@ package ua.com.foxminded.university.domain.service.interfaces;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Teacher;
 
+import java.util.List;
+
 public interface TeacherService extends Service<Teacher> {
 
     void deactivateTeacher(Teacher teacher);
@@ -11,4 +13,7 @@ public interface TeacherService extends Service<Teacher> {
 
     Teacher transferTeacherToDepartment(Teacher teacher, Department department);
 
+    List<Teacher> getAllByDepartment(int departmentId);
+
+    List<Teacher> getAllByFaculty(int facultyId);
 }
