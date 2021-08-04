@@ -7,9 +7,8 @@
 </head>
 <body>
 <div layout:fragment="content">
-  <h3
-    th:utext="${groupIdSelect ne null}? 'Students from ' + ${students.get(0).group.name} :
-                (${facultyIdSelect ne null}? 'Students from ' + ${students.get(0).group.faculty.name} : 'Students')">
+  <h3 th:utext="${groupIdSelect ne null}? 'Students from ' + ${students.get(0).group.name} :
+      (${facultyIdSelect ne null}? 'Students from ' + ${students.get(0).group.faculty.name} : 'Students')">
     Students from</h3>
   <!--  Form -->
   <form action="#" th:action="@{/student}" class="my-2">
@@ -104,25 +103,17 @@
 </div>
 <!--Scripts-->
 <script layout:fragment="script">
-  function showInactiveGroupsInSelect() {
-    const check = document.getElementById('switchShowInactiveGroups');
-    const select = document.getElementById('selectGroup');
-    showInactiveSelectOption(select, check);
+  function showInactiveGroupsInSelect () {
+    const check = document.getElementById('switchShowInactiveGroups')
+    const select = document.getElementById('selectGroup')
+    showInactiveSelectOption(select, check)
   }
 
-  function showInactiveStudentsInTable() {
-    const table = document.getElementById('mainTable');
-    const check = document.getElementById('switchShowInactiveStudentsMainTable');
-    showInactiveTableRow(table, check);
+  function showInactiveStudentsInTable () {
+    const table = document.getElementById('mainTable')
+    const check = document.getElementById('switchShowInactiveStudentsMainTable')
+    showInactiveTableRow(table, check)
   }
 </script>
-<!--Delete after complete design-->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
-<script src="../resources/js/tablesort.js" th:src="@{/js/tablesort.js}"></script>
-<script src="../resources/js/show_inactive.js" th:src="@{/js/show_inactive.js}"></script>
-<script src="../resources/js/fill_select.js" th:src="@{/js/fill_select.js}"></script>
-<!--Delete after complete design-->
 </body>
 </html>

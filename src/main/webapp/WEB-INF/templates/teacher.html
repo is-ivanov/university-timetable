@@ -7,12 +7,9 @@
 </head>
 <body>
 <div layout:fragment="content">
-  <!--  <h3-->
-  <!--    th:utext="${groupIdSelect ne null}? 'Students from ' + ${students.get(0).department.name} :-->
-  <!--                (${facultyIdSelect ne null}? 'Students from ' + ${students.get(0).department.faculty.name} : 'Students')">-->
-  <!--    Teachers-->
-  <!--    from</h3>-->
-  <h3>Teachers</h3>
+  <h3 th:utext="${departmentIdSelect ne null}? 'Teacher from ' + ${teachers.get(0).department.name} :
+      (${facultyIdSelect ne null}? 'Teachers from ' + ${teachers.get(0).department.faculty.name} : 'Teachers')">
+    Teachers from</h3>
   <!--  Form -->
   <form action="#" th:action="@{/teacher}" class="my-2">
     <!--    Faculty and Department select-->
@@ -59,37 +56,37 @@
   </form>
   <!--  Form-->
   <!--  Main Table-->
-    <div class="table-responsive-md">
-      <table class="table table-hover table-sortable" id="mainTable"
-             th:classappend="${facultyIdSelect == null and departmentIdSelect == null } ? 'd-none'">
-        <caption>List of teachers</caption>
-        <thead class="bg-success">
-        <tr>
-          <th scope="col" class="col">id</th>
-          <th scope="col" class="col">First Name</th>
-          <th scope="col" class="col">Patronymic</th>
-          <th scope="col" class="col">Last Name</th>
-          <th scope="col" class="col">Department</th>
-          <th scope="col" class="col text-center">Status</th>
-          <th scope="col" class="d-none">Department Id</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="student : ${teachers}"
-            th:classappend="${student.active} ? 'active' : (${isShowInactiveTeachers}? 'inactive' : 'inactive d-none')">
-          <td th:utext="${student.id}">...</td>
-          <td th:utext="${student.firstName}">...</td>
-          <td th:utext="${student.patronymic}">...</td>
-          <td th:utext="${student.lastName}">...</td>
-          <td th:utext="${student.department.name}">...</td>
-          <td th:utext="${student.active} ? 'active' : 'inactive'" class="text-center"
-              th:classappend="${student.active} ? 'active' : 'inactive'">active
-          </td>
-          <td th:utext="${student.department.id}" class="d-none">...</td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
+  <div class="table-responsive-md">
+    <table class="table table-hover table-sortable" id="mainTable"
+           th:classappend="${facultyIdSelect == null and departmentIdSelect == null } ? 'd-none'">
+      <caption>List of teachers</caption>
+      <thead class="bg-success">
+      <tr>
+        <th scope="col" class="col">id</th>
+        <th scope="col" class="col">First Name</th>
+        <th scope="col" class="col">Patronymic</th>
+        <th scope="col" class="col">Last Name</th>
+        <th scope="col" class="col">Department</th>
+        <th scope="col" class="col text-center">Status</th>
+        <th scope="col" class="d-none">Department Id</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="teacher : ${teachers}"
+          th:classappend="${teacher.active} ? 'active' : (${isShowInactiveTeachers}? 'inactive' : 'inactive d-none')">
+        <td th:utext="${teacher.id}">...</td>
+        <td th:utext="${teacher.firstName}">...</td>
+        <td th:utext="${teacher.patronymic}">...</td>
+        <td th:utext="${teacher.lastName}">...</td>
+        <td th:utext="${teacher.department.name}">...</td>
+        <td th:utext="${teacher.active} ? 'active' : 'inactive'" class="text-center"
+            th:classappend="${teacher.active} ? 'active' : 'inactive'">active
+        </td>
+        <td th:utext="${teacher.department.id}" class="d-none">...</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
   <!--  Main Table End-->
 </div>
 <!--Scripts-->
@@ -100,13 +97,5 @@
     showInactiveTableRow(table, check)
   }
 </script>
-<!--Delete after complete design-->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
-<script src="../resources/js/tablesort.js" th:src="@{/js/tablesort.js}"></script>
-<script src="../resources/js/show_inactive.js" th:src="@{/js/show_inactive.js}"></script>
-<script src="../resources/js/fill_select.js" th:src="@{/js/fill_select.js}"></script>
-<!--Delete after complete design-->
 </body>
 </html>
