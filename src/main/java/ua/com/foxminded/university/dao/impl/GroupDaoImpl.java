@@ -9,7 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ua.com.foxminded.university.dao.interfaces.GroupDao;
 import ua.com.foxminded.university.domain.entity.Group;
-import ua.com.foxminded.university.domain.entity.mapper.GroupMapper;
+import ua.com.foxminded.university.dao.mapper.GroupMapper;
 import ua.com.foxminded.university.exception.DAOException;
 
 import java.util.List;

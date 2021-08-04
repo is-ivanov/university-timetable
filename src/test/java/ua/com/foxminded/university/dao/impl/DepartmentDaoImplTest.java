@@ -22,8 +22,7 @@ import ua.com.foxminded.university.springconfig.WebConfig;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {TestDbConfig.class, WebConfig.class})
-@WebAppConfiguration
+@ContextConfiguration(classes = TestDbConfig.class)
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
     "/schema.sql", "/department-test-data.sql"})
 class DepartmentDaoImplTest {

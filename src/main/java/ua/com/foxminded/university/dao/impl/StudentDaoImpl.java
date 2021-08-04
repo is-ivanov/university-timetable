@@ -12,7 +12,7 @@ import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Student;
-import ua.com.foxminded.university.domain.entity.mapper.StudentMapper;
+import ua.com.foxminded.university.dao.mapper.StudentMapper;
 import ua.com.foxminded.university.exception.DAOException;
 
 import java.util.List;

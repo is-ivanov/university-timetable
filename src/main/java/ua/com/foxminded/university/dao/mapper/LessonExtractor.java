@@ -1,4 +1,4 @@
-package ua.com.foxminded.university.domain.entity.mapper;
+package ua.com.foxminded.university.dao.mapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

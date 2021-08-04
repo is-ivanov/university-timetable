@@ -1,4 +1,4 @@
-package ua.com.foxminded.university.domain.entity.mapper;
+package ua.com.foxminded.university.dao.mapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;

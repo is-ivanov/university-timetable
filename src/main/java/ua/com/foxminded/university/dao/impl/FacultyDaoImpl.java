@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import ua.com.foxminded.university.dao.interfaces.FacultyDao;
 import ua.com.foxminded.university.domain.entity.Faculty;
-import ua.com.foxminded.university.domain.entity.mapper.FacultyMapper;
+import ua.com.foxminded.university.dao.mapper.FacultyMapper;
 import ua.com.foxminded.university.exception.DAOException;
 
 @Slf4j

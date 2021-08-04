@@ -21,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestDbConfig.class)
-@WebAppConfiguration
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
     "/schema.sql", "/group-test-data.sql"})
 class GroupDaoImplTest {

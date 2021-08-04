@@ -105,18 +105,15 @@ class FacultyServiceImplTest {
     }
 
     @Test
-    @DisplayName("test 'getAllSortedAscByName' when dao return unsorted list " +
-        "method should return sorted list")
+    @DisplayName("test 'getAll' when Dao return List faculties then method " +
+        "should return this List")
     void testGetAllSortedAscByName() {
         Faculty firstFaculty = new Faculty(ID1, FIRST_FACULTY_NAME);
         Faculty secondFaculty = new Faculty(ID2, SECOND_FACULTY_NAME);
         LinkedList<Faculty> facultiesFromDao = new LinkedList<>();
-        facultiesFromDao.add(secondFaculty);
         facultiesFromDao.add(firstFaculty);
-        when(facultyDaoMock.getAll()).thenReturn(facultiesFromDao);
-        LinkedList<Faculty> expectedFaculties = new LinkedList<>();
-        expectedFaculties.add(firstFaculty);
-        expectedFaculties.add(secondFaculty);
-        assertEquals(expectedFaculties, facultyService.getAllSortedByNameAsc());
+        facultiesFromDao.add(secondFaculty);
+        when(facultyDaoMock.getAllSortedByNameAsc()).thenReturn(facultiesFromDao);
+        assertEquals(facultiesFromDao, facultyService.getAllSortedByNameAsc());
     }
 }
