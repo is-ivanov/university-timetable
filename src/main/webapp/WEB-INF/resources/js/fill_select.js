@@ -1,5 +1,5 @@
 /**
- * Fill select 'selectGroup' with group data from the DB
+ * Fill select 'selectGroup' with groups data from the DB
  */
 function fillSelectGroups () {
   let faculty = $('#selectFaculty').val()
@@ -38,7 +38,7 @@ function fillSelectGroups () {
 }
 
 /**
- * Fill select 'selectDepartment' with department data from the DB
+ * Fill select 'selectDepartment' with departments data from the DB
  */
 function fillSelectDepartments () {
   let faculty = $('#selectFaculty').val()
@@ -46,6 +46,31 @@ function fillSelectDepartments () {
     $('#selectDepartment').
       empty().
       append('<option disabled selected>Please select department...</option>')
+    data.sort(function (a, b) {
+      const nameA = a.name.toLowerCase()
+      const nameB = b.name.toLowerCase()
+      if (nameA < nameB)
+        return -1
+      if (nameA > nameB)
+        return 1
+      return 0
+    })
+    data.forEach(function (item) {
+      let option = '<option value = ' + item.id + '>' + item.name + '</option>'
+      $('#selectDepartment').append(option)
+    })
+  })
+}
+
+/**
+ * Fill select 'selectTeacher' with teachers data from the DB
+ */
+function fillSelectTeachers () {
+  let department = $('#selectDepartment').val()
+  $.get('/lesson/department?departmentId=' + department, function (data) {
+    $('#selectTeacher').
+      empty().
+      append('<option disabled selected>Please select teacher...</option>')
     data.sort(function (a, b) {
       const nameA = a.name.toLowerCase()
       const nameB = b.name.toLowerCase()
