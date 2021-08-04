@@ -12,7 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 @Configuration
-@ComponentScan("ua.com.foxminded.university")
+@ComponentScan("ua.com.foxminded.university.dao")
 @PropertySource("classpath:db.properties")
 public class DbConfig {
     private static final String DRIVER = "db.driver";
