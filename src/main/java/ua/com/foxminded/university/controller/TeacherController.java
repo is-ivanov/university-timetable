@@ -1,5 +1,6 @@
 package ua.com.foxminded.university.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,6 +12,7 @@ import ua.com.foxminded.university.domain.service.interfaces.*;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @Controller
 @RequestMapping("/teacher")
 public class TeacherController {
@@ -19,18 +21,8 @@ public class TeacherController {
     private final FacultyService facultyService;
     private final DepartmentService departmentService;
 
-    @Autowired
-    public TeacherController(TeacherService teacherService,
-                             FacultyService facultyService,
-                             DepartmentService departmentService) {
-        this.teacherService = teacherService;
-        this.facultyService = facultyService;
-        this.departmentService = departmentService;
-    }
-
     @GetMapping
-    public String showDepartments(@RequestParam(value = "facultyId", required = false)
-                                      Integer facultyId,
+    public String showDepartments(@RequestParam(required = false) Integer facultyId,
                                   @RequestParam(value = "departmentId", required = false)
                                       Integer departmentId,
                                   @RequestParam(value = "isShowInactiveTeachers",
