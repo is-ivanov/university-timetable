@@ -71,18 +71,22 @@ function fillSelectTeachers () {
     $('#selectTeacher').
       empty().
       append('<option disabled selected>Please select teacher...</option>')
+    data.forEach(function (teacher) {
+      teacher.fullName = teacher.lastName + ' ' + teacher.firstName.charAt(0)
+        + '.' + teacher.patronymic.charAt(0) + '.'
+    })
     data.sort(function (a, b) {
-      const nameA = a.name.toLowerCase()
-      const nameB = b.name.toLowerCase()
+      const nameA = a.fullName.toLowerCase()
+      const nameB = b.fullName.toLowerCase()
       if (nameA < nameB)
         return -1
       if (nameA > nameB)
         return 1
       return 0
     })
-    data.forEach(function (item) {
-      let option = '<option value = ' + item.id + '>' + item.name + '</option>'
-      $('#selectDepartment').append(option)
+    data.forEach(function (teacher) {
+      let option = '<option value = ' + teacher.id + '>' + teacher.fullName + '</option>'
+      $('#selectTeacher').append(option)
     })
   })
 }

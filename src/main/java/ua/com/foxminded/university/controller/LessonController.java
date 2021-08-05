@@ -28,8 +28,11 @@ public class LessonController {
 
     @GetMapping
     public String showLessons(@RequestParam(required = false) Integer facultyId,
+                              @RequestParam(required = false) Integer departmentId,
                               Model model) {
         model.addAttribute("faculties", facultyService.getAllSortedByNameAsc());
+        model.addAttribute("facultyIdSelect", facultyId);
+        model.addAttribute("departmentIdSelect", departmentId);
 
         return "lesson";
     }

@@ -1,15 +1,19 @@
 package ua.com.foxminded.university.domain.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class TeacherDto {
 
-    private int id;
+    private Integer id;
     private String firstName;
     private String patronymic;
     private String lastName;
     private String departmentName;
-    private boolean active;
-
+    private String status;
+    private String fullName;
 }
