@@ -64,10 +64,10 @@
           <div class="col-md ps-1">
             <select class="form-select" id="selectTeacher" name="teacherId">
               <option disabled selected>Please select teacher...</option>
-              <option th:each="department : ${departments}"
-                      th:value="${department.id}"
-                      th:utext="${department.name}"
-                      th:selected="${departmentIdSelect ne null and department.id eq departmentIdSelect}">...
+              <option th:each="teacher : ${teachers}"
+                      th:value="${teacher.id}"
+                      th:utext="${teacher.name}"
+                      th:selected="${teacherIdSelect ne null and teacher.id eq teacherIdSelect}">...
               </option>
             </select>
           </div>

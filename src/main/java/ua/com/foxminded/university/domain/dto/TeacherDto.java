@@ -16,6 +16,6 @@ public class TeacherDto {
     private String patronymic;
     private String lastName;
     private String departmentName;
-    private String status;
+    private boolean isActive;
     private String fullName;
 }

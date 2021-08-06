@@ -71,10 +71,6 @@ function fillSelectTeachers () {
     $('#selectTeacher').
       empty().
       append('<option disabled selected>Please select teacher...</option>')
-    data.forEach(function (teacher) {
-      teacher.fullName = teacher.lastName + ' ' + teacher.firstName.charAt(0)
-        + '.' + teacher.patronymic.charAt(0) + '.'
-    })
     data.sort(function (a, b) {
       const nameA = a.fullName.toLowerCase()
       const nameB = b.fullName.toLowerCase()

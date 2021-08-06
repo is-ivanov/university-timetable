@@ -10,7 +10,7 @@ public abstract class Person {
     private String firstName;
     private String patronymic;
     private String lastName;
-    private boolean active;
+    private boolean isActive;
 
     public String getFullName() {
         return String.format(MASK_FULL_NAME, this.lastName,
