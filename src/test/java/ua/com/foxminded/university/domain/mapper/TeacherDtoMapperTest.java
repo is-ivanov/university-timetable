@@ -1,11 +1,9 @@
 package ua.com.foxminded.university.domain.mapper;
 
-import lombok.AllArgsConstructor;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Teacher;
@@ -16,22 +14,25 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-@AllArgsConstructor
-@ExtendWith(SpringExtension.class)
 class TeacherDtoMapperTest {
 
-    public static final String FIRST_NAME = "First name";
-    public static final String PATRONYMIC = "Patronymic";
-    public static final String LAST_NAME = "LastName";
-    public static final String FULL_NAME = "LastName, F.P.";
-    public static final int ID1 = 1;
-    public static final int ID2 = 2;
-    public static final String DEPARTMENT_NAME = "department name";
+    private static final String FIRST_NAME = "First name";
+    private static final String PATRONYMIC = "Patronymic";
+    private static final String LAST_NAME = "LastName";
+    private static final String FULL_NAME = "LastName, F.P.";
+    private static final int ID1 = 1;
+    private static final int ID2 = 2;
+    private static final String DEPARTMENT_NAME = "department name";
 
-    private final TeacherDtoMapper mapper;
+    private TeacherDtoMapper mapper;
+
+    @BeforeEach
+    void setUp() {
+        mapper = new TeacherDtoMapperImpl();
+    }
 
     @Nested
-    @DisplayName("When we convert teacher into teacherDto")
+    @DisplayName("When we convert teacher to teacherDto")
     class teacherToTeacherDtoTest {
 
         @Test
