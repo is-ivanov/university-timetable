@@ -14,7 +14,7 @@ function sortTableByColumn(table, column, asc = true) {
     const sortedRows = rows.sort((a, b) => {
         let aColText = a.querySelector(`td:nth-child(${column + 1})`).textContent.trim().toLowerCase();
         let bColText = b.querySelector(`td:nth-child(${column + 1})`).textContent.trim().toLowerCase();
-
+        //TODO sort dates
         if (!isNaN(parseFloat(aColText))&& !isNaN(parseFloat((bColText)))) {
             aColText = parseFloat(aColText);
             bColText = parseFloat(bColText);

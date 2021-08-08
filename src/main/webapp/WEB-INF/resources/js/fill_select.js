@@ -7,30 +7,18 @@ function fillSelectGroups () {
     $('#selectGroup').
       empty().
       append('<option disabled selected>Please select group...</option>')
-    data.sort(function (a, b) {
-      const nameA = a.name.toLowerCase()
-      const nameB = b.name.toLowerCase()
-      if (nameA < nameB)
-        return -1
-      if (nameA > nameB)
-        return 1
-      return 0
-    })
+    data.sort(sortByName)
     data.forEach(function (item) {
       let option
       if (item.active === true) {
         option = '<option class = \'active\' value = ' + item.id + '>' +
           item.name + '</option>'
       } else if ($('#switchShowInactiveGroups').is(':checked')) {
-        // const
         option = '<option class = \'inactive\' value = ' + item.id + '>' +
-          item.name +
-          ' - inactive' + '</option>'
+          item.name + ' - inactive' + '</option>'
       } else {
         option = '<option class = \'inactive d-none\' value = ' + item.id +
-          '>' +
-          item.name +
-          ' - inactive' + '</option>'
+          '>' + item.name + ' - inactive' + '</option>'
       }
       $('#selectGroup').append(option)
     })
@@ -46,15 +34,7 @@ function fillSelectDepartments () {
     $('#selectDepartment').
       empty().
       append('<option disabled selected>Please select department...</option>')
-    data.sort(function (a, b) {
-      const nameA = a.name.toLowerCase()
-      const nameB = b.name.toLowerCase()
-      if (nameA < nameB)
-        return -1
-      if (nameA > nameB)
-        return 1
-      return 0
-    })
+    data.sort(sortByName)
     data.forEach(function (item) {
       let option = '<option value = ' + item.id + '>' + item.name + '</option>'
       $('#selectDepartment').append(option)
@@ -64,10 +44,18 @@ function fillSelectDepartments () {
 
 /**
  * Fill select 'selectTeacher' with teachers data from the DB
+ *
+ * @param {Number} valueSelect The value from 'select' with condition
+ * @param {String} type        Type of select (faculty; department)
  */
-function fillSelectTeachers () {
-  let department = $('#selectDepartment').val()
-  $.get('/lesson/department?departmentId=' + department, function (data) {
+function fillSelectTeachers (valueSelect, type) {
+  let uri
+  if (type === 'faculty') {
+    uri = 'lesson/faculty?facultyId=' + valueSelect
+  } else if (type === 'department') {
+    uri = 'lesson/department?departmentId=' + valueSelect
+  }
+  $.get(uri, function (data) {
     $('#selectTeacher').
       empty().
       append('<option disabled selected>Please select teacher...</option>')
@@ -81,8 +69,28 @@ function fillSelectTeachers () {
       return 0
     })
     data.forEach(function (teacher) {
-      let option = '<option value = ' + teacher.id + '>' + teacher.fullName + '</option>'
+      let option
+      if (teacher.active === true) {
+        option = '<option class = \'active\' value = ' + teacher.id + '>' +
+          teacher.fullName + '</option>'
+      } else if ($('#switchShowInactiveTeachers').is(':checked')) {
+        option = '<option class = \'inactive\' value = ' + teacher.id + '>' +
+          teacher.fullName + ' - inactive' + '</option>'
+      } else {
+        option = '<option class = \'inactive d-none\' value = ' + teacher.id +
+          '>' + teacher.fullName + ' - inactive' + '</option>'
+      }
       $('#selectTeacher').append(option)
     })
   })
+}
+
+function sortByName (a, b) {
+  const nameA = a.name.toLowerCase()
+  const nameB = b.name.toLowerCase()
+  if (nameA < nameB)
+    return -1
+  if (nameA > nameB)
+    return 1
+  return 0
 }

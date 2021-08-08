@@ -2,136 +2,143 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout}">
 <head>
-  <meta charset="UTF-8">
   <title>Lessons</title>
-  <!--  TODO Delete after complete design -->
-  <link rel="icon" th:href="@{/img/favicon.png}" type="image/png"/>
-  <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-        crossorigin="anonymous"
-        th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
-  <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
-  <link rel="stylesheet" th:href="@{/css/style.css}"/>
-  <!--  TODO Delete after complete design -->
 </head>
 <body>
 <div layout:fragment="content">
-  <h3 th:utext="${departmentIdSelect ne null}? 'Teacher from ' + ${teachers.get(0).department.name} :
-      (${facultyIdSelect ne null}? 'Teachers from ' + ${teachers.get(0).department.faculty.name} : 'List of lessons')">
-    List of lessons</h3>
+  <h3>List of lessons</h3>
   <!--  Form -->
-  <form action="#" th:action="@{/lesson}" class="my-2">
-    <!--    Faculty and Department select-->
+  <form action="#" th:action="@{/lesson/filter}" th:object="${lessonFilter}"
+        method="post" class="my-2">
     <div class="row mb-3">
-      <!--      First column filter-->
+      <!--Faculty, department and teacher select-->
       <div class="col-6">
+        <!--Faculty-->
         <div class="row my-1">
           <div class="col-2 text-end pe-1">
             <label for="selectFaculty" class="col-form-label">Faculty</label>
           </div>
           <div class="col-md ps-1">
-            <select class="form-select" id="selectFaculty" name="facultyId" onchange="fillSelectDepartments()">
-              <option disabled th:selected="${facultyIdSelect eq null}">Please select faculty...</option>
+            <select class="form-select" id="selectFaculty" name="facultyId"
+                    onchange="fillSelectDepartmentsAndTeachers()">
+              <option disabled value="" selected>Please select faculty...</option>
               <option th:each="faculty : ${faculties}"
                       th:value="${faculty.id}"
                       th:utext="${faculty.name}"
-                      th:selected="${facultyIdSelect ne null and faculty.id eq facultyIdSelect}">...
+                      th:selected="${lessonFilter.facultyId ne null and faculty.id eq lessonFilter.facultyId}">...
               </option>
             </select>
           </div>
         </div>
+        <!--Department-->
         <div class="row my-1">
           <div class="col-2 text-end pe-1">
             <label for="selectDepartment" class="col-form-label">Department</label>
           </div>
           <div class="col-md ps-1">
-            <select class="form-select" id="selectDepartment" name="departmentId" onchange="fillSelectTeachers()">
-              <option disabled selected>Please select department...</option>
+            <select class="form-select" id="selectDepartment" name="departmentId"
+                    onchange="fillSelectTeachersLesson()">
+              <option disabled value="" selected>Please select department...</option>
               <option th:each="department : ${departments}"
                       th:value="${department.id}"
                       th:utext="${department.name}"
-                      th:selected="${departmentIdSelect ne null and department.id eq departmentIdSelect}">...
+                      th:selected="${lessonFilter.departmentId ne null and
+                          department.id eq lessonFilter.departmentId}">...
               </option>
             </select>
           </div>
         </div>
+        <!--Teacher-->
         <div class="row my-1">
           <div class="col-2 text-end pe-1">
             <label for="selectTeacher" class="col-form-label">Teacher</label>
           </div>
           <div class="col-md ps-1">
             <select class="form-select" id="selectTeacher" name="teacherId">
-              <option disabled selected>Please select teacher...</option>
+              <option disabled value="" selected>Please select teacher...</option>
               <option th:each="teacher : ${teachers}"
                       th:value="${teacher.id}"
-                      th:utext="${teacher.name}"
-                      th:selected="${teacherIdSelect ne null and teacher.id eq teacherIdSelect}">...
+                      th:utext="${teacher.fullName} + (${teacher.isActive}? '' : ' - inactive')"
+                      th:classappend="${teacher.isActive}? 'active' : (${isShowInactiveTeachers}?
+                                                'inactive' : 'inactive d-none')"
+                      th:selected="${lessonFilter.teacherId ne null and teacher.id eq lessonFilter.teacherId}">...
               </option>
             </select>
           </div>
         </div>
+        <!--Inactive teacher checkbox-->
+        <div class="row my-1">
+          <div class="col-sm-auto form-check form-switch ms-5">
+            <input class="form-check-input" type="checkbox" id="switchShowInactiveTeachers"
+                   onclick="showInactiveTeachersInSelect()" name="isShowInactiveTeachers"
+                   th:checked="${isShowInactiveTeachers}"/>
+            <label class="form-check-label" for="switchShowInactiveTeachers">Show inactive teachers</label>
+          </div>
+        </div>
       </div>
-      <!--Second column filter-->
+      <!--Course, room and date select-->
       <div class="col-6">
+        <!--Course-->
         <div class="row my-1">
           <div class="col-2 text-end pe-1">
             <label for="selectCourse" class="col-form-label">Course</label>
           </div>
           <div class="col-md ps-1">
-            <select class="form-select" id="selectCourse" name="courseId" onchange="fillSelectDepartments()">
-              <option disabled th:selected="${facultyIdSelect eq null}">Please select course...</option>
-              <option th:each="faculty : ${faculties}"
-                      th:value="${faculty.id}"
-                      th:utext="${faculty.name}"
-                      th:selected="${facultyIdSelect ne null and faculty.id eq facultyIdSelect}">...
+            <select class="form-select" id="selectCourse" name="courseId">
+              <option disabled value="" selected>Please select course...</option>
+              <option th:each="course : ${courses}"
+                      th:value="${course.id}"
+                      th:utext="${course.name}"
+                      th:selected="${lessonFilter.courseId ne null and course.id eq lessonFilter.courseId}">...
               </option>
             </select>
           </div>
         </div>
+        <!--Room-->
         <div class="row my-1">
           <div class="col-2 text-end pe-1">
             <label for="selectRoom" class="col-form-label">Room</label>
           </div>
           <div class="col-md ps-1">
             <select class="form-select" id="selectRoom" name="roomId">
-              <option disabled selected>Please select room...</option>
-              <option th:each="department : ${departments}"
-                      th:value="${department.id}"
-                      th:utext="${department.name}"
-                      th:selected="${departmentIdSelect ne null and department.id eq departmentIdSelect}">...
+              <option disabled value="" selected>Please select room...</option>
+              <option th:each="room : ${rooms}"
+                      th:value="${room.id}"
+                      th:utext="${room.building} + ' - ' + ${room.number}"
+                      th:selected="${lessonFilter.roomId ne null and room.id eq lessonFilter.roomId}">...
               </option>
             </select>
           </div>
         </div>
+        <!--Dates lesson-->
         <div class="row my-1">
           <div class="col-2 text-end pe-1">
-            <label for="selectDate" class="col-form-label">Date</label>
+            <label for="datepicker" class="col-form-label">Dates</label>
           </div>
-          <div class="col-md ps-1">
-            <select class="form-select" id="selectDate" name="dateStart">
-              <option disabled selected>Please select date...</option>
-              <option th:each="department : ${departments}"
-                      th:value="${department.id}"
-                      th:utext="${department.name}"
-                      th:selected="${departmentIdSelect ne null and department.id eq departmentIdSelect}">...
-              </option>
-            </select>
+          <div class="col-md ps-1 input-group input-daterange" id="datepicker">
+            <span class="input-group-text">from</span>
+            <input type="text" class="input-sm form-control" th:field="*{dateFrom}"
+                   th:value="${#temporals.format(lessonFilter.dateFrom, 'yyyy-MM-dd')}"
+                   autocomplete="off"/>
+            <span class="input-group-text">to</span>
+            <input type="text" class="input-sm form-control" th:field="*{dateTo}"
+                   th:value="${#temporals.format(lessonFilter.dateTo, 'yyyy-MM-dd')}"
+                   autocomplete="off"/>
+            <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
           </div>
         </div>
       </div>
-
     </div>
-    <!--    Submit button and checkbox show inactive teachers -->
-    <div class="row mt-2">
+
+    <!--Submit button and checkbox show inactive teachers -->
+    <div class="row mt-2 align-items-center">
       <div class="col-sm">
         <input class="btn btn-success" type="submit" value="Show lessons"/>
       </div>
       <div class="col-sm-auto form-check form-switch ms-5">
         <input class="form-check-input" type="checkbox" id="switchShowPastLessonsMainTable"
-               onclick="showInactiveTeachersInTable()" name="isShowInactiveTeachers"
-               th:checked="${isShowInactiveTeachers}"/>
+               onclick="showPastLessonsInTable()" name="isShowPastLessons"
+               th:checked="${isShowPastLessons}"/>
         <label class="form-check-label" for="switchShowPastLessonsMainTable">Show past lessons</label>
       </div>
     </div>
@@ -139,12 +146,10 @@
   <!--  Form-->
   <!--  Main Table-->
   <div class="table-responsive-md">
-    <table class="table table-hover table-sortable" id="mainTable"
-           th:classappend="${facultyIdSelect == null and departmentIdSelect == null } ? 'd-none'">
+    <table class="table table-hover table-sortable" id="mainTable">
       <caption>List of lessons</caption>
       <thead class="bg-success">
       <tr>
-        <th scope="col" class="d-none">Id</th>
         <th scope="col" class="col">Course</th>
         <th scope="col" class="col">Teacher</th>
         <th scope="col" class="col">Room</th>
@@ -156,18 +161,14 @@
       </thead>
       <tbody>
       <tr th:each="lesson : ${lessons}"
-          th:classappend="${lesson.active} ? 'active' : (${isShowInactiveTeachers}? 'inactive' : 'inactive d-none')">
-        <td th:utext="${lesson.id}" class="d-none">Lesson id</td>
-        <td th:utext="${lesson.firstName}">course</td>
-        <td th:utext="${lesson.patronymic}">teacher</td>
-        <td th:utext="${lesson.lastName}">room</td>
-        <td th:utext="${lesson.department.name}">2021/08/07</td>
-        <td th:utext="${lesson.department.name}">14:30</td>
-        <td th:utext="${lesson.department.name}">16:00</td>
-        <td th:utext="${lesson.department.name}">details; edit; delete</td>
-        <!--        <td th:utext="${lesson.active} ? 'active' : 'inactive'" class="text-center"-->
-        <!--            th:classappend="${student.active} ? 'active' : 'inactive'">active-->
-        <!--        </td>-->
+          th:classappend="${lesson.timeEnd &gt; #temporals.createNow()}? 'active' : (${isShowPastLessons}? 'inactive' : 'inactive d-none')">
+        <td th:utext="${lesson.courseName}">course</td>
+        <td th:utext="${lesson.teacherFullName}">teacher</td>
+        <td th:utext="${lesson.buildingAndRoom}">room</td>
+        <td th:utext="${#temporals.format(lesson.timeStart, 'yyyy-MM-dd')}">2021/08/07</td>
+        <td th:utext="${#temporals.format(lesson.timeStart, 'HH:mm')}">14:30</td>
+        <td th:utext="${#temporals.format(lesson.timeEnd, 'HH:mm')}">16:00</td>
+        <td>details; edit; delete</td>
       </tr>
       </tbody>
     </table>
@@ -176,19 +177,34 @@
 </div>
 <!--Scripts-->
 <script layout:fragment="script">
-  function showInactiveTeachersInTable () {
-    const table = document.getElementById('mainTable')
-    const check = document.getElementById('switchShowInactiveTeachersMainTable')
-    showInactiveTableRow(table, check)
+  function fillSelectDepartmentsAndTeachers () {
+    fillSelectDepartments()
+
+    const select = document.getElementById('selectFaculty').value
+    fillSelectTeachers(select, 'faculty')
   }
+
+  function fillSelectTeachersLesson () {
+    const select = document.getElementById('selectDepartment').value
+    fillSelectTeachers(select, 'department')
+  }
+
+  function showInactiveTeachersInSelect () {
+    const check = document.getElementById('switchShowInactiveTeachers')
+    const select = document.getElementById('selectTeacher')
+    showInactiveSelectOption(select, check)
+  }
+
+  $('.input-daterange').datepicker({
+    format: 'yyyy-mm-dd',
+    weekStart: 1,
+    todayBtn: true,
+    daysOfWeekHighlighted: '0',
+    calendarWeeks: true,
+    autoclose: true,
+    todayHighlight: true,
+  })
+
 </script>
-<!--Delete after complete design-->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
-<script src="../resources/js/tablesort.js" th:src="@{/js/tablesort.js}"></script>
-<script src="../resources/js/show_inactive.js" th:src="@{/js/show_inactive.js}"></script>
-<script src="../resources/js/fill_select.js" th:src="@{/js/fill_select.js}"></script>
-<!--Delete after complete design-->
 </body>
 </html>
