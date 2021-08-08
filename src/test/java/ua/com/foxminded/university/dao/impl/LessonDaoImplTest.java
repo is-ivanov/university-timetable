@@ -12,14 +12,18 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import ua.com.foxminded.university.domain.entity.*;
+import ua.com.foxminded.university.domain.filter.LessonFilter;
 import ua.com.foxminded.university.exception.DAOException;
 import ua.com.foxminded.university.springconfig.TestDbConfig;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
@@ -418,6 +422,69 @@ class LessonDaoImplTest {
         @DisplayName("when student_id = 5 then should return empty List")
         void testStudentId5_ReturnEmptyListLessons() {
             assertTrue(dao.getAllForStudent(ID5).isEmpty());
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'getAllWithFilter' method")
+    class getAllWithFilterTest {
+
+        @Test
+        @DisplayName("when filter only for faculty should return list lessons" +
+            " size 3")
+        void testFilterOnlyFacultyId1() {
+            LessonFilter filter = new LessonFilter();
+            filter.setFacultyId(ID1);
+            List<Lesson> lessons = dao.getAllWithFilter(filter);
+            assertThat(lessons, hasSize(3));
+        }
+
+        @Test
+        @DisplayName("when filter only for facultyId=2 should return empty list")
+        void testFilterOnlyFacultyId2() {
+            LessonFilter filter = new LessonFilter();
+            filter.setFacultyId(ID2);
+            List<Lesson> lessons = dao.getAllWithFilter(filter);
+            assertThat(lessons, empty());
+        }
+
+        @Test
+        @DisplayName("when filter facultyId and departmentId then filtering " +
+            "should be only for department and with departmentId=1 should " +
+            "return list size 3")
+        void testFilterFacultyAndDepartmentId1() {
+            LessonFilter filter = new LessonFilter();
+            filter.setFacultyId(ID2);
+            filter.setDepartmentId(ID1);
+            List<Lesson> lessons = dao.getAllWithFilter(filter);
+            assertThat(lessons, hasSize(3));
+        }
+
+        @Test
+        @DisplayName("when filter facultyId, departmentId and teacherId then " +
+            "filtering should be only for teacher and with teacherId=1 should" +
+            " return list size 2")
+        void testFilterFacultyDepartmentAndTeacherId1() {
+            LessonFilter filter = new LessonFilter();
+            filter.setFacultyId(ID2);
+            filter.setDepartmentId(ID2);
+            filter.setTeacherId(ID1);
+            List<Lesson> lessons = dao.getAllWithFilter(filter);
+            assertThat(lessons, hasSize(2));
+            assertThat(lessons.get(0).getTeacher().getId(), equalTo(ID1));
+        }
+
+        @Test
+        @DisplayName("when filter dateFrom and dateTo then filtering should " +
+            "return lessons between this dates")
+        void testFilterDateFromAndDateTo() {
+            LessonFilter filter = new LessonFilter();
+            filter.setDateFrom(LocalDate.of(2021, 6, 9));
+            filter.setDateTo(LocalDate.of(2021, 6, 11));
+            List<Lesson> lessons = dao.getAllWithFilter(filter);
+            assertThat(lessons, hasSize(1));
+            assertThat(lessons.get(0).getTimeStart(),
+                is(equalTo(LocalDateTime.of(2021, 6, 10, 14, 0))));
         }
     }
 }

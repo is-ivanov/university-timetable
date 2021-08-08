@@ -3,6 +3,7 @@ package ua.com.foxminded.university.dao.interfaces;
 import java.util.List;
 
 import ua.com.foxminded.university.domain.entity.Lesson;
+import ua.com.foxminded.university.domain.filter.LessonFilter;
 
 public interface LessonDao extends Dao<Lesson> {
 
@@ -18,4 +19,5 @@ public interface LessonDao extends Dao<Lesson> {
 
     void deleteStudentFromLesson(int lessonId, int studentId);
 
+    List<Lesson> getAllWithFilter(LessonFilter filter);
 }

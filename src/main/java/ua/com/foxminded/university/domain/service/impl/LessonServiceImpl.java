@@ -1,19 +1,21 @@
 package ua.com.foxminded.university.domain.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.com.foxminded.university.dao.interfaces.LessonDao;
 import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Room;
 import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.domain.entity.Teacher;
+import ua.com.foxminded.university.domain.filter.LessonFilter;
 import ua.com.foxminded.university.domain.service.interfaces.LessonService;
 import ua.com.foxminded.university.exception.ServiceException;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Slf4j
 @Service
 public class LessonServiceImpl implements LessonService {
@@ -22,13 +24,9 @@ public class LessonServiceImpl implements LessonService {
     private static final String MESSAGE_ROOM_NOT_AVAILABLE = "Room %s is not available";
     private static final String MESSAGE_STUDENT_NOT_AVAILABLE = "Student %s is not available";
     private static final String FOUND_LESSONS = "Found {} lessons";
+    private static final String MESSAGE_FILTER_NOT_SELECT = "Select at least one filter";
 
     private final LessonDao lessonDao;
-
-    @Autowired
-    public LessonServiceImpl(LessonDao lessonDao) {
-        this.lessonDao = lessonDao;
-    }
 
     @Override
     public void add(Lesson lesson) throws ServiceException {
@@ -89,6 +87,21 @@ public class LessonServiceImpl implements LessonService {
             lesson.getId());
     }
 
+    @Override
+    public List<Lesson> getAllWithFilter(LessonFilter filter) {
+        log.debug("Getting all lessons with ({})", filter);
+        log.debug("Checking filter conditions");
+        if (filter.getFacultyId() != null || filter.getDepartmentId() != null ||
+            filter.getTeacherId() != null || filter.getCourseId() != null ||
+            filter.getRoomId() != null || filter.getDateFrom() != null ||
+            filter.getDateTo() != null) {
+            return lessonDao.getAllWithFilter(filter);
+        } else {
+            log.warn("Filter is empty");
+            throw new ServiceException(MESSAGE_FILTER_NOT_SELECT);
+        }
+    }
+
     private void checkLesson(Lesson lesson) throws ServiceException {
         log.debug("Start checking the lesson id({})", lesson.getId());
         if (!checkTeacher(lesson)) {
@@ -145,7 +158,7 @@ public class LessonServiceImpl implements LessonService {
 
     private boolean checkTime(Lesson checkedLesson, List<Lesson> lessons) {
         log.debug("Checking the intersection of time lesson id({}) with other" +
-            " lessons",checkedLesson.getId());
+            " lessons", checkedLesson.getId());
         LocalDateTime timeStartCheckedLesson = checkedLesson.getTimeStart();
         LocalDateTime timeEndCheckedLesson = checkedLesson.getTimeEnd();
         for (Lesson lesson : lessons) {
@@ -156,7 +169,7 @@ public class LessonServiceImpl implements LessonService {
                 || (timeEndCheckedLesson.isAfter(timeStartLesson)
                 && timeEndCheckedLesson.isBefore(timeEndLesson))) {
                 log.warn("Time lesson id({}) intersect with time lesson id" +
-                    "({})",checkedLesson.getId(), lesson.getId());
+                    "({})", checkedLesson.getId(), lesson.getId());
                 return false;
             }
         }

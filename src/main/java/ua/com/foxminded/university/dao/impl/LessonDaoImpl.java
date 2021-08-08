@@ -1,22 +1,24 @@
 package ua.com.foxminded.university.dao.impl;
 
-import java.util.List;
-import java.util.Optional;
-
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-
 import ua.com.foxminded.university.dao.interfaces.LessonDao;
-import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.dao.mapper.LessonExtractor;
+import ua.com.foxminded.university.domain.entity.Lesson;
+import ua.com.foxminded.university.domain.filter.LessonFilter;
 import ua.com.foxminded.university.exception.DAOException;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
 @Slf4j
+@RequiredArgsConstructor
 @Repository
 @PropertySource("classpath:sql_query.properties")
 public class LessonDaoImpl implements LessonDao {
@@ -37,18 +39,21 @@ public class LessonDaoImpl implements LessonDao {
     private static final String MESSAGE_DELETE_LESSON_NOT_FOUND = "Can't delete because lesson id(%d) not found";
     private static final String MESSAGE_STUDENT_NOT_FOUND_IN_LESSON = "Can't delete because student id(%d) not found in lesson id(%d)";
     private static final String FOUND_LESSONS = "Found {} lessons";
+    private static final String WHERE = " WHERE l.lesson_id > 0 ";
+    private static final String TEACHER_FILTER = " AND l.teacher_id = ";
+    private static final String DEPARTMENT_FILTER = " AND t.department_id = ";
+    private static final String FACULTY_FILTER = " AND d.faculty_id = ";
+    private static final String COURSE_FILTER = " AND l.course_id = ";
+    private static final String ROOM_FILTER = " AND l.room_id = ";
+    private static final String TIME_BETWEEN_FILTER = " AND l.time_start BETWEEN '";
+    private static final String AND = "' AND '";
+    private static final String CLOSING_QUOTATION_MARK = "' ";
+    private static final String TIME_AFTER_FILTER = " AND l.time_start >= '";
+    private static final String TIME_BEFORE_FILTER = " AND l.time_start <= '";
 
     private final JdbcTemplate jdbcTemplate;
     private final LessonExtractor lessonExtractor;
     private final Environment env;
-
-    @Autowired
-    public LessonDaoImpl(JdbcTemplate jdbcTemplate,
-                         LessonExtractor lessonExtractor, Environment env) {
-        this.jdbcTemplate = jdbcTemplate;
-        this.lessonExtractor = lessonExtractor;
-        this.env = env;
-    }
 
     @Override
     public void add(Lesson lesson) {
@@ -200,4 +205,75 @@ public class LessonDaoImpl implements LessonDao {
         return lessons;
     }
 
+    @Override
+    public List<Lesson> getAllWithFilter(LessonFilter filter) {
+        log.debug("Getting all lessons with ({})", filter);
+        List<Lesson> lessons = jdbcTemplate.query(createQuery(filter), lessonExtractor);
+        log.info(FOUND_LESSONS, lessons.size());
+        return lessons;
+    }
+
+    private String createQuery(LessonFilter filter) {
+        log.debug("create sql query with filters");
+        StringBuilder query = new StringBuilder(env.getRequiredProperty(QUERY_GET_ALL));
+        query.append(WHERE);
+        addTeacherDepartmentFacultyFilter(query, filter.getTeacherId(),
+            filter.getDepartmentId(), filter.getFacultyId());
+        addCourseFilter(query, filter.getCourseId());
+        addRoomFilter(query, filter.getRoomId());
+        addDateFilter(query, filter.getDateFrom(), filter.getDateTo());
+        log.info("query = {}", query.toString());
+        return query.toString();
+    }
+
+    private void addTeacherDepartmentFacultyFilter(StringBuilder query,
+                                                   Integer teacherId,
+                                                   Integer departmentId,
+                                                   Integer facultyId) {
+        log.debug("check filter by teacher, department and faculty");
+        if (teacherId != null) {
+            log.debug("add filter by teacherId({})", teacherId);
+            query.append(TEACHER_FILTER).append(teacherId);
+        } else if (departmentId != null) {
+            log.debug("add filter by departmentId({})", departmentId);
+            query.append(DEPARTMENT_FILTER).append(departmentId);
+        } else if (facultyId != null) {
+            log.debug("add filter by facultyId({})", facultyId);
+            query.append(FACULTY_FILTER).append(facultyId);
+        }
+    }
+
+    private void addCourseFilter(StringBuilder query, Integer courseId) {
+        log.debug("check filter by course");
+        if (courseId != null) {
+            log.debug("add filter by courseId({})", courseId);
+            query.append(COURSE_FILTER).append(courseId);
+        }
+    }
+
+    private void addRoomFilter(StringBuilder query, Integer roomId) {
+        log.debug("check filter by room");
+        if (roomId != null) {
+            log.debug("add filter by roomId({})", roomId);
+            query.append(ROOM_FILTER).append(roomId);
+        }
+    }
+
+    private void addDateFilter(StringBuilder query, LocalDate dateFrom,
+                               LocalDate dateTo) {
+        log.debug("check filter by date");
+        if (dateFrom != null && dateTo != null) {
+            log.debug("add filter between {} and {}", dateFrom, dateTo);
+            query.append(TIME_BETWEEN_FILTER).append(dateFrom)
+                .append(AND).append(dateTo).append(CLOSING_QUOTATION_MARK);
+        } else if (dateFrom != null) {
+            log.debug("add filter time_start >= {}", dateFrom);
+            query.append(TIME_AFTER_FILTER).append(dateFrom)
+                .append(CLOSING_QUOTATION_MARK);
+        } else if (dateTo != null) {
+            log.debug("add filter time_start <= {}", dateTo);
+            query.append(TIME_BEFORE_FILTER).append(dateTo)
+                .append(CLOSING_QUOTATION_MARK);
+        }
+    }
 }
