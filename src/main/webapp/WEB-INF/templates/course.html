@@ -15,12 +15,20 @@
       <tr>
         <th scope="col" class="col-1">id</th>
         <th scope="col" class="col-6">Name</th>
+        <th scope="col" class="col">Action</th>
       </tr>
       </thead>
       <tbody>
       <tr th:each="course : ${courses}">
         <td th:utext="${course.id}">...</td>
         <td th:utext="${course.name}">...</td>
+        <td>
+          <div class="row">
+            <a th:href="@{/course/{id}(id = ${course.id})}" class="btn btn-info">
+              <span th:text="${course.id}"></span>
+            </a>
+          </div>
+        </td>
       </tr>
       </tbody>
     </table>
