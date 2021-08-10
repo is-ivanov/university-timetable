@@ -19,14 +19,21 @@
       </tr>
       </thead>
       <tbody>
-      <tr th:each="course : ${courses}">
+      <tr th:each="course : ${courses}" class="align-middle">
         <td th:utext="${course.id}">...</td>
         <td th:utext="${course.name}">...</td>
         <td>
-          <div class="row">
-            <a th:href="@{/course/{id}(id = ${course.id})}" class="btn btn-info">
-              <span th:text="${course.id}"></span>
-            </a>
+          <div>
+            <form th:action="@{/course/{id}(id = ${course.id})}" class="form-inline">
+              <button type="submit" class="btn btn-outline-warning btn-sm">
+                <i class="bi-pencil-square"></i> Edit
+              </button>
+            </form>
+            <form th:method="delete" th:action="@{/course/{id}(id = ${course.id})}" class="form-group">
+              <button type="submit" class="btn btn-outline-danger btn-sm">
+                <i class="bi-trash-fill"></i> Delete
+              </button>
+            </form>
           </div>
         </td>
       </tr>
