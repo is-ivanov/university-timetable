@@ -13,13 +13,32 @@
       <thead class="bg-success">
       <tr>
         <th scope="col" class="col-1">id</th>
-        <th scope="col" class="col-6">Faculty Name</th>
+        <th scope="col" class="col">Faculty Name</th>
+        <th scope="col" class="col">Action</th>
       </tr>
       </thead>
       <tbody>
-      <tr th:each="faculty : ${faculties}">
+      <tr th:each="faculty : ${faculties}" class="align-middle">
         <td th:utext="${faculty.id}">...</td>
         <td th:utext="${faculty.name}">...</td>
+        <td class="py-0">
+          <div class="row">
+            <div class="col-auto">
+              <form th:action="@{/faculty/{id}(id = ${faculty.id})}">
+                <button type="submit" class="btn btn-warning btn-sm">
+                  <i class="bi-pencil-square"></i> Edit
+                </button>
+              </form>
+            </div>
+            <div class="col-auto">
+              <form th:method="delete" th:action="@{/faculty/{id}(id = ${faculty.id})}">
+                <button type="submit" class="btn btn-danger btn-sm">
+                  <i class="bi-trash-fill"></i> Delete
+                </button>
+              </form>
+            </div>
+          </div>
+        </td>
       </tr>
       </tbody>
     </table>

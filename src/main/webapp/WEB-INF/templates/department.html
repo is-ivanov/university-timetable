@@ -34,15 +34,32 @@
         <th scope="col" class="col-1">id</th>
         <th scope="col" class="col">Department Name</th>
         <th scope="col">Faculty Name</th>
-        <th scope="col" class="d-none">Faculty Id</th>
+        <th scope="col">Action</th>
       </tr>
       </thead>
       <tbody>
-      <tr th:each="department : ${departments}">
+      <tr th:each="department : ${departments}" class="align-middle">
         <td th:utext="${department.id}">...</td>
         <td th:utext="${department.name}">...</td>
         <td th:utext="${department.faculty.name}">...</td>
-        <td th:utext="${department.faculty.id}" class="d-none">...</td>
+        <td class="py-0">
+          <div class="row">
+            <div class="col-auto">
+              <form th:action="@{/department/{id}(id = ${department.id})}">
+                <button type="submit" class="btn btn-warning btn-sm">
+                  <i class="bi-pencil-square"></i> Edit
+                </button>
+              </form>
+            </div>
+            <div class="col-auto">
+              <form th:method="delete" th:action="@{/department/{id}(id = ${department.id})}">
+                <button type="submit" class="btn btn-danger btn-sm">
+                  <i class="bi-trash-fill"></i> Delete
+                </button>
+              </form>
+            </div>
+          </div>
+        </td>
       </tr>
       </tbody>
     </table>

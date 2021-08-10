@@ -68,11 +68,11 @@
         <th scope="col" class="col">Last Name</th>
         <th scope="col" class="col">Department</th>
         <th scope="col" class="col text-center">Status</th>
-        <th scope="col" class="d-none">Department Id</th>
+        <th scope="col" class="col">Action</th>
       </tr>
       </thead>
       <tbody>
-      <tr th:each="teacher : ${teachers}"
+      <tr th:each="teacher : ${teachers}" class="align-middle"
           th:classappend="${teacher.active} ? 'active' : (${isShowInactiveTeachers}? 'inactive' : 'inactive d-none')">
         <td th:utext="${teacher.id}">...</td>
         <td th:utext="${teacher.firstName}">...</td>
@@ -82,7 +82,31 @@
         <td th:utext="${teacher.active} ? 'active' : 'inactive'" class="text-center"
             th:classappend="${teacher.active} ? 'active' : 'inactive'">active
         </td>
-        <td th:utext="${teacher.department.id}" class="d-none">...</td>
+        <td class="py-0">
+          <div class="row">
+            <div class="col-auto">
+              <form th:action="@{/teacher/{id}/timetable(id = ${teacher.id})}">
+                <button type="submit" class="btn btn-info btn-sm">
+                  <i class="bi-calendar3"></i> Timetable
+                </button>
+              </form>
+            </div>
+            <div class="col-auto">
+              <form th:action="@{/teacher/{id}(id = ${teacher.id})}">
+                <button type="submit" class="btn btn-warning btn-sm">
+                  <i class="bi-pencil-square"></i> Edit
+                </button>
+              </form>
+            </div>
+            <div class="col-auto">
+              <form th:method="delete" th:action="@{/techer/{id}(id = ${teacher.id})}">
+                <button type="submit" class="btn btn-danger btn-sm">
+                  <i class="bi-trash-fill"></i> Delete
+                </button>
+              </form>
+            </div>
+          </div>
+        </td>
       </tr>
       </tbody>
     </table>

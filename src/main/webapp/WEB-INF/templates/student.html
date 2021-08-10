@@ -80,11 +80,11 @@
         <th scope="col" class="col">Last Name</th>
         <th scope="col" class="col">Group Name</th>
         <th scope="col" class="col text-center">Status</th>
-        <th scope="col" class="d-none">Group Id</th>
+        <th scope="col" class="col">Action</th>
       </tr>
       </thead>
       <tbody>
-      <tr th:each="student : ${students}"
+      <tr th:each="student : ${students}" class="align-middle"
           th:classappend="${student.active} ? 'active' : (${isShowInactiveStudents}? 'inactive' : 'inactive d-none')">
         <td th:utext="${student.id}">...</td>
         <td th:utext="${student.firstName}">...</td>
@@ -94,7 +94,31 @@
         <td th:utext="${student.active} ? 'active' : 'inactive'" class="text-center"
             th:classappend="${student.active} ? 'active' : 'inactive'">active
         </td>
-        <td th:utext="${student.group.id}" class="d-none">...</td>
+        <td class="py-0">
+          <div class="row">
+            <div class="col-auto">
+              <form th:action="@{/student/{id}/timetable(id = ${student.id})}">
+                <button type="submit" class="btn btn-info btn-sm">
+                  <i class="bi-calendar3"></i> Timetable
+                </button>
+              </form>
+            </div>
+            <div class="col-auto">
+              <form th:action="@{/student/{id}(id = ${student.id})}">
+                <button type="submit" class="btn btn-warning btn-sm">
+                  <i class="bi-pencil-square"></i> Edit
+                </button>
+              </form>
+            </div>
+            <div class="col-auto">
+              <form th:method="delete" th:action="@{/student/{id}(id = ${student.id})}">
+                <button type="submit" class="btn btn-danger btn-sm">
+                  <i class="bi-trash-fill"></i> Delete
+                </button>
+              </form>
+            </div>
+          </div>
+        </td>
       </tr>
       </tbody>
     </table>

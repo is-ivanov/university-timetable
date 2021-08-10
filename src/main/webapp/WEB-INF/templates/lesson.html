@@ -54,7 +54,8 @@
             <label for="selectTeacher" class="col-form-label">Teacher</label>
           </div>
           <div class="col-md ps-1">
-            <select class="form-select" id="selectTeacher" name="teacherId">
+            <select class="form-select" id="selectTeacher" name="teacherId"
+                    onchange="enableSubmit()">
               <option disabled value="" selected>Please select teacher...</option>
               <option th:each="teacher : ${teachers}"
                       th:value="${teacher.id}"
@@ -84,7 +85,7 @@
             <label for="selectCourse" class="col-form-label">Course</label>
           </div>
           <div class="col-md ps-1">
-            <select class="form-select" id="selectCourse" name="courseId">
+            <select class="form-select" id="selectCourse" name="courseId" onchange="enableSubmit()">
               <option disabled value="" selected>Please select course...</option>
               <option th:each="course : ${courses}"
                       th:value="${course.id}"
@@ -100,7 +101,7 @@
             <label for="selectRoom" class="col-form-label">Room</label>
           </div>
           <div class="col-md ps-1">
-            <select class="form-select" id="selectRoom" name="roomId">
+            <select class="form-select" id="selectRoom" name="roomId" onchange="enableSubmit()">
               <option disabled value="" selected>Please select room...</option>
               <option th:each="room : ${rooms}"
                       th:value="${room.id}"
@@ -119,11 +120,11 @@
             <span class="input-group-text">from</span>
             <input type="text" class="input-sm form-control" th:field="*{dateFrom}"
                    th:value="${#temporals.format(lessonFilter.dateFrom, 'yyyy-MM-dd')}"
-                   autocomplete="off"/>
+                   autocomplete="off" onchange="enableSubmit()"/>
             <span class="input-group-text">to</span>
             <input type="text" class="input-sm form-control" th:field="*{dateTo}"
                    th:value="${#temporals.format(lessonFilter.dateTo, 'yyyy-MM-dd')}"
-                   autocomplete="off"/>
+                   autocomplete="off" onchange="enableSubmit()"/>
             <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
           </div>
         </div>
@@ -134,7 +135,8 @@
     <div class="row mt-2 align-items-center">
       <!--Submit-->
       <div class="col-sm">
-        <input class="btn btn-success" type="submit" value="Show lessons"/>
+        <input class="btn btn-success" type="submit" value="Show lessons" id="submit"
+               th:disabled="${!#request.requestURI.contains('lesson/filter')}"/>
       </div>
       <!--Checkbox show past lessons-->
       <div class="col-sm-auto form-check form-switch ms-5">
@@ -158,11 +160,11 @@
         <th scope="col" class="col">Date</th>
         <th scope="col" class="col">Time Start</th>
         <th scope="col" class="col">Time End</th>
-        <th scope="col" class="col">Actions</th>
+        <th scope="col" class="col">Action</th>
       </tr>
       </thead>
       <tbody>
-      <tr th:each="lesson : ${lessons}"
+      <tr th:each="lesson : ${lessons}" class="align-middle"
           th:classappend="${lesson.timeEnd &gt; #temporals.createNow()}? 'active' : (${isShowPastLessons}? 'inactive' : 'inactive d-none')">
         <td th:utext="${lesson.courseName}">course</td>
         <td th:utext="${lesson.teacherFullName}">teacher</td>
@@ -170,7 +172,24 @@
         <td th:utext="${#temporals.format(lesson.timeStart, 'yyyy-MM-dd')}">2021/08/07</td>
         <td th:utext="${#temporals.format(lesson.timeStart, 'HH:mm')}">14:30</td>
         <td th:utext="${#temporals.format(lesson.timeEnd, 'HH:mm')}">16:00</td>
-        <td>details; edit; delete</td>
+        <td class="py-0">
+          <div class="row">
+            <div class="col-auto">
+              <form th:action="@{/lesson/{id}(id = ${lesson.id})}">
+                <button type="submit" class="btn btn-warning btn-sm">
+                  <i class="bi-pencil-square"></i> Edit
+                </button>
+              </form>
+            </div>
+            <div class="col-auto">
+              <form th:method="delete" th:action="@{/lesson/{id}(id = ${lesson.id})}">
+                <button type="submit" class="btn btn-danger btn-sm">
+                  <i class="bi-trash-fill"></i> Delete
+                </button>
+              </form>
+            </div>
+          </div>
+        </td>
       </tr>
       </tbody>
     </table>
@@ -184,11 +203,13 @@
 
     const select = document.getElementById('selectFaculty').value
     fillSelectTeachers(select, 'faculty')
+    enableSubmit()
   }
 
   function fillSelectTeachersLesson () {
     const select = document.getElementById('selectDepartment').value
     fillSelectTeachers(select, 'department')
+    enableSubmit()
   }
 
   function showInactiveTeachersInSelect () {
@@ -201,6 +222,10 @@
     const table = document.getElementById('mainTable')
     const check = document.getElementById('switchShowPastLessonsMainTable')
     showInactiveTableRow(table, check)
+  }
+
+  function enableSubmit () {
+    enableButton(document.getElementById('submit'))
   }
 
   $('.input-daterange').datepicker({

@@ -23,11 +23,6 @@
             <a class="nav-link" th:classappend="${#request.requestURI.startsWith('/lesson') ? 'active':''}"
                th:href="@{/lesson}">Lessons</a>
           </li>
-<!--          <li class="nav-item">-->
-<!--            <a class="nav-link" th:classappend="${#request.requestURI.startsWith('/schedule') ? 'active':''}"-->
-<!--               th:href="@{/schedule}">Schedule-->
-<!--            </a>-->
-<!--          </li>-->
           <li class="nav-item">
             <a class="nav-link" th:classappend="${#request.requestURI.startsWith('/student') ? 'active':''}"
                th:href="@{/student}">Students

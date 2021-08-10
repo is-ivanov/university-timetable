@@ -1,7 +1,7 @@
 /**
  * Add/remove style 'd-none' for show/hide rows in table
  *
- * @param {HTMLTableElement} table The table to switch
+ * @param {HTMLTableElement} table    The table to switch
  * @param {HTMLInputElement} checkbox The checkbox switcher
  */
 function showInactiveTableRow (table, checkbox) {
@@ -18,8 +18,8 @@ function showInactiveTableRow (table, checkbox) {
 /**
  * Add/remove style 'd-none' for show/hide option in select
  *
- * @param {HTMLInputElement} select     The input 'select' to switch
- * @param {HTMLInputElement} checkbox   The checkbox switcher
+ * @param {HTMLSelectElement} select     The input 'select' to switch
+ * @param {HTMLInputElement}  checkbox   The checkbox switcher
  */
 function showInactiveSelectOption (select, checkbox) {
 
@@ -32,4 +32,12 @@ function showInactiveSelectOption (select, checkbox) {
       option.classList.add('d-none'))
   }
 
+}
+
+/**
+ * Remove attribute 'disabled' from @button
+ * @param button {HTMLInputElement}
+ */
+function enableButton (button) {
+  button.removeAttribute('disabled')
 }

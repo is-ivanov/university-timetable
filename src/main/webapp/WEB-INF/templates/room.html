@@ -14,15 +14,41 @@
       <thead class="bg-success">
       <tr>
         <th scope="col" class="col-1">id</th>
-        <th scope="col" class="col-6">Building</th>
-        <th scope="col" class="col-6">Room Number</th>
+        <th scope="col" class="col">Building</th>
+        <th scope="col" class="col">Room Number</th>
+        <th scope="col" class="col-">Action</th>
       </tr>
       </thead>
       <tbody>
-      <tr th:each="room : ${rooms}">
+      <tr th:each="room : ${rooms}" class="align-middle">
         <td th:utext="${room.id}">...</td>
         <td th:utext="${room.building}">...</td>
         <td th:utext="${room.number}">...</td>
+        <td class="py-0">
+          <div class="row">
+            <div class="col-auto">
+              <form th:action="@{/room/{id}/timetable(id = ${room.id})}">
+                <button type="submit" class="btn btn-info btn-sm">
+                  <i class="bi-calendar3"></i> Timetable
+                </button>
+              </form>
+            </div>
+            <div class="col-auto">
+              <form th:action="@{/room/{id}(id = ${room.id})}">
+                <button type="submit" class="btn btn-warning btn-sm">
+                  <i class="bi-pencil-square"></i> Edit
+                </button>
+              </form>
+            </div>
+            <div class="col-auto">
+              <form th:method="delete" th:action="@{/room/{id}(id = ${room.id})}">
+                <button type="submit" class="btn btn-danger btn-sm">
+                  <i class="bi-trash-fill"></i> Delete
+                </button>
+              </form>
+            </div>
+          </div>
+        </td>
       </tr>
       </tbody>
     </table>
