@@ -22,11 +22,9 @@ public class TeacherController {
     private final DepartmentService departmentService;
 
     @GetMapping
-    public String showDepartments(@RequestParam(required = false) Integer facultyId,
-                                  @RequestParam(value = "departmentId", required = false)
-                                      Integer departmentId,
-                                  @RequestParam(value = "isShowInactiveTeachers",
-                                      required = false) String isShowInactiveTeachers,
+    public String showDepartments(@RequestParam Integer facultyId,
+                                  @RequestParam Integer departmentId,
+                                  @RequestParam(required = false) String isShowInactiveTeachers,
                                   Model model) {
         if (isShowInactiveTeachers != null && isShowInactiveTeachers.equals("on")) {
             model.addAttribute("isShowInactiveTeachers", true);
@@ -50,6 +48,10 @@ public class TeacherController {
     @GetMapping(value = "/faculty")
     @ResponseBody
     public List getDepartments(@RequestParam Integer facultyId) {
-        return departmentService.getAllByFaculty(facultyId);
+        if (facultyId == 0) {
+            return departmentService.getAll();
+        } else {
+            return departmentService.getAllByFaculty(facultyId);
+        }
     }
 }

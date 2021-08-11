@@ -29,7 +29,7 @@ public class LessonController {
     private final LessonDtoMapper lessonMapper;
 
     @GetMapping
-    public String showLessons(Model model) {
+    public String show(Model model) {
         model.addAttribute("lessonFilter", new LessonFilter());
         return "lesson";
     }
@@ -48,15 +48,15 @@ public class LessonController {
         Integer departmentId = lessonFilter.getDepartmentId();
         Integer facultyId = lessonFilter.getFacultyId();
         List<Teacher> teachers;
-        if (departmentId != null) {
+        if (departmentId != null && departmentId > 0) {
             teachers = teacherService.getAllByDepartment(departmentId);
-        } else if (facultyId != null) {
+        } else if (facultyId != null && facultyId > 0) {
             teachers = teacherService.getAllByFaculty(facultyId);
         } else {
             teachers = teacherService.getAll();
         }
         model.addAttribute("teachers", convertListTeachersToDto(teachers));
-        if (facultyId != null) {
+        if (facultyId != null && facultyId > 0) {
             model.addAttribute("departments", departmentService.getAllByFaculty(facultyId));
         } else {
             model.addAttribute("departments", departmentService.getAll());
@@ -69,16 +69,24 @@ public class LessonController {
     @GetMapping("/department")
     @ResponseBody
     public List<TeacherDto> getTeachersByDepartment(@RequestParam Integer departmentId) {
-        List<Teacher> teachersByDepartment =
-            teacherService.getAllByDepartment(departmentId);
+        List<Teacher> teachersByDepartment;
+        if (departmentId == 0) {
+            teachersByDepartment = teacherService.getAll();
+        } else {
+            teachersByDepartment = teacherService.getAllByDepartment(departmentId);
+        }
         return convertListTeachersToDto(teachersByDepartment);
     }
 
     @GetMapping("/faculty")
     @ResponseBody
     public List<TeacherDto> getTeachersByFaculty(@RequestParam Integer facultyId) {
-        List<Teacher> teachersByFaculty =
-            teacherService.getAllByFaculty(facultyId);
+        List<Teacher> teachersByFaculty;
+        if (facultyId == 0) {
+            teachersByFaculty = teacherService.getAll();
+        } else {
+            teachersByFaculty = teacherService.getAllByFaculty(facultyId);
+        }
         return convertListTeachersToDto(teachersByFaculty);
     }
 

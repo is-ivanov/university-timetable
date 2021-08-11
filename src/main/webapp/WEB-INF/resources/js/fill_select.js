@@ -6,7 +6,7 @@ function fillSelectGroups () {
   $.get('/student/faculty?facultyId=' + faculty, function (data) {
     $('#selectGroup').
       empty().
-      append('<option disabled selected>Please select group...</option>')
+      append('<option value="0" selected>Please select group...</option>')
     data.sort(sortByName)
     data.forEach(function (item) {
       let option
@@ -33,7 +33,7 @@ function fillSelectDepartments () {
   $.get('/teacher/faculty?facultyId=' + faculty, function (data) {
     $('#selectDepartment').
       empty().
-      append('<option disabled selected>Please select department...</option>')
+      append('<option value="0" selected>Please select department...</option>')
     data.sort(sortByName)
     data.forEach(function (item) {
       let option = '<option value = ' + item.id + '>' + item.name + '</option>'
@@ -58,7 +58,7 @@ function fillSelectTeachers (valueSelect, type) {
   $.get(uri, function (data) {
     $('#selectTeacher').
       empty().
-      append('<option disabled selected>Please select teacher...</option>')
+      append('<option value="0" selected>Please select teacher...</option>')
     data.sort(function (a, b) {
       const nameA = a.fullName.toLowerCase()
       const nameB = b.fullName.toLowerCase()

@@ -231,13 +231,13 @@ public class LessonDaoImpl implements LessonDao {
                                                    Integer departmentId,
                                                    Integer facultyId) {
         log.debug("check filter by teacher, department and faculty");
-        if (teacherId != null) {
+        if (teacherId != null && teacherId > 0) {
             log.debug("add filter by teacherId({})", teacherId);
             query.append(TEACHER_FILTER).append(teacherId);
-        } else if (departmentId != null) {
+        } else if (departmentId != null && departmentId > 0) {
             log.debug("add filter by departmentId({})", departmentId);
             query.append(DEPARTMENT_FILTER).append(departmentId);
-        } else if (facultyId != null) {
+        } else if (facultyId != null && facultyId > 0) {
             log.debug("add filter by facultyId({})", facultyId);
             query.append(FACULTY_FILTER).append(facultyId);
         }
@@ -245,7 +245,7 @@ public class LessonDaoImpl implements LessonDao {
 
     private void addCourseFilter(StringBuilder query, Integer courseId) {
         log.debug("check filter by course");
-        if (courseId != null) {
+        if (courseId != null && courseId > 0) {
             log.debug("add filter by courseId({})", courseId);
             query.append(COURSE_FILTER).append(courseId);
         }
@@ -253,7 +253,7 @@ public class LessonDaoImpl implements LessonDao {
 
     private void addRoomFilter(StringBuilder query, Integer roomId) {
         log.debug("check filter by room");
-        if (roomId != null) {
+        if (roomId != null && roomId > 0) {
             log.debug("add filter by roomId({})", roomId);
             query.append(ROOM_FILTER).append(roomId);
         }

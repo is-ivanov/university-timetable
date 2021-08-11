@@ -33,11 +33,3 @@ function showInactiveSelectOption (select, checkbox) {
   }
 
 }
-
-/**
- * Remove attribute 'disabled' from @button
- * @param button {HTMLInputElement}
- */
-function enableButton (button) {
-  button.removeAttribute('disabled')
-}

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 import ua.com.foxminded.university.domain.service.interfaces.StudentService;
@@ -56,6 +57,12 @@ public class StudentController {
     @GetMapping(value = "/faculty")
     @ResponseBody
     public List getGroups(@RequestParam Integer facultyId) {
-        return groupService.getAllByFacultyId(facultyId);
+        List<Group> groups;
+        if (facultyId == 0) {
+            groups = groupService.getAll();
+        } else {
+            groups = groupService.getAllByFacultyId(facultyId);
+        }
+        return groups;
     }
 }

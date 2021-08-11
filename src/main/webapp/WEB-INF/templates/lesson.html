@@ -21,7 +21,7 @@
           <div class="col-md ps-1">
             <select class="form-select" id="selectFaculty" name="facultyId"
                     onchange="fillSelectDepartmentsAndTeachers()">
-              <option disabled value="" selected>Please select faculty...</option>
+              <option value="0" selected>Please select faculty...</option>
               <option th:each="faculty : ${faculties}"
                       th:value="${faculty.id}"
                       th:utext="${faculty.name}"
@@ -38,7 +38,7 @@
           <div class="col-md ps-1">
             <select class="form-select" id="selectDepartment" name="departmentId"
                     onchange="fillSelectTeachersLesson()">
-              <option disabled value="" selected>Please select department...</option>
+              <option value="0" selected>Please select department...</option>
               <option th:each="department : ${departments}"
                       th:value="${department.id}"
                       th:utext="${department.name}"
@@ -55,8 +55,8 @@
           </div>
           <div class="col-md ps-1">
             <select class="form-select" id="selectTeacher" name="teacherId"
-                    onchange="enableSubmit()">
-              <option disabled value="" selected>Please select teacher...</option>
+                    onchange="switchSubmitEnabled()">
+              <option value="0" selected>Please select teacher...</option>
               <option th:each="teacher : ${teachers}"
                       th:value="${teacher.id}"
                       th:utext="${teacher.fullName} + (${teacher.isActive}? '' : ' - inactive')"
@@ -85,8 +85,9 @@
             <label for="selectCourse" class="col-form-label">Course</label>
           </div>
           <div class="col-md ps-1">
-            <select class="form-select" id="selectCourse" name="courseId" onchange="enableSubmit()">
-              <option disabled value="" selected>Please select course...</option>
+            <select class="form-select" id="selectCourse" name="courseId"
+                    onchange="switchSubmitEnabled()">
+              <option value="0" selected>Please select course...</option>
               <option th:each="course : ${courses}"
                       th:value="${course.id}"
                       th:utext="${course.name}"
@@ -101,8 +102,9 @@
             <label for="selectRoom" class="col-form-label">Room</label>
           </div>
           <div class="col-md ps-1">
-            <select class="form-select" id="selectRoom" name="roomId" onchange="enableSubmit()">
-              <option disabled value="" selected>Please select room...</option>
+            <select class="form-select" id="selectRoom" name="roomId"
+                    onchange="switchSubmitEnabled()">
+              <option value="0" selected>Please select room...</option>
               <option th:each="room : ${rooms}"
                       th:value="${room.id}"
                       th:utext="${room.building} + ' - ' + ${room.number}"
@@ -120,11 +122,11 @@
             <span class="input-group-text">from</span>
             <input type="text" class="input-sm form-control" th:field="*{dateFrom}"
                    th:value="${#temporals.format(lessonFilter.dateFrom, 'yyyy-MM-dd')}"
-                   autocomplete="off" onchange="enableSubmit()"/>
+                   autocomplete="off" onchange="switchSubmitEnabled()"/>
             <span class="input-group-text">to</span>
             <input type="text" class="input-sm form-control" th:field="*{dateTo}"
                    th:value="${#temporals.format(lessonFilter.dateTo, 'yyyy-MM-dd')}"
-                   autocomplete="off" onchange="enableSubmit()"/>
+                   autocomplete="off" onchange="switchSubmitEnabled()"/>
             <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
           </div>
         </div>
@@ -203,13 +205,13 @@
 
     const select = document.getElementById('selectFaculty').value
     fillSelectTeachers(select, 'faculty')
-    enableSubmit()
+    switchSubmitEnabled()
   }
 
   function fillSelectTeachersLesson () {
     const select = document.getElementById('selectDepartment').value
     fillSelectTeachers(select, 'department')
-    enableSubmit()
+    switchSubmitEnabled()
   }
 
   function showInactiveTeachersInSelect () {
@@ -224,8 +226,19 @@
     showInactiveTableRow(table, check)
   }
 
-  function enableSubmit () {
-    enableButton(document.getElementById('submit'))
+  function switchSubmitEnabled () {
+    if ($('#selectFaculty').val() > 0 ||
+      $('#selectDepartment').val() > 0 ||
+      $('#selectTeacher').val() > 0 ||
+      $('#selectCourse').val() > 0 ||
+      $('#selectRoom').val() > 0 ||
+      $('#dateFrom').val() !== '' ||
+      $('#dateTo').val() !== '') {
+
+      $('#submit').removeAttr('disabled')
+    } else {
+      $('#submit').attr('disabled', 'disabled')
+    }
   }
 
   $('.input-daterange').datepicker({
@@ -234,6 +247,7 @@
     todayBtn: true,
     daysOfWeekHighlighted: '0',
     calendarWeeks: true,
+    clearBtn: true,
     autoclose: true,
     todayHighlight: true,
   })
