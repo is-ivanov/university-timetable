@@ -29,16 +29,16 @@ public class LessonController {
     private final LessonDtoMapper lessonMapper;
 
     @GetMapping
-    public String show(Model model) {
+    public String showLessons(Model model) {
         model.addAttribute("lessonFilter", new LessonFilter());
         return "lesson";
     }
 
     @PostMapping("/filter")
-    public String filter(@RequestParam(required = false) String isShowInactiveTeachers,
-                         @RequestParam(required = false) String isShowPastLessons,
-                         @ModelAttribute LessonFilter lessonFilter,
-                         Model model) {
+    public String showFilteredLessons(@RequestParam(required = false) String isShowInactiveTeachers,
+                                      @RequestParam(required = false) String isShowPastLessons,
+                                      @ModelAttribute LessonFilter lessonFilter,
+                                      Model model) {
         if (isShowInactiveTeachers != null && isShowInactiveTeachers.equals("on")) {
             model.addAttribute("isShowInactiveTeachers", true);
         }

@@ -1,7 +1,6 @@
 package ua.com.foxminded.university.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,14 +36,14 @@ public class StudentController {
             model.addAttribute("isShowInactiveStudents", true);
         }
         model.addAttribute("faculties", facultyService.getAllSortedByNameAsc());
-        if (groupId != null) {
+        if (groupId != null && groupId > 0) {
             model.addAttribute("students",
                 studentService.getStudentsByGroup(groupId));
-        } else if (facultyId != null) {
+        } else if (facultyId != null && facultyId > 0) {
             model.addAttribute("students",
                 studentService.getStudentsByFaculty(facultyId));
         }
-        if (facultyId != null) {
+        if (facultyId != null && facultyId > 0) {
             model.addAttribute("groups", groupService.getAllByFacultyId(facultyId));
         } else {
             model.addAttribute("groups", groupService.getAll());

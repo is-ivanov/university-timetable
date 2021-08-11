@@ -1,14 +1,15 @@
 package ua.com.foxminded.university.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import ua.com.foxminded.university.domain.service.interfaces.*;
+import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
+import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
+import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
 
 import java.util.List;
 
@@ -22,20 +23,20 @@ public class TeacherController {
     private final DepartmentService departmentService;
 
     @GetMapping
-    public String showDepartments(@RequestParam Integer facultyId,
-                                  @RequestParam Integer departmentId,
-                                  @RequestParam(required = false) String isShowInactiveTeachers,
-                                  Model model) {
+    public String showTeachers(@RequestParam(required = false) Integer facultyId,
+                               @RequestParam(required = false) Integer departmentId,
+                               @RequestParam(required = false) String isShowInactiveTeachers,
+                               Model model) {
         if (isShowInactiveTeachers != null && isShowInactiveTeachers.equals("on")) {
             model.addAttribute("isShowInactiveTeachers", true);
         }
         model.addAttribute("faculties", facultyService.getAllSortedByNameAsc());
-        if (departmentId != null) {
+        if (departmentId != null && departmentId > 0) {
             model.addAttribute("teachers", teacherService.getAllByDepartment(departmentId));
-        } else if (facultyId != null) {
+        } else if (facultyId != null && facultyId > 0) {
             model.addAttribute("teachers", teacherService.getAllByFaculty(facultyId));
         }
-        if (facultyId != null) {
+        if (facultyId != null && facultyId > 0) {
             model.addAttribute("departments", departmentService.getAllByFaculty(facultyId));
         } else {
             model.addAttribute("departments", departmentService.getAll());

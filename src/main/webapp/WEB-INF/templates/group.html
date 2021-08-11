@@ -7,7 +7,7 @@
 </head>
 <body>
 <div layout:fragment="content">
-  <h3 th:utext="${facultyIdSelect ne null} ? 'Groups from ' + ${groups.get(0).faculty.name} : 'Groups'"></h3>
+  <h3>Groups</h3>
   <form action="#" th:action="@{/group}" class="my-2">
     <div class="row align-items-center">
       <div class="col-1 text-end pe-0">

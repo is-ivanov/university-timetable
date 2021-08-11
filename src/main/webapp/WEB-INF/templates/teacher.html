@@ -7,36 +7,38 @@
 </head>
 <body>
 <div layout:fragment="content">
-  <h3 th:utext="${departmentIdSelect ne null}? 'Teacher from ' + ${teachers.get(0).department.name} :
-      (${facultyIdSelect ne null}? 'Teachers from ' + ${teachers.get(0).department.faculty.name} : 'Teachers')">
-    Teachers from</h3>
+  <h3> Teachers</h3>
   <!--  Form -->
   <form action="#" th:action="@{/teacher}" class="my-2">
     <!--    Faculty and Department select-->
     <div class="row mb-3">
+      <!--    Faculty Select-->
       <div class="col-1 text-end pe-1">
         <label for="selectFaculty" class="col-form-label">Faculty</label>
       </div>
       <div class="col-md ps-1">
-        <select class="form-select" id="selectFaculty" name="facultyId" onchange="fillSelectDepartments()">
-          <option disabled th:selected="${facultyIdSelect eq null}">Please select faculty...</option>
+        <select class="form-select" id="selectFaculty" name="facultyId"
+                onchange="fillSelectDepartmentsTeachers()">
+          <option value="0" selected>Please select faculty...</option>
           <option th:each="faculty : ${faculties}"
                   th:value="${faculty.id}"
                   th:utext="${faculty.name}"
-                  th:selected="${facultyIdSelect ne null and faculty.id eq facultyIdSelect}">...
+                  th:selected="${faculty.id eq facultyIdSelect}">...
           </option>
         </select>
       </div>
+      <!--    Department Select-->
       <div class="col-1 text-end pe-1">
         <label for="selectDepartment" class="col-form-label">Department</label>
       </div>
       <div class="col-md ps-1">
-        <select class="form-select" id="selectDepartment" name="departmentId">
-          <option disabled selected>Please select department...</option>
+        <select class="form-select" id="selectDepartment" name="departmentId"
+                onchange="switchSubmitEnabled()">
+          <option value="0" selected>Please select department...</option>
           <option th:each="department : ${departments}"
                   th:value="${department.id}"
                   th:utext="${department.name}"
-                  th:selected="${departmentIdSelect ne null and department.id eq departmentIdSelect}">...
+                  th:selected="${department.id eq departmentIdSelect}">...
           </option>
         </select>
       </div>
@@ -44,7 +46,8 @@
     <!--    Submit button and checkbox show inactive teachers -->
     <div class="row mt-2 align-items-center">
       <div class="col-sm">
-        <input class="btn btn-success" type="submit" value="Show teachers"/>
+        <input class="btn btn-success" type="submit" id="submit" value="Show teachers"
+               th:disabled="${facultyIdSelect eq null and departmentIdSelect eq null}"/>
       </div>
       <div class="col-sm-auto form-check form-switch ms-5">
         <input class="form-check-input" type="checkbox" id="switchShowInactiveTeachersMainTable"
@@ -119,6 +122,20 @@
     const table = document.getElementById('mainTable')
     const check = document.getElementById('switchShowInactiveTeachersMainTable')
     showInactiveTableRow(table, check)
+  }
+
+  function fillSelectDepartmentsTeachers () {
+    fillSelectDepartments()
+    switchSubmitEnabled()
+  }
+
+  function switchSubmitEnabled () {
+    if ($('#selectFaculty').val() > 0 ||
+      $('#selectDepartment').val() > 0) {
+      $('#submit').removeAttr('disabled')
+    } else {
+      $('#submit').attr('disabled', 'disabled')
+    }
   }
 </script>
 </body>

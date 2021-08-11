@@ -7,9 +7,7 @@
 </head>
 <body>
 <div layout:fragment="content">
-  <h3 th:utext="${groupIdSelect ne null}? 'Students from ' + ${students.get(0).group.name} :
-      (${facultyIdSelect ne null}? 'Students from ' + ${students.get(0).group.faculty.name} : 'Students')">
-    Students from</h3>
+  <h3>Students</h3>
   <!--  Form -->
   <form action="#" th:action="@{/student}" class="my-2">
     <!--    Faculty select-->
@@ -20,11 +18,11 @@
       <div class="col-md ps-1">
         <select class="form-select" id="selectFaculty" name="facultyId"
                 onchange="fillSelectGroupsStudents()">
-          <option value="0" th:selected="${facultyIdSelect eq null}">Please select faculty...</option>
+          <option value="0" selected>Please select faculty...</option>
           <option th:each="faculty : ${faculties}"
                   th:value="${faculty.id}"
                   th:utext="${faculty.name}"
-                  th:selected="${facultyIdSelect ne null and faculty.id eq facultyIdSelect}">...
+                  th:selected="${faculty.id eq facultyIdSelect}">...
           </option>
         </select>
       </div>
@@ -42,7 +40,7 @@
                   th:utext="${group.name} + (${group.active}? '' : ' - inactive')"
                   th:classappend="${group.active}? 'active' : (${isShowInactiveGroups}?
                                                 'inactive' : 'inactive d-none')"
-                  th:selected="${groupIdSelect ne null and group.id eq groupIdSelect}">...
+                  th:selected="${group.id eq groupIdSelect}">...
           </option>
         </select>
       </div>
