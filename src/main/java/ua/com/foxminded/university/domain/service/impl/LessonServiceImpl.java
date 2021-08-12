@@ -4,19 +4,21 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ua.com.foxminded.university.dao.interfaces.LessonDao;
+import ua.com.foxminded.university.domain.dto.LessonDto;
 import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Room;
 import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.domain.entity.Teacher;
 import ua.com.foxminded.university.domain.filter.LessonFilter;
+import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.LessonService;
 import ua.com.foxminded.university.exception.ServiceException;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class LessonServiceImpl implements LessonService {
 
@@ -27,6 +29,7 @@ public class LessonServiceImpl implements LessonService {
     private static final String MESSAGE_FILTER_NOT_SELECT = "Select at least one filter";
 
     private final LessonDao lessonDao;
+    private  final LessonDtoMapper lessonMapper;
 
     @Override
     public void add(Lesson lesson) throws ServiceException {
@@ -100,6 +103,12 @@ public class LessonServiceImpl implements LessonService {
             log.warn("Filter is empty");
             throw new ServiceException(MESSAGE_FILTER_NOT_SELECT);
         }
+    }
+
+    @Override //TODO unit test
+    public List<LessonDto> convertListLessonsToDto(List<Lesson> lessons) {
+        log.debug("convert list lessons to list lessonDTOs");
+        return lessonMapper.lessonsToLessonDtos(lessons);
     }
 
     private void checkLesson(Lesson lesson) throws ServiceException {

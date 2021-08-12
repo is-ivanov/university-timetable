@@ -1,25 +1,25 @@
 package ua.com.foxminded.university.domain.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.com.foxminded.university.dao.interfaces.TeacherDao;
+import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Teacher;
+import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
 
 import java.util.List;
 
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class TeacherServiceImpl implements TeacherService {
 
     private final TeacherDao teacherDao;
-
-    @Autowired
-    public TeacherServiceImpl(TeacherDao teacherDao) {
-        this.teacherDao = teacherDao;
-    }
+    private final TeacherDtoMapper teacherMapper;
 
     @Override
     public void add(Teacher teacher) {
@@ -112,6 +112,12 @@ public class TeacherServiceImpl implements TeacherService {
         List<Teacher> teachers = teacherDao.getAllByFaculty(facultyId);
         log.info("Found {} teachers from faculty id({})", teachers.size(), facultyId);
         return teachers;
+    }
+
+    @Override //TODO unit test
+    public List<TeacherDto> convertListTeachersToDto(List<Teacher> teachers) {
+        log.debug("convert list teachers to list teacherDTOs");
+        return teacherMapper.teachersToTeacherDtos(teachers);
     }
 
 }
