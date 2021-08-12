@@ -12,6 +12,7 @@ import ua.com.foxminded.university.dao.interfaces.TeacherDao;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Teacher;
+import ua.com.foxminded.university.domain.mapper.TeacherDtoMapperImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,8 +39,8 @@ class TeacherServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        teacherService = new TeacherServiceImpl(teacherDaoMock);
-    }
+        teacherService = new TeacherServiceImpl(teacherDaoMock, new TeacherDtoMapperImpl());
+    } // TODO refactor
 
     @Test
     @DisplayName("test 'add' when call add method then should call Dao once")

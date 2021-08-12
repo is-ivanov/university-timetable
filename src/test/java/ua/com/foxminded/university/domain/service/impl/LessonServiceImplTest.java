@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.foxminded.university.dao.interfaces.LessonDao;
 import ua.com.foxminded.university.domain.entity.*;
+import ua.com.foxminded.university.domain.mapper.LessonDtoMapperImpl;
 import ua.com.foxminded.university.exception.ServiceException;
 
 import java.time.LocalDateTime;
@@ -44,7 +45,8 @@ class LessonServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        lessonService = new LessonServiceImpl(lessonDaoMock);
+        lessonService = new LessonServiceImpl(lessonDaoMock,
+            new LessonDtoMapperImpl()); //TODO Refactor
     }
 
     @Nested
