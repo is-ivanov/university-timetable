@@ -1,23 +1,24 @@
 package ua.com.foxminded.university.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ua.com.foxminded.university.domain.dto.LessonDto;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.*;
 import ua.com.foxminded.university.domain.filter.LessonFilter;
-import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
-import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.*;
 
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @Controller
 @RequestMapping("/lesson")
 public class LessonController {
+
+    public static final String GET_ALL_TEACHERS_FOR_SELECTOR = "Get all teachers for selector";
 
     private final LessonService lessonService;
     private final FacultyService facultyService;
@@ -25,12 +26,11 @@ public class LessonController {
     private final DepartmentService departmentService;
     private final CourseService courseService;
     private final RoomService roomService;
-    private final TeacherDtoMapper teacherMapper;
-    private final LessonDtoMapper lessonMapper;
 
     @GetMapping
     public String showLessons(Model model) {
         model.addAttribute("lessonFilter", new LessonFilter());
+        log.info("The required data is loaded into the model");
         return "lesson";
     }
 
@@ -39,6 +39,7 @@ public class LessonController {
                                       @RequestParam(required = false) String isShowPastLessons,
                                       @ModelAttribute LessonFilter lessonFilter,
                                       Model model) {
+        log.debug("Getting data for lesson.html with filter");
         if (isShowInactiveTeachers != null && isShowInactiveTeachers.equals("on")) {
             model.addAttribute("isShowInactiveTeachers", true);
         }
@@ -49,45 +50,60 @@ public class LessonController {
         Integer facultyId = lessonFilter.getFacultyId();
         List<Teacher> teachers;
         if (departmentId != null && departmentId > 0) {
+            log.debug("Get teachers for selector by departmentId ({})",
+                departmentId);
             teachers = teacherService.getAllByDepartment(departmentId);
         } else if (facultyId != null && facultyId > 0) {
+            log.debug("Get teachers for selector by facultyId ({})", facultyId);
             teachers = teacherService.getAllByFaculty(facultyId);
         } else {
+            log.debug(GET_ALL_TEACHERS_FOR_SELECTOR);
             teachers = teacherService.getAll();
         }
-        model.addAttribute("teachers", convertListTeachersToDto(teachers));
+        model.addAttribute("teachers",
+            teacherService.convertListTeachersToDto(teachers));
         if (facultyId != null && facultyId > 0) {
+            log.debug("Get departments for selector by facultyId ({})", facultyId);
             model.addAttribute("departments", departmentService.getAllByFaculty(facultyId));
         } else {
+            log.debug("Get all departments for selector");
             model.addAttribute("departments", departmentService.getAll());
         }
+        log.debug("Get filtered lessons");
         model.addAttribute("lessons",
-            convertListLessonsToDto(lessonService.getAllWithFilter(lessonFilter)));
+            lessonService.convertListLessonsToDto(lessonService.getAllWithFilter(lessonFilter)));
+        log.info("The required data is loaded into the model");
         return "lesson";
     }
 
     @GetMapping("/department")
     @ResponseBody
     public List<TeacherDto> getTeachersByDepartment(@RequestParam Integer departmentId) {
+        log.debug("Getting teachers for selector");
         List<Teacher> teachersByDepartment;
         if (departmentId == 0) {
+            log.debug(GET_ALL_TEACHERS_FOR_SELECTOR);
             teachersByDepartment = teacherService.getAll();
         } else {
+            log.debug("Get teachers for selector by departmentId ({})", departmentId);
             teachersByDepartment = teacherService.getAllByDepartment(departmentId);
         }
-        return convertListTeachersToDto(teachersByDepartment);
+        return teacherService.convertListTeachersToDto(teachersByDepartment);
     }
 
     @GetMapping("/faculty")
     @ResponseBody
     public List<TeacherDto> getTeachersByFaculty(@RequestParam Integer facultyId) {
+        log.debug("Getting teachers for selector");
         List<Teacher> teachersByFaculty;
         if (facultyId == 0) {
+            log.debug(GET_ALL_TEACHERS_FOR_SELECTOR);
             teachersByFaculty = teacherService.getAll();
         } else {
+            log.debug("Get teachers for selector by facultyId ({})", facultyId);
             teachersByFaculty = teacherService.getAllByFaculty(facultyId);
         }
-        return convertListTeachersToDto(teachersByFaculty);
+        return teacherService.convertListTeachersToDto(teachersByFaculty);
     }
 
     @ModelAttribute("faculties")
@@ -102,7 +118,7 @@ public class LessonController {
 
     @ModelAttribute("teachers")
     public List<TeacherDto> populateTeachers() {
-        return convertListTeachersToDto(teacherService.getAll());
+        return teacherService.convertListTeachersToDto(teacherService.getAll());
     }
 
     @ModelAttribute("courses")
@@ -115,11 +131,4 @@ public class LessonController {
         return roomService.getAll();
     }
 
-    private List<TeacherDto> convertListTeachersToDto(List<Teacher> teachers) {
-        return teacherMapper.teachersToTeacherDtos(teachers);
-    }
-
-    private List<LessonDto> convertListLessonsToDto(List<Lesson> lessons) {
-        return lessonMapper.lessonsToLessonDtos(lessons);
-    }
 }

@@ -17,8 +17,8 @@ public class FacultyController {
     private final FacultyService facultyService;
 
     @GetMapping
-    public String faculties(Model model) {
-        log.debug("Getting all faculties");
+    public String showFaculties(Model model) {
+        log.debug("Getting data for faculty.html");
         model.addAttribute("faculties", facultyService.getAll());
         log.info("The list of faculties is loaded into the model");
         return "faculty";

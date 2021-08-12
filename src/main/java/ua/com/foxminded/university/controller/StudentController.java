@@ -1,6 +1,7 @@
 package ua.com.foxminded.university.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,7 @@ import ua.com.foxminded.university.domain.service.interfaces.StudentService;
 
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @Controller
 @RequestMapping("/student")
@@ -29,39 +31,48 @@ public class StudentController {
                                @RequestParam(required = false) String isShowInactiveGroups,
                                @RequestParam(required = false) String isShowInactiveStudents,
                                Model model) {
+        log.debug("Getting data for student.html");
         if (isShowInactiveGroups != null && isShowInactiveGroups.equals("on")) {
             model.addAttribute("isShowInactiveGroups", true);
         }
         if (isShowInactiveStudents != null && isShowInactiveStudents.equals("on")) {
             model.addAttribute("isShowInactiveStudents", true);
         }
+        log.debug("Get faculties for selector");
         model.addAttribute("faculties", facultyService.getAllSortedByNameAsc());
         if (groupId != null && groupId > 0) {
+            log.debug("Get students by groupId ({})", groupId);
             model.addAttribute("students",
                 studentService.getStudentsByGroup(groupId));
         } else if (facultyId != null && facultyId > 0) {
+            log.debug("Get students by facultyId ({})", facultyId);
             model.addAttribute("students",
                 studentService.getStudentsByFaculty(facultyId));
         }
         if (facultyId != null && facultyId > 0) {
+            log.debug("Get groups for selector by facultyId ({})", facultyId);
             model.addAttribute("groups", groupService.getAllByFacultyId(facultyId));
         } else {
+            log.debug("Get all groups for selector");
             model.addAttribute("groups", groupService.getAll());
         }
+        log.debug("adding selected faculty and group into model");
         model.addAttribute("facultyIdSelect", facultyId);
         model.addAttribute("groupIdSelect", groupId);
+        log.info("The required data is loaded into the model");
         return "student";
     }
 
     @GetMapping(value = "/faculty")
     @ResponseBody
-    public List getGroups(@RequestParam Integer facultyId) {
-        List<Group> groups;
+    public List<Group> getGroups(@RequestParam Integer facultyId) {
+        log.debug("Getting groups for selector");
         if (facultyId == 0) {
-            groups = groupService.getAll();
+            log.debug("Get all groups for selector");
+            return groupService.getAll();
         } else {
-            groups = groupService.getAllByFacultyId(facultyId);
+            log.debug("Get groups for selector by facultyId ({})", facultyId);
+            return groupService.getAllByFacultyId(facultyId);
         }
-        return groups;
     }
 }

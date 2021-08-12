@@ -20,6 +20,7 @@ public class CourseController {
     public String courses(Model model) {
         log.debug("Show courses");
         model.addAttribute("courses", courseService.getAll());
+        log.info("The list of courses is loaded into model");
         return "course";
     }
 }

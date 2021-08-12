@@ -15,8 +15,10 @@
       </div>
       <div class="col">
         <select class="form-select" id="selectFaculty" name="facultyId">
-          <option disabled th:selected="${facultySelected eq null}">Please select...</option>
-          <option th:each="faculty : ${faculties}" th:value="${faculty.id}" th:utext="${faculty.name}"
+          <option value="0" selected>Please select faculty...</option>
+          <option th:each="faculty : ${faculties}"
+                  th:value="${faculty.id}"
+                  th:utext="${faculty.name}"
                   th:selected="${facultySelected ne null and faculty.id eq facultySelected.id}">...</option>
         </select>
       </div>
@@ -26,8 +28,7 @@
     </div>
   </form>
   <div class="table-responsive-md">
-    <table class="table table-hover table-sortable" id="mainTable"
-           th:classappend="${facultySelected == null} ? 'd-none'">
+    <table class="table table-hover table-sortable" id="mainTable">
       <caption>List of departments</caption>
       <thead class="bg-success">
       <tr>
