@@ -1,20 +1,18 @@
 package ua.com.foxminded.university.springconfig;
 
-import javax.sql.DataSource;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
+import javax.sql.DataSource;
+
 @Configuration
-@ComponentScan("ua.com.foxminded.university.dao")
+@ComponentScan({"ua.com.foxminded.university.dao", "ua.com.foxminded.university.domain"})
+@Import({WebConfig.class})
 @PropertySource("classpath:db.properties")
-public class DbConfig {
+public class RootConfig {
     private static final String DRIVER = "db.driver";
     private static final String URL = "db.url";
     private static final String LOGIN = "db.login";
@@ -35,4 +33,5 @@ public class DbConfig {
     public JdbcTemplate jdbcTemplate(DataSource dataSource) {
         return new JdbcTemplate(dataSource);
     }
+
 }
