@@ -29,7 +29,7 @@ public class LessonServiceImpl implements LessonService {
     private static final String MESSAGE_FILTER_NOT_SELECT = "Select at least one filter";
 
     private final LessonDao lessonDao;
-    private  final LessonDtoMapper lessonMapper;
+    private final LessonDtoMapper lessonMapper;
 
     @Override
     public void add(Lesson lesson) throws ServiceException {

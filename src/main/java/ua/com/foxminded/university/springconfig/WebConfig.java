@@ -2,7 +2,6 @@ package ua.com.foxminded.university.springconfig;
 
 import lombok.RequiredArgsConstructor;
 import nz.net.ultraq.thymeleaf.LayoutDialect;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -14,9 +13,9 @@ import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 
 @RequiredArgsConstructor
-@ComponentScan("ua.com.foxminded.university")
 @EnableWebMvc
 @Configuration
+@ComponentScan("ua.com.foxminded.university.ui")
 public class WebConfig implements WebMvcConfigurer {
 
     private final ApplicationContext applicationContext;

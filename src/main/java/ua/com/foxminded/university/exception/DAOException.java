@@ -1,6 +1,5 @@
 package ua.com.foxminded.university.exception;
 
-@SuppressWarnings("serial")
 public class DAOException extends RuntimeException {
 
     public DAOException() {

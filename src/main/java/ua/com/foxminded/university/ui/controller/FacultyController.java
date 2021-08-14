@@ -1,4 +1,4 @@
-package ua.com.foxminded.university.controller;
+package ua.com.foxminded.university.ui.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

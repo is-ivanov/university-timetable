@@ -1,7 +1,7 @@
 package ua.com.foxminded.university.domain.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.com.foxminded.university.dao.interfaces.CourseDao;
 import ua.com.foxminded.university.domain.entity.Course;
@@ -10,15 +10,11 @@ import ua.com.foxminded.university.domain.service.interfaces.CourseService;
 import java.util.List;
 
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class CourseServiceImpl implements CourseService {
 
     private final CourseDao courseDao;
-
-    @Autowired
-    public CourseServiceImpl(CourseDao courseDao) {
-        this.courseDao = courseDao;
-    }
 
     @Override
     public void add(Course course) {

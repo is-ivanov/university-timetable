@@ -1,25 +1,20 @@
 package ua.com.foxminded.university.domain.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.com.foxminded.university.dao.interfaces.FacultyDao;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 
-import java.util.Comparator;
 import java.util.List;
 
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class FacultyServiceImpl implements FacultyService {
 
     private final FacultyDao facultyDao;
-
-    @Autowired
-    public FacultyServiceImpl(FacultyDao facultyDao) {
-        this.facultyDao = facultyDao;
-    }
 
     @Override
     public void add(Faculty faculty) {

@@ -1,7 +1,7 @@
 package ua.com.foxminded.university.domain.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.com.foxminded.university.dao.interfaces.StudentDao;
 import ua.com.foxminded.university.domain.entity.Faculty;
@@ -12,15 +12,11 @@ import ua.com.foxminded.university.domain.service.interfaces.StudentService;
 import java.util.List;
 
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class StudentServiceImpl implements StudentService {
 
     private final StudentDao studentDao;
-
-    @Autowired
-    public StudentServiceImpl(StudentDao studentDao) {
-        this.studentDao = studentDao;
-    }
 
     @Override
     public void add(Student student) {

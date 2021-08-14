@@ -1,7 +1,7 @@
 package ua.com.foxminded.university.domain.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.com.foxminded.university.dao.interfaces.GroupDao;
 import ua.com.foxminded.university.dao.interfaces.StudentDao;
@@ -13,17 +13,12 @@ import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class GroupServiceImpl implements GroupService {
 
     private final GroupDao groupDao;
     private final StudentDao studentDao;
-
-    @Autowired
-    public GroupServiceImpl(GroupDao groupDao, StudentDao studentDao) {
-        this.groupDao = groupDao;
-        this.studentDao = studentDao;
-    }
 
     @Override
     public void add(Group group) {

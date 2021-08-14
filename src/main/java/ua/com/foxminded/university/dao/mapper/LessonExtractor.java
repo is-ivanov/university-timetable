@@ -1,17 +1,17 @@
 package ua.com.foxminded.university.dao.mapper;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.stereotype.Component;
+import ua.com.foxminded.university.domain.entity.Lesson;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.stereotype.Component;
-
-import ua.com.foxminded.university.domain.entity.Lesson;
-
+@RequiredArgsConstructor
 @Component
 public class LessonExtractor implements ResultSetExtractor<List<Lesson>> {
 
@@ -20,13 +20,6 @@ public class LessonExtractor implements ResultSetExtractor<List<Lesson>> {
 
     private final LessonMapper lessonMapper;
     private final StudentMapper studentMapper;
-
-    @Autowired
-    public LessonExtractor(LessonMapper lessonMapper,
-                           StudentMapper studentMapper) {
-        this.lessonMapper = lessonMapper;
-        this.studentMapper = studentMapper;
-    }
 
     @Override
     public List<Lesson> extractData(ResultSet rs)

@@ -1,22 +1,22 @@
 package ua.com.foxminded.university.dao.impl;
 
-import java.util.List;
-import java.util.Optional;
-
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-
 import ua.com.foxminded.university.dao.interfaces.TeacherDao;
-import ua.com.foxminded.university.domain.entity.Teacher;
 import ua.com.foxminded.university.dao.mapper.TeacherMapper;
+import ua.com.foxminded.university.domain.entity.Teacher;
 import ua.com.foxminded.university.exception.DAOException;
 
+import java.util.List;
+import java.util.Optional;
+
 @Slf4j
+@RequiredArgsConstructor
 @Repository
 @PropertySource("classpath:sql_query.properties")
 public class TeacherDaoImpl implements TeacherDao {
@@ -34,12 +34,6 @@ public class TeacherDaoImpl implements TeacherDao {
 
     private final JdbcTemplate jdbcTemplate;
     private final Environment env;
-
-    @Autowired
-    public TeacherDaoImpl(JdbcTemplate jdbcTemplate, Environment env) {
-        this.jdbcTemplate = jdbcTemplate;
-        this.env = env;
-    }
 
     @Override
     public void add(Teacher teacher) {

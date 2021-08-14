@@ -1,7 +1,7 @@
 package ua.com.foxminded.university.domain.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.com.foxminded.university.dao.interfaces.RoomDao;
 import ua.com.foxminded.university.domain.entity.Room;
@@ -10,15 +10,11 @@ import ua.com.foxminded.university.domain.service.interfaces.RoomService;
 import java.util.List;
 
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class RoomServiceImpl implements RoomService {
 
     private final RoomDao roomDao;
-
-    @Autowired
-    public RoomServiceImpl(RoomDao roomDao) {
-        this.roomDao = roomDao;
-    }
 
     @Override
     public void add(Room room) {
