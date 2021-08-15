@@ -15,6 +15,8 @@ import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.exception.DAOException;
 import ua.com.foxminded.university.springconfig.TestRootConfig;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -159,4 +161,13 @@ class FacultyDaoImplTest {
             assertEquals(MESSAGE_DELETE_EXCEPTION, ex.getMessage());
         }
     }
+
+    @Test
+    @DisplayName("test 'getAllSortedByNameAsc 'method")
+    void testShouldReturnFacultiesInOrder() {
+        List<Faculty> sortedFaculties = dao.getAllSortedByNameAsc();
+        assertEquals(SECOND_FACULTY_NAME, sortedFaculties.get(0).getName());
+        assertEquals(FIRST_FACULTY_NAME, sortedFaculties.get(1).getName());
+    }
+
 }

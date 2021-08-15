@@ -102,7 +102,6 @@ public class FacultyDaoImpl implements FacultyDao {
         }
     }
 
-    //TODO test for this method
     @Override
     public List<Faculty> getAllSortedByNameAsc() {
         log.debug("Getting all faculties sorted by name ascending");

@@ -18,6 +18,12 @@ import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.exception.DAOException;
 import ua.com.foxminded.university.springconfig.TestRootConfig;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.apache.logging.log4j.ThreadContext.isEmpty;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -41,6 +47,8 @@ class StudentDaoImplTest {
     private static final String FIRST_FACULTY_NAME = "Foreign Language";
     private static final String SECOND_FACULTY_NAME = "Chemical Technology";
     private static final String FIRST_STUDENT_NAME = "Mike";
+    private static final String SECOND_STUDENT_NAME = "Alan";
+    private static final String THIRD_STUDENT_NAME = "Peter";
     private static final String FIRST_STUDENT_LAST_NAME = "Smith";
     private static final String FIRST_STUDENT_PATRONYMIC = "Jr";
     private static final String MESSAGE_EXCEPTION = "Student id(4) not found";
@@ -246,6 +254,35 @@ class StudentDaoImplTest {
             int expectedQuantityStudents = 2;
             int actualQuantityStudents = dao.getStudentsByGroup(group).size();
             assertEquals(expectedQuantityStudents, actualQuantityStudents);
+        }
+    }
+
+
+    @Nested
+    @DisplayName("test 'getStudentsByFaculty' method")
+    class getStudentsByFacultyTest {
+
+        @Test
+        @DisplayName("when facultyId=1 then should return 2 expected students")
+        void testGetByFacultyId1_ReturnTwoStudents() {
+            Faculty faculty = new Faculty();
+            faculty.setId(ID1);
+            List<Student> actualStudents = dao.getStudentsByFaculty(faculty);
+            assertThat(actualStudents, hasSize(2));
+            List<String> listFirstNames = actualStudents.stream()
+                .map(student -> student.getFirstName()).collect(Collectors.toList());
+            assertThat(listFirstNames,
+                containsInAnyOrder(FIRST_STUDENT_NAME, SECOND_STUDENT_NAME));
+            assertThat(listFirstNames, not(hasItem(THIRD_STUDENT_NAME)));
+        }
+
+        @Test
+        @DisplayName("when facultyId=4 then should return empty list")
+        void testGetByFacultyId4_ReturnEmptyList() {
+            Faculty faculty = new Faculty();
+            faculty.setId(ID4);
+            List<Student> actualStudents = dao.getStudentsByFaculty(faculty);
+            assertThat(actualStudents, empty());
         }
     }
 }

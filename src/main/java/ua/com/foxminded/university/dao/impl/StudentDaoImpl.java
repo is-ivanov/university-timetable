@@ -144,7 +144,6 @@ public class StudentDaoImpl implements StudentDao {
         return students;
     }
 
-    @Override //TODO add unit test
     public List<Student> getStudentsByFaculty(Faculty faculty) {
         log.debug("Getting students from ({})", faculty);
         List<Student> students = jdbcTemplate.query(

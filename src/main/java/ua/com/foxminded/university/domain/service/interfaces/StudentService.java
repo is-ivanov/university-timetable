@@ -17,6 +17,5 @@ public interface StudentService extends Service<Student> {
 
     List<Student> getStudentsByGroup(int id);
 
-    //TODO add unit test
     List<Student> getStudentsByFaculty(int facultyId);
 }
