@@ -23,6 +23,7 @@
         <mapstruct.version>1.5.0.Beta1</mapstruct.version>
         <lombok.version>1.18.20</lombok.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
+        <maven-surefire.version>3.0.0-M5</maven-surefire.version>
     </properties>
 
     <dependencies>
@@ -185,13 +186,17 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M5</version>
+                <version>${maven-surefire.version}</version>
                 <configuration>
                     <parallel>methods</parallel>
                     <threadCount>10</threadCount>
                 </configuration>
             </plugin>
-
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>${maven-surefire.version}</version>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>

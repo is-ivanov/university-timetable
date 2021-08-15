@@ -1,12 +1,16 @@
 package ua.com.foxminded.university.domain.mapper;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Teacher;
+import ua.com.foxminded.university.springconfig.TestRootConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +18,8 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = TestRootConfig.class)
 class TeacherDtoMapperTest {
 
     private static final String FIRST_NAME = "First name";
@@ -24,12 +30,8 @@ class TeacherDtoMapperTest {
     private static final int ID2 = 2;
     private static final String DEPARTMENT_NAME = "department name";
 
+    @Autowired
     private TeacherDtoMapper mapper;
-
-    @BeforeEach
-    void setUp() {
-        mapper = new TeacherDtoMapperImpl();
-    }
 
     @Nested
     @DisplayName("When we convert teacher to teacherDto")

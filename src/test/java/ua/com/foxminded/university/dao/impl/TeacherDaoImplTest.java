@@ -11,19 +11,18 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.jdbc.JdbcTestUtils;
-
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Teacher;
 import ua.com.foxminded.university.exception.DAOException;
-import ua.com.foxminded.university.springconfig.TestDbConfig;
+import ua.com.foxminded.university.springconfig.TestRootConfig;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TestDbConfig.class)
+@ContextConfiguration(classes = TestRootConfig.class)
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
     "/schema.sql", "/teacher-test-data.sql"})
 class TeacherDaoImplTest {

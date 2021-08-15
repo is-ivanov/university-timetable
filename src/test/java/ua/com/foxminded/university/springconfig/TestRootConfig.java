@@ -11,13 +11,13 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import javax.sql.DataSource;
 
 @Configuration
-@ComponentScan("ua.com.foxminded.university.dao")
-public class TestDbConfig {
+@ComponentScan({"ua.com.foxminded.university.dao", "ua.com.foxminded.university.domain"})
+public class TestRootConfig {
 
     @Bean
     public DataSource dataSource() {
         return new EmbeddedDatabaseBuilder()
-                .setType(EmbeddedDatabaseType.H2).build();
+            .setType(EmbeddedDatabaseType.H2).build();
     }
 
     @Autowired

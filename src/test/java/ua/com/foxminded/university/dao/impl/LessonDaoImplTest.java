@@ -14,7 +14,7 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 import ua.com.foxminded.university.domain.entity.*;
 import ua.com.foxminded.university.domain.filter.LessonFilter;
 import ua.com.foxminded.university.exception.DAOException;
-import ua.com.foxminded.university.springconfig.TestDbConfig;
+import ua.com.foxminded.university.springconfig.TestRootConfig;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -27,7 +27,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TestDbConfig.class)
+@ContextConfiguration(classes = TestRootConfig.class)
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
     "/schema.sql", "/lesson-test-data.sql"})
 class LessonDaoImplTest {

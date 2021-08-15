@@ -13,13 +13,13 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import ua.com.foxminded.university.domain.entity.Room;
 import ua.com.foxminded.university.exception.DAOException;
-import ua.com.foxminded.university.springconfig.TestDbConfig;
+import ua.com.foxminded.university.springconfig.TestRootConfig;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TestDbConfig.class)
+@ContextConfiguration(classes = TestRootConfig.class)
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
     "/schema.sql", "/room-test-data.sql"})
 class RoomDaoImplTest {
