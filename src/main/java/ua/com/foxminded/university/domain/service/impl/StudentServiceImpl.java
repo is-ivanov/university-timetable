@@ -95,15 +95,14 @@ public class StudentServiceImpl implements StudentService {
         return student;
     }
 
-    @Override //TODO add unit tests
+    @Override
     public List<Student> getStudentsByGroup(Group group) {
         log.debug("Getting all students from group ({})", group);
         List<Student> students = studentDao.getStudentsByGroup(group);
         log.info("Found {} students from group {}", students.size(), group);
         return students;
     }
-
-    @Override //TODO add unit tests
+    @Override
     public List<Student> getStudentsByGroup(int groupId) {
         log.debug("Getting all students from group id({})", groupId);
         Group group = new Group();
@@ -113,7 +112,7 @@ public class StudentServiceImpl implements StudentService {
         return students;
     }
 
-    @Override //TODO add unit test
+    @Override
     public List<Student> getStudentsByFaculty(int facultyId) {
         log.debug("Getting all students from faculty id({})", facultyId);
         Faculty faculty = new Faculty(facultyId, null);

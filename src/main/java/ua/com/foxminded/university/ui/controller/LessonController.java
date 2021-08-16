@@ -71,7 +71,7 @@ public class LessonController {
         }
         log.debug("Get filtered lessons");
         model.addAttribute("lessons",
-            lessonService.convertListLessonsToDto(lessonService.getAllWithFilter(lessonFilter)));
+            lessonService.convertListLessonsToDtos(lessonService.getAllWithFilter(lessonFilter)));
         log.info("The required data is loaded into the model");
         return "lesson";
     }

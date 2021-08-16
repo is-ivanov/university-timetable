@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.foxminded.university.dao.interfaces.LessonDao;
 import ua.com.foxminded.university.domain.entity.*;
+import ua.com.foxminded.university.domain.filter.LessonFilter;
 import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
 import ua.com.foxminded.university.exception.ServiceException;
 
@@ -19,8 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
@@ -30,13 +33,14 @@ class LessonServiceImplTest {
     private static final String MESSAGE_TEACHER_NOT_AVAILABLE = "Teacher %s is not available";
     private static final String MESSAGE_ROOM_NOT_AVAILABLE = "Room %s is not available";
     private static final String MESSAGE_STUDENT_NOT_AVAILABLE = "Student %s is not available";
-    public static final int ID1 = 1;
-    public static final int ID2 = 2;
-    public static final LocalDateTime TIME_START_CHECKED_LESSON = LocalDateTime.of(2021, Month.JANUARY,
+    private static final String MESSAGE_FILTER_NOT_SELECT = "Select at least one filter";
+    private static final int ID1 = 1;
+    private static final int ID2 = 2;
+    private static final LocalDateTime TIME_START_CHECKED_LESSON = LocalDateTime.of(2021, Month.JANUARY,
         3, 12, 0);
-    public static final LocalDateTime TIME_START_BUSY_LESSON = LocalDateTime.of(2021,
+    private static final LocalDateTime TIME_START_BUSY_LESSON = LocalDateTime.of(2021,
         Month.JANUARY, 3, 11, 0);
-    public static final int LESSON_DURATION = 90;
+    private static final int LESSON_DURATION = 90;
 
     @Mock
     private LessonDao lessonDaoMock;
@@ -227,10 +231,36 @@ class LessonServiceImplTest {
     }
 
     @Test
-    @DisplayName("test 'convertListLessonsToDto' method")
-    void testConvertListLessonToDto() {
-        lessonService.convertListLessonsToDto(any());
-        verify(lessonDtoMapperMock, times(1)).lessonsToLessonDtos(any());
+    @DisplayName("test 'convertListLessonsToDtos' method")
+    void testConvertListLessonToDtos() {
+        lessonService.convertListLessonsToDtos(any());
+        verify(lessonDtoMapperMock, times(1))
+            .lessonsToLessonDtos(any());
+    }
+
+    @Nested
+    @DisplayName("test 'getAllWithFilter' method")
+    class TestGetAllWithFilter {
+        @Test
+        @DisplayName("When one condition not null then call lessonDao once")
+        void whenOneConditionNotNullThenCallLessonDaoOnce() {
+            LessonFilter lessonFilter = new LessonFilter();
+            lessonFilter.setFacultyId(ID1);
+
+            lessonService.getAllWithFilter(lessonFilter);
+            verify(lessonDaoMock, times(1))
+                .getAllWithFilter(lessonFilter);
+        }
+
+        @Test
+        @DisplayName("When all conditions is null then should throw ServiceException")
+        void whenAllConditionsIsNullThenShouldThrowServiceException() {
+            LessonFilter lessonFilter = new LessonFilter();
+
+            ServiceException exception = assertThrows(ServiceException.class,
+                () -> lessonService.getAllWithFilter(lessonFilter));
+            assertThat(exception.getMessage(), is(equalTo(MESSAGE_FILTER_NOT_SELECT)));
+        }
     }
 
     private Lesson createTestLesson() {

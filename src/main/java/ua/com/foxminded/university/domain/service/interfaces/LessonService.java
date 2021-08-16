@@ -14,5 +14,5 @@ public interface LessonService extends Service<Lesson> {
 
     List<Lesson> getAllWithFilter(LessonFilter filter);
 
-    List<LessonDto> convertListLessonsToDto(List<Lesson> lessons);
+    List<LessonDto> convertListLessonsToDtos(List<Lesson> lessons);
 }

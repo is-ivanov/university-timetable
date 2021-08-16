@@ -6,12 +6,14 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.foxminded.university.dao.interfaces.TeacherDao;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Teacher;
+import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.mapper.TeacherDtoMapperImpl;
 
 import java.util.ArrayList;
@@ -32,15 +34,14 @@ class TeacherServiceImplTest {
     public static final int ID1 = 1;
     public static final int ID2 = 2;
 
-    private TeacherServiceImpl teacherService;
-
     @Mock
     private TeacherDao teacherDaoMock;
 
-    @BeforeEach
-    void setUp() {
-        teacherService = new TeacherServiceImpl(teacherDaoMock, new TeacherDtoMapperImpl());
-    } // TODO refactor
+    @Mock
+    private TeacherDtoMapper teacherDtoMapperMock;
+
+    @InjectMocks
+    private TeacherServiceImpl teacherService;
 
     @Test
     @DisplayName("test 'add' when call add method then should call Dao once")
