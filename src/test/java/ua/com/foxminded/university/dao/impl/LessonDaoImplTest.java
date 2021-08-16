@@ -332,7 +332,6 @@ class LessonDaoImplTest {
             int actualRowsInTable = JdbcTestUtils.countRowsInTable(jdbcTemplate,
                 TABLE_STUDENTS_LESSON);
             assertEquals(expectedRowsInTable, actualRowsInTable);
-
         }
     }
 

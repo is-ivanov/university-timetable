@@ -89,7 +89,7 @@ public class LessonServiceImpl implements LessonService {
         log.info("Student id({}) added to lesson({}) successfully", student.getId(),
             lesson.getId());
     }
-
+    //TODO unit test
     @Override
     public List<Lesson> getAllWithFilter(LessonFilter filter) {
         log.debug("Getting all lessons with ({})", filter);
@@ -105,7 +105,6 @@ public class LessonServiceImpl implements LessonService {
         }
     }
 
-    @Override //TODO unit test
     public List<LessonDto> convertListLessonsToDto(List<Lesson> lessons) {
         log.debug("convert list lessons to list lessonDTOs");
         return lessonMapper.lessonsToLessonDtos(lessons);

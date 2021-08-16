@@ -1,16 +1,16 @@
 package ua.com.foxminded.university.domain.service.impl;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.foxminded.university.dao.interfaces.LessonDao;
 import ua.com.foxminded.university.domain.entity.*;
-import ua.com.foxminded.university.domain.mapper.LessonDtoMapperImpl;
+import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
 import ua.com.foxminded.university.exception.ServiceException;
 
 import java.time.LocalDateTime;
@@ -38,16 +38,14 @@ class LessonServiceImplTest {
         Month.JANUARY, 3, 11, 0);
     public static final int LESSON_DURATION = 90;
 
-    private LessonServiceImpl lessonService;
-
     @Mock
     private LessonDao lessonDaoMock;
 
-    @BeforeEach
-    void setUp() {
-        lessonService = new LessonServiceImpl(lessonDaoMock,
-            new LessonDtoMapperImpl()); //TODO Refactor
-    }
+    @Mock
+    private LessonDtoMapper lessonDtoMapperMock;
+
+    @InjectMocks
+    private LessonServiceImpl lessonService;
 
     @Nested
     @DisplayName("test 'add' method")
@@ -114,7 +112,7 @@ class LessonServiceImplTest {
         @Test
         @DisplayName("if teacher's time is busy then should throw " +
             "ServiceException with message")
-        void testUpdate_TeacherBusy_ThrowException(){
+        void testUpdate_TeacherBusy_ThrowException() {
             Lesson testLesson = createTestLesson();
             Lesson lessonWithTeacherBusyTime = createLessonWithBusyTime();
             List<Lesson> lessonsThisTeacher = new ArrayList<>();
@@ -228,6 +226,13 @@ class LessonServiceImplTest {
         }
     }
 
+    @Test
+    @DisplayName("test 'convertListLessonsToDto' method")
+    void testConvertListLessonToDto() {
+        lessonService.convertListLessonsToDto(any());
+        verify(lessonDtoMapperMock, times(1)).lessonsToLessonDtos(any());
+    }
+
     private Lesson createTestLesson() {
         Teacher teacher = new Teacher();
         teacher.setId(ID1);
@@ -246,7 +251,8 @@ class LessonServiceImplTest {
             .timeEnd(timeEndCheckedLesson)
             .build();
     }
-    private Lesson createLessonWithBusyTime(){
+
+    private Lesson createLessonWithBusyTime() {
         LocalDateTime endSecondLessonThisTeacher =
             TIME_START_BUSY_LESSON.plusMinutes(LESSON_DURATION);
         return Lesson.builder()

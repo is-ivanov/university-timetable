@@ -53,7 +53,6 @@ public class FacultyServiceImpl implements FacultyService {
         log.info("Delete {}", faculty);
     }
 
-    //TODO change unit test
     @Override
     public List<Faculty> getAllSortedByNameAsc() {
         log.debug("Getting all faculties sorted by name ascending");

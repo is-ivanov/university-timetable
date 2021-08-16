@@ -105,8 +105,8 @@ class FacultyServiceImplTest {
     }
 
     @Test
-    @DisplayName("test 'getAll' when Dao return List faculties then method " +
-        "should return this List")
+    @DisplayName("test 'getAllSortedByNameAsc' when Dao return List faculties" +
+        " then method should return this List")
     void testGetAllSortedAscByName() {
         Faculty firstFaculty = new Faculty(ID1, FIRST_FACULTY_NAME);
         Faculty secondFaculty = new Faculty(ID2, SECOND_FACULTY_NAME);
