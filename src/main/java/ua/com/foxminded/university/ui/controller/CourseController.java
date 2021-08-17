@@ -17,7 +17,7 @@ public class CourseController {
     private final CourseService courseService;
 
     @GetMapping
-    public String courses(Model model) {
+    public String showCourses(Model model) {
         log.debug("Show courses");
         model.addAttribute("courses", courseService.getAll());
         log.info("The list of courses is loaded into model");
