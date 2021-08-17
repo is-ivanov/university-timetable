@@ -98,7 +98,7 @@ public class TeacherServiceImpl implements TeacherService {
         return teacher;
     }
 
-    @Override //TODO unit test
+    @Override
     public List<Teacher> getAllByDepartment(int departmentId) {
         log.debug("Getting all teachers from department id({})", departmentId);
         List<Teacher> teachers = teacherDao.getAllByDepartment(departmentId);
@@ -106,7 +106,7 @@ public class TeacherServiceImpl implements TeacherService {
         return teachers;
     }
 
-    @Override //TODO unit test
+    @Override
     public List<Teacher> getAllByFaculty(int facultyId) {
         log.debug("Getting all teachers from faculty id({})", facultyId);
         List<Teacher> teachers = teacherDao.getAllByFaculty(facultyId);
@@ -114,8 +114,8 @@ public class TeacherServiceImpl implements TeacherService {
         return teachers;
     }
 
-    @Override //TODO unit test
-    public List<TeacherDto> convertListTeachersToDto(List<Teacher> teachers) {
+    @Override
+    public List<TeacherDto> convertListTeachersToDtos(List<Teacher> teachers) {
         log.debug("convert list teachers to list teacherDTOs");
         return teacherMapper.teachersToTeacherDtos(teachers);
     }

@@ -18,5 +18,5 @@ public interface TeacherService extends Service<Teacher> {
 
     List<Teacher> getAllByFaculty(int facultyId);
 
-    List<TeacherDto> convertListTeachersToDto(List<Teacher> teachers);
+    List<TeacherDto> convertListTeachersToDtos(List<Teacher> teachers);
 }

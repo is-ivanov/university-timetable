@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.foxminded.university.dao.interfaces.TeacherDao;
+import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Teacher;
@@ -17,12 +18,12 @@ import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.mapper.TeacherDtoMapperImpl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -199,5 +200,52 @@ class TeacherServiceImplTest {
             verify(teacherDaoMock).update(captor.capture());
             assertEquals(expectedDepartment, captor.getValue().getDepartment());
         }
+    }
+
+    @Test
+    @DisplayName("Test 'getAllByDepartment' when Dao return List teachers " +
+        "then method should return this list")
+    void testGetAllByDepartment() {
+        Faculty faculty = new Faculty();
+        faculty.setId(ID1);
+        Department department = new Department();
+        department.setId(ID1);
+        department.setFaculty(faculty);
+        Teacher teacher1 = new Teacher();
+        teacher1.setId(ID1);
+        teacher1.setFirstName(FIRST_NAME);
+        teacher1.setDepartment(department);
+        List<Teacher> expectedTeachers = new ArrayList<>();
+        expectedTeachers.add(teacher1);
+
+        when(teacherDaoMock.getAllByDepartment(ID1)).thenReturn(expectedTeachers);
+        assertEquals(expectedTeachers, teacherService.getAllByDepartment(ID1));
+    }
+
+    @Test
+    @DisplayName("Test 'getAllByFaculty' when Dao return List teachers then " +
+        "method should return this list")
+    void testGetAllByFaculty() {
+        Teacher teacher = new Teacher();
+        teacher.setId(ID1);
+        teacher.setFirstName(FIRST_NAME);
+        List<Teacher> expectedTeachers = Arrays.asList(teacher);
+
+        when(teacherDaoMock.getAllByFaculty(ID1)).thenReturn(expectedTeachers);
+        assertEquals(expectedTeachers, teacherService.getAllByFaculty(ID1));
+    }
+
+    @Test
+    @DisplayName("Test convertListTeachersToDtos when mapper return List " +
+        "teacherDto then method should return this List")
+    void testConvertListTeachersToDtos() {
+        TeacherDto teacherDto1 = new TeacherDto();
+        teacherDto1.setId(ID1);
+        TeacherDto teacherDto2 = new TeacherDto();
+        teacherDto2.setId(ID2);
+        List<TeacherDto> dtos = Arrays.asList(teacherDto1, teacherDto2);
+
+        when(teacherDtoMapperMock.teachersToTeacherDtos(any())).thenReturn(dtos);
+        assertEquals(dtos, teacherService.convertListTeachersToDtos(any()));
     }
 }

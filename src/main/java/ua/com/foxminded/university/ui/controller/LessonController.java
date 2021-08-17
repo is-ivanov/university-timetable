@@ -61,7 +61,7 @@ public class LessonController {
             teachers = teacherService.getAll();
         }
         model.addAttribute("teachers",
-            teacherService.convertListTeachersToDto(teachers));
+            teacherService.convertListTeachersToDtos(teachers));
         if (facultyId != null && facultyId > 0) {
             log.debug("Get departments for selector by facultyId ({})", facultyId);
             model.addAttribute("departments", departmentService.getAllByFaculty(facultyId));
@@ -88,7 +88,7 @@ public class LessonController {
             log.debug("Get teachers for selector by departmentId ({})", departmentId);
             teachersByDepartment = teacherService.getAllByDepartment(departmentId);
         }
-        return teacherService.convertListTeachersToDto(teachersByDepartment);
+        return teacherService.convertListTeachersToDtos(teachersByDepartment);
     }
 
     @GetMapping("/faculty")
@@ -103,7 +103,7 @@ public class LessonController {
             log.debug("Get teachers for selector by facultyId ({})", facultyId);
             teachersByFaculty = teacherService.getAllByFaculty(facultyId);
         }
-        return teacherService.convertListTeachersToDto(teachersByFaculty);
+        return teacherService.convertListTeachersToDtos(teachersByFaculty);
     }
 
     @ModelAttribute("faculties")
@@ -118,7 +118,7 @@ public class LessonController {
 
     @ModelAttribute("teachers")
     public List<TeacherDto> populateTeachers() {
-        return teacherService.convertListTeachersToDto(teacherService.getAll());
+        return teacherService.convertListTeachersToDtos(teacherService.getAll());
     }
 
     @ModelAttribute("courses")
