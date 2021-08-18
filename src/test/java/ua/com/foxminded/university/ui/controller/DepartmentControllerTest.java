@@ -49,7 +49,7 @@ class DepartmentControllerTest {
     private DepartmentController departmentController;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
         viewResolver.setPrefix("/WEB-INF/templates/");
         viewResolver.setSuffix(".html");

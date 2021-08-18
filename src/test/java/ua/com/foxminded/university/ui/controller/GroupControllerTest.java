@@ -32,10 +32,9 @@ class GroupControllerTest {
 
     public static final int ID1 = 1;
     public static final int ID2 = 2;
-    public static final String NAME_FIRST_FACULTY = "Faculty1 name";
-    public static final String NAME_SECOND_FACULTY = "Faculty2 name";
+    public static final String NAME_FIRST_FACULTY = "Faculty1";
+    public static final String NAME_SECOND_FACULTY = "Faculty2";
     public static final String NAME_FIRST_GROUP = " First group";
-    public static final boolean TRUE = true;
 
     private MockMvc mockMvc;
 
@@ -49,7 +48,7 @@ class GroupControllerTest {
     private GroupController groupController;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
         viewResolver.setPrefix("/WEB-INF/templates/");
         viewResolver.setSuffix(".html");
@@ -63,9 +62,9 @@ class GroupControllerTest {
     void testShowGroupsWithoutParameters() throws Exception {
         List<Faculty> expectedFaculties = createExpectedFaculties();
         Group group1 = new Group(ID1, NAME_FIRST_GROUP,
-            expectedFaculties.get(0), TRUE);
+            expectedFaculties.get(0), true);
         Group group2 = new Group(ID1, NAME_FIRST_GROUP,
-            expectedFaculties.get(1), TRUE);
+            expectedFaculties.get(1), true);
         List<Group> allGroups = Arrays.asList(group1, group2);
 
         when(facultyServiceMock.getAllSortedByNameAsc()).thenReturn(expectedFaculties);
@@ -89,7 +88,7 @@ class GroupControllerTest {
         List<Faculty> expectedFaculties = createExpectedFaculties();
         Faculty faculty = expectedFaculties.get(0);
         Group group1 = new Group(ID1, NAME_FIRST_GROUP,
-            faculty, TRUE);
+            faculty, true);
         List<Group> expectedGroups = Collections.singletonList(group1);
 
         when(facultyServiceMock.getAllSortedByNameAsc()).thenReturn(expectedFaculties);
@@ -103,7 +102,7 @@ class GroupControllerTest {
                 model().attribute("faculties", expectedFaculties),
                 model().attribute("groups", expectedGroups),
                 model().attribute("facultyIdSelect", ID1),
-                model().attribute("isShowInactive", TRUE)
+                model().attribute("isShowInactive", true)
             ));
     }
 
