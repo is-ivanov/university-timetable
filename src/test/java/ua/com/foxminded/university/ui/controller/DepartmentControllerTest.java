@@ -34,6 +34,8 @@ class DepartmentControllerTest {
     public static final int ID2 = 2;
     public static final String NAME_FIRST_FACULTY = "Faculty1 name";
     public static final String NAME_SECOND_FACULTY = "Faculty2 name";
+    public static final String NAME_FIRST_DEPARTMENT = "First department";
+    public static final String NAME_SECOND_DEPARTMENT = "Second department";
 
     private MockMvc mockMvc;
 
@@ -60,9 +62,9 @@ class DepartmentControllerTest {
     @DisplayName("Test showDepartments without parameters")
     void testShowDepartmentsWithoutParameters() throws Exception {
         List<Faculty> expectedFaculties = createExpectedFaculties();
-        Department department1 = new Department(ID1, "First department name",
+        Department department1 = new Department(ID1, NAME_FIRST_DEPARTMENT,
             expectedFaculties.get(0));
-        Department department2 = new Department(ID2, "Second department name",
+        Department department2 = new Department(ID2, NAME_SECOND_DEPARTMENT,
             expectedFaculties.get(1));
         List<Department> allDepartments = Arrays.asList(department1,
             department2);
