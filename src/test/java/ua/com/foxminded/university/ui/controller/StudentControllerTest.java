@@ -2,11 +2,13 @@ package ua.com.foxminded.university.ui.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -21,7 +23,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.ResultMatcher.matchAll;
@@ -39,6 +42,8 @@ class StudentControllerTest {
     public static final String NAME_FIRST_GROUP = "group1";
     public static final String NAME_SECOND_GROUP = "group2";
     public static final String URL_TEMPLATE = "/student?facultyId=1&groupId=2&isShowInactiveGroups=on&isShowInactiveStudents=on";
+    public static final String URL_REQUEST_ALL_GROUPS = "/student/faculty?facultyId=0";
+    public static final String URL_REQUEST_GROUPS = "/student/faculty?facultyId=1";
 
     private MockMvc mockMvc;
 
@@ -64,57 +69,132 @@ class StudentControllerTest {
             .build();
     }
 
-    @Test
-    @DisplayName("Test showStudents without parameters")
-    void testShowStudentsWithoutParameters() throws Exception {
-        Faculty faculty1 = new Faculty(ID1, NAME_FIRST_FACULTY);
-        Faculty faculty2 = new Faculty(ID2, NAME_SECOND_FACULTY);
-        List<Faculty> faculties = Arrays.asList(faculty1, faculty2);
+    @Nested
+    @DisplayName("test showStudents")
+    class TestShowStudents {
 
-        Group group1 = new Group(ID1, NAME_FIRST_GROUP, faculty1, true);
-        Group group2 = new Group(ID2, NAME_SECOND_GROUP, faculty2, true);
-        List<Group> groups = Arrays.asList(group1, group2);
+        @Test
+        @DisplayName("without parameters")
+        void testWithoutParameters() throws Exception {
+            Faculty faculty1 = new Faculty(ID1, NAME_FIRST_FACULTY);
+            Faculty faculty2 = new Faculty(ID2, NAME_SECOND_FACULTY);
+            List<Faculty> faculties = Arrays.asList(faculty1, faculty2);
 
-        when(facultyServiceMock.getAllSortedByNameAsc()).thenReturn(faculties);
-        when(groupServiceMock.getAll()).thenReturn(groups);
+            Group group1 = new Group(ID1, NAME_FIRST_GROUP, faculty1, true);
+            Group group2 = new Group(ID2, NAME_SECOND_GROUP, faculty2, true);
+            List<Group> groups = Arrays.asList(group1, group2);
 
-        mockMvc.perform(get("/student"))
-            .andDo(print())
-            .andExpect(matchAll(
-                status().isOk(),
-                view().name("student"),
-                model().attributeDoesNotExist("isShowInactiveGroups",
-                    "isShowInactiveStudents", "students"),
-                model().attribute("faculties", faculties),
-                model().attribute("groups", groups),
-                model().attribute("facultyIdSelect", is(nullValue())),
-                model().attribute("groupIdSelect", is(nullValue()))
-            ));
+            when(facultyServiceMock.getAllSortedByNameAsc()).thenReturn(faculties);
+            when(groupServiceMock.getAll()).thenReturn(groups);
+
+            mockMvc.perform(get("/student"))
+                .andDo(print())
+                .andExpect(matchAll(
+                    status().isOk(),
+                    view().name("student"),
+                    model().attributeDoesNotExist("isShowInactiveGroups",
+                        "isShowInactiveStudents", "students"),
+                    model().attribute("faculties", faculties),
+                    model().attribute("groups", groups),
+                    model().attribute("facultyIdSelect", is(nullValue())),
+                    model().attribute("groupIdSelect", is(nullValue()))
+                ));
+        }
+
+        @Test
+        @DisplayName("with all parameters")
+        void testWithAllParameters() throws Exception {
+            Student student1 = new Student();
+            student1.setId(ID1);
+            student1.setFirstName("student1 name");
+            List<Student> students = Collections.singletonList(student1);
+            Group group1 = new Group();
+            group1.setId(ID1);
+            List<Group> groups = Collections.singletonList(group1);
+
+            when(studentServiceMock.getStudentsByGroup(ID2)).thenReturn(students);
+            when(groupServiceMock.getAllByFacultyId(ID1)).thenReturn(groups);
+
+            mockMvc.perform(get(URL_TEMPLATE))
+                .andDo(print())
+                .andExpect(matchAll(
+                    status().isOk(),
+                    view().name("student"),
+                    model().attribute("isShowInactiveGroups", true),
+                    model().attribute("isShowInactiveStudents", true),
+                    model().attribute("students", students),
+                    model().attribute("groups", groups)
+                ));
+        }
+
+        @Test
+        @DisplayName("with facultyId and without groupId")
+        void testWithFacultyIdAndWithoutGroupId() throws Exception {
+            Student student1 = new Student();
+            student1.setId(ID1);
+            student1.setFirstName("student1 name");
+            List<Student> students = Collections.singletonList(student1);
+
+            when(studentServiceMock.getStudentsByFaculty(ID1)).thenReturn(students);
+
+            mockMvc.perform(get("/student?facultyId=1"))
+                .andDo(print())
+                .andExpect(matchAll(
+                    status().isOk(),
+                    view().name("student"),
+                    model().attribute("students", students)
+                ));
+        }
     }
 
-    @Test
-    @DisplayName("Test showStudents with all parameters")
-    void testShowStudentsWithAllParameters() throws Exception {
-        Student student1 = new Student();
-        student1.setId(ID1);
-        student1.setFirstName("student1 name");
-        List<Student> students = Collections.singletonList(student1);
-        Group group1 = new Group();
-        group1.setId(ID1);
-        List<Group> groups = Collections.singletonList(group1);
+    @Nested
+    @DisplayName("test getGroups")
+    class TestGetGroups {
 
-        when(studentServiceMock.getStudentsByGroup(ID2)).thenReturn(students);
-        when(groupServiceMock.getAllByFacultyId(ID1)).thenReturn(groups);
+        @Test
+        @DisplayName("with parameter facultyId = 0")
+        void withoutParameterFacultyId() throws Exception {
+            Group group1 = new Group();
+            group1.setId(ID1);
+            group1.setName("group1");
+            Group group2 = new Group();
+            group2.setId(ID2);
+            group2.setName("group2");
+            List<Group> groups = Arrays.asList(group1, group2);
 
-        mockMvc.perform(get(URL_TEMPLATE))
-            .andDo(print())
-            .andExpect(matchAll(
-               status().isOk(),
-                view().name("student"),
-                model().attribute("isShowInactiveGroups", true),
-                model().attribute("isShowInactiveStudents", true),
-                model().attribute("students", students),
-                model().attribute("groups", groups)
-            ));
+            when(groupServiceMock.getAll()).thenReturn(groups);
+
+            mockMvc.perform(get(URL_REQUEST_ALL_GROUPS))
+
+                .andDo(print())
+                .andExpect(matchAll(
+                    content().contentType(MediaType.APPLICATION_JSON),
+                    status().isOk(),
+                    jsonPath("$.length()").value(2),
+                    jsonPath("$.[0].name").value("group1"),
+                    jsonPath("$.[1].name").value("group2")
+                ));
+        }
+
+        @Test
+        @DisplayName("with parameter facultyId = 1")
+        void withParameterFacultyId1() throws Exception {
+            Group group1 = new Group();
+            group1.setId(ID1);
+            group1.setName("group1");
+            List<Group> groups = Collections.singletonList(group1);
+
+            when(groupServiceMock.getAllByFacultyId(ID1)).thenReturn(groups);
+
+            mockMvc.perform(get(URL_REQUEST_GROUPS))
+
+                .andDo(print())
+                .andExpect(matchAll(
+                    content().contentType(MediaType.APPLICATION_JSON),
+                    status().isOk(),
+                    jsonPath("$.length()").value(1),
+                    jsonPath("$.[0].name").value("group1")
+                ));
+        }
     }
 }
