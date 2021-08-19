@@ -108,26 +108,31 @@ public class LessonController {
 
     @ModelAttribute("faculties")
     public List<Faculty> populateFaculties() {
+        log.debug("Loading list faculties for selector");
         return facultyService.getAllSortedByNameAsc();
     }
 
     @ModelAttribute("departments")
     public List<Department> populateDepartments() {
+        log.debug("Loading list departments for selector");
         return departmentService.getAll();
     }
 
     @ModelAttribute("teachers")
     public List<TeacherDto> populateTeachers() {
+        log.debug("Loading list teachers for selector");
         return teacherService.convertListTeachersToDtos(teacherService.getAll());
     }
 
     @ModelAttribute("courses")
     public List<Course> populateCourses() {
+        log.debug("Loading list courses for selector");
         return courseService.getAll();
     }
 
     @ModelAttribute("rooms")
     public List<Room> populateRooms() {
+        log.debug("Loading list rooms for selector");
         return roomService.getAll();
     }
 
