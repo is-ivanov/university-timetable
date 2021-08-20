@@ -304,7 +304,7 @@ class LessonControllerTest {
             when(teacherServiceMock.getAll()).thenReturn(teachers);
             when(teacherServiceMock.convertListTeachersToDtos(teachers)).thenReturn(teacherDtos);
 
-            mockMvc.perform(get("/lesson/department?departmentId=0"))
+            mockMvc.perform(get("/lesson/faculty?facultyId=0"))
                 .andDo(print())
                 .andExpect(matchAll(
                     content().contentType(MediaType.APPLICATION_JSON),
@@ -312,6 +312,32 @@ class LessonControllerTest {
                     jsonPath("$.length()").value(2),
                     jsonPath("$.[0].id").value(1),
                     jsonPath("$.[1].id").value(2)
+                ));
+        }
+
+        @Test
+        @DisplayName("with parameter facultyId = 1")
+        void withParameterFacultyId1() throws Exception {
+            Teacher teacher1 = new Teacher();
+            teacher1.setId(ID1);
+            List<Teacher> teachers = Collections.singletonList(teacher1);
+
+            TeacherDto teacherDto1 = new TeacherDto();
+            teacherDto1.setId(ID1);
+            List<TeacherDto> teacherDtos = Collections.singletonList(teacherDto1);
+
+            when(teacherServiceMock.getAllByFaculty(ID1)).thenReturn(teachers);
+            when(teacherServiceMock.getAll()).thenReturn(null);
+            doReturn(teacherDtos).when(teacherServiceMock).convertListTeachersToDtos(teachers);
+            doReturn(null).when(teacherServiceMock).convertListTeachersToDtos(null);
+
+            mockMvc.perform(get("/lesson/faculty?facultyId=1"))
+                .andDo(print())
+                .andExpect(matchAll(
+                    content().contentType(MediaType.APPLICATION_JSON),
+                    status().isOk(),
+                    jsonPath("$.length()").value(1),
+                    jsonPath("$.[0].id").value(1)
                 ));
         }
     }
