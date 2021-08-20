@@ -2,27 +2,45 @@
   padding-top: 60px;
 }
 
+table.table-sortable thead > tr > th {
+  padding-right: 30px;
+}
+
 .table-sortable th {
   cursor: pointer;
+  position: relative;
 }
 
-.table-sortable .th-sort-asc::after {
-  content: "\25b4";
+table.table-sortable thead .col::before,
+table.table-sortable thead .col::after {
+  position: absolute;
+  bottom: 0.5em;
+  display: block;
 }
 
-.table-sortable .th-sort-desc::after {
-  content: "\25be";
+.table-sortable .col::before,
+.table-sortable .th-sort-asc::before,
+.table-sortable .th-sort-desc::before {
+  right: 1em;
+  content: "\2191";
 }
 
+.table-sortable .col::after,
 .table-sortable .th-sort-asc::after,
 .table-sortable .th-sort-desc::after {
-  margin-left: 5px;
+  right: 0.5em;
+  content: "\2193";
 }
 
 .table-sortable .th-sort-asc,
 .table-sortable .th-sort-desc {
   background: rgba(0, 0, 0, 0.1);
   color: white;
+}
+
+.table-sortable .th-sort-asc::after,
+.table-sortable .th-sort-desc::before {
+  color: initial;
 }
 
 tr.inactive,
