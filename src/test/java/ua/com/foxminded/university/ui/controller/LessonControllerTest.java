@@ -8,8 +8,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import ua.com.foxminded.university.domain.dto.LessonDto;
@@ -23,11 +23,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.ResultMatcher.*;
+import static org.springframework.test.web.servlet.ResultMatcher.matchAll;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -42,11 +40,6 @@ class LessonControllerTest {
     public static final String NAME_SECOND_FACULTY = "faculty2";
     public static final String NAME_FIRST_DEPARTMENT = "dep1";
     public static final String NAME_SECOND_DEPARTMENT = "dep2";
-    public static final String TEACHER_NAME = "teacher name";
-    public static final String URL_ALL_PARAMETERS = "/teacher?facultyId=1&departmentId=2&isShowInactiveTeachers=on";
-    public static final String URL_FACULTY_PARAMETER = "/teacher?facultyId=1";
-    public static final String URL_FACULTY_ID_0 = "/teacher/faculty?facultyId=0";
-    public static final String URL_FACULTY_ID_1 = "/teacher/faculty?facultyId=1";
 
     private MockMvc mockMvc;
 
@@ -226,6 +219,100 @@ class LessonControllerTest {
                     .flashAttr("lessonFilter", lessonFilter))
                 .andDo(print())
                 .andExpect(model().attribute("teachers", teacherDtos));
+        }
+    }
+
+    @Nested
+    @DisplayName("test getTeachersByDepartment")
+    class TestGetTeachersByDepartment {
+
+        @Test
+        @DisplayName("with parameter departmentId = 0")
+        void withParameterDepartmentId0() throws Exception {
+            Teacher teacher1 = new Teacher();
+            teacher1.setId(ID1);
+            Teacher teacher2 = new Teacher();
+            teacher2.setId(ID2);
+            List<Teacher> teachers = Arrays.asList(teacher1, teacher2);
+
+            TeacherDto teacherDto1 = new TeacherDto();
+            teacherDto1.setId(ID1);
+            TeacherDto teacherDto2 = new TeacherDto();
+            teacherDto2.setId(ID2);
+            List<TeacherDto> teacherDtos = Arrays.asList(teacherDto1, teacherDto2);
+
+            when(teacherServiceMock.getAll()).thenReturn(teachers);
+            when(teacherServiceMock.convertListTeachersToDtos(teachers)).thenReturn(teacherDtos);
+
+            mockMvc.perform(get("/lesson/department?departmentId=0"))
+                .andDo(print())
+                .andExpect(matchAll(
+                    content().contentType(MediaType.APPLICATION_JSON),
+                    status().isOk(),
+                    jsonPath("$.length()").value(2),
+                    jsonPath("$.[0].id").value(1),
+                    jsonPath("$.[1].id").value(2)
+                ));
+        }
+
+        @Test
+        @DisplayName("with parameter departmentId = 1")
+        void withParameterDepartmentId1() throws Exception {
+            Teacher teacher1 = new Teacher();
+            teacher1.setId(ID1);
+            List<Teacher> teachers = Collections.singletonList(teacher1);
+
+            TeacherDto teacherDto1 = new TeacherDto();
+            teacherDto1.setId(ID1);
+            List<TeacherDto> teacherDtos = Collections.singletonList(teacherDto1);
+
+            when(teacherServiceMock.getAllByDepartment(ID1)).thenReturn(teachers);
+            when(teacherServiceMock.getAll()).thenReturn(null);
+            doReturn(teacherDtos).when(teacherServiceMock).convertListTeachersToDtos(teachers);
+            doReturn(null).when(teacherServiceMock).convertListTeachersToDtos(null);
+
+            mockMvc.perform(get("/lesson/department?departmentId=1"))
+                .andDo(print())
+                .andExpect(matchAll(
+                    content().contentType(MediaType.APPLICATION_JSON),
+                    status().isOk(),
+                    jsonPath("$.length()").value(1),
+                    jsonPath("$.[0].id").value(1)
+                ));
+        }
+    }
+
+    @Nested
+    @DisplayName("test getTeachersByFaculty")
+    class TestGetTeachersByFaculty {
+
+        @Test
+        @DisplayName("with parameters facultyId = 0")
+        void withParametersFacultyId0() throws Exception {
+            Teacher teacher1 = new Teacher();
+            teacher1.setId(ID1);
+            Teacher teacher2 = new Teacher();
+            teacher2.setId(ID2);
+            List<Teacher> teachers = Arrays.asList(teacher1, teacher2);
+
+            TeacherDto teacherDto1 = new TeacherDto();
+            teacherDto1.setId(ID1);
+            TeacherDto teacherDto2 = new TeacherDto();
+            teacherDto2.setId(ID2);
+            List<TeacherDto> teacherDtos = Arrays.asList(teacherDto1, teacherDto2);
+
+            when(teacherServiceMock.getAll()).thenReturn(teachers);
+            when(teacherServiceMock.convertListTeachersToDtos(teachers)).thenReturn(teacherDtos);
+
+            mockMvc.perform(get("/lesson/department?departmentId=0"))
+                .andDo(print())
+                .andExpect(matchAll(
+                    content().contentType(MediaType.APPLICATION_JSON),
+                    status().isOk(),
+                    jsonPath("$.length()").value(2),
+                    jsonPath("$.[0].id").value(1),
+                    jsonPath("$.[1].id").value(2)
+                ));
         }
     }
 

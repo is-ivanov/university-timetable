@@ -167,7 +167,6 @@ class TeacherControllerTest {
             when(departmentServiceMock.getAll()).thenReturn(departments);
 
             mockMvc.perform(get(URL_FACULTY_ID_0))
-
                 .andDo(print())
                 .andExpect(matchAll(
                     content().contentType(MediaType.APPLICATION_JSON),
@@ -189,7 +188,6 @@ class TeacherControllerTest {
             when(departmentServiceMock.getAllByFaculty(ID1)).thenReturn(departments);
 
             mockMvc.perform(get(URL_FACULTY_ID_1))
-
                 .andDo(print())
                 .andExpect(matchAll(
                     content().contentType(MediaType.APPLICATION_JSON),
