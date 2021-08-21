@@ -72,7 +72,7 @@
           <div class="col-sm-auto form-check form-switch ms-5">
             <input class="form-check-input" type="checkbox" id="switchShowInactiveTeachers"
                    onclick="showInactiveTeachersInSelect()" name="isShowInactiveTeachers"
-                   th:checked="${isShowInactiveTeachers}"/>
+                   th:checked="${isShowInactiveTeachers}">
             <label class="form-check-label" for="switchShowInactiveTeachers">Show inactive teachers</label>
           </div>
         </div>
@@ -122,11 +122,11 @@
             <span class="input-group-text">from</span>
             <input type="text" class="input-sm form-control" th:field="*{dateFrom}"
                    th:value="${#temporals.format(lessonFilter.dateFrom, 'yyyy-MM-dd')}"
-                   autocomplete="off" onchange="switchSubmitEnabled()"/>
+                   autocomplete="off" onchange="switchSubmitEnabled()">
             <span class="input-group-text">to</span>
             <input type="text" class="input-sm form-control" th:field="*{dateTo}"
                    th:value="${#temporals.format(lessonFilter.dateTo, 'yyyy-MM-dd')}"
-                   autocomplete="off" onchange="switchSubmitEnabled()"/>
+                   autocomplete="off" onchange="switchSubmitEnabled()">
             <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
           </div>
         </div>
@@ -138,13 +138,13 @@
       <!--Submit-->
       <div class="col-sm">
         <input class="btn btn-success" type="submit" value="Show lessons" id="submit"
-               th:disabled="${!#request.requestURI.contains('lesson/filter')}"/>
+               th:disabled="${!#request.requestURI.contains('lesson/filter')}">
       </div>
       <!--Checkbox show past lessons-->
       <div class="col-sm-auto form-check form-switch ms-5">
         <input class="form-check-input" type="checkbox" id="switchShowPastLessonsMainTable"
                onclick="showPastLessonsInTable()" name="isShowPastLessons"
-               th:checked="${isShowPastLessons}"/>
+               th:checked="${isShowPastLessons}">
         <label class="form-check-label" for="switchShowPastLessonsMainTable">Show past lessons</label>
       </div>
     </div>
@@ -156,12 +156,12 @@
       <caption>List of lessons</caption>
       <thead class="bg-success">
       <tr>
-        <th scope="col" class="col">Course</th>
-        <th scope="col" class="col">Teacher</th>
-        <th scope="col" class="col">Room</th>
-        <th scope="col" class="col">Date</th>
-        <th scope="col" class="col">Time Start</th>
-        <th scope="col" class="col">Time End</th>
+        <th scope="col" class="col th-sort">Course</th>
+        <th scope="col" class="col th-sort">Teacher</th>
+        <th scope="col" class="col th-sort">Room</th>
+        <th scope="col" class="col th-sort">Date</th>
+        <th scope="col" class="col th-sort">Time Start</th>
+        <th scope="col" class="col th-sort">Time End</th>
         <th scope="col" class="col">Action</th>
       </tr>
       </thead>

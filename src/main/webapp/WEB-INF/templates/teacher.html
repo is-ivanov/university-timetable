@@ -47,12 +47,12 @@
     <div class="row mt-2 align-items-center">
       <div class="col-sm">
         <input class="btn btn-success" type="submit" id="submit" value="Show teachers"
-               th:disabled="${facultyIdSelect eq null and departmentIdSelect eq null}"/>
+               th:disabled="${facultyIdSelect eq null and departmentIdSelect eq null}">
       </div>
       <div class="col-sm-auto form-check form-switch ms-5">
         <input class="form-check-input" type="checkbox" id="switchShowInactiveTeachersMainTable"
                onclick="showInactiveTeachersInTable()" name="isShowInactiveTeachers"
-               th:checked="${isShowInactiveTeachers}"/>
+               th:checked="${isShowInactiveTeachers}">
         <label class="form-check-label" for="switchShowInactiveTeachersMainTable">Show inactive teachers</label>
       </div>
     </div>
@@ -60,17 +60,16 @@
   <!--  Form-->
   <!--  Main Table-->
   <div class="table-responsive-md">
-    <table class="table table-hover table-sortable" id="mainTable"
-           th:classappend="${facultyIdSelect == null and departmentIdSelect == null } ? 'd-none'">
+    <table class="table table-hover table-sortable" id="mainTable">
       <caption>List of teachers</caption>
       <thead class="bg-success">
       <tr>
-        <th scope="col" class="col">id</th>
-        <th scope="col" class="col">First Name</th>
-        <th scope="col" class="col">Patronymic</th>
-        <th scope="col" class="col">Last Name</th>
-        <th scope="col" class="col">Department</th>
-        <th scope="col" class="col text-center">Status</th>
+        <th scope="col" class="col th-sort">id</th>
+        <th scope="col" class="col th-sort">First Name</th>
+        <th scope="col" class="col th-sort">Patronymic</th>
+        <th scope="col" class="col th-sort">Last Name</th>
+        <th scope="col" class="col th-sort">Department</th>
+        <th scope="col" class="col th-sort text-center">Status</th>
         <th scope="col" class="col">Action</th>
       </tr>
       </thead>

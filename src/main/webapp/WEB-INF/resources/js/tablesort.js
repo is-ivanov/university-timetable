@@ -20,13 +20,21 @@ function sortTableByColumn (table, column, asc = true) {
       textContent.
       trim().
       toLowerCase()
-    if (!isNaN(Date.parse(aColText)) && !isNaN(Date.parse(bColText))) {
-      aColText = Date.parse(aColText)
-      bColText = Date.parse(bColText)
-    } else if (!isNaN(parseFloat(aColText)) && !isNaN(parseFloat((bColText)))) {
+    // if (!isNaN(Date.parse(aColText)) && !isNaN(Date.parse(bColText))) {
+    //   aColText = Date.parse(aColText)
+    //   bColText = Date.parse(bColText)
+    // } else if (!isNaN(parseFloat(aColText)) && !isNaN(parseFloat((bColText)))) {
+    //   aColText = parseFloat(aColText)
+    //   bColText = parseFloat(bColText)
+    // }
+    if (!isNaN(parseFloat(aColText)) && !isNaN(parseFloat((bColText)))) {
       aColText = parseFloat(aColText)
       bColText = parseFloat(bColText)
+    } else if (!isNaN(Date.parse(aColText)) && !isNaN(Date.parse(bColText))) {
+      aColText = Date.parse(aColText)
+      bColText = Date.parse(bColText)
     }
+
 
     return aColText > bColText ? (1 * dirModifier) : (-1 * dirModifier)
 
@@ -52,7 +60,7 @@ function sortTableByColumn (table, column, asc = true) {
 
 }
 
-document.querySelectorAll('.table-sortable th').forEach(headerCell => {
+document.querySelectorAll('.table-sortable thead .th-sort').forEach(headerCell => {
   headerCell.addEventListener('click', () => {
     const tableElement = headerCell.parentElement.parentElement.parentElement
     const headerIndex = Array.prototype.indexOf.call(
