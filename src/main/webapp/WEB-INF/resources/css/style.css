@@ -6,26 +6,26 @@ table.table-sortable thead > tr > th {
   padding-right: 30px;
 }
 
-.table-sortable th {
+.table-sortable thead .th-sort {
   cursor: pointer;
   position: relative;
 }
 
-table.table-sortable thead .col::before,
-table.table-sortable thead .col::after {
+table.table-sortable thead .th-sort::before,
+table.table-sortable thead .th-sort::after {
   position: absolute;
   bottom: 0.5em;
   display: block;
 }
 
-.table-sortable .col::before,
+.table-sortable .th-sort::before,
 .table-sortable .th-sort-asc::before,
 .table-sortable .th-sort-desc::before {
   right: 1em;
   content: "\2191";
 }
 
-.table-sortable .col::after,
+.table-sortable .th-sort::after,
 .table-sortable .th-sort-asc::after,
 .table-sortable .th-sort-desc::after {
   right: 0.5em;
