@@ -57,7 +57,7 @@ class FacultyControllerTest {
 
         when(facultyServiceMock.getAll()).thenReturn(expectedFaculties);
 
-        mockMvc.perform(get("/faculty"))
+        mockMvc.perform(get("/faculties"))
             .andDo(print())
             .andExpect(matchAll(
                status().isOk(),

@@ -8,12 +8,45 @@
 <body>
 <div layout:fragment="content">
   <h3>Faculties</h3>
+  <button type="button" class="btn btn-primary mb-2" data-bs-toggle="modal"
+          data-bs-target="#NewFacultyModal"> New Faculty
+  </button>
+
+  <div class="newFacultyForm">
+    <form action="#" th:action="@{/faculties}" method="post" th:object="${newFaculty}">
+      <div class="modal fade" id="NewFacultyModal" data-bs-backdrop="static" data-bs-keyboard="false"
+           tabindex="-1" aria-labelledby="NewFacultyModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="NewFacultyModalLabel">New Faculty</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div>
+                <label for="facultyNameInput" class="form-label">Faculty name</label>
+                <input type="text" class="form-control" id="facultyNameInput"
+                       placeholder="Enter new faculty name" th:field="*{name}">
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <input type="submit" class="btn btn-primary" value="Create Faculty">
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!--  Table-->
   <div class="table-responsive-md">
     <table class="table table-striped table-hover table-sortable">
+      <caption>List of faculties</caption>
       <thead class="bg-success">
       <tr>
-        <th scope="col" class="col-1">id</th>
-        <th scope="col" class="col">Faculty Name</th>
+        <th scope="col" class="col-1 th-sort">id</th>
+        <th scope="col" class="col th-sort">Faculty Name</th>
         <th scope="col" class="col">Action</th>
       </tr>
       </thead>
@@ -24,14 +57,14 @@
         <td class="py-0">
           <div class="row">
             <div class="col-auto">
-              <form th:action="@{/faculty/{id}(id = ${faculty.id})}">
+              <form th:action="@{/faculties/{id}(id = ${faculty.id})}">
                 <button type="submit" class="btn btn-warning btn-sm">
                   <i class="bi-pencil-square"></i> Edit
                 </button>
               </form>
             </div>
             <div class="col-auto">
-              <form th:method="delete" th:action="@{/faculty/{id}(id = ${faculty.id})}">
+              <form th:method="delete" th:action="@{/faculties/{id}(id = ${faculty.id})}">
                 <button type="submit" class="btn btn-danger btn-sm">
                   <i class="bi-trash-fill"></i> Delete
                 </button>
@@ -44,5 +77,10 @@
     </table>
   </div>
 </div>
+<script layout:fragment="script">
+  document.getElementById('NewFacultyModal').addEventListener('shown.bs.modal', function () {
+    document.getElementById('facultyNameInput').focus()
+  })
+</script>
 </body>
 </html>
