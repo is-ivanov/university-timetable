@@ -8,35 +8,87 @@
 <body>
 <div layout:fragment="content">
   <h3>Faculties</h3>
-  <button type="button" class="btn btn-primary mb-2" data-bs-toggle="modal"
-          data-bs-target="#NewFacultyModal"> New Faculty
+  <button type="button" class="btn btn-primary mb-2 btn-sm" data-bs-toggle="modal"
+          data-bs-target="#newFacultyModal">
+    <i class="bi bi-plus-circle"></i> New Faculty
   </button>
 
-  <div class="newFacultyForm">
-    <form action="#" th:action="@{/faculties}" method="post" th:object="${newFaculty}">
-      <div class="modal fade" id="NewFacultyModal" data-bs-backdrop="static" data-bs-keyboard="false"
-           tabindex="-1" aria-labelledby="NewFacultyModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="NewFacultyModalLabel">New Faculty</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <div>
-                <label for="facultyNameInput" class="form-label">Faculty name</label>
-                <input type="text" class="form-control" id="facultyNameInput"
-                       placeholder="Enter new faculty name" th:field="*{name}">
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <input type="submit" class="btn btn-primary" value="Create Faculty">
+  <!--  Modal Forms-->
+  <!--  Create Modal-->
+  <div id="newFacultyModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false"
+       tabindex="-1" aria-labelledby="NewFacultyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form action="#" th:action="@{/faculties}" method="post" th:object="${newFaculty}">
+          <div class="modal-header">
+            <h5 class="modal-title" id="newFacultyModalLabel">New Faculty</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div>
+              <label for="newFacultyNameInput" class="form-label">Faculty name</label>
+              <input type="text" class="form-control" id="newFacultyNameInput"
+                     placeholder="Enter new faculty name" th:field="*{name}" required="required">
             </div>
           </div>
-        </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <input type="submit" class="btn btn-primary" value="Create Faculty">
+          </div>
+        </form>
       </div>
-    </form>
+    </div>
+  </div>
+
+  <!--Edit Modal -->
+  <div id="editFacultyModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false"
+       tabindex="-1" aria-labelledby="editFacultyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form id="formEdit" th:method="put">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editFacultyModalLabel">Update Faculty</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div>
+              <label for="editFacultyNameInput" class="form-label">Faculty name</label>
+              <input type="text" class="form-control" id="editFacultyNameInput"
+                     name="name" value="" required="required">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <input type="submit" class="btn btn-primary" value="Update">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!--  Delete Modal-->
+  <div id="deleteFacultyModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false"
+       tabindex="-1" aria-labelledby="DeleteFacultyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form id="formDelete" th:method="delete">
+          <div class="modal-header">
+            <h5 id="deleteFacultyModalLabel" class="modal-title">Delete Faculty</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p id="deletedFacultyName"></p>
+            <p class="text-danger">
+              <small>This action cannot be undone.</small>
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <input type="submit" class="btn btn-danger" value="Delete">
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 
   <!--  Table-->
@@ -57,18 +109,16 @@
         <td class="py-0">
           <div class="row">
             <div class="col-auto">
-              <form th:action="@{/faculties/{id}(id = ${faculty.id})}">
-                <button type="submit" class="btn btn-warning btn-sm">
-                  <i class="bi-pencil-square"></i> Edit
-                </button>
-              </form>
+              <a href="#editFacultyModal" class="btn btn-warning btn-sm editButton" data-bs-toggle="modal"
+                 th:data-bs-id="${faculty.id}">
+                <i class="bi-pencil-square"></i> Edit
+              </a>
             </div>
             <div class="col-auto">
-              <form th:method="delete" th:action="@{/faculties/{id}(id = ${faculty.id})}">
-                <button type="submit" class="btn btn-danger btn-sm">
-                  <i class="bi-trash-fill"></i> Delete
-                </button>
-              </form>
+              <a href="#deleteFacultyModal" class="btn btn-danger btn-sm deleteButton" data-bs-toggle="modal"
+                 th:data-bs-id="${faculty.id}" th:data-bs-name="${faculty.name}">
+                <i class="bi-trash-fill"></i> Delete
+              </a>
             </div>
           </div>
         </td>
@@ -77,10 +127,41 @@
     </table>
   </div>
 </div>
+
 <script layout:fragment="script">
-  document.getElementById('NewFacultyModal').addEventListener('shown.bs.modal', function () {
-    document.getElementById('facultyNameInput').focus()
+  // NEW MODAL
+  $(function () {
+    $('#newFacultyModal').on('shown.bs.modal', function () {
+      $('#newFacultyNameInput').focus()
+    })
   })
+
+  // DELETE MODAL
+  $(function () {
+    $('.deleteButton').on('click', function () {
+      let id = $(this).attr('data-bs-id')
+      let name = $(this).attr('data-bs-name')
+      $('#deletedFacultyName').text('Are you sure you want to delete \'' + name + '\'?')
+      $('#formDelete').attr('action', '/faculties/' + id)
+    })
+  })
+
+  // EDIT MODAL
+  $(function () {
+    $('.editButton').on('click', function () {
+      let href = '/faculties/' + $(this).attr('data-bs-id')
+      $('#formEdit').attr('action', href)
+      $.get(href, function (faculty) {
+        $('#editFacultyNameInput').val(faculty.name)
+      })
+    })
+  })
+  $(function () {
+    $('#editFacultyModal').on('shown.bs.modal', function () {
+      $('#editFacultyNameInput').focus()
+    })
+  })
+
 </script>
 </body>
 </html>

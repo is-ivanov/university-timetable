@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 
@@ -30,7 +27,33 @@ public class FacultyController {
 
     @PostMapping
     public String createFaculty(@ModelAttribute Faculty faculty) {
+        log.debug("creating {}", faculty);
         facultyService.add(faculty);
         return "redirect:/faculties";
     }
+
+    @GetMapping("/{id}")
+    @ResponseBody
+    public Faculty showFaculty(@PathVariable("id") int facultyId) {
+        log.debug("Getting faculty by id({})", facultyId);
+        Faculty faculty = facultyService.getById(facultyId);
+        log.info("Found {}", faculty);
+        return faculty;
+    }
+
+    @PutMapping("/{id}")
+    public String updateFaculty(@ModelAttribute("faculty") Faculty faculty,
+        @PathVariable("id") int facultyId) {
+        facultyService.update(faculty);
+        return "redirect:/faculties";
+    }
+
+    @DeleteMapping("/{id}")
+    public String deleteFaculty(@PathVariable("id") int facultyId) {
+        log.debug("Deleting faculty by id({})", facultyId);
+        facultyService.delete(facultyId);
+        log.info("Delete faculty with id ({})", facultyId);
+        return "redirect:/faculties";
+    }
+
 }

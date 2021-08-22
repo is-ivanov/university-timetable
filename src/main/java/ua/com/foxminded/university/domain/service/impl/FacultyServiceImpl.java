@@ -54,6 +54,15 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
     @Override
+    public void delete(int facultyId) {
+        log.debug("Deleting faculty with id({})", facultyId);
+        Faculty faculty = new Faculty();
+        faculty.setId(facultyId);
+        facultyDao.delete(faculty);
+        log.info("Delete faculty with id ({})", facultyId);
+    }
+
+    @Override
     public List<Faculty> getAllSortedByNameAsc() {
         log.debug("Getting all faculties sorted by name ascending");
         List<Faculty> faculties = facultyDao.getAllSortedByNameAsc();
