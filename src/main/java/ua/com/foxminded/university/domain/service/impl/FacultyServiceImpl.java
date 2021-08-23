@@ -59,7 +59,7 @@ public class FacultyServiceImpl implements FacultyService {
         Faculty faculty = new Faculty();
         faculty.setId(facultyId);
         facultyDao.delete(faculty);
-        log.info("Delete faculty with id ({})", facultyId);
+        log.info("Delete faculty with id({})", facultyId);
     }
 
     @Override

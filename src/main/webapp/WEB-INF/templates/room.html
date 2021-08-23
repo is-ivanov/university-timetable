@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout}">
 <head>
   <meta charset="UTF-8">
@@ -8,6 +9,13 @@
 <body>
 <div layout:fragment="content">
   <h3>Rooms</h3>
+  <button type="button" class="btn btn-primary mb-2 btn-sm"
+          data-bs-toggle="modal"
+          data-bs-target="#newRoomModal">
+    <i class="bi bi-plus-circle"></i> New Room
+  </button>
+
+  <!--  Table-->
   <div class="table-responsive-md">
     <table class="table table-striped table-hover table-sortable">
       <caption>List of rooms</caption>
@@ -22,8 +30,8 @@
       <tbody>
       <tr th:each="room : ${rooms}" class="align-middle">
         <td th:utext="${room.id}">...</td>
-        <td th:utext="${room.building}">...</td>
-        <td th:utext="${room.number}">...</td>
+        <td class="room_building" th:utext="${room.building}">...</td>
+        <td class="room_number" th:utext="${room.number}">...</td>
         <td class="py-0">
           <div class="row">
             <div class="col-auto">
@@ -34,18 +42,17 @@
               </form>
             </div>
             <div class="col-auto">
-              <form th:action="@{/room/{id}(id = ${room.id})}">
-                <button type="submit" class="btn btn-warning btn-sm">
-                  <i class="bi-pencil-square"></i> Edit
-                </button>
-              </form>
+              <a href="#editRoomModal" class="btn btn-warning btn-sm editButton"
+                 data-bs-toggle="modal" th:data-bs-id="${room.id}">
+                <i class="bi-pencil-square"></i> Edit
+              </a>
             </div>
             <div class="col-auto">
-              <form th:method="delete" th:action="@{/room/{id}(id = ${room.id})}">
-                <button type="submit" class="btn btn-danger btn-sm">
-                  <i class="bi-trash-fill"></i> Delete
-                </button>
-              </form>
+              <a href="#deleteRoomModal"
+                 class="btn btn-danger btn-sm deleteButton"
+                 data-bs-toggle="modal" th:data-bs-id="${room.id}">
+                <i class="bi-trash-fill"></i>Delete
+              </a>
             </div>
           </div>
         </td>
@@ -53,6 +60,151 @@
       </tbody>
     </table>
   </div>
+  <!--  Modal Forms-->
+  <!--  Create Modal-->
+  <div id="newRoomModal" class="modal fade" data-bs-backdrop="static"
+       tabindex="-1" aria-labelledby="NewRoomModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form action="#" th:action="@{/rooms}" method="post"
+              th:object="${newRoom}">
+          <div class="modal-header">
+            <h5 class="modal-title" id="newRoomModalLabel">New Room</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="newRoomBuildingInput"
+                     class="form-label">Building</label>
+              <input type="text" class="form-control" id="newRoomBuildingInput"
+                     placeholder="Enter new room building"
+                     th:field="*{building}" required="required">
+            </div>
+            <div class="mb-3">
+              <label for="newRoomNumberInput" class="form-label">Room
+                number</label>
+              <input type="text" class="form-control" id="newRoomNumberInput"
+                     placeholder="Enter new room number" th:field="*{number}"
+                     required="required">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary"
+                    data-bs-dismiss="modal">Cancel
+            </button>
+            <input type="submit" class="btn btn-primary" value="Create Room">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!--Edit Modal -->
+  <div id="editRoomModal" class="modal fade" data-bs-backdrop="static"
+       tabindex="-1" aria-labelledby="editRoomModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form id="formEdit" th:method="put">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editRoomModalLabel">Update Room</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div>
+              <label for="editRoomBuildingInput" class="form-label">Faculty
+                name</label>
+              <input type="text" class="form-control" id="editRoomBuildingInput"
+                     name="building" value="" required="required">
+            </div>
+            <div>
+              <label for="editRoomNumberInput" class="form-label">Faculty
+                name</label>
+              <input type="text" class="form-control" id="editRoomNumberInput"
+                     name="number" value="" required="required">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary"
+                    data-bs-dismiss="modal">Cancel
+            </button>
+            <input type="submit" class="btn btn-primary" value="Update">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!--  Delete Modal-->
+  <div id="deleteRoomModal" class="modal fade" data-bs-backdrop="static"
+       tabindex="-1" aria-labelledby="DeleteRoomModalLabel"
+       aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form id="formDelete" th:method="delete">
+          <div class="modal-header">
+            <h5 id="deleteRoomModalLabel" class="modal-title">Delete Room</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to delete
+              <span class="fw-bold" id="deletedRoomName"></span></p>
+            <p class="text-danger">
+              <small>This action cannot be undone.</small>
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary"
+                    data-bs-dismiss="modal">Cancel
+            </button>
+            <input type="submit" class="btn btn-danger" value="Delete">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
 </div>
+<script layout:fragment="script">
+  // NEW MODAL
+  $(function () {
+    $('#newRoomModal').on('shown.bs.modal', function () {
+      $('#newRoomBuildingInput').focus()
+    })
+  })
+
+  // EDIT MODAL
+  $(function () {
+    $('.editButton').on('click', function () {
+      let href = '/rooms/' + $(this).attr('data-bs-id')
+      $('#formEdit').attr('action', href)
+      $.get(href, function (room) {
+        $('#editRoomBuildingInput').val(room.building)
+        $('#editRoomNumberInput').val(room.number)
+      })
+    })
+  })
+  $(function () {
+    $('#editRoomModal').on('shown.bs.modal', function () {
+      $('#editRoomBuildingInput').focus()
+    })
+  })
+
+  // DELETE MODAL
+  $(function () {
+    $('.deleteButton').on('click', function () {
+      let id = $(this).attr('data-bs-id')
+      let row = $(this).parent().parent().parent().parent()
+      let building = row.children('.room_building').text()
+      let number = row.children('.room_number').text()
+      $('#deletedRoomName').
+        text(' room (building \'' + building + '\', number \'' + number + '\'?')
+          $('#formDelete').attr('action', '/rooms/' + id)
+    })
+  })
+
+</script>
 </body>
 </html>

@@ -14,6 +14,8 @@ import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 @RequestMapping("/faculties")
 public class FacultyController {
 
+    public static final String REDIRECT_FACULTIES = "redirect:/faculties";
+
     private final FacultyService facultyService;
 
     @GetMapping
@@ -27,9 +29,10 @@ public class FacultyController {
 
     @PostMapping
     public String createFaculty(@ModelAttribute Faculty faculty) {
-        log.debug("creating {}", faculty);
+        log.debug("Creating {}", faculty);
         facultyService.add(faculty);
-        return "redirect:/faculties";
+        log.info("{} is create", faculty);
+        return REDIRECT_FACULTIES;
     }
 
     @GetMapping("/{id}")
@@ -42,18 +45,20 @@ public class FacultyController {
     }
 
     @PutMapping("/{id}")
-    public String updateFaculty(@ModelAttribute("faculty") Faculty faculty,
+    public String updateFaculty(@ModelAttribute Faculty faculty,
         @PathVariable("id") int facultyId) {
+        log.debug("Updating faculty id({})", faculty);
         facultyService.update(faculty);
-        return "redirect:/faculties";
+        log.info("Faculty id({}) is updated", facultyId);
+        return REDIRECT_FACULTIES;
     }
 
     @DeleteMapping("/{id}")
     public String deleteFaculty(@PathVariable("id") int facultyId) {
-        log.debug("Deleting faculty by id({})", facultyId);
+        log.debug("Deleting faculty with id({})", facultyId);
         facultyService.delete(facultyId);
         log.info("Delete faculty with id ({})", facultyId);
-        return "redirect:/faculties";
+        return REDIRECT_FACULTIES;
     }
 
 }
