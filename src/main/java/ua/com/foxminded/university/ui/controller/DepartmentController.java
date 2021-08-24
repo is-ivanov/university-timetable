@@ -2,7 +2,6 @@ package ua.com.foxminded.university.ui.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -61,7 +60,6 @@ public class DepartmentController {
         return defineRedirect(uri);
     }
 
-
     @GetMapping("/{id}")
     @ResponseBody
     public Department showDepartment(@PathVariable("id") int departmentId) {
@@ -85,7 +83,7 @@ public class DepartmentController {
     public String deleteDepartment(@PathVariable("id") int departmentId,
                                    @RequestParam(required = false) Integer uri) {
         log.debug("Deleting department with id({})", departmentId);
-//      TODO  departmentService.delete(departmentId);
+        departmentService.delete(departmentId);
         log.info("Department id({}) is deleted", departmentId);
         return defineRedirect(uri);
     }
