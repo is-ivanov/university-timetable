@@ -101,4 +101,18 @@ public class CourseDaoImpl implements CourseDao {
         }
     }
 
+    @Override
+    public void delete(int id) {
+        log.debug("Deleting course id({})", id);
+        int numberDeletedRows = jdbcTemplate.update(
+            env.getRequiredProperty(QUERY_DELETE), id);
+        if (numberDeletedRows == 0) {
+            log.warn("Can't delete course id({})", id);
+            throw new DAOException(String.format(MESSAGE_DELETE_COURSE_NOT_FOUND,
+                id));
+        } else {
+            log.info("Delete course id({})", id);
+        }
+    }
+
 }

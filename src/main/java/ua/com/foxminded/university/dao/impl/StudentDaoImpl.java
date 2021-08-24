@@ -123,6 +123,20 @@ public class StudentDaoImpl implements StudentDao {
     }
 
     @Override
+    public void delete(int id) {
+        log.debug("Deleting student id({})", id);
+        int numberDeletedRows = jdbcTemplate.update(
+            env.getRequiredProperty(QUERY_DELETE), id);
+        if (numberDeletedRows == 0) {
+            log.warn("Can't delete student id({})", id);
+            throw new DAOException(String.format(MESSAGE_DELETE_STUDENT_NOT_FOUND,
+                id));
+        } else {
+            log.info("Delete student id({})", id);
+        }
+    }
+
+    @Override
     public List<Student> getStudentsByLesson(Lesson lesson) {
         log.debug("Getting students by lesson id({})", lesson.getId());
         List<Student> students = jdbcTemplate.query(

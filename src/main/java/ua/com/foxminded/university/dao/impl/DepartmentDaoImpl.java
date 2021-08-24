@@ -106,6 +106,20 @@ public class DepartmentDaoImpl implements DepartmentDao {
     }
 
     @Override
+    public void delete(int id) {
+        log.debug("Deleting department id({})", id);
+        int numberDeletedRows = jdbcTemplate.update(
+            env.getRequiredProperty(QUERY_DELETE), id);
+        if (numberDeletedRows == 0) {
+            log.warn("Can't delete department id({})", id);
+            throw new DAOException(String
+                .format(MESSAGE_DELETE_DEPARTMENT_NOT_FOUND, id));
+        } else {
+            log.info("Delete department id({})", id);
+        }
+    }
+
+    @Override
     public List<Department> getAllByFacultyId(int facultyId) {
         log.debug("Getting all departments by faculty id({})", facultyId);
         List<Department> departments =

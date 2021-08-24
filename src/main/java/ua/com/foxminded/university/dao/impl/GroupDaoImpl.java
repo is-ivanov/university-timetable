@@ -102,6 +102,20 @@ public class GroupDaoImpl implements GroupDao {
     }
 
     @Override
+    public void delete(int id) {
+        log.debug("Deleting group id({})", id);
+        int numberDeletedRows = jdbcTemplate.update(
+            env.getRequiredProperty(QUERY_DELETE), id);
+        if (numberDeletedRows == 0) {
+            log.warn("Can't delete group id({})", id);
+            throw new DAOException(String.format(MESSAGE_DELETE_GROUP_NOT_FOUND,
+                id));
+        } else {
+            log.info("Delete group id({})", id);
+        }
+    }
+
+    @Override
     public List<Group> getAllByFacultyId(int facultyId) {
         log.debug("Getting all groups by faculty id({})", facultyId);
         List<Group> groups = jdbcTemplate.query(
