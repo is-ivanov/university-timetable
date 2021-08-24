@@ -31,7 +31,7 @@ public class RoomController {
     public String createRoom(@ModelAttribute Room room) {
         log.debug("Creating {}", room);
         roomService.add(room);
-        log.info("{} is create", room);
+        log.info("{} is created", room);
         return REDIRECT_ROOMS;
     }
 

@@ -2,11 +2,10 @@ package ua.com.foxminded.university.ui.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
@@ -17,8 +16,11 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @Controller
-@RequestMapping("/department")
+@RequestMapping("/departments")
 public class DepartmentController {
+
+    public static final String REDIRECT_DEPARTMENTS = "redirect:/departments";
+    public static final String REDIRECT_DEPARTMENTS_FACULTY_ID = "redirect:/departments?facultyId=";
 
     private final DepartmentService departmentService;
     private final FacultyService facultyService;
@@ -45,7 +47,54 @@ public class DepartmentController {
         log.debug("adding departments and selected faculty into model");
         model.addAttribute("departments", departments);
         model.addAttribute("facultySelected", facultySelected);
+        model.addAttribute("newDepartment", new Department());
         log.info("The list of departments and selected faculty is loaded into the model");
         return "department";
+    }
+
+    @PostMapping
+    public String createDepartment(@ModelAttribute Department department,
+                                   @RequestParam(required = false) Integer uri) {
+        log.debug("Creating {}", department);
+        departmentService.add(department);
+        log.info("{} is created", department);
+        return defineRedirect(uri);
+    }
+
+
+    @GetMapping("/{id}")
+    @ResponseBody
+    public Department showDepartment(@PathVariable("id") int departmentId) {
+        log.debug("Getting department by id({})", departmentId);
+        Department department = departmentService.getById(departmentId);
+        log.info("Found {}", department);
+        return department;
+    }
+
+    @PutMapping("/{id}")
+    public String updateDepartment(@ModelAttribute Department department,
+                                   @PathVariable("id") int departmentId,
+                                   @RequestParam(required = false) Integer uri) {
+        log.debug("Updating department id({})", departmentId);
+        departmentService.update(department);
+        log.info("Department id({}) is updated", departmentId);
+        return defineRedirect(uri);
+    }
+
+    @DeleteMapping("/{id}")
+    public String deleteDepartment(@PathVariable("id") int departmentId,
+                                   @RequestParam(required = false) Integer uri) {
+        log.debug("Deleting department with id({})", departmentId);
+//      TODO  departmentService.delete(departmentId);
+        log.info("Department id({}) is deleted", departmentId);
+        return defineRedirect(uri);
+    }
+
+    private String defineRedirect(Integer uri) {
+        String redirect = REDIRECT_DEPARTMENTS;
+        if (uri != null && uri > 0) {
+            redirect = REDIRECT_DEPARTMENTS_FACULTY_ID + uri;
+        }
+        return redirect;
     }
 }

@@ -20,37 +20,45 @@
       <div class="collapse navbar-collapse" id="navbar">
         <ul class="navbar-nav me-auto mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link" th:classappend="${#request.requestURI.startsWith('/lesson') ? 'active':''}"
-               th:href="@{/lesson}">Lessons</a>
+            <a class="nav-link"
+               th:classappend="${#request.requestURI.startsWith('/lessons') ? 'active':''}"
+               th:href="@{/lessons}">Lessons</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" th:classappend="${#request.requestURI.startsWith('/student') ? 'active':''}"
-               th:href="@{/student}">Students
+            <a class="nav-link"
+               th:classappend="${#request.requestURI.startsWith('/students') ? 'active':''}"
+               th:href="@{/students}">Students
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" th:classappend="${#request.requestURI.startsWith('/teacher') ? 'active':''}"
-               th:href="@{/teacher}">Teachers</a>
+            <a class="nav-link"
+               th:classappend="${#request.requestURI.startsWith('/teachers') ? 'active':''}"
+               th:href="@{/teachers}">Teachers</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" th:classappend="${#request.requestURI.startsWith('/course') ? 'active':''}"
-               th:href="@{/course}">Courses</a>
+            <a class="nav-link"
+               th:classappend="${#request.requestURI.startsWith('/courses') ? 'active':''}"
+               th:href="@{/courses}">Courses</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" th:classappend="${#request.requestURI.startsWith('/group') ? 'active':''}"
-               th:href="@{/group}">Groups</a>
+            <a class="nav-link"
+               th:classappend="${#request.requestURI.startsWith('/groups') ? 'active':''}"
+               th:href="@{/groups}">Groups</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" th:classappend="${#request.requestURI.startsWith('/department') ? 'active':''}"
-               th:href="@{/department}">Departments</a>
+            <a class="nav-link"
+               th:classappend="${#request.requestURI.startsWith('/departments') ? 'active':''}"
+               th:href="@{/departments}">Departments</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" th:classappend="${#request.requestURI.startsWith('/rooms') ? 'active':''}"
+            <a class="nav-link"
+               th:classappend="${#request.requestURI.startsWith('/rooms') ? 'active':''}"
                th:href="@{/rooms}">
               Rooms</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" th:classappend="${#request.requestURI.startsWith('/faculties') ? 'active':''}"
+            <a class="nav-link"
+               th:classappend="${#request.requestURI.startsWith('/faculties') ? 'active':''}"
                th:href="@{/faculties}">Faculties
             </a>
           </li>

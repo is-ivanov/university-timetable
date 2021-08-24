@@ -31,7 +31,7 @@ public class FacultyController {
     public String createFaculty(@ModelAttribute Faculty faculty) {
         log.debug("Creating {}", faculty);
         facultyService.add(faculty);
-        log.info("{} is create", faculty);
+        log.info("{} is created", faculty);
         return REDIRECT_FACULTIES;
     }
 
@@ -47,7 +47,7 @@ public class FacultyController {
     @PutMapping("/{id}")
     public String updateFaculty(@ModelAttribute Faculty faculty,
         @PathVariable("id") int facultyId) {
-        log.debug("Updating faculty id({})", faculty);
+        log.debug("Updating faculty with id({})", faculty);
         facultyService.update(faculty);
         log.info("Faculty id({}) is updated", facultyId);
         return REDIRECT_FACULTIES;
@@ -57,7 +57,7 @@ public class FacultyController {
     public String deleteFaculty(@PathVariable("id") int facultyId) {
         log.debug("Deleting faculty with id({})", facultyId);
         facultyService.delete(facultyId);
-        log.info("Delete faculty with id ({})", facultyId);
+        log.info("Faculty id({}) is deleted", facultyId);
         return REDIRECT_FACULTIES;
     }
 

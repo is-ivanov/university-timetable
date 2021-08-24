@@ -18,7 +18,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @Controller
-@RequestMapping("/teacher")
+@RequestMapping("/teachers")
 public class TeacherController {
 
     private final TeacherService teacherService;

@@ -11,7 +11,7 @@ import ua.com.foxminded.university.domain.service.interfaces.CourseService;
 @Slf4j
 @RequiredArgsConstructor
 @Controller
-@RequestMapping("/course")
+@RequestMapping("/courses")
 public class CourseController {
 
     private final CourseService courseService;

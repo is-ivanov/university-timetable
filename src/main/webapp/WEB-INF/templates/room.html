@@ -9,6 +9,7 @@
 <body>
 <div layout:fragment="content">
   <h3>Rooms</h3>
+
   <button type="button" class="btn btn-primary mb-2 btn-sm"
           data-bs-toggle="modal"
           data-bs-target="#newRoomModal">
@@ -79,14 +80,14 @@
                      class="form-label">Building</label>
               <input type="text" class="form-control" id="newRoomBuildingInput"
                      placeholder="Enter new room building"
-                     th:field="*{building}" required="required">
+                     th:field="*{building}" required>
             </div>
             <div class="mb-3">
               <label for="newRoomNumberInput" class="form-label">Room
                 number</label>
               <input type="text" class="form-control" id="newRoomNumberInput"
                      placeholder="Enter new room number" th:field="*{number}"
-                     required="required">
+                     required>
             </div>
           </div>
           <div class="modal-footer">
@@ -113,16 +114,14 @@
           </div>
           <div class="modal-body">
             <div>
-              <label for="editRoomBuildingInput" class="form-label">Faculty
-                name</label>
+              <label for="editRoomBuildingInput" class="form-label">Building</label>
               <input type="text" class="form-control" id="editRoomBuildingInput"
-                     name="building" value="" required="required">
+                     name="building" value="" required>
             </div>
             <div>
-              <label for="editRoomNumberInput" class="form-label">Faculty
-                name</label>
+              <label for="editRoomNumberInput" class="form-label">Room number</label>
               <input type="text" class="form-control" id="editRoomNumberInput"
-                     name="number" value="" required="required">
+                     name="number" value="" required>
             </div>
           </div>
           <div class="modal-footer">
@@ -167,13 +166,14 @@
   </div>
 
 </div>
+
 <script layout:fragment="script">
-  // NEW MODAL
-  $(function () {
-    $('#newRoomModal').on('shown.bs.modal', function () {
-      $('#newRoomBuildingInput').focus()
+    // NEW MODAL
+    $(function () {
+      $('#newRoomModal').on('shown.bs.modal', function () {
+        $('#newRoomBuildingInput').focus()
+      })
     })
-  })
 
   // EDIT MODAL
   $(function () {
@@ -201,7 +201,7 @@
       let number = row.children('.room_number').text()
       $('#deletedRoomName').
         text(' room (building \'' + building + '\', number \'' + number + '\'?')
-          $('#formDelete').attr('action', '/rooms/' + id)
+      $('#formDelete').attr('action', '/rooms/' + id)
     })
   })
 

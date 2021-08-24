@@ -15,7 +15,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @Controller
-@RequestMapping("/lesson")
+@RequestMapping("/lessons")
 public class LessonController {
 
     public static final String GET_ALL_TEACHERS_FOR_SELECTOR = "Get all teachers for selector";
