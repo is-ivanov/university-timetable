@@ -54,12 +54,10 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public void delete(int roomId) {
-        log.debug("Deleting room with id({})", roomId);
-        Room room = new Room();
-        room.setId(roomId);
-        roomDao.delete(room);
-        log.info("Delete room with id({})", roomId);
+    public void delete(int id) {
+        log.debug("Deleting room id({})", id);
+        roomDao.delete(id);
+        log.info("Delete room id({})", id);
     }
 
 }

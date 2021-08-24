@@ -66,6 +66,13 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    public void delete(int id) {
+        log.debug("Deleting student id({})", id);
+        studentDao.delete(id);
+        log.info("Delete student id({})", id);
+    }
+
+    @Override
     public void deactivateStudent(Student student) {
         log.debug("Deactivating student [id={}, {} {} {}]", student.getId(),
             student.getFirstName(), student.getPatronymic(), student.getLastName());

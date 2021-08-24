@@ -69,6 +69,13 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    public void delete(int id) {
+        log.debug("Deleting teacher id({})", id);
+        teacherDao.delete(id);
+        log.info("Delete teacher id({})", id);
+    }
+
+    @Override
     public void deactivateTeacher(Teacher teacher) {
         log.debug("Deactivating teacher [id={}, {} {} {}]", teacher.getId(),
             teacher.getFirstName(), teacher.getPatronymic(), teacher.getLastName());

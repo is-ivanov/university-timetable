@@ -58,6 +58,13 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    public void delete(int id) {
+        log.debug("Deleting group id({})", id);
+        groupDao.delete(id);
+        log.info("Delete group id({})", id);
+    }
+
+    @Override
     public void deactivateGroup(Group group) {
         log.debug("Deactivating {}", group);
         group.setActive(false);

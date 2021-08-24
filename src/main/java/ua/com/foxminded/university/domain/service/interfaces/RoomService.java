@@ -4,5 +4,4 @@ import ua.com.foxminded.university.domain.entity.Room;
 
 public interface RoomService extends Service<Room> {
 
-    void delete(int roomId);
 }

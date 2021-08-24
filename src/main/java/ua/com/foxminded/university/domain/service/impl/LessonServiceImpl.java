@@ -76,6 +76,16 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
+    public void delete(int id) {
+        log.info("Start deleting lesson id({})", id);
+        log.debug("Deleting all students from lesson id({})", id);
+        lessonDao.deleteAllStudentsFromLesson(id);
+        log.debug("Deleting lesson id({})", id);
+        lessonDao.delete(id);
+        log.info("Lesson id({}) deleted successfully", id);
+    }
+
+    @Override
     public void addStudentToLesson(Lesson lesson, Student student) {
         log.debug("Start adding student id({}) to lesson id({})",
             student.getId(), lesson.getId());
@@ -89,6 +99,7 @@ public class LessonServiceImpl implements LessonService {
         log.info("Student id({}) added to lesson({}) successfully", student.getId(),
             lesson.getId());
     }
+
     @Override
     public List<Lesson> getAllWithFilter(LessonFilter filter) {
         log.debug("Getting all lessons with ({})", filter);

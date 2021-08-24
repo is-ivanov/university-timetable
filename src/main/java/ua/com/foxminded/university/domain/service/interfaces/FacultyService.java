@@ -6,7 +6,5 @@ import java.util.List;
 
 public interface FacultyService extends Service<Faculty> {
 
-    void delete(int facultyId);
-
     List<Faculty> getAllSortedByNameAsc();
 }
