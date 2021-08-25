@@ -47,7 +47,6 @@ tr.inactive,
 option.inactive {
   background: lavender;
   color: red;
-  font-style: italic;
 }
 
 td.active {

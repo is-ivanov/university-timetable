@@ -58,7 +58,7 @@
       <tr th:each="group : ${groups}" class="align-middle"
           th:classappend="${group.active} ? 'active' : (${isShowInactive}? 'inactive' : 'inactive d-none')">
         <td th:utext="${group.id}">...</td>
-        <td th:utext="${group.name}">...</td>
+        <td class="group_name" th:utext="${group.name}">...</td>
         <td th:utext="${group.faculty.name}">...</td>
         <td th:utext="${group.active} ? 'active' : 'inactive'" class="text-center"
             th:classappend="${group.active} ? 'active' : 'inactive'">...
@@ -191,45 +191,44 @@
       </div>
     </div>
 
-  <!--  &lt;!&ndash;  Delete Modal&ndash;&gt;-->
-  <!--  <div id="deleteDepartmentModal" class="modal fade" data-bs-backdrop="static"-->
-  <!--       tabindex="-1" aria-labelledby="DeleteDepartmentModalLabel"-->
-  <!--       aria-hidden="true">-->
-  <!--    <div class="modal-dialog modal-dialog-centered">-->
-  <!--      <div class="modal-content">-->
-  <!--        <form id="formDelete" th:method="delete">-->
-  <!--          <div class="modal-header">-->
-  <!--            <h5 id="deleteDepartmentModalLabel" class="modal-title">Delete Department</h5>-->
-  <!--            <button type="button" class="btn-close" data-bs-dismiss="modal"-->
-  <!--                    aria-label="Close"></button>-->
-  <!--          </div>-->
-  <!--          <div class="modal-body">-->
-  <!--            <p>Are you sure you want to delete-->
-  <!--              <span class="fw-bold" id="deletedDepartmentName"></span></p>-->
-  <!--            <p class="text-danger">-->
-  <!--              <small>This action cannot be undone.</small>-->
-  <!--            </p>-->
-  <!--          </div>-->
-  <!--          <div class="modal-footer">-->
-  <!--            <button type="button" class="btn btn-secondary"-->
-  <!--                    data-bs-dismiss="modal">Cancel-->
-  <!--            </button>-->
-  <!--            <input type="hidden" name="uri" th:value="${param.facultyId}">-->
-  <!--            <input type="submit" class="btn btn-danger" value="Delete">-->
-  <!--          </div>-->
-  <!--        </form>-->
-  <!--      </div>-->
-  <!--    </div>-->
-  <!--  </div>-->
+    <!--  Delete Modal-->
+  <div id="deleteGroupModal" class="modal fade" data-bs-backdrop="static"
+       tabindex="-1" aria-labelledby="DeleteGroupModalLabel"
+       aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form id="formDelete" th:method="delete">
+          <div class="modal-header">
+            <h5 id="deleteGroupModalLabel" class="modal-title">Delete Group</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to delete
+              <span class="fw-bold" id="deletedGroupName"></span></p>
+            <p class="text-danger">
+              <small>This action cannot be undone.</small>
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary"
+                    data-bs-dismiss="modal">Cancel
+            </button>
+            <input type="hidden" name="uri"
+                   th:value="${#request.requestURI} + (${#request.queryString}? '?' + ${#request.queryString} : '')">
+            <input type="submit" class="btn btn-danger" value="Delete">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 
 </div>
 <script layout:fragment="script">
 
   function showInactiveGroupsInTable () {
     const table = document.getElementById('mainTable')
-    // const table = $('#mainTable')
     const check = document.getElementById('switchShowInactiveGroupsMainTable')
-    // const check = $('#switchShowInactiveGroupsMainTable')
     showInactiveTableRow(table, check)
   }
 
@@ -258,18 +257,18 @@
       $('#editGroupNameInput').focus()
     })
   })
-  //
-  // // DELETE MODAL
-  // $(function () {
-  //   $('.deleteButton').on('click', function () {
-  //     let id = $(this).attr('data-bs-id')
-  //     let row = $(this).parent().parent().parent().parent()
-  //     let name = row.children('.department_name').text()
-  //     $('#deletedDepartmentName').
-  //       text('\'' + name + '\'?')
-  //     $('#formDelete').attr('action', '/departments/' + id)
-  //   })
-  // })
+
+  // DELETE MODAL
+  $(function () {
+    $('.deleteButton').on('click', function () {
+      let id = $(this).attr('data-bs-id')
+      let row = $(this).parent().parent().parent().parent()
+      let name = row.children('.group_name').text()
+      $('#deletedGroupName').
+        text('\'' + name + '\'?')
+      $('#formDelete').attr('action', '/groups/' + id)
+    })
+  })
 
 </script>
 </body>
