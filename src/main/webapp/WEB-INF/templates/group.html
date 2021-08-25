@@ -8,7 +8,8 @@
 <body>
 <div layout:fragment="content">
   <h3>Groups</h3>
-  <form action="#" th:action="@{/group}" class="my-2">
+  <!--  Form filter-->
+  <form action="#" th:action="@{/groups}" class="my-2">
     <div class="row align-items-center">
       <div class="col-1 text-end pe-0">
         <label for="selectFaculty" class="col-form-label">Faculty</label>
@@ -33,6 +34,14 @@
       </div>
     </div>
   </form>
+
+  <button type="button" class="btn btn-primary mb-2 btn-sm"
+          data-bs-toggle="modal"
+          data-bs-target="#newGroupModal">
+    <i class="bi bi-plus-circle"></i> New Group
+  </button>
+
+  <!--  Table-->
   <div class="table-responsive-md">
     <table class="table table-hover table-sortable" id="mainTable">
       <caption>List of groups</caption>
@@ -57,18 +66,17 @@
         <td class="py-0">
           <div class="row">
             <div class="col-auto">
-              <form th:action="@{/group/{id}(id = ${group.id})}">
-                <button type="submit" class="btn btn-warning btn-sm">
-                  <i class="bi-pencil-square"></i> Edit
-                </button>
-              </form>
+              <a href="#editGroupModal" class="btn btn-warning btn-sm editButton"
+                 data-bs-toggle="modal" th:data-bs-id="${group.id}">
+                <i class="bi-pencil-square"></i> Edit
+              </a>
             </div>
             <div class="col-auto">
-              <form th:method="delete" th:action="@{/group/{id}(id = ${group.id})}">
-                <button type="submit" class="btn btn-danger btn-sm">
-                  <i class="bi-trash-fill"></i> Delete
-                </button>
-              </form>
+              <a href="#deleteGroupModal"
+                 class="btn btn-danger btn-sm deleteButton"
+                 data-bs-toggle="modal" th:data-bs-id="${group.id}">
+                <i class="bi-trash-fill"></i>Delete
+              </a>
             </div>
           </div>
         </td>
@@ -76,13 +84,192 @@
       </tbody>
     </table>
   </div>
+
+  <!--  Modal Forms-->
+  <!--  Create Modal-->
+  <div id="newGroupModal" class="modal fade" data-bs-backdrop="static"
+       tabindex="-1" aria-labelledby="NewGroupModalLabel"
+       aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form action="#" th:action="@{/groups}" method="post"
+              th:object="${newGroup}">
+          <div class="modal-header">
+            <h5 class="modal-title" id="newGroupModalLabel">New Group</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="newGroupNameInput" class="form-label">Name</label>
+              <input type="text" class="form-control" id="newGroupNameInput"
+                     placeholder="Enter new group name"
+                     th:field="*{name}" required>
+            </div>
+
+            <div class="col-auto form-check form-switch mb-3">
+              <input class="form-check-input" type="checkbox" id="switchActiveNewGroup"
+                     th:field="*{active}">
+              <label class="form-check-label" for="switchActiveNewGroup">Active group</label>
+            </div>
+
+            <div class="mb-3">
+              <label for="selectFacultyNewGroup" class="form-label">Faculty</label>
+              <select name="faculty.id" id="selectFacultyNewGroup"
+                      class="form-select" required>
+                <option value="" disabled selected>Please select faculty...
+                </option>
+                <option th:each="faculty : ${faculties}"
+                        th:value="${faculty.id}"
+                        th:utext="${faculty.name}"
+                        th:selected="${facultyIdSelect ne null and faculty.id eq facultyIdSelect}">...
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary"
+                    data-bs-dismiss="modal">Cancel
+            </button>
+            <input type="hidden" name="uri"
+                   th:value="${#request.requestURI} + (${#request.queryString}? '?' + ${#request.queryString} : '')">
+            <input type="submit" class="btn btn-primary"
+                   value="Create Department">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+    <!--Edit Modal -->
+    <div id="editGroupModal" class="modal fade" data-bs-backdrop="static"
+         tabindex="-1" aria-labelledby="editGroupModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <form id="formEdit" th:method="put">
+            <div class="modal-header">
+              <h5 class="modal-title" id="editGroupModalLabel">Update Group</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"
+                      aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="editGroupNameInput" class="form-label">Name</label>
+                <input type="text" class="form-control" id="editGroupNameInput"
+                       name="name" value="" required>
+              </div>
+
+              <div class="col-auto form-check form-switch mb-3">
+                <input class="form-check-input" type="checkbox" id="switchActiveEditGroup"
+                       name="active">
+                <label class="form-check-label" for="switchActiveEditGroup">Active group</label>
+              </div>
+
+              <div class="mb-3">
+                <label for="editGroupFacultySelect" class="form-label">Faculty</label>
+                <select name="faculty.id" id="editGroupFacultySelect" class="form-select" required>
+                  <option value="" disabled selected>Please select faculty...
+                  </option>
+                  <option th:each="faculty : ${faculties}"
+                          th:value="${faculty.id}"
+                          th:utext="${faculty.name}"
+                          th:selected="${facultyIdSelect ne null and faculty.id eq facultyIdSelect}">...
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary"
+                      data-bs-dismiss="modal">Cancel
+              </button>
+              <input type="hidden" name="uri"
+                     th:value="${#request.requestURI} + (${#request.queryString}? '?' + ${#request.queryString} : '')">
+              <input type="submit" class="btn btn-primary" value="Update">
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  <!--  &lt;!&ndash;  Delete Modal&ndash;&gt;-->
+  <!--  <div id="deleteDepartmentModal" class="modal fade" data-bs-backdrop="static"-->
+  <!--       tabindex="-1" aria-labelledby="DeleteDepartmentModalLabel"-->
+  <!--       aria-hidden="true">-->
+  <!--    <div class="modal-dialog modal-dialog-centered">-->
+  <!--      <div class="modal-content">-->
+  <!--        <form id="formDelete" th:method="delete">-->
+  <!--          <div class="modal-header">-->
+  <!--            <h5 id="deleteDepartmentModalLabel" class="modal-title">Delete Department</h5>-->
+  <!--            <button type="button" class="btn-close" data-bs-dismiss="modal"-->
+  <!--                    aria-label="Close"></button>-->
+  <!--          </div>-->
+  <!--          <div class="modal-body">-->
+  <!--            <p>Are you sure you want to delete-->
+  <!--              <span class="fw-bold" id="deletedDepartmentName"></span></p>-->
+  <!--            <p class="text-danger">-->
+  <!--              <small>This action cannot be undone.</small>-->
+  <!--            </p>-->
+  <!--          </div>-->
+  <!--          <div class="modal-footer">-->
+  <!--            <button type="button" class="btn btn-secondary"-->
+  <!--                    data-bs-dismiss="modal">Cancel-->
+  <!--            </button>-->
+  <!--            <input type="hidden" name="uri" th:value="${param.facultyId}">-->
+  <!--            <input type="submit" class="btn btn-danger" value="Delete">-->
+  <!--          </div>-->
+  <!--        </form>-->
+  <!--      </div>-->
+  <!--    </div>-->
+  <!--  </div>-->
+
 </div>
 <script layout:fragment="script">
-  function showInactiveGroupsInTable() {
-    const table = document.getElementById('mainTable');
-    const check = document.getElementById('switchShowInactiveGroupsMainTable');
-    showInactiveTableRow(table, check);
+
+  function showInactiveGroupsInTable () {
+    const table = document.getElementById('mainTable')
+    // const table = $('#mainTable')
+    const check = document.getElementById('switchShowInactiveGroupsMainTable')
+    // const check = $('#switchShowInactiveGroupsMainTable')
+    showInactiveTableRow(table, check)
   }
+
+  // NEW MODAL
+  $(function () {
+    $('#newGroupModal').on('shown.bs.modal', function () {
+      $('#newGroupNameInput').focus()
+    })
+  })
+
+  // EDIT MODAL
+  $(function () {
+    $('.editButton').on('click', function () {
+      let href = '/groups/' + $(this).attr('data-bs-id')
+      $('#formEdit').attr('action', href)
+      $.get(href, function (group) {
+        $('#editGroupNameInput').val(group.name)
+        let facultyId = group.faculty.id
+        $('#switchActiveEditGroup').prop('checked', group.active)
+        $('#editGroupFacultySelect option[value=' + facultyId + ']').prop('selected', true)
+      })
+    })
+  })
+  $(function () {
+    $('#editGroupModal').on('shown.bs.modal', function () {
+      $('#editGroupNameInput').focus()
+    })
+  })
+  //
+  // // DELETE MODAL
+  // $(function () {
+  //   $('.deleteButton').on('click', function () {
+  //     let id = $(this).attr('data-bs-id')
+  //     let row = $(this).parent().parent().parent().parent()
+  //     let name = row.children('.department_name').text()
+  //     $('#deletedDepartmentName').
+  //       text('\'' + name + '\'?')
+  //     $('#formDelete').attr('action', '/departments/' + id)
+  //   })
+  // })
 
 </script>
 </body>

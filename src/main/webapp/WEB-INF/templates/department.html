@@ -119,7 +119,8 @@
             <button type="button" class="btn btn-secondary"
                     data-bs-dismiss="modal">Cancel
             </button>
-            <input type="hidden" name="uri" th:value="${param.facultyId}">
+            <input type="hidden" name="uri"
+                   th:value="${#request.requestURI} + (${#request.queryString}? '?' + ${#request.queryString} : '')">
             <input type="submit" class="btn btn-primary"
                    value="Create Department">
           </div>
@@ -140,12 +141,12 @@
                     aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <div>
+            <div class="mb-3">
               <label for="editDepartmentNameInput" class="form-label">Name</label>
               <input type="text" class="form-control" id="editDepartmentNameInput"
                      name="name" value="" required>
             </div>
-            <div>
+            <div class="mb-3">
               <label for="editDepartmentFacultySelect" class="form-label">Faculty</label>
               <select name="faculty.id" id="editDepartmentFacultySelect" class="form-select" required>
                 <option value="" disabled selected>Please select faculty...
@@ -162,7 +163,8 @@
             <button type="button" class="btn btn-secondary"
                     data-bs-dismiss="modal">Cancel
             </button>
-            <input type="hidden" name="uri" th:value="${param.facultyId}">
+            <input type="hidden" name="uri"
+                   th:value="${#request.requestURI} + (${#request.queryString}? '?' + ${#request.queryString} : '')">
             <input type="submit" class="btn btn-primary" value="Update">
           </div>
         </form>
@@ -193,7 +195,8 @@
             <button type="button" class="btn btn-secondary"
                     data-bs-dismiss="modal">Cancel
             </button>
-            <input type="hidden" name="uri" th:value="${param.facultyId}">
+            <input type="hidden" name="uri"
+                   th:value="${#request.requestURI} + (${#request.queryString}? '?' + ${#request.queryString} : '')">
             <input type="submit" class="btn btn-danger" value="Delete">
           </div>
         </form>

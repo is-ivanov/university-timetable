@@ -18,8 +18,7 @@ import java.util.List;
 @RequestMapping("/departments")
 public class DepartmentController {
 
-    public static final String REDIRECT_DEPARTMENTS = "redirect:/departments";
-    public static final String REDIRECT_DEPARTMENTS_FACULTY_ID = "redirect:/departments?facultyId=";
+    public static final String REDIRECT_DEPARTMENTS = "redirect:";
 
     private final DepartmentService departmentService;
     private final FacultyService facultyService;
@@ -53,7 +52,7 @@ public class DepartmentController {
 
     @PostMapping
     public String createDepartment(@ModelAttribute Department department,
-                                   @RequestParam(required = false) Integer uri) {
+                                   @RequestParam(required = false) String uri) {
         log.debug("Creating {}", department);
         departmentService.add(department);
         log.info("{} is created", department);
@@ -63,7 +62,7 @@ public class DepartmentController {
     @GetMapping("/{id}")
     @ResponseBody
     public Department showDepartment(@PathVariable("id") int departmentId) {
-        log.debug("Getting department by id({})", departmentId);
+        log.debug("Getting department id({})", departmentId);
         Department department = departmentService.getById(departmentId);
         log.info("Found {}", department);
         return department;
@@ -72,7 +71,7 @@ public class DepartmentController {
     @PutMapping("/{id}")
     public String updateDepartment(@ModelAttribute Department department,
                                    @PathVariable("id") int departmentId,
-                                   @RequestParam(required = false) Integer uri) {
+                                   @RequestParam(required = false) String uri) {
         log.debug("Updating department id({})", departmentId);
         departmentService.update(department);
         log.info("Department id({}) is updated", departmentId);
@@ -81,18 +80,14 @@ public class DepartmentController {
 
     @DeleteMapping("/{id}")
     public String deleteDepartment(@PathVariable("id") int departmentId,
-                                   @RequestParam(required = false) Integer uri) {
-        log.debug("Deleting department with id({})", departmentId);
+                                   @RequestParam(required = false) String uri) {
+        log.debug("Deleting department id({})", departmentId);
         departmentService.delete(departmentId);
         log.info("Department id({}) is deleted", departmentId);
         return defineRedirect(uri);
     }
 
-    private String defineRedirect(Integer uri) {
-        String redirect = REDIRECT_DEPARTMENTS;
-        if (uri != null && uri > 0) {
-            redirect = REDIRECT_DEPARTMENTS_FACULTY_ID + uri;
-        }
-        return redirect;
+    private String defineRedirect(String uri) {
+        return REDIRECT_DEPARTMENTS + uri;
     }
 }
