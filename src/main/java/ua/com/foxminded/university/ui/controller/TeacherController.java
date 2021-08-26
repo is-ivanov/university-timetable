@@ -4,11 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import ua.com.foxminded.university.domain.entity.Department;
+import ua.com.foxminded.university.domain.entity.Teacher;
 import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
@@ -20,6 +18,8 @@ import java.util.List;
 @Controller
 @RequestMapping("/teachers")
 public class TeacherController {
+
+    public static final String REDIRECT_TEACHERS = "redirect:";
 
     private final TeacherService teacherService;
     private final FacultyService facultyService;
@@ -53,11 +53,12 @@ public class TeacherController {
         log.debug("adding selected faculty and department into model");
         model.addAttribute("facultyIdSelect", facultyId);
         model.addAttribute("departmentIdSelect", departmentId);
+        model.addAttribute("newTeacher", new Teacher());
         log.info("The required data is loaded into the model");
         return "teacher";
     }
 
-    @GetMapping(value = "/faculty")
+    @GetMapping(value = "/departments")
     @ResponseBody
     public List<Department> getDepartments(@RequestParam Integer facultyId) {
         log.debug("Getting departments for selector");
@@ -68,5 +69,49 @@ public class TeacherController {
             log.debug("Get departments for selector by facultyId ({})", facultyId);
             return departmentService.getAllByFaculty(facultyId);
         }
+    }
+
+    @PostMapping
+    public String createTeacher(@ModelAttribute Teacher teacher,
+                                @RequestParam(required = false) String uri) {
+        log.debug("Creating teacher [{} {} {}]", teacher.getFirstName(),
+            teacher.getPatronymic(), teacher.getLastName());
+        teacherService.add(teacher);
+        log.info("Teacher [{}, {}, {}] is created", teacher.getFirstName(),
+            teacher.getPatronymic(), teacher.getLastName());
+        return defineRedirect(uri);
+    }
+
+    @GetMapping("/{id}")
+    @ResponseBody
+    public Teacher showTeacher(@PathVariable("id") int teacherId) {
+        log.debug("Getting teacher id({})", teacherId);
+        Teacher teacher = teacherService.getById(teacherId);
+        log.info("Found teacher [{} {} {}]", teacher.getFirstName(),
+            teacher.getPatronymic(), teacher.getLastName());
+        return teacher;
+    }
+
+    @PutMapping("/{id}")
+    public String updateTeacher(@ModelAttribute Teacher teacher,
+                                @PathVariable("id") int teacherId,
+                                @RequestParam(required = false) String uri) {
+        log.debug("Updating teacher id({})", teacherId);
+        teacherService.update(teacher);
+        log.info("Teacher id({}) is updated", teacherId);
+        return defineRedirect(uri);
+    }
+
+    @DeleteMapping("/{id}")
+    public String deleteTeacher(@PathVariable("id") int teacherId,
+                                @RequestParam(required = false) String uri) {
+        log.debug("Deleting teacher id({})", teacherId);
+        teacherService.delete(teacherId);
+        log.info("Teacher id({}) is deleted", teacherId);
+        return defineRedirect(uri);
+    }
+
+    private String defineRedirect(String uri) {
+        return REDIRECT_TEACHERS + uri;
     }
 }
