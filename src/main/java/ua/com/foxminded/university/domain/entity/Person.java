@@ -6,6 +6,7 @@ import lombok.Data;
 public abstract class Person {
 
     public static final String MASK_FULL_NAME = "%s, %.1s.%.1s.";
+
     private Integer id;
     private String firstName;
     private String patronymic;

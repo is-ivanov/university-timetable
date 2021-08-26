@@ -3,7 +3,7 @@
  */
 function fillSelectGroups () {
   let faculty = $('#selectFaculty').val()
-  $.get('/student/faculty?facultyId=' + faculty, function (data) {
+  $.get('/students/faculty?facultyId=' + faculty, function (data) {
     $('#selectGroup').
       empty().
       append('<option value="0" selected>Please select group...</option>')
@@ -30,7 +30,7 @@ function fillSelectGroups () {
  */
 function fillSelectDepartments () {
   let faculty = $('#selectFaculty').val()
-  $.get('/teacher/faculty?facultyId=' + faculty, function (data) {
+  $.get('/teachers/departments?facultyId=' + faculty, function (data) {
     $('#selectDepartment').
       empty().
       append('<option value="0" selected>Please select department...</option>')
@@ -51,9 +51,9 @@ function fillSelectDepartments () {
 function fillSelectTeachers (valueSelect, type) {
   let uri
   if (type === 'faculty') {
-    uri = 'lesson/faculty?facultyId=' + valueSelect
+    uri = 'lessons/faculty?facultyId=' + valueSelect
   } else if (type === 'department') {
-    uri = 'lesson/department?departmentId=' + valueSelect
+    uri = 'lessons/department?departmentId=' + valueSelect
   }
   $.get(uri, function (data) {
     $('#selectTeacher').
