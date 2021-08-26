@@ -26,7 +26,7 @@
       </div>
 
       <div class="col">
-        <input class="btn btn-success" type="submit" value="Show groups">
+        <input class="btn btn-success btn-sm" type="submit" value="Show groups">
       </div>
 
       <div class="col-auto form-check form-switch">
@@ -130,12 +130,12 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary"
+            <button type="button" class="btn btn-secondary btn-sm"
                     data-bs-dismiss="modal">Cancel
             </button>
             <input type="hidden" name="uri"
                    th:value="${#request.requestURI} + (${#request.queryString}? '?' + ${#request.queryString} : '')">
-            <input type="submit" class="btn btn-primary" value="Create Group">
+            <input type="submit" class="btn btn-primary btn-sm" value="Create Group">
           </div>
         </form>
       </div>
@@ -180,12 +180,12 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary"
+            <button type="button" class="btn btn-secondary btn-sm"
                     data-bs-dismiss="modal">Cancel
             </button>
             <input type="hidden" name="uri"
                    th:value="${#request.requestURI} + (${#request.queryString}? '?' + ${#request.queryString} : '')">
-            <input type="submit" class="btn btn-primary" value="Update">
+            <input type="submit" class="btn btn-primary btn-sm" value="Update">
           </div>
         </form>
       </div>
@@ -212,12 +212,12 @@
             </p>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary"
+            <button type="button" class="btn btn-secondary btn-sm"
                     data-bs-dismiss="modal">Cancel
             </button>
             <input type="hidden" name="uri"
                    th:value="${#request.requestURI} + (${#request.queryString}? '?' + ${#request.queryString} : '')">
-            <input type="submit" class="btn btn-danger" value="Delete">
+            <input type="submit" class="btn btn-danger btn-sm" value="Delete">
           </div>
         </form>
       </div>
