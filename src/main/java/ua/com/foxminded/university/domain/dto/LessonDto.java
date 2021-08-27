@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -14,10 +15,14 @@ import java.time.LocalDateTime;
 public class LessonDto {
 
     private Integer id;
+    private int courseId;
     private String courseName;
+    private int teacherId;
     private String teacherFullName;
+    private int roomId;
     private String buildingAndRoom;
     private LocalDateTime timeStart;
     private LocalDateTime timeEnd;
+    private List<StudentDto> students;
 
 }

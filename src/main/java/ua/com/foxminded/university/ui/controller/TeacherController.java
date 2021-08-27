@@ -58,7 +58,7 @@ public class TeacherController {
         return "teacher";
     }
 
-    @GetMapping(value = "/departments")
+    @GetMapping("/departments")
     @ResponseBody
     public List<Department> getDepartments(@RequestParam Integer facultyId) {
         log.debug("Getting departments for selector");

@@ -5,12 +5,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ua.com.foxminded.university.domain.dto.LessonDto;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.*;
 import ua.com.foxminded.university.domain.filter.LessonFilter;
+import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.*;
 
 import java.util.List;
+
 
 @Slf4j
 @RequiredArgsConstructor
@@ -26,10 +29,12 @@ public class LessonController {
     private final DepartmentService departmentService;
     private final CourseService courseService;
     private final RoomService roomService;
+    private final LessonDtoMapper lessonDtoMapper;
 
     @GetMapping
     public String showLessons(Model model) {
         model.addAttribute("lessonFilter", new LessonFilter());
+        model.addAttribute("newLesson", new Lesson());
         log.info("The required data is loaded into the model");
         return "lesson";
     }
@@ -105,6 +110,15 @@ public class LessonController {
         }
         return teacherService.convertListTeachersToDtos(teachersByFaculty);
     }
+
+//    @PostMapping
+//    public String createLesson(@ModelAttribute LessonDto lessonDto,
+//                               @RequestParam(required = false) String uri) {
+//        log.debug("Creating lesson [{}, {}, {}]", lessonDto.getCourseName(),
+//            lessonDto.getTeacherFullName(), lessonDto.getTimeStart());
+//        lessonDtoMapper.
+//        lessonService.add();
+//    }
 
     @ModelAttribute("faculties")
     public List<Faculty> populateFaculties() {

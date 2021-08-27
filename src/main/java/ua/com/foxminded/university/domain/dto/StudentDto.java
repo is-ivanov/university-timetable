@@ -9,14 +9,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TeacherDto {
+public class StudentDto {
 
     private Integer id;
     private String firstName;
     private String patronymic;
     private String lastName;
-    private int departmentId;
-    private String departmentName;
+    private int groupId;
+    private String groupName;
     private boolean isActive;
     private String fullName;
 }
