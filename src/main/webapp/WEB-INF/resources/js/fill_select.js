@@ -3,7 +3,7 @@
  */
 function fillSelectGroups () {
   let faculty = $('#selectFaculty').val()
-  $.get('/students/faculties?facultyId=' + faculty, function (data) {
+  $.get('/students/groups?facultyId=' + faculty, function (data) {
     $('#selectGroup').
       empty().
       append('<option value="0" selected>Please select group...</option>')

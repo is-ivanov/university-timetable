@@ -9,7 +9,7 @@
 <div layout:fragment="content">
   <h3>Students</h3>
   <!--  Form -->
-  <form action="#" th:action="@{/student}" class="my-2">
+  <form action="#" th:action="@{/students}" class="my-2">
     <!--    Faculty select-->
     <div class="row mb-3">
       <div class="col-1">
@@ -55,7 +55,7 @@
     <!--    Submit button and checkbox show inactive students -->
     <div class="row mt-2 align-items-center">
       <div class="col-sm">
-        <input class="btn btn-success" type="submit" value="Show students" id="submit"
+        <input class="btn btn-success btn-sm" type="submit" value="Show students" id="submit"
                th:disabled="${facultyIdSelect eq null and groupIdSelect eq null}">
       </div>
       <div class="col-sm-auto form-check form-switch ms-5">
@@ -66,7 +66,13 @@
       </div>
     </div>
   </form>
-  <!--  Form-->
+
+  <button type="button" class="btn btn-primary mb-2 btn-sm"
+          data-bs-toggle="modal"
+          data-bs-target="#newStudentModal">
+    <i class="bi bi-plus-circle"></i> New Student
+  </button>
+
   <!--  Main Table-->
   <div class="table-responsive-md">
     <table class="table table-hover table-sortable" id="mainTable">
@@ -86,9 +92,9 @@
       <tr th:each="student : ${students}" class="align-middle"
           th:classappend="${student.active} ? 'active' : (${isShowInactiveStudents}? 'inactive' : 'inactive d-none')">
         <td th:utext="${student.id}">...</td>
-        <td th:utext="${student.firstName}">...</td>
-        <td th:utext="${student.patronymic}">...</td>
-        <td th:utext="${student.lastName}">...</td>
+        <td class="first_name" th:utext="${student.firstName}">...</td>
+        <td class="patronymic" th:utext="${student.patronymic}">...</td>
+        <td class="last_name" th:utext="${student.lastName}">...</td>
         <td th:utext="${student.group.name}">...</td>
         <td th:utext="${student.active} ? 'active' : 'inactive'" class="text-center"
             th:classappend="${student.active} ? 'active' : 'inactive'">active
@@ -103,18 +109,18 @@
               </form>
             </div>
             <div class="col-auto">
-              <form th:action="@{/student/{id}(id = ${student.id})}">
-                <button type="submit" class="btn btn-warning btn-sm">
-                  <i class="bi-pencil-square"></i> Edit
-                </button>
-              </form>
+              <a href="#editStudentModal"
+                 class="btn btn-warning btn-sm editButton"
+                 data-bs-toggle="modal" th:data-bs-id="${student.id}">
+                <i class="bi-pencil-square"></i> Edit
+              </a>
             </div>
             <div class="col-auto">
-              <form th:method="delete" th:action="@{/student/{id}(id = ${student.id})}">
-                <button type="submit" class="btn btn-danger btn-sm">
-                  <i class="bi-trash-fill"></i> Delete
-                </button>
-              </form>
+              <a href="#deleteStudentModal"
+                 class="btn btn-danger btn-sm deleteButton"
+                 data-bs-toggle="modal" th:data-bs-id="${student.id}">
+                <i class="bi-trash-fill"></i>Delete
+              </a>
             </div>
           </div>
         </td>
@@ -123,7 +129,173 @@
     </table>
   </div>
   <!--  Main Table End-->
+
+  <!--  Modal Forms-->
+  <!--  Create Modal-->
+  <div id="newStudentModal" class="modal fade" data-bs-backdrop="static"
+       tabindex="-1" aria-labelledby="NewStudentModalLabel"
+       aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form action="#" th:action="@{/students}" method="post"
+              th:object="${newStudent}">
+          <div class="modal-header">
+            <h5 class="modal-title" id="newStudentModalLabel">New Student</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="form-floating mb-3">
+              <input type="text" class="form-control" id="newStudentFirstNameInput"
+                     placeholder="First name"
+                     th:field="*{firstName}" required>
+              <label for="newStudentFirstNameInput">First Name</label>
+            </div>
+
+            <div class="form-floating mb-3">
+              <input type="text" class="form-control" id="newStudentPatronymicInput"
+                     placeholder="Patronymic"
+                     th:field="*{patronymic}">
+              <label for="newStudentPatronymicInput">Patronymic</label>
+            </div>
+
+            <div class="form-floating mb-3">
+              <input type="text" class="form-control" id="newStudentLastNameInput"
+                     placeholder="Last Name"
+                     th:field="*{lastName}" required>
+              <label for="newStudentLastNameInput">Last Name</label>
+            </div>
+
+            <div class="col-auto form-check form-switch mb-3">
+              <input class="form-check-input" type="checkbox" id="switchActiveNewStudent"
+                     th:field="*{active}">
+              <label class="form-check-label" for="switchActiveNewStudent">Active student</label>
+            </div>
+
+            <div class="mb-3">
+              <label for="selectGroupNewStudent" class="form-label">Group</label>
+              <select name="group.id" id="selectGroupNewStudent"
+                      class="form-select" required>
+                <option value="" disabled selected>Please select group...
+                </option>
+                <option th:each="group : ${groups}"
+                        th:value="${group.id}"
+                        th:utext="${group.name}"
+                        th:selected="${group.id eq groupIdSelect}">...
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary btn-sm"
+                    data-bs-dismiss="modal">Cancel
+            </button>
+            <input type="hidden" name="uri"
+                   th:value="${#request.requestURI} + (${#request.queryString}? '?' + ${#request.queryString} : '')">
+            <input type="submit" class="btn btn-primary btn-sm" value="Create Student">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!--Edit Modal -->
+  <div id="editStudentModal" class="modal fade" data-bs-backdrop="static"
+       tabindex="-1" aria-labelledby="editStudentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form id="formEdit" th:method="put">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editStudentModalLabel">Update Student</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="form-floating mb-3">
+              <input type="text" class="form-control" id="editStudentFirstNameInput"
+                     name="firstName" value="" required>
+              <label for="editStudentFirstNameInput" class="form-label">First Name</label>
+            </div>
+
+            <div class="form-floating mb-3">
+              <input type="text" class="form-control" id="editStudentPatronymicInput"
+                     name="patronymic" value="">
+              <label for="editStudentPatronymicInput" class="form-label">Patronymic</label>
+            </div>
+
+            <div class="form-floating mb-3">
+              <input type="text" class="form-control" id="editStudentLastNameInput"
+                     name="lastName" value="" required>
+              <label for="editStudentLastNameInput" class="form-label">Last Name</label>
+            </div>
+
+            <div class="col-auto form-check form-switch mb-3">
+              <input class="form-check-input" type="checkbox" id="switchActiveEditStudent"
+                     name="active">
+              <label class="form-check-label" for="switchActiveEditStudent">Active student</label>
+            </div>
+
+            <div class="mb-3">
+              <label for="editStudentGroupSelect" class="form-label">Group</label>
+              <select name="group.id" id="editStudentGroupSelect" class="form-select" required>
+                <option value="" disabled selected>Please select department...
+                </option>
+                <option th:each="group : ${groups}"
+                        th:value="${group.id}"
+                        th:utext="${group.name}"
+                        th:selected="${group.id eq groupIdSelect}">...
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary"
+                    data-bs-dismiss="modal">Cancel
+            </button>
+            <input type="hidden" name="uri"
+                   th:value="${#request.requestURI} + (${#request.queryString}? '?' + ${#request.queryString} : '')">
+            <input type="submit" class="btn btn-primary" value="Update">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!--  Delete Modal-->
+  <div id="deleteStudentModal" class="modal fade" data-bs-backdrop="static"
+       tabindex="-1" aria-labelledby="DeleteStudentModalLabel"
+       aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form id="formDelete" th:method="delete">
+          <div class="modal-header">
+            <h5 id="deleteStudentModalLabel" class="modal-title">Delete Student</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to delete
+              <span class="fw-bold" id="deletedStudent"></span></p>
+            <p class="text-danger">
+              <small>This action cannot be undone.</small>
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary"
+                    data-bs-dismiss="modal">Cancel
+            </button>
+            <input type="hidden" name="uri"
+                   th:value="${#request.requestURI} + (${#request.queryString}? '?' + ${#request.queryString} : '')">
+            <input type="submit" class="btn btn-danger" value="Delete">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
 </div>
+
 <!--Scripts-->
 <script layout:fragment="script">
   function showInactiveGroupsInSelect () {
@@ -151,6 +323,54 @@
       $('#submit').attr('disabled', 'disabled')
     }
   }
+
+  // NEW MODAL
+  $(function () {
+    $('#newStudentModal').on('show.bs.modal', function () {
+      $('#switchActiveNewStudent').prop('checked', true)
+    })
+  })
+
+  $(function () {
+    $('#newStudentModal').on('shown.bs.modal', function () {
+      $('#newStudentFirstNameInput').focus()
+    })
+  })
+
+  // EDIT MODAL
+  $(function () {
+    $('.editButton').on('click', function () {
+      let href = '/students/' + $(this).attr('data-bs-id')
+      $('#formEdit').attr('action', href)
+      $.get(href, function (student) {
+        $('#editStudentFirstNameInput').val(student.firstName)
+        $('#editStudentPatronymicInput').val(student.patronymic)
+        $('#editStudentLastNameInput').val(student.lastName)
+        let groupId = student.group.id
+        $('#switchActiveEditStudent').prop('checked', student.active)
+        $('#editStudentGroupSelect option[value=' + groupId + ']').prop('selected', true)
+      })
+    })
+  })
+  $(function () {
+    $('#editStudentModal').on('shown.bs.modal', function () {
+      $('#editStudentFirstNameInput').focus()
+    })
+  })
+
+  // DELETE MODAL
+  $(function () {
+    $('.deleteButton').on('click', function () {
+      let id = $(this).attr('data-bs-id')
+      let row = $(this).parent().parent().parent().parent()
+      let firstName = row.children('.first_name').text()
+      let patronymic = row.children('.patronymic').text()
+      let lastName = row.children('.last_name').text()
+      let student = '\'' + firstName + ' ' + patronymic + ' ' + lastName + '\'?'
+      $('#deletedStudent').text(student)
+      $('#formDelete').attr('action', '/students/' + id)
+    })
+  })
 
 </script>
 </body>
