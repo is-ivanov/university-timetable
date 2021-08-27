@@ -11,13 +11,13 @@
     <logger name="ua.com.foxminded.university" level="debug" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="org.springframework" level="info" additivity="false">
+    <logger name="org.springframework" level="debug" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="org.thymeleaf" level="debug" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <root level="info">
+    <root level="error">
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>
