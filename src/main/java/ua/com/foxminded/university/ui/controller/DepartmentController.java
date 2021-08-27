@@ -12,13 +12,13 @@ import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 
 import java.util.List;
 
+import static ua.com.foxminded.university.ui.Util.defineRedirect;
+
 @Slf4j
 @RequiredArgsConstructor
 @Controller
 @RequestMapping("/departments")
 public class DepartmentController {
-
-    public static final String REDIRECT_DEPARTMENTS = "redirect:";
 
     private final DepartmentService departmentService;
     private final FacultyService facultyService;
@@ -87,7 +87,4 @@ public class DepartmentController {
         return defineRedirect(uri);
     }
 
-    private String defineRedirect(String uri) {
-        return REDIRECT_DEPARTMENTS + uri;
-    }
 }

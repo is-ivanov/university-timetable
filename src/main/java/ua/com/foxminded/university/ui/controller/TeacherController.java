@@ -13,13 +13,13 @@ import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
 
 import java.util.List;
 
+import static ua.com.foxminded.university.ui.Util.defineRedirect;
+
 @Slf4j
 @RequiredArgsConstructor
 @Controller
 @RequestMapping("/teachers")
 public class TeacherController {
-
-    public static final String REDIRECT_TEACHERS = "redirect:";
 
     private final TeacherService teacherService;
     private final FacultyService facultyService;
@@ -111,7 +111,4 @@ public class TeacherController {
         return defineRedirect(uri);
     }
 
-    private String defineRedirect(String uri) {
-        return REDIRECT_TEACHERS + uri;
-    }
 }

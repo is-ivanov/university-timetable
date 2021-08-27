@@ -11,13 +11,13 @@ import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 
 import java.util.List;
 
+import static ua.com.foxminded.university.ui.Util.defineRedirect;
+
 @Slf4j
 @RequiredArgsConstructor
 @Controller
 @RequestMapping("/groups")
 public class GroupController {
-
-    public static final String REDIRECT_GROUPS = "redirect:";
 
     private final GroupService groupService;
     private final FacultyService facultyService;
@@ -85,7 +85,4 @@ public class GroupController {
         return defineRedirect(uri);
     }
 
-    private String defineRedirect(String uri) {
-        return REDIRECT_GROUPS + uri;
-    }
 }
