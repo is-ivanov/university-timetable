@@ -15,11 +15,11 @@ import lombok.NoArgsConstructor;
 public class Lesson {
 
     private int id;
-    private Teacher teacher;
-    private List<Student> students;
     private Course course;
+    private Teacher teacher;
     private Room room;
     private LocalDateTime timeStart;
     private LocalDateTime timeEnd;
+    private List<Student> students;
 
 }

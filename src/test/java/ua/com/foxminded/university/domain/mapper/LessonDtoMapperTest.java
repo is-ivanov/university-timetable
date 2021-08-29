@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ua.com.foxminded.university.domain.dto.LessonDto;
-import ua.com.foxminded.university.domain.entity.Course;
-import ua.com.foxminded.university.domain.entity.Lesson;
-import ua.com.foxminded.university.domain.entity.Room;
-import ua.com.foxminded.university.domain.entity.Teacher;
+import ua.com.foxminded.university.domain.entity.*;
 import ua.com.foxminded.university.springconfig.TestRootConfig;
 
 import java.time.LocalDateTime;
@@ -33,50 +30,86 @@ class LessonDtoMapperTest {
     private static final String NUMBER_ROOM = "546";
     private static final String BUILDING_AND_NUMBER_ROOM = "BuildingName - 546";
     private static final int DURATION_LESSON_IN_MINUTES = 90;
+    private static final int ID1 = 1;
+    private static final int ID2 = 2;
+    private static final LocalDateTime TIME_START = LocalDateTime.of(2021, 8, 10, 10, 0);
+    private static final LocalDateTime TIME_END = TIME_START.plusMinutes(DURATION_LESSON_IN_MINUTES);
 
     @Autowired
     private LessonDtoMapper mapper;
 
     @Nested
     @DisplayName("When we convert lesson to lessonDto")
-    class lessonToLessonDtoTest {
+    class LessonToLessonDtoTest {
 
         @Test
         @DisplayName("if lesson with full properties then should return " +
             "lessonDto with expected properties")
-        void testExpectedLesson() {
+        void testExpectedLessonDto() {
 
-            Course course = new Course();
-            course.setName(COURSE_NAME);
-            Teacher teacher = new Teacher();
-            teacher.setFirstName(FIRST_NAME_TEACHER);
-            teacher.setPatronymic(PATRONYMIC_TEACHER);
-            teacher.setLastName(LAST_NAME_TEACHER);
-            Room room = new Room();
-            room.setBuilding(BUILDING_NAME);
-            room.setNumber(NUMBER_ROOM);
-            LocalDateTime timeStart = LocalDateTime.of(2021, 8, 10, 10, 0);
-            LocalDateTime timeEnd =
-                timeStart.plusMinutes(DURATION_LESSON_IN_MINUTES);
+            Course course = new Course(ID2, COURSE_NAME);
+            Teacher teacher = Teacher.builder()
+                .id(ID2)
+                .firstName(FIRST_NAME_TEACHER)
+                .patronymic(PATRONYMIC_TEACHER)
+                .lastName(LAST_NAME_TEACHER)
+                .active(true)
+                .department(new Department())
+                .build();
+            Room room = new Room(ID1, BUILDING_NAME, NUMBER_ROOM);
             Lesson lesson = Lesson.builder()
-                .id(1)
+                .id(ID1)
                 .course(course)
                 .teacher(teacher)
                 .room(room)
-                .timeStart(timeStart)
-                .timeEnd(timeEnd)
+                .timeStart(TIME_START)
+                .timeEnd(TIME_END)
                 .build();
 
             LessonDto lessonDto = mapper.lessonToLessonDto(lesson);
 
-            assertThat(lessonDto.getId(), is(equalTo(1)));
+            assertThat(lessonDto.getId(), is(equalTo(ID1)));
+            assertThat(lessonDto.getCourseId(), is(equalTo(ID2)));
             assertThat(lessonDto.getCourseName(), is(equalTo(COURSE_NAME)));
+            assertThat(lessonDto.getTeacherId(), is(equalTo(ID2)));
             assertThat(lessonDto.getTeacherFullName(),
                 is(equalTo(FULL_NAME_TEACHER)));
+            assertThat(lessonDto.getRoomId(), is(equalTo(ID1)));
             assertThat(lessonDto.getBuildingAndRoom(),
                 is(equalTo(BUILDING_AND_NUMBER_ROOM)));
-            assertThat(lessonDto.getTimeStart(), is(equalTo(timeStart)));
-            assertThat(lessonDto.getTimeEnd(), is(equalTo(timeEnd)));
+            assertThat(lessonDto.getTimeStart(), is(equalTo(TIME_START)));
+            assertThat(lessonDto.getTimeEnd(), is(equalTo(TIME_END)));
+        }
+    }
+
+    @Nested
+    @DisplayName("When we convert lessonDto to lesson")
+    class LessonDtoToLessonTest {
+
+        @Test
+        @DisplayName("if lessonDto with full properties then should return " +
+            "lesson with expected properties")
+        void testExpectedLesson() {
+
+            LessonDto lessonDto = LessonDto.builder()
+                .id(ID1)
+                .courseId(ID2)
+                .courseName(COURSE_NAME)
+                .teacherId(ID1)
+                .roomId(ID2)
+                .timeStart(TIME_START)
+                .timeEnd(TIME_END)
+                .build();
+
+            Lesson lesson = mapper.lessonDtoToLesson(lessonDto);
+
+            assertThat(lesson.getId(), is(equalTo(ID1)));
+            assertThat(lesson.getCourse().getId(), is(equalTo(ID2)));
+            assertThat(lesson.getCourse().getName(), is(equalTo(COURSE_NAME)));
+            assertThat(lesson.getTeacher().getId(), is(equalTo(ID1)));
+            assertThat(lesson.getRoom().getId(), is(equalTo(ID2)));
+            assertThat(lesson.getTimeStart(), is(equalTo(TIME_START)));
+            assertThat(lesson.getTimeEnd(), is(equalTo(TIME_END)));
         }
     }
 

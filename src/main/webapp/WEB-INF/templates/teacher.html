@@ -80,20 +80,20 @@
       </tr>
       </thead>
       <tbody>
-      <tr th:each="teacher : ${teachers}" class="align-middle"
-          th:classappend="${teacher.active} ? 'active' : (${isShowInactiveTeachers}? 'inactive' : 'inactive d-none')">
-        <td th:utext="${teacher.id}">...</td>
-        <td class="first_name" th:utext="${teacher.firstName}">...</td>
-        <td class="patronymic" th:utext="${teacher.patronymic}">...</td>
-        <td class="last_name" th:utext="${teacher.lastName}">...</td>
-        <td th:utext="${teacher.department.name}">...</td>
-        <td th:utext="${teacher.active} ? 'active' : 'inactive'" class="text-center"
-            th:classappend="${teacher.active} ? 'active' : 'inactive'">active
+      <tr th:each="teacherDto : ${teachers}" class="align-middle"
+          th:classappend="${teacherDto.active} ? 'active' : (${isShowInactiveTeachers}? 'inactive' : 'inactive d-none')">
+        <td th:utext="${teacherDto.id}">...</td>
+        <td class="first_name" th:utext="${teacherDto.firstName}">...</td>
+        <td class="patronymic" th:utext="${teacherDto.patronymic}">...</td>
+        <td class="last_name" th:utext="${teacherDto.lastName}">...</td>
+        <td th:utext="${teacherDto.departmentName}">...</td>
+        <td th:utext="${teacherDto.active} ? 'active' : 'inactive'" class="text-center"
+            th:classappend="${teacherDto.active} ? 'active' : 'inactive'">active
         </td>
         <td class="py-0">
           <div class="row">
             <div class="col-auto">
-              <form th:action="@{/teacher/{id}/timetable(id = ${teacher.id})}">
+              <form th:action="@{/teacher/{id}/timetable(id = ${teacherDto.id})}">
                 <button type="submit" class="btn btn-info btn-sm">
                   <i class="bi-calendar3"></i> Timetable
                 </button>
@@ -102,14 +102,14 @@
             <div class="col-auto">
               <a href="#editTeacherModal"
                  class="btn btn-warning btn-sm editButton"
-                 data-bs-toggle="modal" th:data-bs-id="${teacher.id}">
+                 data-bs-toggle="modal" th:data-bs-id="${teacherDto.id}">
                 <i class="bi-pencil-square"></i> Edit
               </a>
             </div>
             <div class="col-auto">
               <a href="#deleteTeacherModal"
                  class="btn btn-danger btn-sm deleteButton"
-                 data-bs-toggle="modal" th:data-bs-id="${teacher.id}">
+                 data-bs-toggle="modal" th:data-bs-id="${teacherDto.id}">
                 <i class="bi-trash-fill"></i>Delete
               </a>
             </div>
@@ -165,7 +165,7 @@
 
             <div class="mb-3">
               <label for="selectDepartmentNewTeacher" class="form-label">Department</label>
-              <select name="department.id" id="selectDepartmentNewTeacher"
+              <select name="departmentId" id="selectDepartmentNewTeacher"
                       class="form-select" required>
                 <option value="" disabled selected>Please select department...
                 </option>
@@ -228,7 +228,7 @@
 
             <div class="mb-3">
               <label for="editTeacherDepartmentSelect" class="form-label">Department</label>
-              <select name="department.id" id="editTeacherDepartmentSelect" class="form-select" required>
+              <select name="departmentId" id="editTeacherDepartmentSelect" class="form-select" required>
                 <option value="" disabled selected>Please select department...
                 </option>
                 <option th:each="department : ${departments}"
@@ -330,7 +330,7 @@
         $('#editTeacherFirstNameInput').val(teacher.firstName)
         $('#editTeacherPatronymicInput').val(teacher.patronymic)
         $('#editTeacherLastNameInput').val(teacher.lastName)
-        let departmentId = teacher.department.id
+        let departmentId = teacher.departmentId
         $('#switchActiveEditTeacher').prop('checked', teacher.active)
         $('#editTeacherDepartmentSelect option[value=' + departmentId + ']').prop('selected', true)
       })

@@ -16,7 +16,6 @@ import ua.com.foxminded.university.domain.filter.LessonFilter;
 import ua.com.foxminded.university.exception.DAOException;
 import ua.com.foxminded.university.springconfig.TestRootConfig;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -478,8 +477,8 @@ class LessonDaoImplTest {
             "return lessons between this dates")
         void testFilterDateFromAndDateTo() {
             LessonFilter filter = new LessonFilter();
-            filter.setDateFrom(LocalDate.of(2021, 6, 9));
-            filter.setDateTo(LocalDate.of(2021, 6, 11));
+            filter.setDateFrom(LocalDateTime.of(2021, 6, 9, 8, 0));
+            filter.setDateTo(LocalDateTime.of(2021, 6, 11, 20, 0));
             List<Lesson> lessons = dao.getAllWithFilter(filter);
             assertThat(lessons, hasSize(1));
             assertThat(lessons.get(0).getTimeStart(),

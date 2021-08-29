@@ -230,14 +230,6 @@ class LessonServiceImplTest {
         }
     }
 
-    @Test
-    @DisplayName("test 'convertListLessonsToDtos' method")
-    void testConvertListLessonToDtos() {
-        lessonService.convertListLessonsToDtos(any());
-        verify(lessonDtoMapperMock, times(1))
-            .lessonsToLessonDtos(any());
-    }
-
     @Nested
     @DisplayName("test 'getAllWithFilter' method")
     class TestGetAllWithFilter {

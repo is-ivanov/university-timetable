@@ -19,6 +19,7 @@ import ua.com.foxminded.university.domain.filter.LessonFilter;
 import ua.com.foxminded.university.domain.service.interfaces.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -102,7 +103,8 @@ class LessonControllerTest {
 
             when(facultyServiceMock.getAllSortedByNameAsc()).thenReturn(faculties);
             when(departmentServiceMock.getAll()).thenReturn(departments);
-            when(teacherServiceMock.convertListTeachersToDtos(any())).thenReturn(teachers);
+            //TODO
+            //            when(teacherServiceMock.convertListTeachersToDtos(any())).thenReturn(teachers);
             when(courseServiceMock.getAll()).thenReturn(courses);
             when(roomServiceMock.getAll()).thenReturn(rooms);
 
@@ -142,10 +144,10 @@ class LessonControllerTest {
                 .id(ID1)
                 .build();
             List<LessonDto> lessonDtos = Collections.singletonList(lessonDto1);
-
-            when(teacherServiceMock.convertListTeachersToDtos(any())).thenReturn(teachers);
+//TODO
+//            when(teacherServiceMock.convertListTeachersToDtos(any())).thenReturn(teachers);
             when(departmentServiceMock.getAll()).thenReturn(departments);
-            when(lessonServiceMock.convertListLessonsToDtos(any())).thenReturn(lessonDtos);
+//            when(lessonServiceMock.convertListLessonsToDtos(any())).thenReturn(lessonDtos);
 
             mockMvc.perform(post("/lesson/filter"))
                 .andDo(print())
@@ -164,8 +166,8 @@ class LessonControllerTest {
         @DisplayName("Test with all parameters")
         void testWithAllParameters() throws Exception {
 
-            LocalDate dateFrom = LocalDate.of(2021, 8, 10);
-            LocalDate dateTo = LocalDate.of(2021, 9, 15);
+            LocalDateTime dateFrom = LocalDateTime.of(2021, 8, 10, 8, 0);
+            LocalDateTime dateTo = LocalDateTime.of(2021, 9, 15, 23, 0);
             LessonFilter lessonFilter = LessonFilter.builder()
                 .facultyId(1)
                 .departmentId(2)
@@ -180,8 +182,9 @@ class LessonControllerTest {
             List<TeacherDto> teacherDtos = Collections.singletonList(new TeacherDto());
             when(teacherServiceMock.getAllByDepartment(ID2)).thenReturn(teachers);
             when(teacherServiceMock.getAll()).thenReturn(null);
-            doReturn(teacherDtos).when(teacherServiceMock).convertListTeachersToDtos(teachers);
-            doReturn(null).when(teacherServiceMock).convertListTeachersToDtos(null);
+//            TODO
+//            doReturn(teacherDtos).when(teacherServiceMock).convertListTeachersToDtos(teachers);
+//            doReturn(null).when(teacherServiceMock).convertListTeachersToDtos(null);
 
             List<Department> departments = Collections.singletonList(new Department());
             when(departmentServiceMock.getAllByFaculty(ID1)).thenReturn(departments);
@@ -212,8 +215,9 @@ class LessonControllerTest {
             List<TeacherDto> teacherDtos = Collections.singletonList(new TeacherDto());
             when(teacherServiceMock.getAllByFaculty(ID1)).thenReturn(teachers);
             when(teacherServiceMock.getAll()).thenReturn(null);
-            doReturn(teacherDtos).when(teacherServiceMock).convertListTeachersToDtos(teachers);
-            doReturn(null).when(teacherServiceMock).convertListTeachersToDtos(null);
+//            TODO
+//            doReturn(teacherDtos).when(teacherServiceMock).convertListTeachersToDtos(teachers);
+//            doReturn(null).when(teacherServiceMock).convertListTeachersToDtos(null);
 
             mockMvc.perform(post("/lesson/filter")
                     .flashAttr("lessonFilter", lessonFilter))
@@ -242,7 +246,8 @@ class LessonControllerTest {
             List<TeacherDto> teacherDtos = Arrays.asList(teacherDto1, teacherDto2);
 
             when(teacherServiceMock.getAll()).thenReturn(teachers);
-            when(teacherServiceMock.convertListTeachersToDtos(teachers)).thenReturn(teacherDtos);
+//            TODO
+//            when(teacherServiceMock.convertListTeachersToDtos(teachers)).thenReturn(teacherDtos);
 
             mockMvc.perform(get("/lesson/department?departmentId=0"))
                 .andDo(print())
@@ -268,8 +273,9 @@ class LessonControllerTest {
 
             when(teacherServiceMock.getAllByDepartment(ID1)).thenReturn(teachers);
             when(teacherServiceMock.getAll()).thenReturn(null);
-            doReturn(teacherDtos).when(teacherServiceMock).convertListTeachersToDtos(teachers);
-            doReturn(null).when(teacherServiceMock).convertListTeachersToDtos(null);
+//            TODO
+//            doReturn(teacherDtos).when(teacherServiceMock).convertListTeachersToDtos(teachers);
+//            doReturn(null).when(teacherServiceMock).convertListTeachersToDtos(null);
 
             mockMvc.perform(get("/lesson/department?departmentId=1"))
                 .andDo(print())
@@ -302,7 +308,8 @@ class LessonControllerTest {
             List<TeacherDto> teacherDtos = Arrays.asList(teacherDto1, teacherDto2);
 
             when(teacherServiceMock.getAll()).thenReturn(teachers);
-            when(teacherServiceMock.convertListTeachersToDtos(teachers)).thenReturn(teacherDtos);
+//            TODO
+//            when(teacherServiceMock.convertListTeachersToDtos(teachers)).thenReturn(teacherDtos);
 
             mockMvc.perform(get("/lesson/faculty?facultyId=0"))
                 .andDo(print())
@@ -328,8 +335,9 @@ class LessonControllerTest {
 
             when(teacherServiceMock.getAllByFaculty(ID1)).thenReturn(teachers);
             when(teacherServiceMock.getAll()).thenReturn(null);
-            doReturn(teacherDtos).when(teacherServiceMock).convertListTeachersToDtos(teachers);
-            doReturn(null).when(teacherServiceMock).convertListTeachersToDtos(null);
+//            TODO
+//            doReturn(teacherDtos).when(teacherServiceMock).convertListTeachersToDtos(teachers);
+//            doReturn(null).when(teacherServiceMock).convertListTeachersToDtos(null);
 
             mockMvc.perform(get("/lesson/faculty?facultyId=1"))
                 .andDo(print())

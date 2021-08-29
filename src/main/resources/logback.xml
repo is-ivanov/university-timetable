@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration>
-    <property name="HOME_LOG" value="logs/app.log"/>
     <appender name="STDOUT"
               class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -11,7 +10,7 @@
     <logger name="ua.com.foxminded.university" level="debug" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="org.springframework" level="debug" additivity="false">
+    <logger name="org.springframework" level="info" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="org.thymeleaf" level="debug" additivity="false">

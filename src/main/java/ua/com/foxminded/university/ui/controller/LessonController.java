@@ -10,9 +10,12 @@ import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.*;
 import ua.com.foxminded.university.domain.filter.LessonFilter;
 import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
+import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.*;
 
 import java.util.List;
+
+import static ua.com.foxminded.university.ui.Util.defineRedirect;
 
 
 @Slf4j
@@ -30,11 +33,11 @@ public class LessonController {
     private final CourseService courseService;
     private final RoomService roomService;
     private final LessonDtoMapper lessonDtoMapper;
+    private final TeacherDtoMapper teacherDtoMapper;
 
     @GetMapping
     public String showLessons(Model model) {
         model.addAttribute("lessonFilter", new LessonFilter());
-        model.addAttribute("newLesson", new Lesson());
         log.info("The required data is loaded into the model");
         return "lesson";
     }
@@ -66,7 +69,7 @@ public class LessonController {
             teachers = teacherService.getAll();
         }
         model.addAttribute("teachers",
-            teacherService.convertListTeachersToDtos(teachers));
+            teacherDtoMapper.teachersToTeacherDtos(teachers));
         if (facultyId != null && facultyId > 0) {
             log.debug("Get departments for selector by facultyId ({})", facultyId);
             model.addAttribute("departments", departmentService.getAllByFaculty(facultyId));
@@ -76,12 +79,13 @@ public class LessonController {
         }
         log.debug("Get filtered lessons");
         model.addAttribute("lessons",
-            lessonService.convertListLessonsToDtos(lessonService.getAllWithFilter(lessonFilter)));
+            lessonDtoMapper.lessonsToLessonDtos(lessonService.getAllWithFilter(lessonFilter)));
+        model.addAttribute("newLesson", new LessonDto());
         log.info("The required data is loaded into the model");
         return "lesson";
     }
 
-    @GetMapping("/department")
+    @GetMapping("/departments")
     @ResponseBody
     public List<TeacherDto> getTeachersByDepartment(@RequestParam Integer departmentId) {
         log.debug("Getting teachers for selector");
@@ -93,10 +97,10 @@ public class LessonController {
             log.debug("Get teachers for selector by departmentId ({})", departmentId);
             teachersByDepartment = teacherService.getAllByDepartment(departmentId);
         }
-        return teacherService.convertListTeachersToDtos(teachersByDepartment);
+        return teacherDtoMapper.teachersToTeacherDtos(teachersByDepartment);
     }
 
-    @GetMapping("/faculty")
+    @GetMapping("/faculties")
     @ResponseBody
     public List<TeacherDto> getTeachersByFaculty(@RequestParam Integer facultyId) {
         log.debug("Getting teachers for selector");
@@ -108,17 +112,17 @@ public class LessonController {
             log.debug("Get teachers for selector by facultyId ({})", facultyId);
             teachersByFaculty = teacherService.getAllByFaculty(facultyId);
         }
-        return teacherService.convertListTeachersToDtos(teachersByFaculty);
+        return teacherDtoMapper.teachersToTeacherDtos(teachersByFaculty);
     }
 
-//    @PostMapping
-//    public String createLesson(@ModelAttribute LessonDto lessonDto,
-//                               @RequestParam(required = false) String uri) {
-//        log.debug("Creating lesson [{}, {}, {}]", lessonDto.getCourseName(),
-//            lessonDto.getTeacherFullName(), lessonDto.getTimeStart());
-//        lessonDtoMapper.
-//        lessonService.add();
-//    }
+    @PostMapping
+    public String createLesson(@ModelAttribute LessonDto lessonDto,
+                               @RequestParam(required = false) String uri) {
+        log.debug("Creating lesson {}", lessonDto);
+        lessonService.add(lessonDtoMapper.lessonDtoToLesson(lessonDto));
+        log.info("Lesson {} is created", lessonDto);
+        return defineRedirect(uri);
+    }
 
     @ModelAttribute("faculties")
     public List<Faculty> populateFaculties() {
@@ -135,7 +139,7 @@ public class LessonController {
     @ModelAttribute("teachers")
     public List<TeacherDto> populateTeachers() {
         log.debug("Loading list teachers for selector");
-        return teacherService.convertListTeachersToDtos(teacherService.getAll());
+        return teacherDtoMapper.teachersToTeacherDtos(teacherService.getAll());
     }
 
     @ModelAttribute("courses")

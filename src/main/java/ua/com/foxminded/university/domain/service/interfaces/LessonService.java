@@ -1,6 +1,5 @@
 package ua.com.foxminded.university.domain.service.interfaces;
 
-import ua.com.foxminded.university.domain.dto.LessonDto;
 import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.domain.filter.LessonFilter;
@@ -14,5 +13,4 @@ public interface LessonService extends Service<Lesson> {
 
     List<Lesson> getAllWithFilter(LessonFilter filter);
 
-    List<LessonDto> convertListLessonsToDtos(List<Lesson> lessons);
 }

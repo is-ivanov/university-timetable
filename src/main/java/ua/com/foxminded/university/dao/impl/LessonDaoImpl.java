@@ -14,6 +14,7 @@ import ua.com.foxminded.university.domain.filter.LessonFilter;
 import ua.com.foxminded.university.exception.DAOException;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -273,8 +274,8 @@ public class LessonDaoImpl implements LessonDao {
         }
     }
 
-    private void addDateFilter(StringBuilder query, LocalDate dateFrom,
-                               LocalDate dateTo) {
+    private void addDateFilter(StringBuilder query, LocalDateTime dateFrom,
+                               LocalDateTime dateTo) {
         log.debug("check filter by date");
         if (dateFrom != null && dateTo != null) {
             log.debug("add filter between {} and {}", dateFrom, dateTo);

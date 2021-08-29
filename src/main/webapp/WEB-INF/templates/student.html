@@ -89,20 +89,20 @@
       </tr>
       </thead>
       <tbody>
-      <tr th:each="student : ${students}" class="align-middle"
-          th:classappend="${student.active} ? 'active' : (${isShowInactiveStudents}? 'inactive' : 'inactive d-none')">
-        <td th:utext="${student.id}">...</td>
-        <td class="first_name" th:utext="${student.firstName}">...</td>
-        <td class="patronymic" th:utext="${student.patronymic}">...</td>
-        <td class="last_name" th:utext="${student.lastName}">...</td>
-        <td th:utext="${student.group.name}">...</td>
-        <td th:utext="${student.active} ? 'active' : 'inactive'" class="text-center"
-            th:classappend="${student.active} ? 'active' : 'inactive'">active
+      <tr th:each="studentDto : ${students}" class="align-middle"
+          th:classappend="${studentDto.active} ? 'active' : (${isShowInactiveStudents}? 'inactive' : 'inactive d-none')">
+        <td th:utext="${studentDto.id}">...</td>
+        <td class="first_name" th:utext="${studentDto.firstName}">...</td>
+        <td class="patronymic" th:utext="${studentDto.patronymic}">...</td>
+        <td class="last_name" th:utext="${studentDto.lastName}">...</td>
+        <td th:utext="${studentDto.groupName}">...</td>
+        <td th:utext="${studentDto.active} ? 'active' : 'inactive'" class="text-center"
+            th:classappend="${studentDto.active} ? 'active' : 'inactive'">active
         </td>
         <td class="py-0">
           <div class="row">
             <div class="col-auto">
-              <form th:action="@{/student/{id}/timetable(id = ${student.id})}">
+              <form th:action="@{/student/{id}/timetable(id = ${studentDto.id})}">
                 <button type="submit" class="btn btn-info btn-sm">
                   <i class="bi-calendar3"></i> Timetable
                 </button>
@@ -111,14 +111,14 @@
             <div class="col-auto">
               <a href="#editStudentModal"
                  class="btn btn-warning btn-sm editButton"
-                 data-bs-toggle="modal" th:data-bs-id="${student.id}">
+                 data-bs-toggle="modal" th:data-bs-id="${studentDto.id}">
                 <i class="bi-pencil-square"></i> Edit
               </a>
             </div>
             <div class="col-auto">
               <a href="#deleteStudentModal"
                  class="btn btn-danger btn-sm deleteButton"
-                 data-bs-toggle="modal" th:data-bs-id="${student.id}">
+                 data-bs-toggle="modal" th:data-bs-id="${studentDto.id}">
                 <i class="bi-trash-fill"></i>Delete
               </a>
             </div>
@@ -174,7 +174,7 @@
 
             <div class="mb-3">
               <label for="selectGroupNewStudent" class="form-label">Group</label>
-              <select name="group.id" id="selectGroupNewStudent"
+              <select name="groupId" id="selectGroupNewStudent"
                       class="form-select" required>
                 <option value="" disabled selected>Please select group...
                 </option>
@@ -237,7 +237,7 @@
 
             <div class="mb-3">
               <label for="editStudentGroupSelect" class="form-label">Group</label>
-              <select name="group.id" id="editStudentGroupSelect" class="form-select" required>
+              <select name="groupId" id="editStudentGroupSelect" class="form-select" required>
                 <option value="" disabled selected>Please select department...
                 </option>
                 <option th:each="group : ${groups}"
@@ -346,7 +346,7 @@
         $('#editStudentFirstNameInput').val(student.firstName)
         $('#editStudentPatronymicInput').val(student.patronymic)
         $('#editStudentLastNameInput').val(student.lastName)
-        let groupId = student.group.id
+        let groupId = student.groupId
         $('#switchActiveEditStudent').prop('checked', student.active)
         $('#editStudentGroupSelect option[value=' + groupId + ']').prop('selected', true)
       })
