@@ -2,13 +2,10 @@ package ua.com.foxminded.university.domain.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.com.foxminded.university.dao.interfaces.TeacherDao;
-import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Teacher;
-import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
 
 import java.util.List;
@@ -19,7 +16,6 @@ import java.util.List;
 public class TeacherServiceImpl implements TeacherService {
 
     private final TeacherDao teacherDao;
-    private final TeacherDtoMapper teacherMapper;
 
     @Override
     public void add(Teacher teacher) {
@@ -119,12 +115,6 @@ public class TeacherServiceImpl implements TeacherService {
         List<Teacher> teachers = teacherDao.getAllByFaculty(facultyId);
         log.info("Found {} teachers from faculty id({})", teachers.size(), facultyId);
         return teachers;
-    }
-
-    @Override
-    public List<TeacherDto> convertListTeachersToDtos(List<Teacher> teachers) {
-        log.debug("convert list teachers to list teacherDTOs");
-        return teacherMapper.teachersToTeacherDtos(teachers);
     }
 
 }

@@ -13,6 +13,7 @@ import ua.com.foxminded.university.domain.entity.Teacher;
 import ua.com.foxminded.university.springconfig.TestRootConfig;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -35,33 +36,35 @@ class TeacherDtoMapperTest {
 
     @Nested
     @DisplayName("When we convert teacher to teacherDto")
-    class teacherToTeacherDtoTest {
+    class TeacherToTeacherDtoTest {
 
         @Test
         @DisplayName("if teacher.isActive=true with full properties then " +
             "should return teacherDto with expected properties")
         void testActiveTeacher() {
-            Teacher teacher = new Teacher();
-            teacher.setId(ID1);
-            teacher.setFirstName(FIRST_NAME);
-            teacher.setPatronymic(PATRONYMIC);
-            teacher.setLastName(LAST_NAME);
-            teacher.setActive(true);
             Department department = new Department();
             department.setId(ID2);
             department.setName(DEPARTMENT_NAME);
-            teacher.setDepartment(department);
+            Teacher teacher = Teacher.builder()
+                .id(ID1)
+                .firstName(FIRST_NAME)
+                .patronymic(PATRONYMIC)
+                .lastName(LAST_NAME)
+                .active(true)
+                .department(department)
+                .build();
 
             TeacherDto teacherDto = mapper.teacherToTeacherDto(teacher);
 
+            assertThat(teacherDto.getId(), is(equalTo(ID1)));
             assertThat(teacherDto.getFirstName(), is(equalTo(FIRST_NAME)));
             assertThat(teacherDto.getPatronymic(), is(equalTo(PATRONYMIC)));
             assertThat(teacherDto.getLastName(), is(equalTo(LAST_NAME)));
-            assertThat(teacherDto.getId(), is(equalTo(ID1)));
-            assertThat(teacherDto.getDepartmentName(),
-                is(equalTo(DEPARTMENT_NAME)));
             assertThat(teacherDto.isActive(), is(true));
             assertThat(teacherDto.getFullName(), is(equalTo(FULL_NAME)));
+            assertThat(teacherDto.getDepartmentId(), is(equalTo(ID2)));
+            assertThat(teacherDto.getDepartmentName(),
+                is(equalTo(DEPARTMENT_NAME)));
         }
 
         @Test
@@ -85,22 +88,24 @@ class TeacherDtoMapperTest {
         @Test
         @DisplayName("should return expected list teacherDtos")
         void testListTeachers() {
-            Teacher teacher1 = new Teacher();
-            teacher1.setId(ID1);
-            teacher1.setFirstName(FIRST_NAME);
-            teacher1.setPatronymic(PATRONYMIC);
-            teacher1.setLastName(LAST_NAME);
-            teacher1.setActive(true);
             Department department = new Department();
             department.setId(ID2);
             department.setName(DEPARTMENT_NAME);
-            teacher1.setDepartment(department);
-            Teacher teacher2 = new Teacher();
-            teacher2.setId(ID2);
-            teacher2.setActive(false);
-            List<Teacher> teachers = new ArrayList<>();
-            teachers.add(teacher1);
-            teachers.add(teacher2);
+            Teacher teacher1 = Teacher.builder()
+                .id(ID1)
+                .firstName(FIRST_NAME)
+                .patronymic(PATRONYMIC)
+                .lastName(LAST_NAME)
+                .active(true)
+                .department(department)
+                .build();
+
+
+            Teacher teacher2 = Teacher.builder()
+                .id(ID2)
+                .active(false)
+                .build();
+            List<Teacher> teachers = Arrays.asList(teacher1, teacher2);
 
             List<TeacherDto> teacherDtos = mapper.teachersToTeacherDtos(teachers);
             assertThat(teacherDtos.get(0).getId(), is(equalTo(ID1)));
@@ -108,6 +113,38 @@ class TeacherDtoMapperTest {
             assertThat(teacherDtos.get(1).isActive(), is(false));
             assertThat(teacherDtos, hasSize(2));
 
+        }
+    }
+
+    @Nested
+    @DisplayName("When we convert teacherDto to teacher")
+    class TeacherDtoToTeacherTest {
+
+        @Test
+        @DisplayName("if teacherDto with full properties then should return " +
+            "teacher with expected properties")
+        void testActiveTeacherDtoToTeacher() {
+            TeacherDto teacherDto = TeacherDto.builder()
+                .id(ID1)
+                .firstName(FIRST_NAME)
+                .patronymic(PATRONYMIC)
+                .lastName(LAST_NAME)
+                .active(true)
+                .fullName(FULL_NAME)
+                .departmentId(ID2)
+                .departmentName(DEPARTMENT_NAME)
+                .build();
+
+            Teacher teacher = mapper.teacherDtoToTeacher(teacherDto);
+
+            assertThat(teacher.getId(), is(equalTo(ID1)));
+            assertThat(teacher.getFirstName(), is(equalTo(FIRST_NAME)));
+            assertThat(teacher.getPatronymic(), is(equalTo(PATRONYMIC)));
+            assertThat(teacher.getLastName(), is(equalTo(LAST_NAME)));
+            assertThat(teacher.isActive(), is(true));
+            assertThat(teacher.getFullName(), is(equalTo(FULL_NAME)));
+            assertThat(teacher.getDepartment().getId(), is(equalTo(ID2)));
+            assertThat(teacher.getDepartment().getName(), is(equalTo(DEPARTMENT_NAME)));
         }
     }
 }

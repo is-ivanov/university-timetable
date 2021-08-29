@@ -5,8 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Teacher;
+import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
@@ -24,6 +26,7 @@ public class TeacherController {
     private final TeacherService teacherService;
     private final FacultyService facultyService;
     private final DepartmentService departmentService;
+    private final TeacherDtoMapper teacherMapper;
 
     @GetMapping
     public String showTeachers(@RequestParam(required = false) Integer facultyId,
@@ -38,10 +41,14 @@ public class TeacherController {
         model.addAttribute("faculties", facultyService.getAllSortedByNameAsc());
         if (departmentId != null && departmentId > 0) {
             log.debug("Get teachers by departmentId ({})", departmentId);
-            model.addAttribute("teachers", teacherService.getAllByDepartment(departmentId));
+            model.addAttribute("teachers",
+                teacherMapper.teachersToTeacherDtos(
+                    teacherService.getAllByDepartment(departmentId)));
         } else if (facultyId != null && facultyId > 0) {
             log.debug("Get teachers by facultyId ({})", facultyId);
-            model.addAttribute("teachers", teacherService.getAllByFaculty(facultyId));
+            model.addAttribute("teachers",
+                teacherMapper.teachersToTeacherDtos(
+                    teacherService.getAllByFaculty(facultyId)));
         }
         if (facultyId != null && facultyId > 0) {
             log.debug("Get departments for selector by facultyId ({})", facultyId);
@@ -53,7 +60,7 @@ public class TeacherController {
         log.debug("adding selected faculty and department into model");
         model.addAttribute("facultyIdSelect", facultyId);
         model.addAttribute("departmentIdSelect", departmentId);
-        model.addAttribute("newTeacher", new Teacher());
+        model.addAttribute("newTeacher", new TeacherDto());
         log.info("The required data is loaded into the model");
         return "teacher";
     }
@@ -72,32 +79,32 @@ public class TeacherController {
     }
 
     @PostMapping
-    public String createTeacher(@ModelAttribute Teacher teacher,
+    public String createTeacher(@ModelAttribute TeacherDto teacherDto,
                                 @RequestParam(required = false) String uri) {
-        log.debug("Creating teacher [{} {} {}]", teacher.getFirstName(),
-            teacher.getPatronymic(), teacher.getLastName());
-        teacherService.add(teacher);
-        log.info("Teacher [{}, {}, {}] is created", teacher.getFirstName(),
-            teacher.getPatronymic(), teacher.getLastName());
+        log.debug("Creating teacher [{} {} {}]", teacherDto.getFirstName(),
+            teacherDto.getPatronymic(), teacherDto.getLastName());
+        teacherService.add(teacherMapper.teacherDtoToTeacher(teacherDto));
+        log.info("Teacher [{}, {}, {}] is created", teacherDto.getFirstName(),
+            teacherDto.getPatronymic(), teacherDto.getLastName());
         return defineRedirect(uri);
     }
 
     @GetMapping("/{id}")
     @ResponseBody
-    public Teacher showTeacher(@PathVariable("id") int teacherId) {
+    public TeacherDto showTeacher(@PathVariable("id") int teacherId) {
         log.debug("Getting teacher id({})", teacherId);
         Teacher teacher = teacherService.getById(teacherId);
         log.info("Found teacher [{} {} {}]", teacher.getFirstName(),
             teacher.getPatronymic(), teacher.getLastName());
-        return teacher;
+        return teacherMapper.teacherToTeacherDto(teacher);
     }
 
     @PutMapping("/{id}")
-    public String updateTeacher(@ModelAttribute Teacher teacher,
+    public String updateTeacher(@ModelAttribute TeacherDto teacherDto,
                                 @PathVariable("id") int teacherId,
                                 @RequestParam(required = false) String uri) {
         log.debug("Updating teacher id({})", teacherId);
-        teacherService.update(teacher);
+        teacherService.update(teacherMapper.teacherDtoToTeacher(teacherDto));
         log.info("Teacher id({}) is updated", teacherId);
         return defineRedirect(uri);
     }

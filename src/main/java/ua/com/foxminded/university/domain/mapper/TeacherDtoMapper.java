@@ -10,9 +10,15 @@ import java.util.List;
 @Mapper (componentModel = "spring")
 public interface TeacherDtoMapper {
 
+    @Mapping(target = "departmentId", source = "department.id")
     @Mapping(target = "departmentName", source = "department.name")
-    @Mapping(target = "isActive", source = "active")
     TeacherDto teacherToTeacherDto(Teacher teacher);
+
+
+    @Mapping(target = "department")
+    @Mapping(target = "department.id", source = "departmentId")
+    @Mapping(target = "department.name", source = "departmentName")
+    Teacher teacherDtoToTeacher(TeacherDto teacherDto);
 
     List<TeacherDto> teachersToTeacherDtos(List<Teacher> teachers);
 

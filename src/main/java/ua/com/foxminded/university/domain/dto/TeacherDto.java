@@ -15,8 +15,8 @@ public class TeacherDto {
     private String firstName;
     private String patronymic;
     private String lastName;
+    private boolean active;
+    private String fullName;
     private int departmentId;
     private String departmentName;
-    private boolean isActive;
-    private String fullName;
 }

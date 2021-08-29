@@ -1,6 +1,5 @@
 package ua.com.foxminded.university.domain.service.impl;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -10,20 +9,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.foxminded.university.dao.interfaces.TeacherDao;
-import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Teacher;
-import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
-import ua.com.foxminded.university.domain.mapper.TeacherDtoMapperImpl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -37,9 +31,6 @@ class TeacherServiceImplTest {
 
     @Mock
     private TeacherDao teacherDaoMock;
-
-    @Mock
-    private TeacherDtoMapper teacherDtoMapperMock;
 
     @InjectMocks
     private TeacherServiceImpl teacherService;
@@ -229,23 +220,10 @@ class TeacherServiceImplTest {
         Teacher teacher = new Teacher();
         teacher.setId(ID1);
         teacher.setFirstName(FIRST_NAME);
-        List<Teacher> expectedTeachers = Arrays.asList(teacher);
+        List<Teacher> expectedTeachers = Collections.singletonList(teacher);
 
         when(teacherDaoMock.getAllByFaculty(ID1)).thenReturn(expectedTeachers);
         assertEquals(expectedTeachers, teacherService.getAllByFaculty(ID1));
     }
 
-    @Test
-    @DisplayName("Test convertListTeachersToDtos when mapper return List " +
-        "teacherDto then method should return this List")
-    void testConvertListTeachersToDtos() {
-        TeacherDto teacherDto1 = new TeacherDto();
-        teacherDto1.setId(ID1);
-        TeacherDto teacherDto2 = new TeacherDto();
-        teacherDto2.setId(ID2);
-        List<TeacherDto> dtos = Arrays.asList(teacherDto1, teacherDto2);
-
-        when(teacherDtoMapperMock.teachersToTeacherDtos(any())).thenReturn(dtos);
-        assertEquals(dtos, teacherService.convertListTeachersToDtos(any()));
-    }
 }
