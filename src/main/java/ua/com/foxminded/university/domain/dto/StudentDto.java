@@ -15,8 +15,8 @@ public class StudentDto {
     private String firstName;
     private String patronymic;
     private String lastName;
+    private boolean active;
+    private String fullName;
     private int groupId;
     private String groupName;
-    private boolean isActive;
-    private String fullName;
 }
