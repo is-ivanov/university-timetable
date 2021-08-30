@@ -9,7 +9,7 @@
   <h3>List of lessons</h3>
   <!--  Form -->
   <form action="#" th:action="@{/lessons/filter}" th:object="${lessonFilter}"
-        method="post" class="my-2">
+        method="get" class="my-2">
     <div class="row mb-3">
       <!--Faculty, department and teacher select-->
       <div class="col-6">
@@ -319,67 +319,99 @@
     </div>
   </div>
 
-  <!--  &lt;!&ndash;Edit Modal &ndash;&gt;-->
-  <!--  <div id="editStudentModal" class="modal fade" data-bs-backdrop="static"-->
-  <!--       tabindex="-1" aria-labelledby="editStudentModalLabel" aria-hidden="true">-->
-  <!--    <div class="modal-dialog modal-dialog-centered">-->
-  <!--      <div class="modal-content">-->
-  <!--        <form id="formEdit" th:method="put">-->
-  <!--          <div class="modal-header">-->
-  <!--            <h5 class="modal-title" id="editStudentModalLabel">Update Student</h5>-->
-  <!--            <button type="button" class="btn-close" data-bs-dismiss="modal"-->
-  <!--                    aria-label="Close"></button>-->
-  <!--          </div>-->
-  <!--          <div class="modal-body">-->
-  <!--            <div class="form-floating mb-3">-->
-  <!--              <input type="text" class="form-control" id="editStudentFirstNameInput"-->
-  <!--                     name="firstName" value="" required>-->
-  <!--              <label for="editStudentFirstNameInput" class="form-label">First Name</label>-->
-  <!--            </div>-->
+  <!--Edit Modal -->
+  <div id="editLessonModal" class="modal fade" data-bs-backdrop="static"
+       tabindex="-1" aria-labelledby="editLessonModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form id="formEdit" th:method="put">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editLessonModalLabel">Update Lesson</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <!-- Select course-->
+            <div class="mb-3">
+              <label for="selectCourseEditLesson" class="form-label">Course</label>
+              <select name="courseId" id="selectCourseEditLesson"
+                      class="form-select" required>
+                <option value="" disabled selected>Please select course...
+                </option>
+                <option th:each="course : ${courses}"
+                        th:value="${course.id}"
+                        th:utext="${course.name}"
+                        th:selected="${lessonFilter.courseId ne null and course.id eq lessonFilter.courseId}">...
+                </option>
+              </select>
+            </div>
+            <!-- Select teacher-->
+            <div class="mb-3">
+              <label for="selectTeacherEditLesson" class="form-label">Teacher</label>
+              <select name="teacherId" id="selectTeacherEditLesson"
+                      class="form-select" required>
+                <option value="" disabled selected>Please select teacher...
+                </option>
+                <option th:each="teacherDto : ${teachers}"
+                        th:value="${teacherDto.id}"
+                        th:utext="${teacherDto.fullName} + (${teacherDto.active}? '' : ' - inactive')"
+                        th:classappend="${teacherDto.active}? 'active' : (${isShowInactiveTeachers}?
+                                                'inactive' : 'inactive d-none')"
+                        th:selected="${lessonFilter.teacherId ne null and teacherDto.id eq lessonFilter.teacherId}">...
+                </option>
+              </select>
+            </div>
+            <!-- Select Room-->
+            <div class="mb-3">
+              <label for="selectRoomEditLesson" class="form-label">Room</label>
+              <select name="roomId" id="selectRoomEditLesson"
+                      class="form-select" required>
+                <option value="" disabled selected>Please select room...
+                </option>
+                <option th:each="room : ${rooms}"
+                        th:value="${room.id}"
+                        th:utext="${room.building} + ' - ' + ${room.number}"
+                        th:selected="${lessonFilter.roomId ne null and room.id eq lessonFilter.roomId}">...
+                </option>
+              </select>
+            </div>
+            <!-- Select date-->
+            <!--Date start-->
+            <div class="mb-3">
+              <label for="dateStartPickerEditLesson" class="form-label">Time start</label>
+              <div class="input-group date" id="dateStartPickerEditLesson" data-target-input="nearest">
+                <input type="text" class="form-control datetimepicker-input" data-target="#dateStartPickerEditLesson"
+                       name="timeStart" required/>
+                <div data-target="#dateStartPickerEditLesson" data-toggle="datetimepicker">
+                  <div class="input-group-text"><i class="bi bi-calendar3"></i></div>
+                </div>
+              </div>
+            </div>
+            <!--Date end-->
+            <div class="mb-3">
+              <label for="dateEndPickerEditLesson" class="form-label">Time end</label>
+              <div class="input-group date" id="dateEndPickerEditLesson" data-target-input="nearest">
+                <input type="text" class="form-control datetimepicker-input" data-target="#dateEndPickerEditLesson"
+                       name="timeEnd" required/>
+                <div data-target="#dateEndPickerEditLesson" data-toggle="datetimepicker">
+                  <div class="input-group-text"><i class="bi bi-calendar3"></i></div>
+                </div>
+              </div>
+            </div>
 
-  <!--            <div class="form-floating mb-3">-->
-  <!--              <input type="text" class="form-control" id="editStudentPatronymicInput"-->
-  <!--                     name="patronymic" value="">-->
-  <!--              <label for="editStudentPatronymicInput" class="form-label">Patronymic</label>-->
-  <!--            </div>-->
-
-  <!--            <div class="form-floating mb-3">-->
-  <!--              <input type="text" class="form-control" id="editStudentLastNameInput"-->
-  <!--                     name="lastName" value="" required>-->
-  <!--              <label for="editStudentLastNameInput" class="form-label">Last Name</label>-->
-  <!--            </div>-->
-
-  <!--            <div class="col-auto form-check form-switch mb-3">-->
-  <!--              <input class="form-check-input" type="checkbox" id="switchActiveEditStudent"-->
-  <!--                     name="active">-->
-  <!--              <label class="form-check-label" for="switchActiveEditStudent">Active student</label>-->
-  <!--            </div>-->
-
-  <!--            <div class="mb-3">-->
-  <!--              <label for="editStudentGroupSelect" class="form-label">Group</label>-->
-  <!--              <select name="groupId" id="editStudentGroupSelect" class="form-select" required>-->
-  <!--                <option value="" disabled selected>Please select department...-->
-  <!--                </option>-->
-  <!--                <option th:each="group : ${groups}"-->
-  <!--                        th:value="${group.id}"-->
-  <!--                        th:utext="${group.name}"-->
-  <!--                        th:selected="${group.id eq groupIdSelect}">...-->
-  <!--                </option>-->
-  <!--              </select>-->
-  <!--            </div>-->
-  <!--          </div>-->
-  <!--          <div class="modal-footer">-->
-  <!--            <button type="button" class="btn btn-secondary"-->
-  <!--                    data-bs-dismiss="modal">Cancel-->
-  <!--            </button>-->
-  <!--            <input type="hidden" name="uri"-->
-  <!--                   th:value="${#request.requestURI} + (${#request.queryString}? '?' + ${#request.queryString} : '')">-->
-  <!--            <input type="submit" class="btn btn-primary" value="Update">-->
-  <!--          </div>-->
-  <!--        </form>-->
-  <!--      </div>-->
-  <!--    </div>-->
-  <!--  </div>-->
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary"
+                    data-bs-dismiss="modal">Cancel
+            </button>
+            <input type="hidden" name="uri"
+                   th:value="${#request.requestURI} + (${#request.queryString}? '?' + ${#request.queryString} : '')">
+            <input type="submit" class="btn btn-primary" value="Update">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 
   <!--  &lt;!&ndash;  Delete Modal&ndash;&gt;-->
   <!--  <div id="deleteStudentModal" class="modal fade" data-bs-backdrop="static"-->
@@ -498,26 +530,25 @@
     })
   })
 
-  // // EDIT MODAL
-  // $(function () {
-  //   $('.editButton').on('click', function () {
-  //     let href = '/students/' + $(this).attr('data-bs-id')
-  //     $('#formEdit').attr('action', href)
-  //     $.get(href, function (student) {
-  //       $('#editStudentFirstNameInput').val(student.firstName)
-  //       $('#editStudentPatronymicInput').val(student.patronymic)
-  //       $('#editStudentLastNameInput').val(student.lastName)
-  //       let groupId = student.groupId
-  //       $('#switchActiveEditStudent').prop('checked', student.active)
-  //       $('#editStudentGroupSelect option[value=' + groupId + ']').prop('selected', true)
-  //     })
-  //   })
-  // })
-  // $(function () {
-  //   $('#editStudentModal').on('shown.bs.modal', function () {
-  //     $('#editStudentFirstNameInput').focus()
-  //   })
-  // })
+  // EDIT MODAL
+  $(function () {
+    $('.editButton').on('click', function () {
+      let href = '/lessons/' + $(this).attr('data-bs-id')
+      $('#formEdit').attr('action', href)
+      $.get(href, function (lessonDto) {
+        $('#selectCourseEditLesson option[value=' + lessonDto.courseId + ']').prop('selected', true)
+        $('#selectTeacherEditLesson option[value=' + lessonDto.teacherId + ']').prop('selected', true)
+        $('#selectRoomEditLesson option[value=' + lessonDto.roomId + ']').prop('selected', true)
+        $('#dateStartPickerEditLesson').children('.datetimepicker-input').val(lessonDto.timeStart)
+        $('#dateEndPickerEditLesson').children('.datetimepicker-input').val(lessonDto.timeEnd)
+      })
+    })
+  })
+  $(function () {
+    $('#editLessonModal').on('shown.bs.modal', function () {
+      $('#selectCourseEditLesson').focus()
+    })
+  })
   //
   // // DELETE MODAL
   // $(function () {

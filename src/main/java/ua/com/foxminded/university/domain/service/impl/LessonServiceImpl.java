@@ -50,7 +50,9 @@ public class LessonServiceImpl implements LessonService {
     public Lesson getById(int id) {
         log.debug("Getting lesson by id({})", id);
         Lesson lesson = lessonDao.getById(id).orElse(new Lesson());
-        log.info("Found {}", lesson);
+        log.info("Found lesson [teacher {}, course {}, room {}]",
+            lesson.getTeacher().getFullName(), lesson.getCourse().getName(),
+            lesson.getRoom().getNumber());
         return lesson;
     }
 

@@ -42,7 +42,7 @@ public class LessonController {
         return "lesson";
     }
 
-    @PostMapping("/filter")
+    @GetMapping("/filter")
     public String showFilteredLessons(@RequestParam(required = false) String isShowInactiveTeachers,
                                       @RequestParam(required = false) String isShowPastLessons,
                                       @ModelAttribute LessonFilter lessonFilter,
@@ -121,6 +121,36 @@ public class LessonController {
         log.debug("Creating lesson {}", lessonDto);
         lessonService.add(lessonDtoMapper.lessonDtoToLesson(lessonDto));
         log.info("Lesson {} is created", lessonDto);
+        return defineRedirect(uri);
+    }
+
+    @GetMapping("/{id}")
+    @ResponseBody
+    public LessonDto showLesson(@PathVariable("id") int lessonId) {
+        log.debug("Getting lesson id({})", lessonId);
+        Lesson lesson = lessonService.getById(lessonId);
+        log.info("Found lesson [teacher {}, course {}, room {}]",
+            lesson.getTeacher().getFullName(), lesson.getCourse().getName(),
+            lesson.getRoom().getNumber());
+        return lessonDtoMapper.lessonToLessonDto(lesson);
+    }
+
+    @PutMapping("/{id}")
+    public String updateLesson(@ModelAttribute LessonDto lessonDto,
+                               @PathVariable("id") int lessonId,
+                               @RequestParam(required = false) String uri) {
+        log.debug("Updating lesson id({})", lessonId);
+        lessonService.update(lessonDtoMapper.lessonDtoToLesson(lessonDto));
+        log.info("Lesson id({}) is updated", lessonId);
+        return defineRedirect(uri);
+    }
+
+    @DeleteMapping("/{id}")
+    public String deleteLesson(@PathVariable("id") int lessonId,
+                               @RequestParam(required = false) String uri) {
+        log.debug("Deleting lesson id({})", lessonId);
+        lessonService.delete(lessonId);
+        log.info("Lesson id({}) is deleted", lessonId);
         return defineRedirect(uri);
     }
 

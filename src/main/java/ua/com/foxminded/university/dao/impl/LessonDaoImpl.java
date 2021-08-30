@@ -60,10 +60,12 @@ public class LessonDaoImpl implements LessonDao {
     public void add(Lesson lesson) {
         log.debug("Adding lesson id({})", lesson.getId());
         try {
+            LocalDateTime timeStart = lesson.getTimeStart();
+            LocalDateTime timeEnd = lesson.getTimeEnd();
             jdbcTemplate.update(env.getRequiredProperty(QUERY_ADD),
                 lesson.getTeacher().getId(), lesson.getCourse().getId(),
-                lesson.getRoom().getId(), lesson.getTimeStart(),
-                lesson.getTimeEnd());
+                lesson.getRoom().getId(), timeStart,
+                timeEnd);
         } catch (DataAccessException e) {
             log.error("An error occurred while adding the {}", lesson, e);
             throw new DAOException(e.getMessage(), e);
