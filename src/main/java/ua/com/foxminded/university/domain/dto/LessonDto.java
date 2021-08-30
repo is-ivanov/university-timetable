@@ -1,5 +1,6 @@
 package ua.com.foxminded.university.domain.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,6 +15,8 @@ import java.time.LocalDateTime;
 @Builder
 public class LessonDto {
 
+    public static final String FORMAT_DATE_TIME = "yyyy-MM-dd HH:mm";
+
     private Integer id;
     private int courseId;
     private String courseName;
@@ -22,10 +25,12 @@ public class LessonDto {
     private int roomId;
     private String buildingAndRoom;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    @DateTimeFormat(pattern = FORMAT_DATE_TIME)
+    @JsonFormat(pattern = FORMAT_DATE_TIME)
     private LocalDateTime timeStart;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    @DateTimeFormat(pattern = FORMAT_DATE_TIME)
+    @JsonFormat(pattern = FORMAT_DATE_TIME)
     private LocalDateTime timeEnd;
 
 }
