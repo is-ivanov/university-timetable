@@ -202,6 +202,12 @@
         <td class="py-0">
           <div class="row">
             <div class="col-auto">
+              <a th:href="@{/lessons/{id}(id=${lessonDto.id})}"
+                 class="btn btn-success btn-sm">
+                <i class="bi bi-eye"></i> Details
+              </a>
+            </div>
+            <div class="col-auto">
               <a href="#editLessonModal"
                  class="btn btn-warning btn-sm editButton"
                  data-bs-toggle="modal" th:data-bs-id="${lessonDto.id}">
@@ -413,37 +419,37 @@
     </div>
   </div>
 
-  <!--  &lt;!&ndash;  Delete Modal&ndash;&gt;-->
-  <!--  <div id="deleteStudentModal" class="modal fade" data-bs-backdrop="static"-->
-  <!--       tabindex="-1" aria-labelledby="DeleteStudentModalLabel"-->
-  <!--       aria-hidden="true">-->
-  <!--    <div class="modal-dialog modal-dialog-centered">-->
-  <!--      <div class="modal-content">-->
-  <!--        <form id="formDelete" th:method="delete">-->
-  <!--          <div class="modal-header">-->
-  <!--            <h5 id="deleteStudentModalLabel" class="modal-title">Delete Student</h5>-->
-  <!--            <button type="button" class="btn-close" data-bs-dismiss="modal"-->
-  <!--                    aria-label="Close"></button>-->
-  <!--          </div>-->
-  <!--          <div class="modal-body">-->
-  <!--            <p>Are you sure you want to delete-->
-  <!--              <span class="fw-bold" id="deletedStudent"></span></p>-->
-  <!--            <p class="text-danger">-->
-  <!--              <small>This action cannot be undone.</small>-->
-  <!--            </p>-->
-  <!--          </div>-->
-  <!--          <div class="modal-footer">-->
-  <!--            <button type="button" class="btn btn-secondary"-->
-  <!--                    data-bs-dismiss="modal">Cancel-->
-  <!--            </button>-->
-  <!--            <input type="hidden" name="uri"-->
-  <!--                   th:value="${#request.requestURI} + (${#request.queryString}? '?' + ${#request.queryString} : '')">-->
-  <!--            <input type="submit" class="btn btn-danger" value="Delete">-->
-  <!--          </div>-->
-  <!--        </form>-->
-  <!--      </div>-->
-  <!--    </div>-->
-  <!--  </div>-->
+    <!--  Delete Modal-->
+  <div id="deleteLessonModal" class="modal fade" data-bs-backdrop="static"
+       tabindex="-1" aria-labelledby="DeleteLessonModalLabel"
+       aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form id="formDelete" th:method="delete">
+          <div class="modal-header">
+            <h5 id="deleteLessonModalLabel" class="modal-title">Delete Lesson</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to delete
+              <span class="fw-bold" id="deletedLesson"></span></p>
+            <p class="text-danger">
+              <small>This action cannot be undone.</small>
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary"
+                    data-bs-dismiss="modal">Cancel
+            </button>
+            <input type="hidden" name="uri"
+                   th:value="${#request.requestURI} + (${#request.queryString}? '?' + ${#request.queryString} : '')">
+            <input type="submit" class="btn btn-danger" value="Delete">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 
 
 </div>
@@ -521,6 +527,15 @@
       picker.datetimepicker('viewMode', 'times')
       picker.datetimepicker('minDate', e.date)
     })
+
+    $('#dateStartPickerEditLesson').on('hide.datetimepicker', function (e) {
+      let picker = $('#dateEndPickerEditLesson')
+      picker.children('input').val(moment(e.date).format('yyyy-MM-DD HH:mm'))
+      picker.datetimepicker('defaultDate', e.date)
+      picker.datetimepicker('viewMode', 'times')
+      picker.datetimepicker('minDate', e.date)
+    })
+
   })
 
   // NEW MODAL
@@ -549,20 +564,22 @@
       $('#selectCourseEditLesson').focus()
     })
   })
-  //
-  // // DELETE MODAL
-  // $(function () {
-  //   $('.deleteButton').on('click', function () {
-  //     let id = $(this).attr('data-bs-id')
-  //     let row = $(this).parent().parent().parent().parent()
-  //     let firstName = row.children('.first_name').text()
-  //     let patronymic = row.children('.patronymic').text()
-  //     let lastName = row.children('.last_name').text()
-  //     let student = '\'' + firstName + ' ' + patronymic + ' ' + lastName + '\'?'
-  //     $('#deletedStudent').text(student)
-  //     $('#formDelete').attr('action', '/students/' + id)
-  //   })
-  // })
+
+  // DELETE MODAL
+  $(function () {
+    $('.deleteButton').on('click', function () {
+      let id = $(this).attr('data-bs-id')
+      let row = $(this).parent().parent().parent().parent()
+      let course = row.children('.course').text()
+      let teacher = row.children('.teacher').text()
+      let date_start = row.children('.date_start').text()
+      let time_start = row.children('.time_start').text()
+      let lesson = '\' lesson(course \'' + course + '\'; teacher \'' + teacher
+        + '\'; date \'' + date_start + ' ' + time_start + '\'?'
+      $('#deletedLesson').text(lesson)
+      $('#formDelete').attr('action', '/lessons/' + id)
+    })
+  })
 
 </script>
 </body>
