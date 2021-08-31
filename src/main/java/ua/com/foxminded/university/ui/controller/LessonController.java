@@ -39,7 +39,7 @@ public class LessonController {
     public String showLessons(Model model) {
         model.addAttribute("lessonFilter", new LessonFilter());
         log.info("The required data is loaded into the model");
-        return "lesson";
+        return "lessons";
     }
 
     @GetMapping("/filter")
@@ -47,7 +47,7 @@ public class LessonController {
                                       @RequestParam(required = false) String isShowPastLessons,
                                       @ModelAttribute LessonFilter lessonFilter,
                                       Model model) {
-        log.debug("Getting data for lesson.html with filter");
+        log.debug("Getting data for lessons.html with filter");
         if (isShowInactiveTeachers != null && isShowInactiveTeachers.equals("on")) {
             model.addAttribute("isShowInactiveTeachers", true);
         }
@@ -82,7 +82,13 @@ public class LessonController {
             lessonDtoMapper.lessonsToLessonDtos(lessonService.getAllWithFilter(lessonFilter)));
         model.addAttribute("newLesson", new LessonDto());
         log.info("The required data is loaded into the model");
-        return "lesson";
+        return "lessons";
+    }
+
+    @GetMapping("/{id}")
+    public String showLesson(@PathVariable("id") int lessonId, Model model) {
+        //TODO
+        return null;
     }
 
     @GetMapping("/departments")
@@ -122,17 +128,6 @@ public class LessonController {
         lessonService.add(lessonDtoMapper.lessonDtoToLesson(lessonDto));
         log.info("Lesson {} is created", lessonDto);
         return defineRedirect(uri);
-    }
-
-    @GetMapping("/{id}")
-    @ResponseBody
-    public LessonDto showLesson(@PathVariable("id") int lessonId) {
-        log.debug("Getting lesson id({})", lessonId);
-        Lesson lesson = lessonService.getById(lessonId);
-        log.info("Found lesson [teacher {}, course {}, room {}]",
-            lesson.getTeacher().getFullName(), lesson.getCourse().getName(),
-            lesson.getRoom().getNumber());
-        return lessonDtoMapper.lessonToLessonDto(lesson);
     }
 
     @PutMapping("/{id}")

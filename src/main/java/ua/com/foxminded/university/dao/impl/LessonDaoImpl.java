@@ -13,7 +13,6 @@ import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.filter.LessonFilter;
 import ua.com.foxminded.university.exception.DAOException;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
