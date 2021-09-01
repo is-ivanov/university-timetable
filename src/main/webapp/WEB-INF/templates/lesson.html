@@ -3,13 +3,155 @@
       layout:decorate="~{layouts/layout}">
 <head>
   <title>Lesson</title>
+
+  <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+        th:href="@{/webjars/font-awesome/css/all.css}"/>
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/css/tempusdominus-bootstrap-4.min.css"
+        th:href="@{/webjars/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/css/bootstrap.min.css"
+        th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.min.css"
+        th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.css}">
+  <link href="../resources/css/style.css" rel="stylesheet" th:href="@{/css/style.css}"/>
 </head>
 <body>
 <div layout:fragment="content">
-  <h1>Lesson</h1>
-  <form action="#">
+  <div class="container-lg">
+    <h1>Lesson</h1>
+    <!--    Lesson Properties-->
+    <div class="col-8 border">
+      <form id="lesson properties" th:method="put">
+        <fieldset disabled>
+          <div class="p-3">
+            <!-- Select date-->
+            <div class="row">
+              <!--Date start-->
+              <div class="col mb-3">
+                <label for="dateStartPickerEditLesson" class="form-label">Time start</label>
+                <div class="input-group date" id="dateStartPickerEditLesson" data-target-input="nearest">
+                  <input type="text" class="form-control datetimepicker-input" data-target="#dateStartPickerEditLesson"
+                         name="timeStart" required/>
+                  <div data-target="#dateStartPickerEditLesson" data-toggle="datetimepicker">
+                    <div class="input-group-text"><i class="bi bi-calendar3"></i></div>
+                  </div>
+                </div>
+              </div>
+              <!--Date end-->
+              <div class="col mb-3">
+                <label for="dateEndPickerEditLesson" class="form-label">Time end</label>
+                <div class="input-group date" id="dateEndPickerEditLesson" data-target-input="nearest">
+                  <input type="text" class="form-control datetimepicker-input" data-target="#dateEndPickerEditLesson"
+                         name="timeEnd" required/>
+                  <div data-target="#dateEndPickerEditLesson" data-toggle="datetimepicker">
+                    <div class="input-group-text"><i class="bi bi-calendar3"></i></div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-  </form>
+            <!-- Select course-->
+            <div class="mb-3">
+              <label for="selectCourseEditLesson" class="form-label">Course</label>
+              <select name="courseId" id="selectCourseEditLesson"
+                      class="form-select" required>
+                <option value="" disabled selected>Please select course...
+                </option>
+                <option th:each="course : ${courses}"
+                        th:value="${course.id}"
+                        th:utext="${course.name}"
+                        th:selected="${lessonFilter.courseId ne null and course.id eq lessonFilter.courseId}">...
+                </option>
+              </select>
+            </div>
+            <!--Teacher, Room-->
+            <div class="row">
+              <!-- Select teacher-->
+              <div class="col mb-3">
+                <label for="selectTeacherEditLesson" class="form-label">Teacher</label>
+                <select name="teacherId" id="selectTeacherEditLesson"
+                        class="form-select" required>
+                  <option value="" disabled selected>Please select teacher...
+                  </option>
+                  <option th:each="teacherDto : ${teachers}"
+                          th:value="${teacherDto.id}"
+                          th:utext="${teacherDto.fullName} + (${teacherDto.active}? '' : ' - inactive')"
+                          th:classappend="${teacherDto.active}? 'active' : (${isShowInactiveTeachers}?
+                                                'inactive' : 'inactive d-none')"
+                          th:selected="${lessonFilter.teacherId ne null and teacherDto.id eq lessonFilter.teacherId}">
+                    ...
+                  </option>
+                </select>
+              </div>
+              <!-- Select Room-->
+              <div class="col mb-3">
+                <label for="selectRoomEditLesson" class="form-label">Room</label>
+                <select name="roomId" id="selectRoomEditLesson"
+                        class="form-select" required>
+                  <option value="" disabled selected>Please select room...
+                  </option>
+                  <option th:each="room : ${rooms}"
+                          th:value="${room.id}"
+                          th:utext="${room.building} + ' - ' + ${room.number}"
+                          th:selected="${lessonFilter.roomId ne null and room.id eq lessonFilter.roomId}">...
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <input type="hidden" name="uri"
+                   th:value="${#request.requestURI} + (${#request.queryString}? '?' + ${#request.queryString} : '')">
+            <input type="submit" class="btn btn-primary" value="Update">
+          </div>
+        </fieldset>
+
+        <div class="ps-3 pb-2">
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="switchUpdateOn">
+            <label class="form-check-label" for="switchUpdateOn">Update on</label>
+          </div>
+        </div>
+      </form>
+    </div>
+    <br>
+
+    <div class="table-responsive-md">
+      <table class="table table-hover table-sortable" id="mainTable">
+        <caption>Students of this lesson</caption>
+        <thead class="bg-success">
+        <tr>
+          <th scope="col" class="col th-sort">Group</th>
+          <th scope="col" class="col th-sort">First Name</th>
+          <th scope="col" class="col th-sort">Patronymic</th>
+          <th scope="col" class="col th-sort">Last Name</th>
+          <th scope="col" class="col">Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="align-middle">
+          <td>99XT-1</td>
+          <td>Ivan</td>
+          <td>Ivanovich</td>
+          <td>Ivanov</td>
+          <td></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+        th:src="@{/webjars/jquery/jquery.min.js}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/js/bootstrap.bundle.min.js"
+        th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
+        th:src="@{/webjars/momentjs/moment.js}"></script>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.min.js"
+  th:src="@{/webjars/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+<script src="../resources/js/tablesort.js" th:src="@{/js/tablesort.js}"></script>
+<script src="../resources/js/show_inactive.js" th:src="@{/js/show_inactive.js}"></script>
+<script src="../resources/js/fill_select.js" th:src="@{/js/fill_select.js}"></script>
 </body>
 </html>
