@@ -86,9 +86,26 @@ public class LessonController {
     }
 
     @GetMapping("/{id}")
+    @ResponseBody
+    public LessonDto showLesson(@PathVariable("id") int lessonId) {
+        log.debug("Getting lesson id({})", lessonId);
+        LessonDto lessonDto = lessonDtoMapper.lessonToLessonDto(lessonService.getById(lessonId));
+        log.info("Found lesson [teacher {}, course {}, room {}]",
+            lessonDto.getTeacherFullName(), lessonDto.getCourseName(),
+            lessonDto.getBuildingAndRoom());
+        return lessonDto;
+    }
+
+    @GetMapping("/{id}/students")
     public String showLesson(@PathVariable("id") int lessonId, Model model) {
+        log.debug("Getting students for lesson id({})", lessonId);
         //TODO
-        return null;
+        LessonDto lessonDto = lessonDtoMapper.lessonToLessonDto(lessonService.getById(lessonId));
+        model.addAttribute("lesson", lessonDto);
+        log.info("Found lesson [teacher {}, course {}, room {}]",
+            lessonDto.getTeacherFullName(), lessonDto.getCourseName(),
+            lessonDto.getBuildingAndRoom());
+        return "lesson";
     }
 
     @GetMapping("/departments")

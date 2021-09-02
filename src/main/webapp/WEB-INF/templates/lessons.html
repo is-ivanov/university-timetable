@@ -166,7 +166,6 @@
       </div>
     </div>
   </form>
-
   <!--  New Lesson Button-->
   <button type="button" class="btn btn-primary mb-2 btn-sm"
           th:classappend="${#request.requestURI.startsWith('/lessons/filter')? '':'d-none'}"
@@ -202,7 +201,7 @@
         <td class="py-0">
           <div class="row">
             <div class="col-auto">
-              <a th:href="@{/lessons/{id}(id=${lessonDto.id})}"
+              <a th:href="@{/lessons/{id}/students(id=${lessonDto.id})}"
                  class="btn btn-success btn-sm">
                 <i class="bi bi-eye"></i> Details
               </a>
@@ -218,7 +217,7 @@
               <a href="#deleteLessonModal"
                  class="btn btn-danger btn-sm deleteButton"
                  data-bs-toggle="modal" th:data-bs-id="${lessonDto.id}">
-                <i class="bi-trash-fill"></i>Delete
+                <i class="bi-trash-fill"></i> Delete
               </a>
             </div>
           </div>
@@ -548,7 +547,7 @@
   // EDIT MODAL
   $(function () {
     $('.editButton').on('click', function () {
-      let href = '/lessons/api/' + $(this).attr('data-bs-id')
+      let href = '/lessons/' + $(this).attr('data-bs-id')
       $('#formEdit').attr('action', href)
       $.get(href, function (lessonDto) {
         $('#selectCourseEditLesson option[value=' + lessonDto.courseId + ']').prop('selected', true)

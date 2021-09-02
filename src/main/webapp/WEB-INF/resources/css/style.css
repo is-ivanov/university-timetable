@@ -48,6 +48,16 @@ option.inactive {
   background: lavender;
   color: red;
 }
+td.check-box-table-cell,
+th.check-box-table-cell {
+  text-align: center;
+  width: 41px;
+}
+td input[type=checkbox],
+th input[type=checkbox]{
+  margin: 0 auto;
+  vertical-align: middle;
+}
 
 td.active {
   color: green;

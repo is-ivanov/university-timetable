@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -24,6 +25,7 @@ public class LessonDto {
     private String teacherFullName;
     private int roomId;
     private String buildingAndRoom;
+    private List<StudentDto> students;
 
     @DateTimeFormat(pattern = FORMAT_DATE_TIME)
     @JsonFormat(pattern = FORMAT_DATE_TIME)

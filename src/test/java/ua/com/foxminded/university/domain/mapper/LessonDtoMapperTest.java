@@ -8,10 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ua.com.foxminded.university.domain.dto.LessonDto;
+import ua.com.foxminded.university.domain.dto.StudentDto;
 import ua.com.foxminded.university.domain.entity.*;
 import ua.com.foxminded.university.springconfig.TestRootConfig;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -26,6 +29,10 @@ class LessonDtoMapperTest {
     private static final String PATRONYMIC_TEACHER = "PatronymicTeacher";
     private static final String LAST_NAME_TEACHER = "LastNameTeacher";
     private static final String FULL_NAME_TEACHER = "LastNameTeacher, F.P.";
+    private static final String GROUP_NAME = "Test group name";
+    private static final String FIRST_NAME_STUDENT = "FirstNameStudent";
+    private static final String PATRONYMIC_STUDENT = "PatronymicStudent";
+    private static final String LAST_NAME_STUDENT = "LastNameStudent";
     private static final String BUILDING_NAME = "BuildingName";
     private static final String NUMBER_ROOM = "546";
     private static final String BUILDING_AND_NUMBER_ROOM = "BuildingName - 546";
@@ -57,6 +64,16 @@ class LessonDtoMapperTest {
                 .department(new Department())
                 .build();
             Room room = new Room(ID1, BUILDING_NAME, NUMBER_ROOM);
+            Group group = new Group();
+            group.setName(GROUP_NAME);
+            Student student = Student.builder()
+                .firstName(FIRST_NAME_STUDENT)
+                .patronymic(PATRONYMIC_STUDENT)
+                .lastName(LAST_NAME_STUDENT)
+                .active(true)
+                .group(group)
+                .build();
+            List<Student> students = Collections.singletonList(student);
             Lesson lesson = Lesson.builder()
                 .id(ID1)
                 .course(course)
@@ -64,10 +81,11 @@ class LessonDtoMapperTest {
                 .room(room)
                 .timeStart(TIME_START)
                 .timeEnd(TIME_END)
+                .students(students)
                 .build();
 
             LessonDto lessonDto = mapper.lessonToLessonDto(lesson);
-
+            StudentDto studentDto = lessonDto.getStudents().get(0);
             assertThat(lessonDto.getId(), is(equalTo(ID1)));
             assertThat(lessonDto.getCourseId(), is(equalTo(ID2)));
             assertThat(lessonDto.getCourseName(), is(equalTo(COURSE_NAME)));
@@ -79,6 +97,11 @@ class LessonDtoMapperTest {
                 is(equalTo(BUILDING_AND_NUMBER_ROOM)));
             assertThat(lessonDto.getTimeStart(), is(equalTo(TIME_START)));
             assertThat(lessonDto.getTimeEnd(), is(equalTo(TIME_END)));
+            assertThat(studentDto.getFirstName(), is(equalTo(FIRST_NAME_STUDENT)));
+            assertThat(studentDto.getPatronymic(), is(equalTo(PATRONYMIC_STUDENT)));
+            assertThat(studentDto.getLastName(), is(equalTo(LAST_NAME_STUDENT)));
+            assertThat(studentDto.isActive(), is(true));
+            assertThat(studentDto.getGroupName(), is(equalTo(GROUP_NAME)));
         }
     }
 

@@ -14,6 +14,7 @@
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.min.css"
         th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.css}">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="../resources/css/style.css" rel="stylesheet" th:href="@{/css/style.css}"/>
 </head>
 <body>
@@ -102,7 +103,7 @@
 
             <input type="hidden" name="uri"
                    th:value="${#request.requestURI} + (${#request.queryString}? '?' + ${#request.queryString} : '')">
-            <input type="submit" class="btn btn-primary btn-sm" value="Update">
+            <input type="submit" class="btn btn-primary btn" value="Update">
           </div>
         </fieldset>
 
@@ -116,20 +117,33 @@
     </div>
     <br>
 
+    <!--    Buttons control table-->
     <div class="pb-2">
       <form action="">
-        <button class="btn btn-secondary btn-sm">Select All</button>
-        <button class="btn btn-secondary btn-sm">Clear</button>
+        <div>
+          <button class="btn btn-primary">
+            <i class="bi bi-person-plus-fill"></i> Add Student
+          </button>
+          <button class="btn btn-primary">
+            <i class="bi bi-folder-plus"></i> Add Group
+          </button>
+          <button class="btn btn-danger float-end">
+            <i class="bi-trash-fill"></i> Delete
+          </button>
+        </div>
       </form>
     </div>
 
+    <!--    Table Students-->
     <div class="table-responsive-md">
       <table class="table table-hover table-sortable" id="mainTable">
         <caption>Students of this lesson</caption>
         <thead class="bg-success">
         <tr>
-          <th scope="col" class="col">
-            <input class="form-check-input" type="checkbox">
+          <th scope="col" class="col check-box-table-cell">
+            <label>
+              <input class="form-check-input" type="checkbox">
+            </label>
           </th>
           <th scope="col" class="col th-sort">Group</th>
           <th scope="col" class="col th-sort">First Name</th>
@@ -140,7 +154,7 @@
         </thead>
         <tbody>
         <tr class="align-middle">
-          <td>
+          <td class="check-box-table-cell">
             <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
           </td>
           <td>99XT-1</td>
@@ -152,7 +166,7 @@
               <a href="#deleteLessonModal"
                  class="btn btn-danger btn-sm deleteButton"
                  data-bs-toggle="modal" th:data-bs-id="${lessonDto.id}">
-                <i class="bi-trash-fill"></i>Delete
+                <i class="bi-trash-fill"></i> Delete
               </a>
             </div>
           </td>
@@ -175,9 +189,6 @@
 <script src="../resources/js/show_inactive.js" th:src="@{/js/show_inactive.js}"></script>
 <script src="../resources/js/fill_select.js" th:src="@{/js/fill_select.js}"></script>
 <script>
-  function one () {
-    alert(1)
-  }
 </script>
 </body>
 </html>
