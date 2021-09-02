@@ -2,6 +2,7 @@ package ua.com.foxminded.university.ui.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
 import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 import static ua.com.foxminded.university.ui.Util.defineRedirect;
@@ -99,7 +101,6 @@ public class LessonController {
     @GetMapping("/{id}/students")
     public String showLesson(@PathVariable("id") int lessonId, Model model) {
         log.debug("Getting students for lesson id({})", lessonId);
-        //TODO
         LessonDto lessonDto = lessonDtoMapper.lessonToLessonDto(lessonService.getById(lessonId));
         model.addAttribute("lesson", lessonDto);
         log.info("Found lesson [teacher {}, course {}, room {}]",

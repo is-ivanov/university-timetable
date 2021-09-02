@@ -14,7 +14,6 @@
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.min.css"
         th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.css}">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="../resources/css/style.css" rel="stylesheet" th:href="@{/css/style.css}"/>
 </head>
 <body>
@@ -24,28 +23,30 @@
     <!--    Lesson Properties-->
     <div class="col-8 border">
       <form id="lesson properties" th:method="put">
-        <fieldset disabled>
+        <fieldset id="main_properties" disabled>
           <div class="p-3">
             <!-- Select date-->
             <div class="row">
               <!--Date start-->
               <div class="col mb-3">
-                <label for="dateStartPickerEditLesson" class="form-label">Time start</label>
-                <div class="input-group date" id="dateStartPickerEditLesson" data-target-input="nearest">
-                  <input type="text" class="form-control datetimepicker-input" data-target="#dateStartPickerEditLesson"
+                <label for="dateStartPickerLesson" class="form-label">Time start</label>
+                <div class="input-group date" id="dateStartPickerLesson" data-target-input="nearest">
+                  <input type="text" class="form-control datetimepicker-input" data-target="#dateStartPickerLesson"
+                         th:value="${#temporals.format(lesson.timeStart, 'yyyy-MM-dd HH:mm')}"
                          name="timeStart" required/>
-                  <div data-target="#dateStartPickerEditLesson" data-toggle="datetimepicker">
+                  <div data-target="#dateStartPickerLesson" data-toggle="datetimepicker">
                     <div class="input-group-text"><i class="bi bi-calendar3"></i></div>
                   </div>
                 </div>
               </div>
               <!--Date end-->
               <div class="col mb-3">
-                <label for="dateEndPickerEditLesson" class="form-label">Time end</label>
-                <div class="input-group date" id="dateEndPickerEditLesson" data-target-input="nearest">
-                  <input type="text" class="form-control datetimepicker-input" data-target="#dateEndPickerEditLesson"
+                <label for="dateEndPickerLesson" class="form-label">Time end</label>
+                <div class="input-group date" id="dateEndPickerLesson" data-target-input="nearest">
+                  <input type="text" class="form-control datetimepicker-input" data-target="#dateEndPickerLesson"
+                         th:value="${#temporals.format(lesson.timeEnd, 'yyyy-MM-dd HH:mm')}"
                          name="timeEnd" required/>
-                  <div data-target="#dateEndPickerEditLesson" data-toggle="datetimepicker">
+                  <div data-target="#dateEndPickerLesson" data-toggle="datetimepicker">
                     <div class="input-group-text"><i class="bi bi-calendar3"></i></div>
                   </div>
                 </div>
@@ -62,7 +63,7 @@
                 <option th:each="course : ${courses}"
                         th:value="${course.id}"
                         th:utext="${course.name}"
-                        th:selected="${lessonFilter.courseId ne null and course.id eq lessonFilter.courseId}">...
+                        th:selected="${lesson.courseId ne null and course.id eq lesson.courseId}">...
                 </option>
               </select>
             </div>
@@ -77,10 +78,8 @@
                   </option>
                   <option th:each="teacherDto : ${teachers}"
                           th:value="${teacherDto.id}"
-                          th:utext="${teacherDto.fullName} + (${teacherDto.active}? '' : ' - inactive')"
-                          th:classappend="${teacherDto.active}? 'active' : (${isShowInactiveTeachers}?
-                                                'inactive' : 'inactive d-none')"
-                          th:selected="${lessonFilter.teacherId ne null and teacherDto.id eq lessonFilter.teacherId}">
+                          th:utext="${teacherDto.fullName}"
+                          th:selected="${lesson.teacherId ne null and teacherDto.id eq lesson.teacherId}">
                     ...
                   </option>
                 </select>
@@ -95,21 +94,22 @@
                   <option th:each="room : ${rooms}"
                           th:value="${room.id}"
                           th:utext="${room.building} + ' - ' + ${room.number}"
-                          th:selected="${lessonFilter.roomId ne null and room.id eq lessonFilter.roomId}">...
+                          th:selected="${lesson.roomId ne null and room.id eq lesson.roomId}">...
                   </option>
                 </select>
               </div>
             </div>
 
-            <input type="hidden" name="uri"
-                   th:value="${#request.requestURI} + (${#request.queryString}? '?' + ${#request.queryString} : '')">
+            <!--            <input type="hidden" name="uri"-->
+            <!--                   th:value="${#request.requestURI} + (${#request.queryString}? '?' + ${#request.queryString} : '')">-->
             <input type="submit" class="btn btn-primary btn" value="Update">
           </div>
         </fieldset>
 
         <div class="ps-3 pb-2">
           <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="switchUpdateOn">
+            <input class="form-check-input" type="checkbox" id="switchUpdateOn"
+                   onclick="updateOn()">
             <label class="form-check-label" for="switchUpdateOn">Update on</label>
           </div>
         </div>
@@ -188,7 +188,15 @@
 <script src="../resources/js/tablesort.js" th:src="@{/js/tablesort.js}"></script>
 <script src="../resources/js/show_inactive.js" th:src="@{/js/show_inactive.js}"></script>
 <script src="../resources/js/fill_select.js" th:src="@{/js/fill_select.js}"></script>
-<script>
+<script layout:fragment="script">
+  function updateOn () {
+    console.log()
+    if ($('#switchUpdateOn').checked) {
+      $('#main_properties').removeAttr('disabled')
+    } else {
+      $('#main_properties').attr('disabled', 'disabled')
+    }
+  }
 </script>
 </body>
 </html>
