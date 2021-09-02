@@ -7,13 +7,13 @@
         </encoder>
     </appender>
 
-    <logger name="ua.com.foxminded.university" level="debug" additivity="false">
+    <logger name="ua.com.foxminded.university" level="info" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="org.springframework" level="info" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="org.thymeleaf" level="debug" additivity="false">
+    <logger name="org.thymeleaf" level="info" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
     <root level="error">

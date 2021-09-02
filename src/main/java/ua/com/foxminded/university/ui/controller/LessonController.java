@@ -34,6 +34,7 @@ public class LessonController {
     private final DepartmentService departmentService;
     private final CourseService courseService;
     private final RoomService roomService;
+    private final GroupService groupService;
     private final LessonDtoMapper lessonDtoMapper;
     private final TeacherDtoMapper teacherDtoMapper;
 
@@ -100,12 +101,11 @@ public class LessonController {
 
     @GetMapping("/{id}/students")
     public String showLesson(@PathVariable("id") int lessonId, Model model) {
-        log.debug("Getting students for lesson id({})", lessonId);
+        log.debug("Getting data for lesson.html for lesson id({})", lessonId);
         LessonDto lessonDto = lessonDtoMapper.lessonToLessonDto(lessonService.getById(lessonId));
         model.addAttribute("lesson", lessonDto);
-        log.info("Found lesson [teacher {}, course {}, room {}]",
-            lessonDto.getTeacherFullName(), lessonDto.getCourseName(),
-            lessonDto.getBuildingAndRoom());
+        model.addAttribute("groups", groupService.getAll());
+        log.info("The required data is loaded into the model");
         return "lesson";
     }
 

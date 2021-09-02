@@ -26,9 +26,9 @@
         <fieldset id="main_properties" disabled>
           <div class="p-3">
             <!-- Select date-->
-            <div class="row">
+            <div class="row mb-3">
               <!--Date start-->
-              <div class="col mb-3">
+              <div class="col">
                 <label for="dateStartPickerLesson" class="form-label">Time start</label>
                 <div class="input-group date" id="dateStartPickerLesson" data-target-input="nearest">
                   <input type="text" class="form-control datetimepicker-input" data-target="#dateStartPickerLesson"
@@ -40,7 +40,7 @@
                 </div>
               </div>
               <!--Date end-->
-              <div class="col mb-3">
+              <div class="col">
                 <label for="dateEndPickerLesson" class="form-label">Time end</label>
                 <div class="input-group date" id="dateEndPickerLesson" data-target-input="nearest">
                   <input type="text" class="form-control datetimepicker-input" data-target="#dateEndPickerLesson"
@@ -68,9 +68,9 @@
               </select>
             </div>
             <!--Teacher, Room-->
-            <div class="row">
+            <div class="row mb-3">
               <!-- Select teacher-->
-              <div class="col mb-3">
+              <div class="col">
                 <label for="selectTeacherEditLesson" class="form-label">Teacher</label>
                 <select name="teacherId" id="selectTeacherEditLesson"
                         class="form-select" required>
@@ -85,7 +85,7 @@
                 </select>
               </div>
               <!-- Select Room-->
-              <div class="col mb-3">
+              <div class="col">
                 <label for="selectRoomEditLesson" class="form-label">Room</label>
                 <select name="roomId" id="selectRoomEditLesson"
                         class="form-select" required>
@@ -100,8 +100,6 @@
               </div>
             </div>
 
-            <!--            <input type="hidden" name="uri"-->
-            <!--                   th:value="${#request.requestURI} + (${#request.queryString}? '?' + ${#request.queryString} : '')">-->
             <input type="submit" class="btn btn-primary btn" value="Update">
           </div>
         </fieldset>
@@ -121,12 +119,15 @@
     <div class="pb-2">
       <form action="">
         <div>
-          <button class="btn btn-primary">
+          <button type="button" class="btn btn-primary"
+                  data-bs-toggle="modal" data-bs-target="#addStudentModal">
             <i class="bi bi-person-plus-fill"></i> Add Student
           </button>
+
           <button class="btn btn-primary">
             <i class="bi bi-folder-plus"></i> Add Group
           </button>
+
           <button class="btn btn-danger float-end">
             <i class="bi-trash-fill"></i> Delete
           </button>
@@ -153,19 +154,21 @@
         </tr>
         </thead>
         <tbody>
-        <tr class="align-middle">
+        <tr class="align-middle" th:each="student : ${lesson.students}"
+            th:if="${#lists.size(lesson.students) gt 0 and lesson.students.get(0).getId() ne 0}"
+            th:data-bs-id="${student.id}">
           <td class="check-box-table-cell">
-            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+            <input class="form-check-input" type="checkbox" id="flexCheckDefault">
           </td>
-          <td>99XT-1</td>
-          <td>Ivan</td>
-          <td>Ivanovich</td>
-          <td>Ivanov</td>
+          <td th:utext="${student.groupName}">99XT-1</td>
+          <td th:utext="${student.firstName}">Ivan</td>
+          <td th:utext="${student.patronymic}">Ivanovich</td>
+          <td th:utext="${student.lastName}">Ivanov</td>
           <td>
             <div class="col-auto">
               <a href="#deleteLessonModal"
                  class="btn btn-danger btn-sm deleteButton"
-                 data-bs-toggle="modal" th:data-bs-id="${lessonDto.id}">
+                 data-bs-toggle="modal" th:data-bs-id="${student.id}">
                 <i class="bi-trash-fill"></i> Delete
               </a>
             </div>
@@ -175,6 +178,66 @@
       </table>
     </div>
   </div>
+
+  <!--  Modal Forms-->
+  <!--  Add Student Modal-->
+  <div id="addStudentModal" class="modal fade" data-bs-backdrop="static" tabindex="-1"
+       aria-labelledby="AddStudentModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form action="#" th:action="@{/lessons/{lessonId}/students(lessonId=${lesson.id})}"
+              method="post" id="formAddStudentModal">
+          <div class="modal-header">
+            <h5 class="modal-title">Add Student</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close">
+            </button>
+          </div>
+          <div class="modal-body">
+            <!--Faculty Select-->
+            <div class="mb-3">
+              <label for="selectFacultyAddStudent" class="form-label">Faculty</label>
+              <select name="facultyId" id="selectFacultyAddStudent" class="form-select"
+                      onchange="fillSelectGroupsStudents()">
+                <option value="" disabled selected>Please select faculty...</option>
+                <option th:each="faculty : ${faculties}"
+                        th:value="${faculty.id}"
+                        th:utext="${faculty.name}">...
+                </option>
+              </select>
+            </div>
+            <!--Group Select-->
+            <div class="mb-3">
+              <label for="selectGroupAddStudent" class="form-label">Group</label>
+              <select class="form-select" name="groupId" id="selectGroupAddStudent"
+                      onchange="fillSelectActiveStudents()">
+                <option value="" disabled selected>Please select group...</option>
+                <option th:each="group : ${groups}"
+                        th:value="${group.id}"
+                        th:utext="${group.name}">...
+                </option>
+              </select>
+            </div>
+            <!--Student Select-->
+            <div class="mb-3">
+              <label for=""></label>
+              <select name="" id="">
+                <option value=""></option>
+                <option value=""></option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary btn-sm"
+                    data-bs-dismiss="modal">Cancel
+            </button>
+            <input type="submit" class="btn btn-primary btn-sm" value="Add Student">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
         th:src="@{/webjars/jquery/jquery.min.js}"></script>
@@ -188,10 +251,10 @@
 <script src="../resources/js/tablesort.js" th:src="@{/js/tablesort.js}"></script>
 <script src="../resources/js/show_inactive.js" th:src="@{/js/show_inactive.js}"></script>
 <script src="../resources/js/fill_select.js" th:src="@{/js/fill_select.js}"></script>
+
 <script layout:fragment="script">
   function updateOn () {
-    console.log()
-    if ($('#switchUpdateOn').checked) {
+    if ($('#switchUpdateOn').is(':checked')) {
       $('#main_properties').removeAttr('disabled')
     } else {
       $('#main_properties').attr('disabled', 'disabled')
