@@ -9,6 +9,7 @@ import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -103,6 +104,15 @@ public class GroupServiceImpl implements GroupService {
     public List<Group> getAllByFacultyId(int facultyId) {
         log.debug("Getting all groups by faculty id({})", facultyId);
         List<Group> groups = groupDao.getAllByFacultyId(facultyId);
+        log.info("Found {} groups", groups.size());
+        return groups;
+    }
+
+    @Override
+    public List<Group> getFreeGroupsOnLessonTime(LocalDateTime startTime,
+                                                 LocalDateTime endTime) {
+        log.debug("Getting groups free from {} to {}", startTime, endTime);
+        List<Group> groups = groupDao.getFreeGroupsOnLessonTime(startTime, endTime);
         log.info("Found {} groups", groups.size());
         return groups;
     }

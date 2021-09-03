@@ -1,5 +1,6 @@
 package ua.com.foxminded.university.domain.service.interfaces;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import ua.com.foxminded.university.domain.entity.Faculty;
@@ -13,4 +14,7 @@ public interface GroupService extends Service<Group> {
             Faculty facultyNewGroup);
 
     List<Group> getAllByFacultyId(int facultyId);
+
+    List<Group> getFreeGroupsOnLessonTime(LocalDateTime startTime,
+                                          LocalDateTime endTime);
 }
