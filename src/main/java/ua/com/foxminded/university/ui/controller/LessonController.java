@@ -2,7 +2,6 @@ package ua.com.foxminded.university.ui.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -11,10 +10,12 @@ import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.*;
 import ua.com.foxminded.university.domain.filter.LessonFilter;
 import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
+import ua.com.foxminded.university.domain.mapper.StudentDtoMapper;
 import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static ua.com.foxminded.university.ui.Util.defineRedirect;
@@ -35,8 +36,10 @@ public class LessonController {
     private final CourseService courseService;
     private final RoomService roomService;
     private final GroupService groupService;
+    private final StudentService studentService;
     private final LessonDtoMapper lessonDtoMapper;
     private final TeacherDtoMapper teacherDtoMapper;
+    private final StudentDtoMapper studentDtoMapper;
 
     @GetMapping
     public String showLessons(Model model) {
@@ -102,9 +105,26 @@ public class LessonController {
     @GetMapping("/{id}/students")
     public String showLesson(@PathVariable("id") int lessonId, Model model) {
         log.debug("Getting data for lesson.html for lesson id({})", lessonId);
-        LessonDto lessonDto = lessonDtoMapper.lessonToLessonDto(lessonService.getById(lessonId));
+        Lesson lesson = lessonService.getById(lessonId);
+        LessonDto lessonDto = lessonDtoMapper.lessonToLessonDto(lesson);
         model.addAttribute("lesson", lessonDto);
-        model.addAttribute("groups", groupService.getAll());
+
+        LocalDateTime timeStart = lesson.getTimeStart();
+        LocalDateTime timeEnd = lesson.getTimeEnd();
+        Teacher teacher = lesson.getTeacher();
+        Room room = lesson.getRoom();
+        log.debug("Loading free teachers in model");
+        List<Teacher> freeTeachers = teacherService.getFreeTeachersOnLessonTime(
+            timeStart, timeEnd);
+        freeTeachers.add(teacher);
+        model.addAttribute("teachers",
+            teacherDtoMapper.teachersToTeacherDtos(freeTeachers));
+        log.debug("Loading free rooms in model");
+        List<Room> freeRooms = roomService.getFreeRoomsOnLessonTime(timeStart, timeEnd);
+        freeRooms.add(room);
+        model.addAttribute("rooms", freeRooms);
+        log.debug("Loading active groups in model");
+        model.addAttribute("groups", groupService.getActiveGroups());
         log.info("The required data is loaded into the model");
         return "lesson";
     }
@@ -146,6 +166,30 @@ public class LessonController {
         lessonService.add(lessonDtoMapper.lessonDtoToLesson(lessonDto));
         log.info("Lesson {} is created", lessonDto);
         return defineRedirect(uri);
+    }
+
+    @PostMapping("/{id}/students")
+    public String addStudentToLesson(@PathVariable("id") int lessonId,
+                                     @RequestParam int studentId,
+                                     HttpServletRequest request) {
+        log.debug("Adding student id({}) to lesson id({})", studentId, lessonId);
+        Lesson lesson = Lesson.builder().id(lessonId).build();
+        Student student = Student.builder().id(studentId).build();
+        lessonService.addStudentToLesson(lesson, student);
+        log.info("Student id({}) added to lesson id({}) successfully", student, lessonId);
+        return defineRedirect(request);
+    }
+
+    @PostMapping("/{id}/groups")
+    public String addStudentsFromGroupToLesson(@PathVariable("id") int lessonId,
+                                               @RequestParam int groupId,
+                                               HttpServletRequest request) {
+        log.debug("Adding all students from group id({}) to lesson id({})",
+            groupId, lessonId);
+        lessonService.addStudentsFromGroupToLesson(groupId, lessonId);
+        log.info("Student from group id({}) is added to lesson id({})", groupId,
+            lessonId);
+        return defineRedirect(request);
     }
 
     @PutMapping("/{id}")

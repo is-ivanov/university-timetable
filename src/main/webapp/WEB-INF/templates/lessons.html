@@ -230,6 +230,8 @@
 
   <!--  Modal Forms-->
   <!--  Create Modal-->
+<!--  TODO 1. In create and edit lesson modal fisrt position input date_start ans date_end, after course then teacher and room\
+      TODO 2. After update time fill selectors teachers and rooms-->
   <div id="newLessonModal" class="modal fade" data-bs-backdrop="static"
        tabindex="-1" aria-labelledby="NewLessonModalLabel"
        aria-hidden="true">
@@ -496,20 +498,6 @@
   }
 
   $(function () {
-    $('.date').datetimepicker({
-      useCurrent: false,
-      format: 'yyyy-MM-DD HH:mm',
-      calendarWeeks: true,
-      icons: {
-        time: 'far fa-clock',
-        today: 'far calendar-check',
-      },
-      buttons: {
-        showToday: true,
-        showClear: true,
-        showClose: true,
-      },
-    })
 
     $('#dateStartPicker').on('change.datetimepicker', function (e) {
       $('#dateEndPicker').datetimepicker('minDate', e.date)

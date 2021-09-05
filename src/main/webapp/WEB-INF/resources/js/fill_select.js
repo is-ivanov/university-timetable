@@ -1,28 +1,73 @@
 /**
- * Fill select 'selectGroup' with groups data from the DB
+ * Fills in the selector for selecting a group with data from the database
+ *
+ * @param {HTMLSelectElement} select         The select element for filling data
+ * @param {Number}            facultyId      Id selected faculty (0 when not selected)
+ * @param {Boolean}           isShowInactive with true we show inactive groups
  */
-function fillSelectGroups () {
-  let faculty = $('#selectFaculty').val()
-  $.get('/students/groups?facultyId=' + faculty, function (data) {
-    $('#selectGroup').
+function fillSelectGroups (select, facultyId, isShowInactive) {
+  let uri = '/faculties/' + facultyId + '/groups'
+  $.get(uri, function (data) {
+    select.
       empty().
       append('<option value="0" selected>Please select group...</option>')
     data.sort(sortByName)
-    data.forEach(function (item) {
-      let option
-      if (item.active === true) {
-        option = '<option class = \'active\' value = ' + item.id + '>' +
-          item.name + '</option>'
-      } else if ($('#switchShowInactiveGroups').is(':checked')) {
-        option = '<option class = \'inactive\' value = ' + item.id + '>' +
-          item.name + ' - inactive' + '</option>'
-      } else {
-        option = '<option class = \'inactive d-none\' value = ' + item.id +
-          '>' + item.name + ' - inactive' + '</option>'
-      }
-      $('#selectGroup').append(option)
+    data.forEach(function (group) {
+      fillSelectActive(group.id, group.name, group.active, isShowInactive, select)
     })
   })
+}
+
+/**
+ * Fills in the selector for selecting a student with data from the database
+ *
+ * @param {HTMLSelectElement} select The select element for filling data
+ * @param {Number} facultyId Id selected faculty (0 when not selected)
+ * @param {Number} groupId Id selected group (0 when not selected)
+ * @param {Boolean} isShowInactive with true we show inactive students
+ */
+function fillSelectStudents (select, facultyId, groupId, isShowInactive) {
+  let uri
+  if (groupId > 0) {
+    uri = '/groups/' + groupId
+  } else if (groupId === 0 && facultyId >= 0) {
+    uri = '/faculties/' + facultyId
+  }
+  uri = uri + '/students'
+  $.get(uri, function (data) {
+    select.
+      empty().
+      append(
+        '<option value="" disabled selected>Please select student...</option>')
+    data.sort(sortByFullName)
+    data.forEach(function (studentDto) {
+      fillSelectActive(studentDto.id, studentDto.fullName, studentDto.active, isShowInactive, select)
+    })
+  })
+}
+
+/**
+ * Fills select with active fields
+ *
+ * @param {Number}            value
+ * @param {Text}              text
+ * @param {Boolean}           isActive
+ * @param {Boolean}           isShowInactive
+ * @param {HTMLSelectElement} select
+ */
+function fillSelectActive (value, text, isActive, isShowInactive, select) {
+  let option
+  if (isActive === true) {
+    option = '<option class = \'active\' value = ' + value + '>' +
+      text + '</option>'
+  } else if (isShowInactive) {
+    option = '<option class = \'inactive\' value = ' + value + '>' +
+      text + ' - inactive' + '</option>'
+  } else {
+    option = '<option class = \'inactive d-none\' value = ' + value + '>' +
+      text + ' - inactive' + '</option>'
+  }
+  select.append(option)
 }
 
 /**
@@ -91,6 +136,16 @@ function sortByName (a, b) {
   if (nameA < nameB)
     return -1
   if (nameA > nameB)
+    return 1
+  return 0
+}
+
+function sortByFullName (a, b) {
+  const fullNameA = a.fullName.toLowerCase()
+  const fullNameB = b.fullName.toLowerCase()
+  if (fullNameA < fullNameB)
+    return -1
+  if (fullNameA > fullNameB)
     return 1
   return 0
 }

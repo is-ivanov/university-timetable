@@ -9,7 +9,11 @@ import java.util.List;
 
 public interface LessonService extends Service<Lesson> {
 
-    void addStudentToLesson(Lesson lesson, Student student) throws ServiceException;
+    void addStudentToLesson(Lesson lesson, Student student);
+
+    void addStudentToLesson(int lessonId, int studentId);
+
+    void addStudentsFromGroupToLesson(int groupId, int lessonId);
 
     List<Lesson> getAllWithFilter(LessonFilter filter);
 

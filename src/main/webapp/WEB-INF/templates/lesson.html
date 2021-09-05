@@ -18,6 +18,14 @@
 </head>
 <body>
 <div layout:fragment="content">
+  <!--  TODO 1. edit lesson (teacher and room only available):
+          TODO 1.2 after update 'time_start', 'time end' or 'course' run script and refill teacher's and room's selectors
+          TODO 1.3 after update 'time_start' focus to 'time end'
+          TODO 1.4 after submit update form reload this page
+   TODO 2. Add students/groups (faculty, group and student only available
+   TODO 3. check all on/off
+   TODO 4. delete one student from lesson
+   TODO 5. delete checked student from lesson-->
   <div class="container-lg">
     <h1>Lesson</h1>
     <!--    Lesson Properties-->
@@ -117,18 +125,20 @@
 
     <!--    Buttons control table-->
     <div class="pb-2">
-      <form action="">
+      <form action="#">
         <div>
-          <button type="button" class="btn btn-primary"
-                  data-bs-toggle="modal" data-bs-target="#addStudentModal">
+          <button type="button" class="btn btn-primary" data-bs-type="addStudent"
+                  data-bs-toggle="modal" data-bs-target="#addModal">
             <i class="bi bi-person-plus-fill"></i> Add Student
           </button>
 
-          <button class="btn btn-primary">
+          <button type="button" class="btn btn-primary" data-bs-type="addGroup"
+                  data-bs-toggle="modal" data-bs-target="#addModal">
             <i class="bi bi-folder-plus"></i> Add Group
           </button>
 
-          <button class="btn btn-danger float-end">
+          <button class="btn btn-danger float-end" data-bs-toggle="modal"
+                  data-bs-target="#deleteModal">
             <i class="bi-trash-fill"></i> Delete
           </button>
         </div>
@@ -150,25 +160,30 @@
           <th scope="col" class="col th-sort">First Name</th>
           <th scope="col" class="col th-sort">Patronymic</th>
           <th scope="col" class="col th-sort">Last Name</th>
+          <th scope="col" class="col th-sort text-center">Status</th>
           <th scope="col" class="col">Action</th>
         </tr>
         </thead>
         <tbody>
-        <tr class="align-middle" th:each="student : ${lesson.students}"
+        <tr class="align-middle" th:each="studentDto : ${lesson.students}"
             th:if="${#lists.size(lesson.students) gt 0 and lesson.students.get(0).getId() ne 0}"
-            th:data-bs-id="${student.id}">
+            th:data-bs-id="${studentDto.id}"
+            th:classappend="${studentDto.active} ? 'active' : 'inactive'">
           <td class="check-box-table-cell">
             <input class="form-check-input" type="checkbox" id="flexCheckDefault">
           </td>
-          <td th:utext="${student.groupName}">99XT-1</td>
-          <td th:utext="${student.firstName}">Ivan</td>
-          <td th:utext="${student.patronymic}">Ivanovich</td>
-          <td th:utext="${student.lastName}">Ivanov</td>
+          <td th:utext="${studentDto.groupName}">99XT-1</td>
+          <td th:utext="${studentDto.firstName}">Ivan</td>
+          <td th:utext="${studentDto.patronymic}">Ivanovich</td>
+          <td th:utext="${studentDto.lastName}">Ivanov</td>
+          <td th:utext="${studentDto.active} ? 'active' : 'inactive'" class="text-center"
+              th:classappend="${studentDto.active} ? 'active' : 'inactive'">active
+          </td>
           <td>
             <div class="col-auto">
               <a href="#deleteLessonModal"
                  class="btn btn-danger btn-sm deleteButton"
-                 data-bs-toggle="modal" th:data-bs-id="${student.id}">
+                 data-bs-toggle="modal" th:data-bs-id="${studentDto.id}">
                 <i class="bi-trash-fill"></i> Delete
               </a>
             </div>
@@ -180,15 +195,14 @@
   </div>
 
   <!--  Modal Forms-->
-  <!--  Add Student Modal-->
-  <div id="addStudentModal" class="modal fade" data-bs-backdrop="static" tabindex="-1"
-       aria-labelledby="AddStudentModal" aria-hidden="true">
+  <!--  Add Group/Student Modal-->
+  <div id="addModal" class="modal fade" data-bs-backdrop="static" tabindex="-1"
+       aria-labelledby="AddModal" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <form action="#" th:action="@{/lessons/{lessonId}/students(lessonId=${lesson.id})}"
-              method="post" id="formAddStudentModal">
+        <form th:attr="data-id=${lesson.id}" method="post" id="formAddModal">
           <div class="modal-header">
-            <h5 class="modal-title">Add Student</h5>
+            <h5 class="modal-title">Add student</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"
                     aria-label="Close">
             </button>
@@ -197,8 +211,7 @@
             <!--Faculty Select-->
             <div class="mb-3">
               <label for="selectFacultyAddStudent" class="form-label">Faculty</label>
-              <select name="facultyId" id="selectFacultyAddStudent" class="form-select"
-                      onchange="fillSelectGroupsStudents()">
+              <select name="facultyId" id="selectFacultyAddStudent" class="form-select" required>
                 <option value="" disabled selected>Please select faculty...</option>
                 <option th:each="faculty : ${faculties}"
                         th:value="${faculty.id}"
@@ -209,8 +222,7 @@
             <!--Group Select-->
             <div class="mb-3">
               <label for="selectGroupAddStudent" class="form-label">Group</label>
-              <select class="form-select" name="groupId" id="selectGroupAddStudent"
-                      onchange="fillSelectActiveStudents()">
+              <select class="form-select" name="groupId" id="selectGroupAddStudent" required>
                 <option value="" disabled selected>Please select group...</option>
                 <option th:each="group : ${groups}"
                         th:value="${group.id}"
@@ -219,11 +231,10 @@
               </select>
             </div>
             <!--Student Select-->
-            <div class="mb-3">
-              <label for=""></label>
-              <select name="" id="">
-                <option value=""></option>
-                <option value=""></option>
+            <div class="mb-3" id="studentSelector">
+              <label for="selectStudentAddStudent" class="form-label">Student</label>
+              <select class="form-select" name="studentId" id="selectStudentAddStudent" required>
+                <option value="" disabled selected>Please select group before select student...</option>
               </select>
             </div>
           </div>
@@ -231,7 +242,8 @@
             <button type="button" class="btn btn-secondary btn-sm"
                     data-bs-dismiss="modal">Cancel
             </button>
-            <input type="submit" class="btn btn-primary btn-sm" value="Add Student">
+            <input type="submit" class="btn btn-primary btn-sm" id="submit"
+                   value="Add Student">
           </div>
         </form>
       </div>
@@ -253,6 +265,21 @@
 <script src="../resources/js/fill_select.js" th:src="@{/js/fill_select.js}"></script>
 
 <script layout:fragment="script">
+
+  $('#selectFacultyAddStudent').change(function () {
+    let selectGroup = $('#selectGroupAddStudent')
+    let facultyId = $(this).val()
+    fillSelectGroups(selectGroup, facultyId, false)
+  })
+
+  $('#selectGroupAddStudent').change(function () {
+    if ($('#addModal').attr('data-modal-type') === 'addStudent') {
+      let selectStudent = $('#selectStudentAddStudent')
+      let groupId = $(this).val()
+      fillSelectStudents(selectStudent, 0, groupId, false)
+    }
+  })
+
   function updateOn () {
     if ($('#switchUpdateOn').is(':checked')) {
       $('#main_properties').removeAttr('disabled')
@@ -260,6 +287,71 @@
       $('#main_properties').attr('disabled', 'disabled')
     }
   }
+
+  // ADD/EDIT MODAL
+  $(function () {
+    $('#addModal').on('show.bs.modal', function (event) {
+      let target = event.relatedTarget
+      let typeContent = target.dataset.bsType
+      let form = $('#formAddModal')
+      let modalTitle = $(this).find('.modal-title')
+      let selectorStudent = $(this).find('#studentSelector')
+      let submitButton = $(this).find('#submit')
+      let uri = '/lessons/' + form.attr('data-id')
+      $(this).attr('data-modal-type', typeContent)
+
+      if (typeContent === 'addStudent') {
+        form.attr('action', uri + '/students')
+        modalTitle.text('Add student')
+        selectorStudent.removeClass('d-none')
+        $('#selectStudentAddStudent').attr('required', true)
+        submitButton.val('Add Student')
+      } else if (typeContent === 'addGroup') {
+        form.attr('action', uri + '/groups')
+        modalTitle.text('Add students from group')
+        selectorStudent.addClass('d-none')
+        $('#selectStudentAddStudent').removeAttr('required')
+        submitButton.val('Add Group')
+      }
+    })
+  })
+
+  $(function () {
+    $('#addModal').on('shown.bs.modal', function () {
+      $('#selectFacultyAddStudent').focus()
+    })
+  })
+
+  //  DateTimePicker
+  $(function () {
+
+
+    $('#dateStartPicker').on('change.datetimepicker', function (e) {
+      $('#dateEndPicker').datetimepicker('minDate', e.date)
+      switchSubmitEnabled()
+    })
+    $('#dateEndPicker').on('change.datetimepicker', function (e) {
+      $('#dateStartPicker').datetimepicker('maxDate', e.date)
+      switchSubmitEnabled()
+    })
+
+    $('#dateStartPickerNewLesson').on('hide.datetimepicker', function (e) {
+      let picker = $('#dateEndPickerNewLesson')
+      picker.datetimepicker('defaultDate', e.date)
+      picker.datetimepicker('viewMode', 'times')
+      picker.datetimepicker('minDate', e.date)
+    })
+
+    $('#dateStartPickerEditLesson').on('hide.datetimepicker', function (e) {
+      let picker = $('#dateEndPickerEditLesson')
+      picker.children('input').val(moment(e.date).format('yyyy-MM-DD HH:mm'))
+      picker.datetimepicker('defaultDate', e.date)
+      picker.datetimepicker('viewMode', 'times')
+      picker.datetimepicker('minDate', e.date)
+    })
+
+  })
+
 </script>
 </body>
 </html>

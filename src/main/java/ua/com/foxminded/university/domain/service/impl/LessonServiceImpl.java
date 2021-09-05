@@ -10,6 +10,7 @@ import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.domain.entity.Teacher;
 import ua.com.foxminded.university.domain.filter.LessonFilter;
 import ua.com.foxminded.university.domain.service.interfaces.LessonService;
+import ua.com.foxminded.university.domain.service.interfaces.StudentService;
 import ua.com.foxminded.university.exception.ServiceException;
 
 import java.time.LocalDateTime;
@@ -27,6 +28,7 @@ public class LessonServiceImpl implements LessonService {
     private static final String MESSAGE_FILTER_NOT_SELECT = "Select at least one filter";
 
     private final LessonDao lessonDao;
+    private final StudentService studentService;
 
     @Override
     public void add(Lesson lesson) throws ServiceException {
@@ -88,15 +90,31 @@ public class LessonServiceImpl implements LessonService {
     public void addStudentToLesson(Lesson lesson, Student student) {
         log.debug("Start adding student id({}) to lesson id({})",
             student.getId(), lesson.getId());
-        if (checkAvailableStudentForLesson(lesson, student)) {
-            lessonDao.addStudentToLesson(lesson.getId(), student.getId());
-        } else {
-            log.warn("Student id({}) is not available to add to the lesson id" +
-                "({})", student.getId(), lesson.getId());
-            throw new ServiceException(String.format(MESSAGE_STUDENT_NOT_AVAILABLE, student));
+        checkAndSaveStudentToLesson(lesson, student);
+    }
+
+    @Override
+    public void addStudentToLesson(int lessonId, int studentId) {
+        log.debug("Getting lesson by lessonId({})", lessonId);
+        Lesson lesson = lessonDao.getById(lessonId).orElse(
+            Lesson.builder().id(lessonId).build());
+        Student student = Student.builder().id(studentId).build();
+        checkAndSaveStudentToLesson(lesson, student);
+    }
+
+
+    @Override
+//    @Transactional
+    public void addStudentsFromGroupToLesson(int groupId, int lessonId) {
+        log.debug("Getting lesson by lessonId({})", lessonId);
+        Lesson lesson = lessonDao.getById(lessonId).orElse(
+            Lesson.builder().id(lessonId).build());
+        log.debug("Getting active students from group id({})", groupId);
+        List<Student> studentsFromGroup = studentService.getStudentsByGroup(groupId);
+        for (Student student : studentsFromGroup) {
+            checkAndSaveStudentToLesson(lesson, student);
         }
-        log.info("Student id({}) added to lesson({}) successfully", student.getId(),
-            lesson.getId());
+        log.info("{} students is added successfully", studentsFromGroup.size());
     }
 
     @Override
@@ -111,6 +129,20 @@ public class LessonServiceImpl implements LessonService {
         } else {
             log.warn("Filter is empty");
             throw new ServiceException(MESSAGE_FILTER_NOT_SELECT);
+        }
+    }
+
+    private void checkAndSaveStudentToLesson(Lesson lesson, Student student) {
+        if (student.isActive()) {
+            if (checkAvailableStudentForLesson(lesson, student)) {
+                lessonDao.addStudentToLesson(lesson.getId(), student.getId());
+            } else {
+                log.warn("Student id({}) is not available to add to the lesson id" +
+                    "({})", student.getId(), lesson.getId());
+                throw new ServiceException(String.format(MESSAGE_STUDENT_NOT_AVAILABLE, student));
+            }
+        log.info("Student id({}) added to lesson({}) successfully", student.getId(),
+            lesson.getId());
         }
     }
 
@@ -169,8 +201,8 @@ public class LessonServiceImpl implements LessonService {
     }
 
     private boolean checkTime(Lesson checkedLesson, List<Lesson> lessons) {
-        log.debug("Checking the intersection of time lesson id({}) with other" +
-            " lessons", checkedLesson.getId());
+        log.debug("Checking the intersection of time lesson id({}) with other lessons",
+            checkedLesson.getId());
         LocalDateTime timeStartCheckedLesson = checkedLesson.getTimeStart();
         LocalDateTime timeEndCheckedLesson = checkedLesson.getTimeEnd();
         for (Lesson lesson : lessons) {
@@ -180,8 +212,8 @@ public class LessonServiceImpl implements LessonService {
                 && timeStartCheckedLesson.isBefore(timeEndLesson))
                 || (timeEndCheckedLesson.isAfter(timeStartLesson)
                 && timeEndCheckedLesson.isBefore(timeEndLesson))) {
-                log.warn("Time lesson id({}) intersect with time lesson id" +
-                    "({})", checkedLesson.getId(), lesson.getId());
+                log.warn("Time lesson id({}) intersect with time lesson id({})",
+                    checkedLesson.getId(), lesson.getId());
                 return false;
             }
         }

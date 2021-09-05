@@ -311,7 +311,10 @@
   }
 
   function fillSelectGroupsStudents () {
-    fillSelectGroups()
+    let select = $('#selectGroup')
+    let facultyId = $('#selectFaculty').val()
+    let isShowInactive = $('#switchShowInactiveGroups').is(':checked')
+    fillSelectGroups(select, facultyId, isShowInactive)
     switchSubmitEnabled()
   }
 
