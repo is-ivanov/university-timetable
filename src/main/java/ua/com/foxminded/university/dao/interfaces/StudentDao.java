@@ -14,4 +14,7 @@ public interface StudentDao extends Dao<Student> {
     List<Student> getStudentsByGroup(Group group);
 
     List<Student> getStudentsByFaculty(Faculty faculty);
+
+    List<Student> getActiveStudents ();
+
 }

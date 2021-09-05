@@ -20,6 +20,7 @@ public class StudentMapper implements RowMapper<Student> {
     private static final String ACTIVE = "student_active";
     private static final String GROUP_ID = "group_id";
     private static final String GROUP_NAME = "group_name";
+    private static final String GROUP_ACTIVE = "group_active";
     private static final String FACULTY_ID = "faculty_id";
     private static final String FACULTY_NAME = "faculty_name";
 
@@ -40,6 +41,7 @@ public class StudentMapper implements RowMapper<Student> {
         group.setId(rs.getInt(GROUP_ID));
         group.setName(rs.getString(GROUP_NAME));
         group.setFaculty(createFaculty(rs));
+        group.setActive(rs.getBoolean(GROUP_ACTIVE));
         return group;
     }
 

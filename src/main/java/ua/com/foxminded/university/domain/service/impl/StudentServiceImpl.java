@@ -128,4 +128,12 @@ public class StudentServiceImpl implements StudentService {
         return students;
     }
 
+    @Override
+    public List<Student> getAllActiveStudents() {
+        log.debug("Getting all active students");
+        List<Student> students = studentDao.getActiveStudents();
+        log.info("Found {} students", students.size());
+        return students;
+    }
+
 }

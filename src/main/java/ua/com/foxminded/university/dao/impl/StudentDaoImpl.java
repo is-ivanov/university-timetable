@@ -26,6 +26,7 @@ public class StudentDaoImpl implements StudentDao {
 
     private static final String QUERY_ADD = "student.add";
     private static final String QUERY_GET_ALL = "student.getAll";
+    private static final String QUERY_GET_ALL_ACTIVE = "student.getAllActive";
     private static final String QUERY_GET_BY_ID = "student.getById";
     private static final String QUERY_UPDATE = "student.update";
     private static final String QUERY_DELETE = "student.delete";
@@ -158,6 +159,16 @@ public class StudentDaoImpl implements StudentDao {
         return students;
     }
 
+    @Override
+    public List<Student> getActiveStudents() {
+        log.debug("Getting all active students");
+        List<Student> students = jdbcTemplate.query(
+            env.getRequiredProperty(QUERY_GET_ALL_ACTIVE), new StudentMapper());
+        log.info("Found {} students", students.size());
+        return students;
+    }
+
+    @Override
     public List<Student> getStudentsByFaculty(Faculty faculty) {
         log.debug("Getting students from ({})", faculty);
         List<Student> students = jdbcTemplate.query(
@@ -166,4 +177,5 @@ public class StudentDaoImpl implements StudentDao {
         log.info("Found {} students from ({})", students.size(), faculty);
         return students;
     }
+
 }

@@ -18,4 +18,7 @@ public interface StudentService extends Service<Student> {
     List<Student> getStudentsByGroup(int id);
 
     List<Student> getStudentsByFaculty(int facultyId);
+
+    List<Student> getAllActiveStudents();
+
 }
