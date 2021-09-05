@@ -7,6 +7,7 @@ import ua.com.foxminded.university.dao.interfaces.RoomDao;
 import ua.com.foxminded.university.domain.entity.Room;
 import ua.com.foxminded.university.domain.service.interfaces.RoomService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -58,6 +59,15 @@ public class RoomServiceImpl implements RoomService {
         log.debug("Deleting room id({})", id);
         roomDao.delete(id);
         log.info("Delete room id({})", id);
+    }
+
+    @Override
+    public List<Room> getFreeRoomsOnLessonTime(LocalDateTime startTime,
+                                               LocalDateTime endTime) {
+        log.debug("Getting free rooms from {} to {}", startTime, endTime);
+        List<Room> freeRooms = roomDao.getFreeRoomsOnLessonTime(startTime, endTime);
+        log.info("Found {} free rooms", freeRooms.size());
+        return freeRooms;
     }
 
 }

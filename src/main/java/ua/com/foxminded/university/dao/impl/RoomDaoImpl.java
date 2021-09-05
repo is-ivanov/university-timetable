@@ -12,6 +12,7 @@ import ua.com.foxminded.university.dao.mapper.RoomMapper;
 import ua.com.foxminded.university.domain.entity.Room;
 import ua.com.foxminded.university.exception.DAOException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +27,7 @@ public class RoomDaoImpl implements RoomDao {
     private static final String QUERY_GET_BY_ID = "room.getById";
     private static final String QUERY_UPDATE = "room.update";
     private static final String QUERY_DELETE = "room.delete";
+    private static final String QUERY_GET_FREE_ROOMS = "room.getFreeRoomsOnLessonTime";
     private static final String MESSAGE_ROOM_NOT_FOUND = "Room id(%d) not found";
     private static final String MESSAGE_UPDATE_ROOM_NOT_FOUND = "Can't update because room id(%d) not found";
     private static final String MESSAGE_DELETE_ROOM_NOT_FOUND = "Can't delete because room id(%d) not found";
@@ -112,6 +114,17 @@ public class RoomDaoImpl implements RoomDao {
         } else {
             log.info("Delete room id({})", id);
         }
+    }
+
+    @Override
+    public List<Room> getFreeRoomsOnLessonTime(LocalDateTime startTime,
+                                               LocalDateTime endTime) {
+        log.debug("Getting free rooms from {} to {}", startTime, endTime);
+        List<Room> freeRooms = jdbcTemplate.query(
+            env.getRequiredProperty(QUERY_GET_FREE_ROOMS), new RoomMapper(),
+            startTime, endTime, startTime, endTime);
+        log.info("Found {} free rooms", freeRooms.size());
+        return freeRooms;
     }
 
 }
