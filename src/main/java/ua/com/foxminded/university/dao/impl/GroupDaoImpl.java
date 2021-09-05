@@ -24,6 +24,7 @@ public class GroupDaoImpl implements GroupDao {
 
     private static final String QUERY_ADD = "group.add";
     private static final String QUERY_GET_ALL = "group.getAll";
+    private static final String QUERY_GET_ALL_ACTIVE = "group.getAllActive";
     private static final String QUERY_GET_ALL_BY_FACULTY = "group.getAllByFaculty";
     private static final String QUERY_GET_BY_ID = "group.getById";
     private static final String QUERY_UPDATE = "group.update";
@@ -133,7 +134,16 @@ public class GroupDaoImpl implements GroupDao {
                                                  LocalDateTime endTime) {
         log.debug("Getting groups free from {} to {}", startTime, endTime);
         List<Group> groups = jdbcTemplate.query(env.getRequiredProperty(QUERY_GET_FREE_GROUPS),
-            new GroupMapper(), startTime, endTime);
+            new GroupMapper(), endTime, startTime);
+        log.info(LOG_FOUND_GROUPS, groups.size());
+        return groups;
+    }
+
+    @Override
+    public List<Group> getActiveGroups() {
+        log.debug("Getting all active groups");
+        List<Group> groups = jdbcTemplate.query(
+            env.getRequiredProperty(QUERY_GET_ALL_ACTIVE), new GroupMapper());
         log.info(LOG_FOUND_GROUPS, groups.size());
         return groups;
     }

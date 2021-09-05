@@ -116,4 +116,12 @@ public class GroupServiceImpl implements GroupService {
         log.info("Found {} groups", groups.size());
         return groups;
     }
+
+    @Override
+    public List<Group> getActiveGroups() {
+        log.debug("Getting all active groups");
+        List<Group> groups = groupDao.getActiveGroups();
+        log.info("Found {} groups", groups.size());
+        return groups;
+    }
 }

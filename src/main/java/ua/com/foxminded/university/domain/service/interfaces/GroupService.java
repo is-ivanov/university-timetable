@@ -17,4 +17,6 @@ public interface GroupService extends Service<Group> {
 
     List<Group> getFreeGroupsOnLessonTime(LocalDateTime startTime,
                                           LocalDateTime endTime);
+
+    List<Group> getActiveGroups();
 }

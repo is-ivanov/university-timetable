@@ -5,9 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ua.com.foxminded.university.domain.dto.StudentDto;
 import ua.com.foxminded.university.domain.entity.Group;
+import ua.com.foxminded.university.domain.mapper.StudentDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
+import ua.com.foxminded.university.domain.service.interfaces.StudentService;
 
 import java.util.List;
 
@@ -21,6 +24,8 @@ public class GroupController {
 
     private final GroupService groupService;
     private final FacultyService facultyService;
+    private final StudentService studentService;
+    private final StudentDtoMapper studentDtoMapper;
 
     @GetMapping
     public String showGroups(@RequestParam(required = false) Integer facultyId,
@@ -85,4 +90,13 @@ public class GroupController {
         return defineRedirect(uri);
     }
 
+    @GetMapping("/{id}/students")
+    @ResponseBody
+    public List<StudentDto> getStudentsFromGroup(@PathVariable int id) {
+        log.debug("Getting students from group id({})", id);
+        List<StudentDto> studentDtos = studentDtoMapper.studentsToStudentDtos(
+            studentService.getStudentsByGroup(id));
+        log.info("Found {} students", studentDtos.size());
+        return studentDtos;
+    }
 }
