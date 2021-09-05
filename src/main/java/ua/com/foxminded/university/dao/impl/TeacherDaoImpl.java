@@ -12,6 +12,7 @@ import ua.com.foxminded.university.dao.mapper.TeacherMapper;
 import ua.com.foxminded.university.domain.entity.Teacher;
 import ua.com.foxminded.university.exception.DAOException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +27,7 @@ public class TeacherDaoImpl implements TeacherDao {
     private static final String QUERY_GET_BY_ID = "teacher.getById";
     private static final String QUERY_UPDATE = "teacher.update";
     private static final String QUERY_DELETE = "teacher.delete";
+    private static final String QUERY_GET_FREE_TEACHERS = "teacher.getFreeTeachersOnLessonTime";
     private static final String QUERY_GET_ALL_BY_DEPARTMENT = "teacher.getTeachersByDepartment";
     private static final String QUERY_GET_ALL_BY_FACULTY = "teacher.getTeachersByFaculty";
     private static final String MESSAGE_TEACHER_NOT_FOUND = "Teacher id(%d) not found";
@@ -149,5 +151,16 @@ public class TeacherDaoImpl implements TeacherDao {
             new TeacherMapper(), facultyId);
         log.info("Found {} teachers from faculty id({})", teachers.size(), facultyId);
         return teachers;
+    }
+
+    @Override
+    public List<Teacher> getFreeTeachersOnLessonTime(LocalDateTime startTime,
+                                                     LocalDateTime endTime) {
+        log.debug("Getting active teachers free from {} to {}", startTime, endTime);
+        List<Teacher> freeTeachers = jdbcTemplate.query(
+            env.getRequiredProperty(QUERY_GET_FREE_TEACHERS), new TeacherMapper(),
+            startTime, endTime, startTime, endTime);
+        log.info("Found {} active free teachers", freeTeachers.size());
+        return freeTeachers;
     }
 }

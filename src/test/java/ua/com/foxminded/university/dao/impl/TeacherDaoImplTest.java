@@ -17,8 +17,12 @@ import ua.com.foxminded.university.domain.entity.Teacher;
 import ua.com.foxminded.university.exception.DAOException;
 import ua.com.foxminded.university.springconfig.TestRootConfig;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
@@ -34,6 +38,7 @@ class TeacherDaoImplTest {
     private static final String TEST_TEACHER_PATRONYMIC = "Ivanovich";
     private static final int ID1 = 1;
     private static final int ID2 = 2;
+    private static final int ID3 = 3;
     private static final int ID4 = 4;
     private static final String FIRST_DEPARTMENT_NAME = "Chemistry";
     private static final String SECOND_DEPARTMENT_NAME = "Oil Technology";
@@ -61,7 +66,7 @@ class TeacherDaoImplTest {
     class addTest {
 
         @Test
-        @DisplayName("add test teacher should CountRowsTable = 3")
+        @DisplayName("add test teacher should add one row in table")
         void testAddTeacher() {
             Department department = new Department();
             department.setId(ID1);
@@ -74,11 +79,13 @@ class TeacherDaoImplTest {
             teacher.setActive(FIRST_TEACHER_ACTIVE);
             teacher.setDepartment(department);
 
+            int rowsInTableBeforeAdding = JdbcTestUtils.countRowsInTable(jdbcTemplate,
+                TABLE_NAME);
+
             dao.add(teacher);
-            int expectedRowsInTable = 3;
             int actualRowsInTable = JdbcTestUtils.countRowsInTable(jdbcTemplate,
                 TABLE_NAME);
-            assertEquals(expectedRowsInTable, actualRowsInTable);
+            assertEquals(rowsInTableBeforeAdding + 1, actualRowsInTable);
 
         }
     }
@@ -178,13 +185,13 @@ class TeacherDaoImplTest {
     class deleteTest {
 
         @Test
-        @DisplayName("with teacher id=1 should delete one record and number " +
-            "records table should equals 1")
+        @DisplayName("with teacher id=3 should delete one record and number " +
+            "records table should one less before")
         void testDeleteExistingTeacher_ReduceNumberRowsInTable() {
             int expectedQuantityTeachers = JdbcTestUtils
                 .countRowsInTable(jdbcTemplate, TABLE_NAME) - 1;
             Teacher teacher = new Teacher();
-            teacher.setId(ID1);
+            teacher.setId(ID3);
             dao.delete(teacher);
             int actualQuantityStudents = JdbcTestUtils
                 .countRowsInTable(jdbcTemplate, TABLE_NAME);
@@ -206,6 +213,37 @@ class TeacherDaoImplTest {
             assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
             assertEquals(MESSAGE_DELETE_EXCEPTION, ex.getMessage());
         }
+
+    }
+
+    @Nested
+    @DisplayName("test 'delete' method with parameter id")
+    class deleteIdTest {
+
+        @Test
+        @DisplayName("with teacher id=3 should delete one record and number " +
+            "records table should equals 2")
+        void testDeleteExistingTeacher_ReduceNumberRowsInTable() {
+            int expectedQuantityTeachers = JdbcTestUtils
+                .countRowsInTable(jdbcTemplate, TABLE_NAME) - 1;
+            dao.delete(ID3);
+            int actualQuantityStudents = JdbcTestUtils
+                .countRowsInTable(jdbcTemplate, TABLE_NAME);
+            assertEquals(expectedQuantityTeachers, actualQuantityStudents);
+        }
+
+        @Test
+        @DisplayName("with teacher id=4 should write new log.warn with " +
+            "expected message")
+        void testDeleteNonExistingTeacher_ExceptionWriteLogWarn() {
+            LogCaptor logCaptor = LogCaptor.forClass(TeacherDaoImpl.class);
+            String expectedLog = String.format(MESSAGE_DELETE_MASK, ID4);
+            DAOException ex = assertThrows(DAOException.class,
+                () -> dao.delete(ID4));
+            assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
+            assertEquals(MESSAGE_DELETE_EXCEPTION, ex.getMessage());
+        }
+
     }
 
     @Nested
@@ -213,9 +251,9 @@ class TeacherDaoImplTest {
     class getAllByDepartmentTest {
 
         @Test
-        @DisplayName("with department id=1 should return List with size = 1")
+        @DisplayName("with department id=1 should return List with size = 2")
         void testGetAllTeachersByDepartmentId1() {
-            int expectedQuantityTeachers = 1;
+            int expectedQuantityTeachers = 2;
             List<Teacher> actualTeachers = dao.getAllByDepartment(ID1);
             assertEquals(expectedQuantityTeachers, actualTeachers.size());
             assertEquals(FIRST_TEACHER_NAME, actualTeachers.get(0).getFirstName());
@@ -235,9 +273,10 @@ class TeacherDaoImplTest {
     class getAllByFacultyTest {
 
         @Test
-        @DisplayName("with faculty id=1 should return List with size = 2")
+        @DisplayName("with faculty id=1 should return List with size = 3")
         void testGetAllTeachersByFacultyId1() {
-            int expectedQuantityTeachers = 2;
+            int expectedQuantityTeachers =
+                JdbcTestUtils.countRowsInTable(jdbcTemplate, TABLE_NAME);
             List<Teacher> actualTeachers = dao.getAllByFaculty(ID1);
             assertEquals(expectedQuantityTeachers, actualTeachers.size());
         }
@@ -248,4 +287,44 @@ class TeacherDaoImplTest {
             assertTrue(dao.getAllByFaculty(ID2).isEmpty());
         }
     }
+
+    @Nested
+    @DisplayName("test 'getFreeTeachersOnLessonTime' method")
+    class GetFreeTeachersOnLessonTimeTest {
+
+        @Test
+        @DisplayName("when new lesson starts at 14:30 12-09-2021 then return " +
+            "list with one teacher (id=3)")
+        void testReturnEmptyList() {
+            LocalDateTime startTime = LocalDateTime.of(2021, 9, 12, 14, 30);
+            LocalDateTime endTime = startTime.plusMinutes(90);
+
+            List<Teacher> actualTeachers =
+                dao.getFreeTeachersOnLessonTime(startTime, endTime);
+            assertThat(actualTeachers, hasSize(1));
+            Teacher freeTeacher = actualTeachers.get(0);
+            assertThat(freeTeacher.getId(), is(equalTo(3)));
+        }
+
+        @Test
+        @DisplayName("when new lesson starts at 15:45 12-09-2021 then return " +
+            "list with two teachers (id=1 and id=3)")
+        void testReturnOneTeacher() {
+            LocalDateTime startTime = LocalDateTime.of(2021, 9, 12, 15, 45);
+            LocalDateTime endTime = startTime.plusMinutes(90);
+
+            List<Teacher> actualTeachers =
+                dao.getFreeTeachersOnLessonTime(startTime, endTime);
+
+            assertThat(actualTeachers, hasSize(2));
+
+            List<Integer> freeTeachersIds = actualTeachers.stream()
+                .map(Teacher::getId)
+                .collect(Collectors.toList());
+            assertThat(freeTeachersIds, hasItem(ID1));
+            assertThat(freeTeachersIds, hasItem(ID3));
+            assertThat(freeTeachersIds, not(hasItem(ID2)));
+        }
+    }
+
 }

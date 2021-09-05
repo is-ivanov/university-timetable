@@ -8,6 +8,7 @@ import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Teacher;
 import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -115,6 +116,16 @@ public class TeacherServiceImpl implements TeacherService {
         List<Teacher> teachers = teacherDao.getAllByFaculty(facultyId);
         log.info("Found {} teachers from faculty id({})", teachers.size(), facultyId);
         return teachers;
+    }
+
+    @Override
+    public List<Teacher> getFreeTeachersOnLessonTime(LocalDateTime startTime,
+                                                     LocalDateTime endTime) {
+        log.debug("Getting active teachers free from {} to {}", startTime, endTime);
+        List<Teacher> freeTeachers =
+            teacherDao.getFreeTeachersOnLessonTime(startTime, endTime);
+        log.info("Found {} active free teachers", freeTeachers.size());
+        return freeTeachers;
     }
 
 }
