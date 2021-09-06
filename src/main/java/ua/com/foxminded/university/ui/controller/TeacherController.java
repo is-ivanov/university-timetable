@@ -2,6 +2,7 @@ package ua.com.foxminded.university.ui.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static ua.com.foxminded.university.ui.Util.defineRedirect;
@@ -76,6 +78,21 @@ public class TeacherController {
             log.debug("Get departments for selector by facultyId ({})", facultyId);
             return departmentService.getAllByFaculty(facultyId);
         }
+    }
+
+    @GetMapping("/free")
+    @ResponseBody
+    public List<TeacherDto> getFreeTeachers(@RequestParam("time_start")
+                                            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+                                                LocalDateTime startTime,
+                                            @RequestParam("time_end")
+                                            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+                                                LocalDateTime endTime) {
+        log.debug("Getting teachers free from {} to {}", startTime, endTime);
+        List<Teacher> freeTeachers =
+            teacherService.getFreeTeachersOnLessonTime(startTime, endTime);
+        log.info("Found {} active free teachers", freeTeachers.size());
+        return teacherMapper.teachersToTeacherDtos(freeTeachers);
     }
 
     @PostMapping

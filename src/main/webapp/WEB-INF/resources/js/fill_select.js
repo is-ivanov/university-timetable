@@ -1,4 +1,20 @@
 /**
+ * Fill option in selector for person
+ * @param select {HTMLSelectElement} - The select element for filling data
+ * @param data {Object} - Returned data from GET response
+ * @param isShowInactive {Boolean} - With true show inactive object
+ */
+function fillPersonFilteredByDate (select, data, isShowInactive) {
+  data.sort(sortByFullName)
+  $(select).
+    remove("option[selected!='selected']").
+    append('<option value="0" selected>Please select person ...</option>')
+  data.forEach(function (person) {
+    fillSelectActive(person.id, person.fullname, person.active, isShowInactive, select)
+  })
+}
+
+/**
  * Fills in the selector for selecting a group with data from the database
  *
  * @param {HTMLSelectElement} select - The select element for filling data
@@ -134,7 +150,6 @@ function fillSelectTeachers (select, valueSelect, type) {
   })
 }
 
-function fillSelectFreeTeachers(select, )
 
 function sortByName (a, b) {
   const nameA = a.name.toLowerCase()

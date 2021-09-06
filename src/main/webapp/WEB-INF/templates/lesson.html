@@ -327,6 +327,7 @@
 
     $('#dateStartPickerLesson').on('hide.datetimepicker', function (e) {
       updateEndDatetimepicker($('#dateEndPickerLesson'), e)
+      updateOptionSelectTeacher()
     })
 
     $('#dateEndPickerLesson').on('hide.datetimepicker', function (e) {
@@ -334,6 +335,14 @@
     })
 
   })
+
+  function updateOptionSelectTeacher() {
+    let time_start = $('#dateStartPickerLesson').children('input').val()
+    let time_end = $('#dateEndPickerLesson').children('input').val()
+    $.get('/teachers/free', {time_start: time_start, time_end: time_end}, function (data) {
+      fillPersonFilteredByDate($('#selectTeacherEditLesson'), data, false)
+    })
+  }
 
 </script>
 </body>
