@@ -126,7 +126,8 @@
                   <span class="input-group-text">from</span>
                   <input type="text" class="form-control datetimepicker-input" data-target="#dateStartPicker"
                          th:field="*{dateFrom}"
-                         th:value="${#temporals.format(lessonFilter.dateFrom, 'yyyy-MM-dd')}"/>
+                         th:value="${#temporals.format(lessonFilter.dateFrom, 'yyyy-MM-dd')}"
+                         placeholder="dddd-mm-dd hh:mm"/>
                   <div data-target="#dateStartPicker" data-toggle="datetimepicker">
                     <div class="input-group-text"><i class="bi bi-calendar3"></i></div>
                   </div>
@@ -138,7 +139,8 @@
                   <span class="input-group-text">to</span>
                   <input type="text" class="form-control datetimepicker-input" data-target="#dateEndPicker"
                          th:field="*{dateTo}"
-                         th:value="${#temporals.format(lessonFilter.dateTo, 'yyyy-MM-dd')}"/>
+                         th:value="${#temporals.format(lessonFilter.dateTo, 'yyyy-MM-dd')}"
+                         placeholder="dddd-mm-dd hh:mm"/>
                   <div data-target="#dateEndPicker" data-toggle="datetimepicker">
                     <div class="input-group-text"><i class="bi bi-calendar3"></i></div>
                   </div>
@@ -230,8 +232,8 @@
 
   <!--  Modal Forms-->
   <!--  Create Modal-->
-<!--  TODO 1. In create and edit lesson modal fisrt position input date_start ans date_end, after course then teacher and room\
-      TODO 2. After update time fill selectors teachers and rooms-->
+  <!--  TODO 1. In create and edit lesson modal fisrt position input date_start ans date_end, after course then teacher and room\
+        TODO 2. After update time fill selectors teachers and rooms-->
   <div id="newLessonModal" class="modal fade" data-bs-backdrop="static"
        tabindex="-1" aria-labelledby="NewLessonModalLabel"
        aria-hidden="true">

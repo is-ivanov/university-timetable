@@ -325,29 +325,12 @@
   //  DateTimePicker
   $(function () {
 
-
-    $('#dateStartPicker').on('change.datetimepicker', function (e) {
-      $('#dateEndPicker').datetimepicker('minDate', e.date)
-      switchSubmitEnabled()
-    })
-    $('#dateEndPicker').on('change.datetimepicker', function (e) {
-      $('#dateStartPicker').datetimepicker('maxDate', e.date)
-      switchSubmitEnabled()
+    $('#dateStartPickerLesson').on('hide.datetimepicker', function (e) {
+      updateEndDatetimepicker($('#dateEndPickerLesson'), e)
     })
 
-    $('#dateStartPickerNewLesson').on('hide.datetimepicker', function (e) {
-      let picker = $('#dateEndPickerNewLesson')
-      picker.datetimepicker('defaultDate', e.date)
-      picker.datetimepicker('viewMode', 'times')
-      picker.datetimepicker('minDate', e.date)
-    })
-
-    $('#dateStartPickerEditLesson').on('hide.datetimepicker', function (e) {
-      let picker = $('#dateEndPickerEditLesson')
-      picker.children('input').val(moment(e.date).format('yyyy-MM-DD HH:mm'))
-      picker.datetimepicker('defaultDate', e.date)
-      picker.datetimepicker('viewMode', 'times')
-      picker.datetimepicker('minDate', e.date)
+    $('#dateEndPickerLesson').on('hide.datetimepicker', function (e) {
+      updateStartDatetimepicker($('#dateStartPickerLesson'), e)
     })
 
   })

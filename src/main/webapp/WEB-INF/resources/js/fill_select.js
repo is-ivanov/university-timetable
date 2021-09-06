@@ -1,9 +1,9 @@
 /**
  * Fills in the selector for selecting a group with data from the database
  *
- * @param {HTMLSelectElement} select         The select element for filling data
- * @param {Number}            facultyId      Id selected faculty (0 when not selected)
- * @param {Boolean}           isShowInactive with true we show inactive groups
+ * @param {HTMLSelectElement} select - The select element for filling data
+ * @param {Number} facultyId - The id selected faculty (0 when not selected)
+ * @param {Boolean} isShowInactive - With true we show inactive groups
  */
 function fillSelectGroups (select, facultyId, isShowInactive) {
   let uri = '/faculties/' + facultyId + '/groups'
@@ -13,7 +13,8 @@ function fillSelectGroups (select, facultyId, isShowInactive) {
       append('<option value="0" selected>Please select group...</option>')
     data.sort(sortByName)
     data.forEach(function (group) {
-      fillSelectActive(group.id, group.name, group.active, isShowInactive, select)
+      fillSelectActive(group.id, group.name, group.active, isShowInactive,
+        select)
     })
   })
 }
@@ -21,10 +22,10 @@ function fillSelectGroups (select, facultyId, isShowInactive) {
 /**
  * Fills in the selector for selecting a student with data from the database
  *
- * @param {HTMLSelectElement} select The select element for filling data
- * @param {Number} facultyId Id selected faculty (0 when not selected)
- * @param {Number} groupId Id selected group (0 when not selected)
- * @param {Boolean} isShowInactive with true we show inactive students
+ * @param {HTMLSelectElement} select - The select element for filling data
+ * @param {Number} facultyId - Id selected faculty (0 when not selected)
+ * @param {Number} groupId - Id selected group (0 when not selected)
+ * @param {Boolean} isShowInactive - With true we show inactive students
  */
 function fillSelectStudents (select, facultyId, groupId, isShowInactive) {
   let uri
@@ -41,7 +42,8 @@ function fillSelectStudents (select, facultyId, groupId, isShowInactive) {
         '<option value="" disabled selected>Please select student...</option>')
     data.sort(sortByFullName)
     data.forEach(function (studentDto) {
-      fillSelectActive(studentDto.id, studentDto.fullName, studentDto.active, isShowInactive, select)
+      fillSelectActive(studentDto.id, studentDto.fullName, studentDto.active,
+        isShowInactive, select)
     })
   })
 }
@@ -90,10 +92,12 @@ function fillSelectDepartments () {
 /**
  * Fill select 'selectTeacher' with teachers data from the DB
  *
- * @param {Number} valueSelect The value from 'select' with condition
- * @param {String} type        Type of select (faculty; department)
+ * @param {HTMLSelectElement} select The select element for filling data
+ * @param {Number} facultyId - The id selected faculty (0 when not selected)
+ * @param {Number}            valueSelect The value from 'select' with condition
+ * @param {String}            type        Type of select (faculty; department)
  */
-function fillSelectTeachers (valueSelect, type) {
+function fillSelectTeachers (select, valueSelect, type) {
   let uri
   if (type === 'faculty') {
     uri = 'lessons/faculties?facultyId=' + valueSelect
@@ -130,22 +134,24 @@ function fillSelectTeachers (valueSelect, type) {
   })
 }
 
+function fillSelectFreeTeachers(select, )
+
 function sortByName (a, b) {
   const nameA = a.name.toLowerCase()
   const nameB = b.name.toLowerCase()
-  if (nameA < nameB)
-    return -1
-  if (nameA > nameB)
-    return 1
-  return 0
+  return sortByText(nameA, nameB)
 }
 
 function sortByFullName (a, b) {
   const fullNameA = a.fullName.toLowerCase()
   const fullNameB = b.fullName.toLowerCase()
-  if (fullNameA < fullNameB)
+  return sortByText(fullNameA, fullNameB)
+}
+
+function sortByText (a, b) {
+  if (a < b)
     return -1
-  if (fullNameA > fullNameB)
+  if (a > b)
     return 1
   return 0
 }
