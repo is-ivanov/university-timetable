@@ -2,11 +2,15 @@ package ua.com.foxminded.university.ui.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ua.com.foxminded.university.domain.entity.Room;
 import ua.com.foxminded.university.domain.service.interfaces.RoomService;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -27,14 +31,6 @@ public class RoomController {
         return "room";
     }
 
-    @PostMapping
-    public String createRoom(@ModelAttribute Room room) {
-        log.debug("Creating {}", room);
-        roomService.add(room);
-        log.info("{} is created", room);
-        return REDIRECT_ROOMS;
-    }
-
     @GetMapping("/{id}")
     @ResponseBody
     public Room showRoom(@PathVariable("id") int roomId) {
@@ -42,6 +38,29 @@ public class RoomController {
         Room room = roomService.getById(roomId);
         log.info("Found {}", room);
         return room;
+    }
+
+    @GetMapping("/free")
+    @ResponseBody
+    public List<Room> getFreeRooms(@RequestParam("time_start")
+                                   @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+                                       LocalDateTime startTime,
+                                   @RequestParam("time_end")
+
+                                   @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+                                       LocalDateTime endTime) {
+        log.debug("Getting rooms free from {} to {}", startTime, endTime);
+        List<Room> freeRooms = roomService.getFreeRoomsOnLessonTime(startTime, endTime);
+        log.info("Found {} free rooms", freeRooms.size());
+        return freeRooms;
+    }
+
+    @PostMapping
+    public String createRoom(@ModelAttribute Room room) {
+        log.debug("Creating {}", room);
+        roomService.add(room);
+        log.info("{} is created", room);
+        return REDIRECT_ROOMS;
     }
 
     @PutMapping("/{id}")

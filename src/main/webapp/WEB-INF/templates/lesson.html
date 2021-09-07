@@ -34,16 +34,17 @@
         <fieldset id="main_properties" disabled>
           <div class="p-3">
             <!-- Select date-->
-            <div class="row mb-3">
+            <div class="row mb-3" id="selectDateEditLesson">
               <!--Date start-->
               <div class="col">
                 <label for="dateStartPickerLesson" class="form-label">Time start</label>
                 <div class="input-group date" id="dateStartPickerLesson" data-target-input="nearest">
                   <input type="text" class="form-control datetimepicker-input" data-target="#dateStartPickerLesson"
                          th:value="${#temporals.format(lesson.timeStart, 'yyyy-MM-dd HH:mm')}"
-                         name="timeStart" required/>
-                  <div data-target="#dateStartPickerLesson" data-toggle="datetimepicker">
-                    <div class="input-group-text"><i class="bi bi-calendar3"></i></div>
+                         name="timeStart" required disabled/>
+                  <div class="input-group-text" data-target="#dateStartPickerLesson"
+                       data-toggle="datetimepicker">
+                    <i class="bi bi-calendar3"></i>
                   </div>
                 </div>
               </div>
@@ -53,9 +54,10 @@
                 <div class="input-group date" id="dateEndPickerLesson" data-target-input="nearest">
                   <input type="text" class="form-control datetimepicker-input" data-target="#dateEndPickerLesson"
                          th:value="${#temporals.format(lesson.timeEnd, 'yyyy-MM-dd HH:mm')}"
-                         name="timeEnd" required/>
-                  <div data-target="#dateEndPickerLesson" data-toggle="datetimepicker">
-                    <div class="input-group-text"><i class="bi bi-calendar3"></i></div>
+                         name="timeEnd" required disabled/>
+                  <div class="input-group-text" data-target="#dateEndPickerLesson"
+                       data-toggle="datetimepicker">
+                    <i class="bi bi-calendar3"></i>
                   </div>
                 </div>
               </div>
@@ -283,8 +285,10 @@
   function updateOn () {
     if ($('#switchUpdateOn').is(':checked')) {
       $('#main_properties').removeAttr('disabled')
+      $('#selectDateEditLesson').find('input').removeAttr('disabled')
     } else {
       $('#main_properties').attr('disabled', 'disabled')
+      $('#selectDateEditLesson').find('input').attr('disabled', 'disabled')
     }
   }
 
@@ -327,7 +331,8 @@
 
     $('#dateStartPickerLesson').on('hide.datetimepicker', function (e) {
       updateEndDatetimepicker($('#dateEndPickerLesson'), e)
-      updateOptionSelectTeacher()
+      updateOptionsSelectTeacher()
+      updateOptionsSelectRoom()
     })
 
     $('#dateEndPickerLesson').on('hide.datetimepicker', function (e) {
@@ -336,11 +341,19 @@
 
   })
 
-  function updateOptionSelectTeacher() {
+  function updateOptionsSelectTeacher () {
     let time_start = $('#dateStartPickerLesson').children('input').val()
     let time_end = $('#dateEndPickerLesson').children('input').val()
-    $.get('/teachers/free', {time_start: time_start, time_end: time_end}, function (data) {
-      fillPersonFilteredByDate($('#selectTeacherEditLesson'), data, false)
+    $.get('/teachers/free', { time_start: time_start, time_end: time_end }, function (data) {
+      fillSelectPersonFilteredByDate($('#selectTeacherEditLesson'), data, false)
+    })
+  }
+
+  function updateOptionsSelectRoom () {
+    let time_start = $('#dateStartPickerLesson').children('input').val()
+    let time_end = $('#dateEndPickerLesson').children('input').val()
+    $.get('/rooms/free', { time_start: time_start, time_end: time_end }, function (data) {
+      fillSelectRoomFilteredByDate($('#selectRoomEditLesson'), data)
     })
   }
 

@@ -1,16 +1,41 @@
 /**
- * Fill option in selector for person
+ * Fill options in selector for person
+ *
  * @param select {HTMLSelectElement} - The select element for filling data
  * @param data {Object} - Returned data from GET response
  * @param isShowInactive {Boolean} - With true show inactive object
  */
-function fillPersonFilteredByDate (select, data, isShowInactive) {
+function fillSelectPersonFilteredByDate (select, data, isShowInactive) {
   data.sort(sortByFullName)
+  let selectedValue = $(select).children('option:selected').val()
+  let selectedText = $(select).children('option:selected').text()
   $(select).
-    remove("option[selected!='selected']").
-    append('<option value="0" selected>Please select person ...</option>')
+    empty().
+    append('<option value="0">Please select person ...</option>').
+    append('<option value="' + selectedValue + '" selected>' + selectedText + '</option>')
   data.forEach(function (person) {
-    fillSelectActive(person.id, person.fullname, person.active, isShowInactive, select)
+    fillSelectActive(person.id, person.fullName, person.active, isShowInactive, select)
+  })
+}
+
+/**
+ * Fill options in selector for room
+ *
+ * @param select {HTMLSelectElement} - The select element for filling data
+ * @param data {Object} - Returned data from GET response
+ */
+function fillSelectRoomFilteredByDate (select, data) {
+  data.sort(sortByRoom)
+  let selectedValue = $(select).children('option:selected').val()
+  let selectedText = $(select).children('option:selected').text()
+  $(select).
+    empty().
+    append('<option value="0">Please select room...</option>').
+    append('<option value="' + selectedValue + '" selected>' + selectedText + '</option>')
+  data.forEach(function (room) {
+    let name = room.building + ' - ' + room.number
+    let option = '<option value = ' + room.id + '>' + name + '</option>'
+    select.append(option)
   })
 }
 
@@ -88,6 +113,8 @@ function fillSelectActive (value, text, isActive, isShowInactive, select) {
   select.append(option)
 }
 
+
+
 /**
  * Fill select 'selectDepartment' with departments data from the DB
  */
@@ -161,6 +188,14 @@ function sortByFullName (a, b) {
   const fullNameA = a.fullName.toLowerCase()
   const fullNameB = b.fullName.toLowerCase()
   return sortByText(fullNameA, fullNameB)
+}
+
+function sortByRoom (a, b) {
+  let roomA = a.building + ' - ' + a.number
+  let roomB = b.building + ' - ' + b.number
+  roomA = roomA.toLowerCase()
+  roomB = roomB.toLowerCase()
+  return sortByText(roomA, roomB)
 }
 
 function sortByText (a, b) {

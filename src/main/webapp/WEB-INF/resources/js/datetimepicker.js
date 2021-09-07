@@ -30,9 +30,9 @@ function updateEndDatetimepicker (inputEnd, event) {
   let timeStart = event.date
   let timeEnd = moment(timeStart).add(LESSON_DURATION_MINUTE, 'minutes')
   inputEnd.children('input').val(moment(timeEnd).format('yyyy-MM-DD HH:mm'))
+  inputEnd.datetimepicker('minDate', timeStart)
   inputEnd.datetimepicker('defaultDate', timeEnd)
   inputEnd.datetimepicker('viewMode', 'times')
-  inputEnd.datetimepicker('minDate', timeStart)
 }
 
 /**
@@ -43,6 +43,6 @@ function updateEndDatetimepicker (inputEnd, event) {
  */
 function updateStartDatetimepicker (inputStart, event) {
   let timeEnd = event.date
-  inputStart.datetimepicker('viewMode', 'times')
   inputStart.datetimepicker('maxDate', timeEnd)
+  inputStart.datetimepicker('viewMode', 'times')
 }
