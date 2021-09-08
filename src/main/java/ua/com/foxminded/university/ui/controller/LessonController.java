@@ -181,10 +181,8 @@ public class LessonController {
                                      @RequestParam int studentId,
                                      HttpServletRequest request) {
         log.debug("Adding student id({}) to lesson id({})", studentId, lessonId);
-        Lesson lesson = Lesson.builder().id(lessonId).build();
-        Student student = Student.builder().id(studentId).build();
-        lessonService.addStudentToLesson(lesson, student);
-        log.info("Student id({}) added to lesson id({}) successfully", student, lessonId);
+        lessonService.addStudentToLesson(lessonId, studentId);
+        log.info("Student id({}) added to lesson id({}) successfully", studentId, lessonId);
         return defineRedirect(request);
     }
 

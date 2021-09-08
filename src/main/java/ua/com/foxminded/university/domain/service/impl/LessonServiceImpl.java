@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ua.com.foxminded.university.dao.interfaces.LessonDao;
+import ua.com.foxminded.university.dao.interfaces.StudentDao;
 import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Room;
 import ua.com.foxminded.university.domain.entity.Student;
@@ -29,6 +30,7 @@ public class LessonServiceImpl implements LessonService {
 
     private final LessonDao lessonDao;
     private final StudentService studentService;
+    private final StudentDao studentDao;
 
     @Override
     public void add(Lesson lesson) throws ServiceException {
@@ -96,9 +98,12 @@ public class LessonServiceImpl implements LessonService {
     @Override
     public void addStudentToLesson(int lessonId, int studentId) {
         log.debug("Getting lesson by lessonId({})", lessonId);
-        Lesson lesson = lessonDao.getById(lessonId).orElse(
-            Lesson.builder().id(lessonId).build());
-        Student student = Student.builder().id(studentId).build();
+        Lesson lesson = lessonDao.getById(lessonId)
+            .orElseThrow(() -> new ServiceException(
+                String.format("Lesson id(%d) not found", lessonId)));
+        Student student = studentDao.getById(studentId)
+            .orElseThrow(() -> new ServiceException(
+                String.format("Student id(%d) not found", studentId)));
         checkAndSaveStudentToLesson(lesson, student);
     }
 
@@ -141,8 +146,11 @@ public class LessonServiceImpl implements LessonService {
                     "({})", student.getId(), lesson.getId());
                 throw new ServiceException(String.format(MESSAGE_STUDENT_NOT_AVAILABLE, student));
             }
-        log.info("Student id({}) added to lesson({}) successfully", student.getId(),
-            lesson.getId());
+            log.info("Student id({}) added to lesson({}) successfully", student.getId(),
+                lesson.getId());
+        } else {
+            log.warn("Student id({}} is inactive)", student.getId());
+            throw new ServiceException(String.format("Student id(%d) is inactive", student.getId()));
         }
     }
 

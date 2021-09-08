@@ -114,7 +114,7 @@ public class GroupController {
         log.debug("Getting active students from group id({}) free from {} to {}",
             id, startTime, endTime);
         List<StudentDto> freeStudentsFromGroup = studentDtoMapper.studentsToStudentDtos(
-            studentService.getStudentsByGroup(id));
+            studentService.getFreeStudentsFromGroup(id, startTime, endTime));
         log.info("Found {} students", freeStudentsFromGroup.size());
         return freeStudentsFromGroup;
     }

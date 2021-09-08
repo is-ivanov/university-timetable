@@ -1,5 +1,6 @@
 package ua.com.foxminded.university.dao.interfaces;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import ua.com.foxminded.university.domain.entity.Faculty;
@@ -17,4 +18,7 @@ public interface StudentDao extends Dao<Student> {
 
     List<Student> getActiveStudents ();
 
+    List<Student> getFreeStudentsFromGroup(int groupId,
+                                           LocalDateTime startTime,
+                                           LocalDateTime endTime);
 }

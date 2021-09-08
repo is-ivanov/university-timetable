@@ -3,6 +3,7 @@ package ua.com.foxminded.university.domain.service.interfaces;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Student;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface StudentService extends Service<Student> {
@@ -21,4 +22,7 @@ public interface StudentService extends Service<Student> {
 
     List<Student> getAllActiveStudents();
 
+    List<Student> getFreeStudentsFromGroup(int groupId,
+                                           LocalDateTime startTime,
+                                           LocalDateTime endTime);
 }

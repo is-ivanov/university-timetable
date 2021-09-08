@@ -4,11 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ua.com.foxminded.university.dao.interfaces.StudentDao;
+import ua.com.foxminded.university.dao.mapper.StudentMapper;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.domain.service.interfaces.StudentService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -109,6 +111,7 @@ public class StudentServiceImpl implements StudentService {
         log.info("Found {} students from group {}", students.size(), group);
         return students;
     }
+
     @Override
     public List<Student> getStudentsByGroup(int groupId) {
         log.debug("Getting all students from group id({})", groupId);
@@ -134,6 +137,19 @@ public class StudentServiceImpl implements StudentService {
         List<Student> students = studentDao.getActiveStudents();
         log.info("Found {} students", students.size());
         return students;
+    }
+
+    @Override
+    public List<Student> getFreeStudentsFromGroup(int groupId,
+                                                  LocalDateTime startTime,
+                                                  LocalDateTime endTime) {
+        log.debug("Getting active students from group id({}) free from {} to {}",
+            groupId, startTime, endTime);
+        List<Student> freeStudents = studentDao.getFreeStudentsFromGroup(groupId,
+            startTime, endTime);
+        log.info("Found {} free student from group id({})", freeStudents.size(),
+            groupId);
+        return freeStudents;
     }
 
 }

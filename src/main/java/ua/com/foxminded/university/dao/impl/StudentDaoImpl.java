@@ -15,6 +15,7 @@ import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.exception.DAOException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,6 +34,7 @@ public class StudentDaoImpl implements StudentDao {
     private static final String QUERY_GET_ALL_BY_LESSON = "student.getStudentsByLesson";
     private static final String QUERY_GET_ALL_BY_GROUP = "student.getStudentsByGroup";
     private static final String QUERY_GET_ALL_BY_FACULTY = "student.getStudentsByFaculty";
+    private static final String QUERY_GET_FREE_STUDENTS_BY_GROUP = "student.getFreeStudentsFromGroupOnLessonTime";
     private static final String MESSAGE_STUDENT_NOT_FOUND = "Student id(%d) not found";
     private static final String MESSAGE_UPDATE_STUDENT_NOT_FOUND = "Can't update because student id(%d) not found";
     private static final String MESSAGE_DELETE_STUDENT_NOT_FOUND = "Can't delete because student id(%d) not found";
@@ -178,4 +180,16 @@ public class StudentDaoImpl implements StudentDao {
         return students;
     }
 
+    @Override
+    public List<Student> getFreeStudentsFromGroup(int groupId,
+                                                  LocalDateTime startTime,
+                                                  LocalDateTime endTime) {
+        log.debug("Getting active students from group id({}) free from {} to {}",
+            groupId, startTime, endTime);
+        List<Student> freeStudents = jdbcTemplate.query(
+            env.getRequiredProperty(QUERY_GET_FREE_STUDENTS_BY_GROUP),
+            new StudentMapper(), groupId, startTime, endTime, startTime, endTime);
+        log.info("Found {} free student from group id({})", freeStudents.size(), groupId);
+        return freeStudents;
+    }
 }
