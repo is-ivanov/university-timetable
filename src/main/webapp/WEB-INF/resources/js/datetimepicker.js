@@ -29,7 +29,7 @@ const LESSON_DURATION_MINUTE = 90
 function updateEndDatetimepicker (inputEnd, event) {
   let timeStart = event.date
   let timeEnd = moment(timeStart).add(LESSON_DURATION_MINUTE, 'minutes')
-  inputEnd.children('input').val(moment(timeEnd).format('yyyy-MM-DD HH:mm'))
+  $(inputEnd).children('input').val(moment(timeEnd).format('yyyy-MM-DD HH:mm'))
   inputEnd.datetimepicker('minDate', timeStart)
   inputEnd.datetimepicker('defaultDate', timeEnd)
   inputEnd.datetimepicker('viewMode', 'times')

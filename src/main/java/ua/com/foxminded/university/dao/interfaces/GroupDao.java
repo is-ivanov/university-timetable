@@ -12,6 +12,10 @@ public interface GroupDao extends Dao<Group> {
     List<Group> getFreeGroupsOnLessonTime(LocalDateTime startTime,
                                           LocalDateTime endTime);
 
+    List<Group> getFreeGroupsByFacultyOnLessonTime(int facultyId,
+                                                   LocalDateTime startTime,
+                                                   LocalDateTime endTime);
+
     List<Group> getActiveGroups();
 
 }

@@ -45,7 +45,7 @@ public class LessonServiceImpl implements LessonService {
         checkLesson(lesson);
         log.debug("Updating lesson id({})", lesson.getId());
         lessonDao.update(lesson);
-        log.info("Update lesson id({})", lesson.getId());
+        log.info("Lesson id({}) updated successfully", lesson.getId());
     }
 
     @Override

@@ -2,6 +2,7 @@ package ua.com.foxminded.university.ui.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 import ua.com.foxminded.university.domain.service.interfaces.StudentService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static ua.com.foxminded.university.ui.Util.defineRedirect;
@@ -99,4 +101,22 @@ public class GroupController {
         log.info("Found {} students", studentDtos.size());
         return studentDtos;
     }
+
+    @GetMapping("/{id}/students/free")
+    @ResponseBody
+    public List<StudentDto> getFreeStudentsFromGroup(@PathVariable int id,
+                                                     @RequestParam("time_start")
+                                                     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+                                                         LocalDateTime startTime,
+                                                     @RequestParam("time_end")
+                                                     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+                                                         LocalDateTime endTime) {
+        log.debug("Getting active students from group id({}) free from {} to {}",
+            id, startTime, endTime);
+        List<StudentDto> freeStudentsFromGroup = studentDtoMapper.studentsToStudentDtos(
+            studentService.getStudentsByGroup(id));
+        log.info("Found {} students", freeStudentsFromGroup.size());
+        return freeStudentsFromGroup;
+    }
+
 }

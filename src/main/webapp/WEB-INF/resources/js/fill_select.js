@@ -1,28 +1,109 @@
 /**
- * Fill options in selector for person
+ * Send GET request and call function for filling select Teachers
  *
- * @param select {HTMLSelectElement} - The select element for filling data
- * @param data {Object} - Returned data from GET response
- * @param isShowInactive {Boolean} - With true show inactive object
+ * @param {String} time_start - Time start lesson for GET request
+ * @param {String} time_end - Time end lesson for GET request
+ * @param {HTMLSelectElement} select - The select element for filling data
  */
-function fillSelectPersonFilteredByDate (select, data, isShowInactive) {
+function updateSelectTeacherFilteredByDate (time_start, time_end, select) {
+  $.get('/teachers/free', { time_start: time_start, time_end: time_end },
+    function (data) {
+      fillSelectPersonWithDefaultPerson(select, data, false)
+    })
+}
+
+/**
+ * Send GET request and call function for filling select Rooms
+ *
+ * @param {String} time_start - Time start lesson for GET request
+ * @param {String} time_end - Time end lesson for GET request
+ * @param {HTMLSelectElement} select - The select element for filling data
+ */
+function updateSelectRoomFilteredByDate (time_start, time_end, select) {
+  $.get('/rooms/free', { time_start: time_start, time_end: time_end },
+    function (data) {
+      fillSelectRoomFilteredByDate(select, data)
+    })
+}
+
+/**
+ * Send GET request and call function for filling select Groups
+ *
+ * @param {String} time_start - Time start lesson for GET request
+ * @param {String} time_end - Time end lesson for GET request
+ * @param {Number} facultyId - Selected faculty id
+ * @param {HTMLSelectElement} select - The select element for filling data
+ */
+function updateSelectGroupFilteredByFacultyAndDate (
+  time_start, time_end, facultyId, select) {
+  let uri = '/faculties/' + facultyId + '/groups/free'
+  $.get(uri, { time_start: time_start, time_end: time_end }, function (data) {
+    fillSelectGroups(select, data, false)
+  })
+}
+
+/**
+ * Send GET request and call function for filling select Students
+ *
+ * @param {String} time_start - Time start lesson for GET request
+ * @param {String} time_end - Time end lesson for GET request
+ * @param {Number} groupId - Selected group id
+ * @param {HTMLSelectElement} select - The select element for filling data
+ */
+function updateSelectStudentsFilteredByGroupAndDate (time_start, time_end, groupId, select) {
+  let uri = '/groups/' + groupId + '/students/free'
+  $.get(uri, { time_start: time_start, time_end: time_end }, function (data) {
+    fillSelectPerson(select, data, false)
+  })
+}
+
+//--------------------------------------------------
+
+/**
+ * Fill options in selector for person filtered by date lesson
+ *
+ * @param {HTMLSelectElement} select - The select element for filling data
+ * @param {Object} data - Returned data from GET response
+ * @param {Boolean} isShowInactive - With true show inactive object
+ */
+function fillSelectPersonWithDefaultPerson (select, data, isShowInactive) {
   data.sort(sortByFullName)
   let selectedValue = $(select).children('option:selected').val()
   let selectedText = $(select).children('option:selected').text()
   $(select).
     empty().
     append('<option value="0">Please select person ...</option>').
-    append('<option value="' + selectedValue + '" selected>' + selectedText + '</option>')
+    append('<option value="' + selectedValue + '" selected>' + selectedText +
+      '</option>')
   data.forEach(function (person) {
-    fillSelectActive(person.id, person.fullName, person.active, isShowInactive, select)
+    fillSelectActive(person.id, person.fullName, person.active, isShowInactive,
+      select)
   })
 }
 
 /**
- * Fill options in selector for room
+ * Fill options in selector for person filtered by date lesson
  *
- * @param select {HTMLSelectElement} - The select element for filling data
- * @param data {Object} - Returned data from GET response
+ * @param {HTMLSelectElement} select - The select element for filling data
+ * @param {Object} data - Returned data from GET response
+ * @param {Boolean} isShowInactive - With true show inactive object
+ */
+function fillSelectPerson (select, data, isShowInactive) {
+  data.sort(sortByFullName)
+  $(select).
+    empty().
+    append('<option value="0">Please select person ...</option>')
+  data.forEach(function (person) {
+    fillSelectActive(person.id, person.fullName, person.active, isShowInactive,
+      select)
+  })
+}
+
+/**
+ * Fill options in selector for room filtered by date lesson
+ *
+ * @param {HTMLSelectElement} select - The select element for filling data
+ * @param {Object} data - Returned data from GET response
  */
 function fillSelectRoomFilteredByDate (select, data) {
   data.sort(sortByRoom)
@@ -31,7 +112,8 @@ function fillSelectRoomFilteredByDate (select, data) {
   $(select).
     empty().
     append('<option value="0">Please select room...</option>').
-    append('<option value="' + selectedValue + '" selected>' + selectedText + '</option>')
+    append('<option value="' + selectedValue + '" selected>' + selectedText +
+      '</option>')
   data.forEach(function (room) {
     let name = room.building + ' - ' + room.number
     let option = '<option value = ' + room.id + '>' + name + '</option>'
@@ -43,20 +125,16 @@ function fillSelectRoomFilteredByDate (select, data) {
  * Fills in the selector for selecting a group with data from the database
  *
  * @param {HTMLSelectElement} select - The select element for filling data
- * @param {Number} facultyId - The id selected faculty (0 when not selected)
+ * @param {Object} data - The id selected faculty (0 when not selected)
  * @param {Boolean} isShowInactive - With true we show inactive groups
  */
-function fillSelectGroups (select, facultyId, isShowInactive) {
-  let uri = '/faculties/' + facultyId + '/groups'
-  $.get(uri, function (data) {
-    select.
-      empty().
-      append('<option value="0" selected>Please select group...</option>')
-    data.sort(sortByName)
-    data.forEach(function (group) {
-      fillSelectActive(group.id, group.name, group.active, isShowInactive,
-        select)
-    })
+function fillSelectGroups (select, data, isShowInactive) {
+  data.sort(sortByName)
+  $(select).
+    empty().
+    append('<option value="0" selected>Please select group...</option>')
+  data.forEach(function (group) {
+    fillSelectActive(group.id, group.name, group.active, isShowInactive, select)
   })
 }
 
@@ -101,19 +179,17 @@ function fillSelectStudents (select, facultyId, groupId, isShowInactive) {
 function fillSelectActive (value, text, isActive, isShowInactive, select) {
   let option
   if (isActive === true) {
-    option = '<option class = \'active\' value = ' + value + '>' +
-      text + '</option>'
+    option = '<option class = \'active\' value = ' + value + '>' + text +
+      '</option>'
   } else if (isShowInactive) {
-    option = '<option class = \'inactive\' value = ' + value + '>' +
-      text + ' - inactive' + '</option>'
+    option = '<option class = \'inactive\' value = ' + value + '>' + text +
+      ' - inactive' + '</option>'
   } else {
     option = '<option class = \'inactive d-none\' value = ' + value + '>' +
       text + ' - inactive' + '</option>'
   }
   select.append(option)
 }
-
-
 
 /**
  * Fill select 'selectDepartment' with departments data from the DB
@@ -176,7 +252,6 @@ function fillSelectTeachers (select, valueSelect, type) {
     })
   })
 }
-
 
 function sortByName (a, b) {
   const nameA = a.name.toLowerCase()

@@ -118,6 +118,18 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    public List<Group> getFreeGroupsByFacultyOnLessonTime(int facultyId,
+                                                          LocalDateTime startTime,
+                                                          LocalDateTime endTime) {
+        log.debug("Getting active groups from faculty id({}) free from {} to {}",
+            facultyId, startTime, endTime);
+        List<Group> freeGroups = groupDao
+            .getFreeGroupsByFacultyOnLessonTime(facultyId, startTime, endTime);
+        log.info("Found {} groups", freeGroups.size());
+        return freeGroups;
+    }
+
+    @Override
     public List<Group> getActiveGroups() {
         log.debug("Getting all active groups");
         List<Group> groups = groupDao.getActiveGroups();

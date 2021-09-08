@@ -30,6 +30,7 @@ public class GroupDaoImpl implements GroupDao {
     private static final String QUERY_UPDATE = "group.update";
     private static final String QUERY_DELETE = "group.delete";
     private static final String QUERY_GET_FREE_GROUPS = "group.getFreeGroupsOnLessonTime";
+    private static final String QUERY_GET_FREE_GROUPS_BY_FACULTY = "group.getFreeGroupsByFacultyOnLessonTime";
     private static final String MESSAGE_GROUP_NOT_FOUND = "Group id(%d) not found";
     private static final String MESSAGE_UPDATE_GROUP_NOT_FOUND = "Can't update because group id(%d) not found";
     private static final String MESSAGE_DELETE_GROUP_NOT_FOUND = "Can't delete because group id(%d) not found";
@@ -134,9 +135,22 @@ public class GroupDaoImpl implements GroupDao {
                                                  LocalDateTime endTime) {
         log.debug("Getting groups free from {} to {}", startTime, endTime);
         List<Group> groups = jdbcTemplate.query(env.getRequiredProperty(QUERY_GET_FREE_GROUPS),
-            new GroupMapper(), endTime, startTime);
+            new GroupMapper(), startTime, endTime, startTime, endTime);
         log.info(LOG_FOUND_GROUPS, groups.size());
         return groups;
+    }
+
+    @Override
+    public List<Group> getFreeGroupsByFacultyOnLessonTime(int facultyId,
+                                                          LocalDateTime startTime,
+                                                          LocalDateTime endTime) {
+        log.debug("Getting active groups from faculty id({}) free from {} to {}",
+            facultyId, startTime, endTime);
+        List<Group> freeGroups = jdbcTemplate.query(
+            env.getRequiredProperty(QUERY_GET_FREE_GROUPS_BY_FACULTY),
+            new GroupMapper(), facultyId, startTime, endTime, startTime, endTime);
+        log.info(LOG_FOUND_GROUPS, freeGroups.size());
+        return freeGroups;
     }
 
     @Override

@@ -18,10 +18,7 @@
 </head>
 <body>
 <div layout:fragment="content">
-  <!--  TODO 1. edit lesson (teacher and room only available):
-          TODO 1.2 after update 'time_start', 'time end' or 'course' run script and refill teacher's and room's selectors
-          TODO 1.3 after update 'time_start' focus to 'time end'
-          TODO 1.4 after submit update form reload this page
+  <!--
    TODO 2. Add students/groups (faculty, group and student only available
    TODO 3. check all on/off
    TODO 4. delete one student from lesson
@@ -30,7 +27,7 @@
     <h1>Lesson</h1>
     <!--    Lesson Properties-->
     <div class="col-8 border">
-      <form id="lesson properties" th:method="put">
+      <form id="lesson properties" th:method="put" th:action="${'/lessons/' + lesson.id}">
         <fieldset id="main_properties" disabled>
           <div class="p-3">
             <!-- Select date-->
@@ -109,7 +106,7 @@
                 </select>
               </div>
             </div>
-
+            <!--  Submit-->
             <input type="submit" class="btn btn-primary btn" value="Update">
           </div>
         </fieldset>
@@ -125,7 +122,7 @@
     </div>
     <br>
 
-    <!--    Buttons control table-->
+    <!-- Buttons control table-->
     <div class="pb-2">
       <form action="#">
         <div>
@@ -262,25 +259,11 @@
 <script
   src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.min.js"
   th:src="@{/webjars/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
-<script src="../resources/js/tablesort.js" th:src="@{/js/tablesort.js}"></script>
+<script src="../resources/js/sort_table.js" th:src="@{/js/sort_table.js}"></script>
 <script src="../resources/js/show_inactive.js" th:src="@{/js/show_inactive.js}"></script>
 <script src="../resources/js/fill_select.js" th:src="@{/js/fill_select.js}"></script>
 
 <script layout:fragment="script">
-
-  $('#selectFacultyAddStudent').change(function () {
-    let selectGroup = $('#selectGroupAddStudent')
-    let facultyId = $(this).val()
-    fillSelectGroups(selectGroup, facultyId, false)
-  })
-
-  $('#selectGroupAddStudent').change(function () {
-    if ($('#addModal').attr('data-modal-type') === 'addStudent') {
-      let selectStudent = $('#selectStudentAddStudent')
-      let groupId = $(this).val()
-      fillSelectStudents(selectStudent, 0, groupId, false)
-    }
-  })
 
   function updateOn () {
     if ($('#switchUpdateOn').is(':checked')) {
@@ -318,6 +301,25 @@
         submitButton.val('Add Group')
       }
     })
+
+    $('#selectFacultyAddStudent').change(function () {
+      let selectGroup = $('#selectGroupAddStudent')
+      let facultyId = $(this).val()
+      let time_start = $('#dateStartPickerLesson').children('input').val()
+      let time_end = $('#dateEndPickerLesson').children('input').val()
+      updateSelectGroupFilteredByFacultyAndDate(time_start, time_end, facultyId, selectGroup)
+    })
+
+    $('#selectGroupAddStudent').change(function () {
+      if ($('#addModal').attr('data-modal-type') === 'addStudent') {
+        let selectStudent = $('#selectStudentAddStudent')
+        let groupId = $(this).val()
+        let time_start = $('#dateStartPickerLesson').children('input').val()
+        let time_end = $('#dateEndPickerLesson').children('input').val()
+        updateSelectStudentsFilteredByGroupAndDate(time_start, time_end, groupId, selectStudent)
+      }
+    })
+
   })
 
   $(function () {
@@ -329,33 +331,31 @@
   //  DateTimePicker
   $(function () {
 
+    let dateEndPickerLesson = $('#dateEndPickerLesson')
+
     $('#dateStartPickerLesson').on('hide.datetimepicker', function (e) {
-      updateEndDatetimepicker($('#dateEndPickerLesson'), e)
-      updateOptionsSelectTeacher()
-      updateOptionsSelectRoom()
+      updateEndDatetimepicker(dateEndPickerLesson, e)
+      updateOptionsSelectTeacherAndRoom()
+      dateEndPickerLesson.focus()
     })
 
-    $('#dateEndPickerLesson').on('hide.datetimepicker', function (e) {
+    dateEndPickerLesson.on('hide.datetimepicker', function (e) {
       updateStartDatetimepicker($('#dateStartPickerLesson'), e)
+      updateOptionsSelectTeacherAndRoom()
     })
 
   })
 
-  function updateOptionsSelectTeacher () {
+  function updateOptionsSelectTeacherAndRoom () {
     let time_start = $('#dateStartPickerLesson').children('input').val()
     let time_end = $('#dateEndPickerLesson').children('input').val()
-    $.get('/teachers/free', { time_start: time_start, time_end: time_end }, function (data) {
-      fillSelectPersonFilteredByDate($('#selectTeacherEditLesson'), data, false)
-    })
+    let selectTeacher = $('#selectTeacherEditLesson')
+    let selectRoom = $('#selectRoomEditLesson')
+    updateSelectTeacherFilteredByDate(time_start, time_start, selectTeacher)
+    updateSelectRoomFilteredByDate(time_start, time_end, selectRoom)
+
   }
 
-  function updateOptionsSelectRoom () {
-    let time_start = $('#dateStartPickerLesson').children('input').val()
-    let time_end = $('#dateEndPickerLesson').children('input').val()
-    $.get('/rooms/free', { time_start: time_start, time_end: time_end }, function (data) {
-      fillSelectRoomFilteredByDate($('#selectRoomEditLesson'), data)
-    })
-  }
 
 </script>
 </body>

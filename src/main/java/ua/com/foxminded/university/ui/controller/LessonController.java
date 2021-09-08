@@ -44,7 +44,7 @@ public class LessonController {
     @GetMapping
     public String showLessons(Model model) {
         model.addAttribute("lessonFilter", new LessonFilter());
-        log.info("The required data is loaded into the model");
+        log.info("The required data is loaded into the model. Loading page");
         return "lessons";
     }
 
@@ -93,7 +93,7 @@ public class LessonController {
 
     @GetMapping("/{id}")
     @ResponseBody
-    public LessonDto showLesson(@PathVariable("id") int lessonId) {
+    public LessonDto showLessonWithStudents(@PathVariable("id") int lessonId) {
         log.debug("Getting lesson id({})", lessonId);
         LessonDto lessonDto = lessonDtoMapper.lessonToLessonDto(lessonService.getById(lessonId));
         log.info("Found lesson [teacher {}, course {}, room {}]",
@@ -103,7 +103,8 @@ public class LessonController {
     }
 
     @GetMapping("/{id}/students")
-    public String showLesson(@PathVariable("id") int lessonId, Model model) {
+    public String showLessonWithStudents(@PathVariable("id") int lessonId,
+                                         Model model) {
         log.debug("Getting data for lesson.html for lesson id({})", lessonId);
         Lesson lesson = lessonService.getById(lessonId);
         LessonDto lessonDto = lessonDtoMapper.lessonToLessonDto(lesson);
@@ -113,19 +114,26 @@ public class LessonController {
         LocalDateTime timeEnd = lesson.getTimeEnd();
         Teacher teacher = lesson.getTeacher();
         Room room = lesson.getRoom();
+
         log.debug("Loading free teachers in model");
-        List<Teacher> freeTeachers = teacherService.getFreeTeachersOnLessonTime(
-            timeStart, timeEnd);
+        List<Teacher> freeTeachers = teacherService
+            .getFreeTeachersOnLessonTime(timeStart, timeEnd);
         freeTeachers.add(teacher);
         model.addAttribute("teachers",
             teacherDtoMapper.teachersToTeacherDtos(freeTeachers));
+
         log.debug("Loading free rooms in model");
-        List<Room> freeRooms = roomService.getFreeRoomsOnLessonTime(timeStart, timeEnd);
+        List<Room> freeRooms = roomService
+            .getFreeRoomsOnLessonTime(timeStart, timeEnd);
         freeRooms.add(room);
         model.addAttribute("rooms", freeRooms);
+
         log.debug("Loading active groups in model");
-        model.addAttribute("groups", groupService.getActiveGroups());
-        log.info("The required data is loaded into the model");
+        model.addAttribute("groups",
+            groupService.getFreeGroupsOnLessonTime(timeStart, timeEnd));
+
+        log.info("The required data is loaded into the model. Loading page lesson id({})",
+            lessonId);
         return "lesson";
     }
 
@@ -195,11 +203,11 @@ public class LessonController {
     @PutMapping("/{id}")
     public String updateLesson(@ModelAttribute LessonDto lessonDto,
                                @PathVariable("id") int lessonId,
-                               @RequestParam(required = false) String uri) {
+                               HttpServletRequest request) {
         log.debug("Updating lesson id({})", lessonId);
         lessonService.update(lessonDtoMapper.lessonDtoToLesson(lessonDto));
-        log.info("Lesson id({}) is updated", lessonId);
-        return defineRedirect(uri);
+        log.info("Lesson id({}) updated successfully", lessonId);
+        return defineRedirect(request);
     }
 
     @DeleteMapping("/{id}")

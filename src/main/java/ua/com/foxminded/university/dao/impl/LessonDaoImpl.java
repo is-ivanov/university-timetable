@@ -115,7 +115,7 @@ public class LessonDaoImpl implements LessonDao {
             throw new DAOException(String.format(MESSAGE_UPDATE_LESSON_NOT_FOUND,
                 lesson.getId()));
         } else {
-            log.info("Update lesson id({})", lesson.getId());
+            log.info("Lesson id({}) updated successfully", lesson.getId());
         }
     }
 
