@@ -3,6 +3,7 @@ package ua.com.foxminded.university.domain.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ua.com.foxminded.university.dao.interfaces.LessonDao;
 import ua.com.foxminded.university.dao.interfaces.StudentDao;
 import ua.com.foxminded.university.domain.entity.Lesson;
@@ -109,13 +110,17 @@ public class LessonServiceImpl implements LessonService {
 
 
     @Override
-//    @Transactional
+    @Transactional
     public void addStudentsFromGroupToLesson(int groupId, int lessonId) {
         log.debug("Getting lesson by lessonId({})", lessonId);
-        Lesson lesson = lessonDao.getById(lessonId).orElse(
-            Lesson.builder().id(lessonId).build());
+        Lesson lesson = lessonDao.getById(lessonId)
+            .orElseThrow(() -> new ServiceException(
+                String.format("Lesson id(%d) not found", lessonId)
+            ));
         log.debug("Getting active students from group id({})", groupId);
-        List<Student> studentsFromGroup = studentService.getStudentsByGroup(groupId);
+        List<Student> studentsFromGroup =
+            studentService.getFreeStudentsFromGroup(groupId,
+                lesson.getTimeStart(), lesson.getTimeEnd());
         for (Student student : studentsFromGroup) {
             checkAndSaveStudentToLesson(lesson, student);
         }
