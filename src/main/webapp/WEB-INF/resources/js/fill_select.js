@@ -43,6 +43,20 @@ function updateSelectGroupFilteredByFacultyAndDate (
 }
 
 /**
+ * Send GET request and call function for filling select Groups
+ *
+ * @param {Number} facultyId - Selected faculty id
+ * @param {HTMLSelectElement} select - The select element for filling data
+ * @param {Boolean} isShowInactive - With true show inactive object
+ */
+function updateSelectGroupFilteredByFaculty (facultyId, select, isShowInactive) {
+  let uri = '/faculties/' + facultyId + '/groups'
+  $.get(uri, function (data) {
+    fillSelectGroups(select, data, isShowInactive)
+  })
+}
+
+/**
  * Send GET request and call function for filling select Students
  *
  * @param {String} time_start - Time start lesson for GET request

@@ -68,7 +68,7 @@ public class FacultyController {
         return REDIRECT_FACULTIES;
     }
 
-    @GetMapping("/{id}/groups/")
+    @GetMapping("/{id}/groups")
     @ResponseBody
     public List<Group> getGroupsFromFaculty(@PathVariable int id) {
         log.debug("Getting groups by faculty id({})", id);

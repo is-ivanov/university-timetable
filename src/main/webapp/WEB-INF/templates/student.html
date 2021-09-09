@@ -314,7 +314,7 @@
     let select = $('#selectGroup')
     let facultyId = $('#selectFaculty').val()
     let isShowInactive = $('#switchShowInactiveGroups').is(':checked')
-    fillSelectGroups(select, facultyId, isShowInactive)
+    updateSelectGroupFilteredByFaculty(facultyId, select, isShowInactive)
     switchSubmitEnabled()
   }
 
