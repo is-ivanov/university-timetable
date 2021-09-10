@@ -19,7 +19,6 @@
 <body>
 <div layout:fragment="content">
   <!--
-   TODO 2. Add students/groups (faculty, group and student only available
    TODO 3. check all on/off
    TODO 4. delete one student from lesson
    TODO 5. delete checked student from lesson-->
@@ -136,7 +135,7 @@
             <i class="bi bi-folder-plus"></i> Add Group
           </button>
 
-          <button class="btn btn-danger float-end" data-bs-toggle="modal"
+          <button class="btn btn-danger float-end checkbox__depends" data-bs-toggle="modal"
                   data-bs-target="#deleteModal" disabled>
             <i class="bi-trash"></i> Delete
           </button>
@@ -150,9 +149,9 @@
         <caption>Students of this lesson</caption>
         <thead class="bg-success">
         <tr>
-          <th scope="col" class="col check-box-table-cell checkbox">
+          <th scope="col" class="col check-box-table-cell">
             <label>
-              <input class="form-check-input" type="checkbox">
+              <input class="form-check-input" id="check-all" type="checkbox">
             </label>
           </th>
           <th scope="col" class="col th-sort">Group</th>
@@ -168,9 +167,9 @@
             th:if="${#lists.size(lesson.students) gt 0 and lesson.students.get(0).getId() ne 0}"
             th:data-bs-id="${studentDto.id}"
             th:classappend="${studentDto.active} ? 'active' : 'inactive'">
-          <td class="check-box-table-cell checkbox">
+          <td class="check-box-table-cell">
             <label>
-              <input class="form-check-input" type="checkbox">
+              <input class="form-check-input checkbox" type="checkbox">
             </label>
           </td>
           <td th:utext="${studentDto.groupName}">99XT-1</td>
