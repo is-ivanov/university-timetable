@@ -19,8 +19,6 @@
 <body>
 <div layout:fragment="content">
   <!--
-   TODO 3. check all on/off
-   TODO 4. delete one student from lesson
    TODO 5. delete checked student from lesson-->
   <div class="container-lg">
     <h1>Lesson</h1>
@@ -28,6 +26,8 @@
     <div class="col-8 border">
       <form id="lesson properties" th:method="put" th:action="${'/lessons/' + lesson.id}">
         <fieldset id="main_properties" disabled>
+          <input type="hidden" id="lessonId" th:value="${lesson.id}">
+          <legend class="visually-hidden">lesson properties</legend>
           <div class="p-3">
             <!-- Select date-->
             <div class="row mb-3" id="selectDateEditLesson">
@@ -137,7 +137,7 @@
 
           <button class="btn btn-danger float-end checkbox__depends" data-bs-toggle="modal"
                   data-bs-target="#deleteModal" disabled>
-            <i class="bi-trash"></i> Delete
+            <i class="bi-trash"></i> Remove
           </button>
         </div>
       </form>
@@ -169,22 +169,22 @@
             th:classappend="${studentDto.active} ? 'active' : 'inactive'">
           <td class="check-box-table-cell">
             <label>
-              <input class="form-check-input checkbox" type="checkbox">
+              <input class="form-check-input checkbox-table" type="checkbox">
             </label>
           </td>
           <td th:utext="${studentDto.groupName}">99XT-1</td>
-          <td th:utext="${studentDto.firstName}">Ivan</td>
-          <td th:utext="${studentDto.patronymic}">Ivanovich</td>
-          <td th:utext="${studentDto.lastName}">Ivanov</td>
+          <td class="first_name" th:utext="${studentDto.firstName}">Ivan</td>
+          <td class="patronymic" th:utext="${studentDto.patronymic}">Ivanovich</td>
+          <td class="last_name" th:utext="${studentDto.lastName}">Ivanov</td>
           <td th:utext="${studentDto.active} ? 'active' : 'inactive'" class="text-center"
               th:classappend="${studentDto.active} ? 'active' : 'inactive'">active
           </td>
           <td>
             <div class="col-auto">
-              <a href="#deleteLessonModal"
-                 class="btn btn-danger btn-sm deleteButton"
+              <a href="#removeStudentFromLessonModal"
+                 class="btn btn-danger btn-sm removeButton"
                  data-bs-toggle="modal" th:data-bs-id="${studentDto.id}">
-                <i class="bi-trash"></i> Delete
+                <i class="bi-trash"></i> Remove
               </a>
             </div>
           </td>
@@ -244,6 +244,36 @@
             </button>
             <input type="submit" class="btn btn-primary btn-sm" id="submit"
                    value="Add Student">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!--  Remove Student Modal-->
+  <div id="removeStudentFromLessonModal" class="modal fade" data-bs-backdrop="static"
+       tabindex="-1" aria-labelledby="RemoveStudentFromLessonModalLabel"
+       aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form id="formDelete" th:method="delete">
+          <div class="modal-header">
+            <h5 id="removeStudentFromLessonModalLabel" class="modal-title">Remove Lesson</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to remove
+              <span class="fw-bold" id="removedStudent"></span></p>
+            <p class="text-danger">
+              <small>This action cannot be undone.</small>
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary"
+                    data-bs-dismiss="modal">Cancel
+            </button>
+            <input type="submit" class="btn btn-danger" value="Remove">
           </div>
         </form>
       </div>
@@ -326,6 +356,24 @@
   $(function () {
     $('#addModal').on('shown.bs.modal', function () {
       $('#selectFacultyAddStudent').focus()
+    })
+  })
+
+  // REMOVE MODAL
+  $(function () {
+    $('.removeButton').on('click', function () {
+      let studentId = $(this).attr('data-bs-id')
+      let lessonId = $('#lessonId').val()
+      let row = $(this).parent().parent().parent()
+      let firstName = row.children('.first_name').text()
+      let patronymic = row.children('.patronymic').text()
+      let lastName = row.children('.last_name').text()
+      let student = 'student \'' + firstName + ' ' + patronymic + ' ' + lastName + '\' '
+      let course = $('#selectCourseEditLesson > option:selected').text()
+      let timeStart = $('#dateStartPickerLesson > input').val()
+      let lesson = student + 'from lesson: ' + course + ' on ' + timeStart
+      $('#removedStudent').text(lesson)
+      $('#formDelete').attr('action', '/lessons/' + lessonId + '/students/' + studentId)
     })
   })
 

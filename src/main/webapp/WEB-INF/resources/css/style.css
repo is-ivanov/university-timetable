@@ -48,13 +48,15 @@ option.inactive {
   background: lavender;
   color: red;
 }
+
 td.check-box-table-cell,
 th.check-box-table-cell {
   text-align: center;
   width: 41px;
 }
+
 td input[type=checkbox],
-th input[type=checkbox]{
+th input[type=checkbox] {
   margin: 0 auto;
   vertical-align: middle;
 }
@@ -90,3 +92,6 @@ td.inactive {
   3px -3px 2px #BBB;
 }
 
+tr.selected {
+  --bs-table-accent-bg: var(--bs-table-hover-bg);
+}
