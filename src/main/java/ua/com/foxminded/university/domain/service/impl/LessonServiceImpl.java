@@ -142,6 +142,14 @@ public class LessonServiceImpl implements LessonService {
         }
     }
 
+    @Override
+    public void removeStudentFromLesson(int lessonId, int studentId){
+        log.debug("Removing student id({}) from lesson id({})", studentId, lessonId);
+        lessonDao.removeStudentFromLesson(lessonId, studentId);
+        log.info("Student id({}) successfully removed from lesson id({})",
+            studentId, lessonId);
+    }
+
     private void checkAndSaveStudentToLesson(Lesson lesson, Student student) {
         if (student.isActive()) {
             if (checkAvailableStudentForLesson(lesson, student)) {

@@ -208,6 +208,17 @@ public class LessonController {
         return defineRedirect(request);
     }
 
+    @DeleteMapping("/{id}/students/{studentId}")
+    public String removeStudentFromLesson(@PathVariable("id") int lessonId,
+                                          @PathVariable int studentId,
+                                          HttpServletRequest request) {
+        log.debug("Remove student id({}) from lesson id({})", studentId, lessonId);
+        lessonService.removeStudentFromLesson(lessonId, studentId);
+        log.info("Student id({}) successfully removed from lesson id({})",
+            studentId, lessonId);
+        return defineRedirect(request);
+    }
+
     @DeleteMapping("/{id}")
     public String deleteLesson(@PathVariable("id") int lessonId,
                                @RequestParam(required = false) String uri) {

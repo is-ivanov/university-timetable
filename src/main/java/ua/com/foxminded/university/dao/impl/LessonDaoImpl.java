@@ -89,7 +89,9 @@ public class LessonDaoImpl implements LessonDao {
             throw new DAOException(String.format(MESSAGE_LESSON_NOT_FOUND, id),
                 e);
         }
-        log.info("Found {}", result);
+        log.info("Found lesson: course [{}], room[{}], teacher[{}]",
+            result.getCourse().getName(), result.getRoom().getNumber(),
+            result.getTeacher().getFullName());
         return Optional.ofNullable(result);
     }
 
@@ -174,19 +176,18 @@ public class LessonDaoImpl implements LessonDao {
     }
 
     @Override
-    public void deleteStudentFromLesson(int lessonId, int studentId) {
-        log.debug("Deleting student id({}) from lesson id({})", studentId, lessonId);
+    public void removeStudentFromLesson(int lessonId, int studentId) {
+        log.debug("Removing student id({}) from lesson id({})", studentId, lessonId);
         int numberDeletedRows = jdbcTemplate.update(
             env.getRequiredProperty(QUERY_DELETE_STUDENT_FROM_LESSON),
             lessonId, studentId);
         if (numberDeletedRows == 0) {
-
-            log.warn("Can't delete student id({}) from lesson id({})",
+            log.warn("Can't remove student id({}) from lesson id({})",
                 studentId, lessonId);
             throw new DAOException(String.format(
                 MESSAGE_STUDENT_NOT_FOUND_IN_LESSON, studentId, lessonId));
         } else {
-            log.info("Student id({}) successfully deleted from lesson id({})",
+            log.info("Student id({}) successfully removed from lesson id({})",
                 studentId, lessonId);
         }
     }

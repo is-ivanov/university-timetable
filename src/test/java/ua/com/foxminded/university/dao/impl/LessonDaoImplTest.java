@@ -359,7 +359,7 @@ class LessonDaoImplTest {
         void testDeleteStudentFromLesson() {
             int expectedRowsInTable = JdbcTestUtils
                 .countRowsInTable(jdbcTemplate, TABLE_STUDENTS_LESSON) - 1;
-            dao.deleteStudentFromLesson(ID1, ID1);
+            dao.removeStudentFromLesson(ID1, ID1);
             int actualRowsInTable = JdbcTestUtils.countRowsInTable(jdbcTemplate,
                 TABLE_STUDENTS_LESSON);
             assertEquals(expectedRowsInTable, actualRowsInTable);
