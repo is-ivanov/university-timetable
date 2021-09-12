@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import ua.com.foxminded.university.domain.entity.Room;
 import ua.com.foxminded.university.domain.service.interfaces.RoomService;
 
-import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -31,7 +30,7 @@ public class RoomController {
         model.addAttribute("rooms", roomService.getAll());
         model.addAttribute("newRoom", new Room());
         log.info("The list of rooms is loaded into the model");
-        return defineRedirect(URI_ROOMS);
+        return "room";
     }
 
     @GetMapping("/{id}")

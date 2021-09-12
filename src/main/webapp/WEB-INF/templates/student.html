@@ -299,81 +299,78 @@
 <!--Scripts-->
 <script layout:fragment="script">
   function showInactiveGroupsInSelect () {
-    const check = document.getElementById('switchShowInactiveGroups')
-    const select = document.getElementById('selectGroup')
-    showInactiveSelectOption(select, check)
+    const check = document.getElementById('switchShowInactiveGroups');
+    const select = document.getElementById('selectGroup');
+    showInactiveSelectOption(select, check);
   }
 
   function showInactiveStudentsInTable () {
-    const table = document.getElementById('mainTable')
-    const check = document.getElementById('switchShowInactiveStudentsMainTable')
-    showInactiveTableRow(table, check)
+    const table = document.getElementById('mainTable');
+    const check = document.getElementById('switchShowInactiveStudentsMainTable');
+    showInactiveTableRow(table, check);
   }
 
   function fillSelectGroupsStudents () {
-    let select = $('#selectGroup')
-    let facultyId = $('#selectFaculty').val()
-    let isShowInactive = $('#switchShowInactiveGroups').is(':checked')
-    updateSelectGroupFilteredByFaculty(facultyId, select, isShowInactive)
-    switchSubmitEnabled()
+    let select = $('#selectGroup');
+    let facultyId = $('#selectFaculty').val();
+    let isShowInactive = $('#switchShowInactiveGroups').is(':checked');
+    updateSelectGroupFilteredByFaculty(facultyId, select, isShowInactive);
+    switchSubmitEnabled();
   }
 
   function switchSubmitEnabled () {
     if ($('#selectFaculty').val() > 0 ||
       $('#selectGroup').val() > 0) {
-      $('#submit').removeAttr('disabled')
+      $('#submit').removeAttr('disabled');
     } else {
-      $('#submit').attr('disabled', 'disabled')
+      $('#submit').attr('disabled', 'disabled');
     }
   }
 
   // NEW MODAL
   $(function () {
     $('#newStudentModal').on('show.bs.modal', function () {
-      $('#switchActiveNewStudent').prop('checked', true)
-    })
-  })
+      $('#switchActiveNewStudent').prop('checked', true);
+    });
+  });
 
   $(function () {
     $('#newStudentModal').on('shown.bs.modal', function () {
-      $('#newStudentFirstNameInput').focus()
-    })
-  })
+      $('#newStudentFirstNameInput').focus();
+    });
+  });
 
   // EDIT MODAL
   $(function () {
     $('.editButton').on('click', function () {
-      let href = '/students/' + $(this).attr('data-bs-id')
-      $('#formEdit').attr('action', href)
+      let href = '/students/' + $(this).attr('data-bs-id');
+      $('#formEdit').attr('action', href);
       $.get(href, function (student) {
-        $('#editStudentFirstNameInput').val(student.firstName)
-        $('#editStudentPatronymicInput').val(student.patronymic)
-        $('#editStudentLastNameInput').val(student.lastName)
-        let groupId = student.groupId
-        $('#switchActiveEditStudent').prop('checked', student.active)
-        $('#editStudentGroupSelect option[value=' + groupId + ']').prop('selected', true)
-      })
-    })
-  })
+        $('#editStudentFirstNameInput').val(student.firstName);
+        $('#editStudentPatronymicInput').val(student.patronymic);
+        $('#editStudentLastNameInput').val(student.lastName);
+        let groupId = student.groupId;
+        $('#switchActiveEditStudent').prop('checked', student.active);
+        $('#editStudentGroupSelect option[value=' + groupId + ']').prop('selected', true);
+      });
+    });
+  });
   $(function () {
     $('#editStudentModal').on('shown.bs.modal', function () {
-      $('#editStudentFirstNameInput').focus()
-    })
-  })
+      $('#editStudentFirstNameInput').focus();
+    });
+  });
 
   // DELETE MODAL
   $(function () {
     $('.deleteButton').on('click', function () {
-      let id = $(this).attr('data-bs-id')
-      let row = $(this).parent().parent().parent().parent()
-      let firstName = row.children('.first_name').text()
-      let patronymic = row.children('.patronymic').text()
-      let lastName = row.children('.last_name').text()
-      let student = '\'' + firstName + ' ' + patronymic + ' ' + lastName + '\'?'
-      $('#deletedStudent').text(student)
-      $('#formDelete').attr('action', '/students/' + id)
-    })
-  })
+      let id = $(this).attr('data-bs-id');
+      let row = $(this).parent().parent().parent().parent();
+      let student = getPersonFullNameFromRow(row);
+      $('#deletedStudent').text(student + '?');
+      $('#formDelete').attr('action', '/students/' + id);
+    });
+  });
 
 </script>
 </body>

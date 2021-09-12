@@ -289,72 +289,76 @@
 <!--Scripts-->
 <script layout:fragment="script">
   function showInactiveTeachersInTable () {
-    const table = document.getElementById('mainTable')
-    const check = document.getElementById('switchShowInactiveTeachersMainTable')
-    showInactiveTableRow(table, check)
+    const table = document.getElementById('mainTable');
+    const check = document.getElementById('switchShowInactiveTeachersMainTable');
+    showInactiveTableRow(table, check);
   }
+  //TODO call onclick and pass parameter selected value faculty Id
+  $('#selectFaculty').change(function () {
+
+  })
 
   function fillSelectDepartmentsTeachers () {
-    fillSelectDepartments()
-    switchSubmitEnabled()
+    updateSelectDepartments();
+    switchSubmitEnabled();
   }
 
   function switchSubmitEnabled () {
     if ($('#selectFaculty').val() > 0 ||
       $('#selectDepartment').val() > 0) {
-      $('#submit').removeAttr('disabled')
+      $('#submit').removeAttr('disabled');
     } else {
-      $('#submit').attr('disabled', 'disabled')
+      $('#submit').attr('disabled', 'disabled');
     }
   }
 
   // NEW MODAL
   $(function () {
     $('#newTeacherModal').on('show.bs.modal', function () {
-      $('#switchActiveNewTeacher').prop('checked', true)
-    })
-  })
+      $('#switchActiveNewTeacher').prop('checked', true);
+    });
+  });
 
   $(function () {
     $('#newTeacherModal').on('shown.bs.modal', function () {
-      $('#newTeacherFirstNameInput').focus()
-    })
-  })
+      $('#newTeacherFirstNameInput').focus();
+    });
+  });
 
   // EDIT MODAL
   $(function () {
     $('.editButton').on('click', function () {
-      let href = '/teachers/' + $(this).attr('data-bs-id')
-      $('#formEdit').attr('action', href)
+      let href = '/teachers/' + $(this).attr('data-bs-id');
+      $('#formEdit').attr('action', href);
       $.get(href, function (teacher) {
-        $('#editTeacherFirstNameInput').val(teacher.firstName)
-        $('#editTeacherPatronymicInput').val(teacher.patronymic)
-        $('#editTeacherLastNameInput').val(teacher.lastName)
-        let departmentId = teacher.departmentId
-        $('#switchActiveEditTeacher').prop('checked', teacher.active)
-        $('#editTeacherDepartmentSelect option[value=' + departmentId + ']').prop('selected', true)
-      })
-    })
-  })
+        $('#editTeacherFirstNameInput').val(teacher.firstName);
+        $('#editTeacherPatronymicInput').val(teacher.patronymic);
+        $('#editTeacherLastNameInput').val(teacher.lastName);
+        let departmentId = teacher.departmentId;
+        $('#switchActiveEditTeacher').prop('checked', teacher.active);
+        $('#editTeacherDepartmentSelect option[value=' + departmentId + ']').prop('selected', true);
+      });
+    });
+  });
   $(function () {
     $('#editTeacherModal').on('shown.bs.modal', function () {
-      $('#editTeacherFirstNameInput').focus()
-    })
-  })
+      $('#editTeacherFirstNameInput').focus();
+    });
+  });
 
   // DELETE MODAL
   $(function () {
     $('.deleteButton').on('click', function () {
-      let id = $(this).attr('data-bs-id')
-      let row = $(this).parent().parent().parent().parent()
-      let firstName = row.children('.first_name').text()
-      let patronymic = row.children('.patronymic').text()
-      let lastName = row.children('.last_name').text()
-      let teacher = '\'' + firstName + ' ' + patronymic + ' ' + lastName + '\'?'
-      $('#deletedTeacher').text(teacher)
-      $('#formDelete').attr('action', '/teachers/' + id)
-    })
-  })
+      let id = $(this).attr('data-bs-id');
+      let row = $(this).parent().parent().parent().parent();
+      let firstName = row.children('.first_name').text();
+      let patronymic = row.children('.patronymic').text();
+      let lastName = row.children('.last_name').text();
+      let teacher = '\'' + firstName + ' ' + patronymic + ' ' + lastName + '\'?';
+      $('#deletedTeacher').text(teacher);
+      $('#formDelete').attr('action', '/teachers/' + id);
+    });
+  });
 
 </script>
 </body>

@@ -232,7 +232,8 @@
 
   <!--  Modal Forms-->
   <!--  Create Modal-->
-  <!--  TODO 1. In create and edit lesson modal fisrt position input date_start ans date_end, after course then teacher and room\
+  <!--  TODO 1. In create and edit lesson modal first position
+   input date_start ans date_end, after course then teacher and room\
         TODO 2. After update time fill selectors teachers and rooms-->
   <div id="newLessonModal" class="modal fade" data-bs-backdrop="static"
        tabindex="-1" aria-labelledby="NewLessonModalLabel"
@@ -459,7 +460,7 @@
 <!--Scripts-->
 <script layout:fragment="script">
   function fillSelectDepartmentsAndTeachers () {
-    fillSelectDepartments()
+    updateSelectDepartments()
 
     const select = document.getElementById('selectFaculty').value
     fillSelectTeachers(select, 'faculty')
@@ -498,7 +499,7 @@
       $('#submit').attr('disabled', 'disabled')
     }
   }
-
+  //Datetimepicker
   $(function () {
 
     $('#dateStartPicker').on('change.datetimepicker', function (e) {

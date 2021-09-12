@@ -8,8 +8,8 @@
 function updateSelectTeacherFilteredByDate (time_start, time_end, select) {
   $.get('/teachers/free', { time_start: time_start, time_end: time_end },
     function (data) {
-      fillSelectPersonWithDefaultPerson(select, data, false)
-    })
+      fillSelectPersonWithDefaultPerson(select, data, false);
+    });
 }
 
 /**
@@ -22,8 +22,8 @@ function updateSelectTeacherFilteredByDate (time_start, time_end, select) {
 function updateSelectRoomFilteredByDate (time_start, time_end, select) {
   $.get('/rooms/free', { time_start: time_start, time_end: time_end },
     function (data) {
-      fillSelectRoomFilteredByDate(select, data)
-    })
+      fillSelectRoomFilteredByDate(select, data);
+    });
 }
 
 /**
@@ -36,10 +36,10 @@ function updateSelectRoomFilteredByDate (time_start, time_end, select) {
  */
 function updateSelectGroupFilteredByFacultyAndDate (
   time_start, time_end, facultyId, select) {
-  let uri = '/faculties/' + facultyId + '/groups/free'
+  let uri = '/faculties/' + facultyId + '/groups/free';
   $.get(uri, { time_start: time_start, time_end: time_end }, function (data) {
-    fillSelectGroups(select, data, false)
-  })
+    fillSelectGroups(select, data, false);
+  });
 }
 
 /**
@@ -49,11 +49,12 @@ function updateSelectGroupFilteredByFacultyAndDate (
  * @param {HTMLSelectElement} select - The select element for filling data
  * @param {Boolean} isShowInactive - With true show inactive object
  */
-function updateSelectGroupFilteredByFaculty (facultyId, select, isShowInactive) {
-  let uri = '/faculties/' + facultyId + '/groups'
+function updateSelectGroupFilteredByFaculty (
+  facultyId, select, isShowInactive) {
+  let uri = '/faculties/' + facultyId + '/groups';
   $.get(uri, function (data) {
-    fillSelectGroups(select, data, isShowInactive)
-  })
+    fillSelectGroups(select, data, isShowInactive);
+  });
 }
 
 /**
@@ -64,11 +65,34 @@ function updateSelectGroupFilteredByFaculty (facultyId, select, isShowInactive) 
  * @param {Number} groupId - Selected group id
  * @param {HTMLSelectElement} select - The select element for filling data
  */
-function updateSelectStudentsFilteredByGroupAndDate (time_start, time_end, groupId, select) {
-  let uri = '/groups/' + groupId + '/students/free'
+function updateSelectStudentsFilteredByGroupAndDate (
+  time_start, time_end, groupId, select) {
+  let uri = '/groups/' + groupId + '/students/free';
   $.get(uri, { time_start: time_start, time_end: time_end }, function (data) {
-    fillSelectPerson(select, data, false)
-  })
+    fillSelectPerson(select, data, false);
+  });
+}
+
+/**
+ * Send GET request and call function for filling select departments
+ *
+ * @param {Number} facultyId - Selected faculty id
+ * @param {HTMLSelectElement} select - The select element for filling data
+ */
+//TODO Refactor this function
+function updateSelectDepartmentsFilteredByFaculty (facultyId, select) {
+  let uri = '/faculties/' + facultyId + 'departments';
+  let faculty = $('#selectFaculty').val();
+  $.get('/teachers/departments?facultyId=' + faculty, function (data) {
+    $('#selectDepartment').
+      empty().
+      append('<option value="0" selected>Please select department...</option>');
+    data.sort(sortByName);
+    data.forEach(function (item) {
+      let option = '<option value = ' + item.id + '>' + item.name + '</option>';
+      $('#selectDepartment').append(option);
+    });
+  });
 }
 
 //--------------------------------------------------
@@ -81,18 +105,18 @@ function updateSelectStudentsFilteredByGroupAndDate (time_start, time_end, group
  * @param {Boolean} isShowInactive - With true show inactive object
  */
 function fillSelectPersonWithDefaultPerson (select, data, isShowInactive) {
-  data.sort(sortByFullName)
-  let selectedValue = $(select).children('option:selected').val()
-  let selectedText = $(select).children('option:selected').text()
+  data.sort(sortByFullName);
+  let selectedValue = $(select).children('option:selected').val();
+  let selectedText = $(select).children('option:selected').text();
   $(select).
     empty().
     append('<option value="0">Please select person ...</option>').
     append('<option value="' + selectedValue + '" selected>' + selectedText +
-      '</option>')
+      '</option>');
   data.forEach(function (person) {
     fillSelectActive(person.id, person.fullName, person.active, isShowInactive,
-      select)
-  })
+      select);
+  });
 }
 
 /**
@@ -103,14 +127,14 @@ function fillSelectPersonWithDefaultPerson (select, data, isShowInactive) {
  * @param {Boolean} isShowInactive - With true show inactive object
  */
 function fillSelectPerson (select, data, isShowInactive) {
-  data.sort(sortByFullName)
+  data.sort(sortByFullName);
   $(select).
     empty().
-    append('<option value="0">Please select person ...</option>')
+    append('<option value="0">Please select person ...</option>');
   data.forEach(function (person) {
     fillSelectActive(person.id, person.fullName, person.active, isShowInactive,
-      select)
-  })
+      select);
+  });
 }
 
 /**
@@ -120,19 +144,19 @@ function fillSelectPerson (select, data, isShowInactive) {
  * @param {Object} data - Returned data from GET response
  */
 function fillSelectRoomFilteredByDate (select, data) {
-  data.sort(sortByRoom)
-  let selectedValue = $(select).children('option:selected').val()
-  let selectedText = $(select).children('option:selected').text()
+  data.sort(sortByRoom);
+  let selectedValue = $(select).children('option:selected').val();
+  let selectedText = $(select).children('option:selected').text();
   $(select).
     empty().
     append('<option value="0">Please select room...</option>').
     append('<option value="' + selectedValue + '" selected>' + selectedText +
-      '</option>')
+      '</option>');
   data.forEach(function (room) {
-    let name = room.building + ' - ' + room.number
-    let option = '<option value = ' + room.id + '>' + name + '</option>'
-    select.append(option)
-  })
+    let name = room.building + ' - ' + room.number;
+    let option = '<option value = ' + room.id + '>' + name + '</option>';
+    select.append(option);
+  });
 }
 
 /**
@@ -143,13 +167,13 @@ function fillSelectRoomFilteredByDate (select, data) {
  * @param {Boolean} isShowInactive - With true we show inactive groups
  */
 function fillSelectGroups (select, data, isShowInactive) {
-  data.sort(sortByName)
+  data.sort(sortByName);
   $(select).
     empty().
-    append('<option value="0" selected>Please select group...</option>')
+    append('<option value="0" selected>Please select group...</option>');
   data.forEach(function (group) {
-    fillSelectActive(group.id, group.name, group.active, isShowInactive, select)
-  })
+    fillSelectActive(group.id, group.name, group.active, isShowInactive, select);
+  });
 }
 
 /**
@@ -161,24 +185,24 @@ function fillSelectGroups (select, data, isShowInactive) {
  * @param {Boolean} isShowInactive - With true we show inactive students
  */
 function fillSelectStudents (select, facultyId, groupId, isShowInactive) {
-  let uri
+  let uri;
   if (groupId > 0) {
-    uri = '/groups/' + groupId
+    uri = '/groups/' + groupId;
   } else if (groupId === 0 && facultyId >= 0) {
-    uri = '/faculties/' + facultyId
+    uri = '/faculties/' + facultyId;
   }
-  uri = uri + '/students'
+  uri = uri + '/students';
   $.get(uri, function (data) {
     select.
       empty().
       append(
-        '<option value="" disabled selected>Please select student...</option>')
-    data.sort(sortByFullName)
+        '<option value="" disabled selected>Please select student...</option>');
+    data.sort(sortByFullName);
     data.forEach(function (studentDto) {
       fillSelectActive(studentDto.id, studentDto.fullName, studentDto.active,
-        isShowInactive, select)
-    })
-  })
+        isShowInactive, select);
+    });
+  });
 }
 
 /**
@@ -191,35 +215,18 @@ function fillSelectStudents (select, facultyId, groupId, isShowInactive) {
  * @param {HTMLSelectElement} select
  */
 function fillSelectActive (value, text, isActive, isShowInactive, select) {
-  let option
+  let option;
   if (isActive === true) {
     option = '<option class = \'active\' value = ' + value + '>' + text +
-      '</option>'
+      '</option>';
   } else if (isShowInactive) {
     option = '<option class = \'inactive\' value = ' + value + '>' + text +
-      ' - inactive' + '</option>'
+      ' - inactive' + '</option>';
   } else {
     option = '<option class = \'inactive d-none\' value = ' + value + '>' +
-      text + ' - inactive' + '</option>'
+      text + ' - inactive' + '</option>';
   }
-  select.append(option)
-}
-
-/**
- * Fill select 'selectDepartment' with departments data from the DB
- */
-function fillSelectDepartments () {
-  let faculty = $('#selectFaculty').val()
-  $.get('/teachers/departments?facultyId=' + faculty, function (data) {
-    $('#selectDepartment').
-      empty().
-      append('<option value="0" selected>Please select department...</option>')
-    data.sort(sortByName)
-    data.forEach(function (item) {
-      let option = '<option value = ' + item.id + '>' + item.name + '</option>'
-      $('#selectDepartment').append(option)
-    })
-  })
+  select.append(option);
 }
 
 /**
@@ -231,66 +238,66 @@ function fillSelectDepartments () {
  * @param {String}            type        Type of select (faculty; department)
  */
 function fillSelectTeachers (select, valueSelect, type) {
-  let uri
+  let uri;
   if (type === 'faculty') {
-    uri = 'lessons/faculties?facultyId=' + valueSelect
+    uri = 'lessons/faculties?facultyId=' + valueSelect;
   } else if (type === 'department') {
-    uri = 'lessons/departments?departmentId=' + valueSelect
+    uri = 'lessons/departments?departmentId=' + valueSelect;
   }
   $.get(uri, function (data) {
     $('#selectTeacher').
       empty().
-      append('<option value="0" selected>Please select teacher...</option>')
+      append('<option value="0" selected>Please select teacher...</option>');
     data.sort(function (a, b) {
-      const nameA = a.fullName.toLowerCase()
-      const nameB = b.fullName.toLowerCase()
+      const nameA = a.fullName.toLowerCase();
+      const nameB = b.fullName.toLowerCase();
       if (nameA < nameB)
-        return -1
+        return -1;
       if (nameA > nameB)
-        return 1
-      return 0
-    })
+        return 1;
+      return 0;
+    });
     data.forEach(function (teacher) {
-      let option
+      let option;
       if (teacher.active === true) {
         option = '<option class = \'active\' value = ' + teacher.id + '>' +
-          teacher.fullName + '</option>'
+          teacher.fullName + '</option>';
       } else if ($('#switchShowInactiveTeachers').is(':checked')) {
         option = '<option class = \'inactive\' value = ' + teacher.id + '>' +
-          teacher.fullName + ' - inactive' + '</option>'
+          teacher.fullName + ' - inactive' + '</option>';
       } else {
         option = '<option class = \'inactive d-none\' value = ' + teacher.id +
-          '>' + teacher.fullName + ' - inactive' + '</option>'
+          '>' + teacher.fullName + ' - inactive' + '</option>';
       }
-      $('#selectTeacher').append(option)
-    })
-  })
+      $('#selectTeacher').append(option);
+    });
+  });
 }
 
 function sortByName (a, b) {
-  const nameA = a.name.toLowerCase()
-  const nameB = b.name.toLowerCase()
-  return sortByText(nameA, nameB)
+  const nameA = a.name.toLowerCase();
+  const nameB = b.name.toLowerCase();
+  return sortByText(nameA, nameB);
 }
 
 function sortByFullName (a, b) {
-  const fullNameA = a.fullName.toLowerCase()
-  const fullNameB = b.fullName.toLowerCase()
-  return sortByText(fullNameA, fullNameB)
+  const fullNameA = a.fullName.toLowerCase();
+  const fullNameB = b.fullName.toLowerCase();
+  return sortByText(fullNameA, fullNameB);
 }
 
 function sortByRoom (a, b) {
-  let roomA = a.building + ' - ' + a.number
-  let roomB = b.building + ' - ' + b.number
-  roomA = roomA.toLowerCase()
-  roomB = roomB.toLowerCase()
-  return sortByText(roomA, roomB)
+  let roomA = a.building + ' - ' + a.number;
+  let roomB = b.building + ' - ' + b.number;
+  roomA = roomA.toLowerCase();
+  roomB = roomB.toLowerCase();
+  return sortByText(roomA, roomB);
 }
 
 function sortByText (a, b) {
   if (a < b)
-    return -1
+    return -1;
   if (a > b)
-    return 1
-  return 0
+    return 1;
+  return 0;
 }
