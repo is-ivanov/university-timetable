@@ -8,13 +8,15 @@ import org.springframework.web.bind.annotation.*;
 import ua.com.foxminded.university.domain.entity.Course;
 import ua.com.foxminded.university.domain.service.interfaces.CourseService;
 
+import static ua.com.foxminded.university.ui.Util.defineRedirect;
+
 @Slf4j
 @RequiredArgsConstructor
 @Controller
 @RequestMapping("/courses")
 public class CourseController {
 
-    public static final String REDIRECT_COURSES = "redirect:/courses";
+    public static final String URI_COURSES = "/courses";
 
     private final CourseService courseService;
 
@@ -32,12 +34,12 @@ public class CourseController {
         log.debug("Creating {}", course);
         courseService.add(course);
         log.info("{} is created", course);
-        return REDIRECT_COURSES;
+        return defineRedirect(URI_COURSES);
     }
 
     @GetMapping("/{id}")
     @ResponseBody
-    public Course showCourse(@PathVariable("id") int courseId) {
+    public Course getCourse(@PathVariable("id") int courseId) {
         log.debug("Getting course id({}})", courseId);
         Course course = courseService.getById(courseId);
         log.info("Found {}", course);
@@ -50,7 +52,7 @@ public class CourseController {
         log.debug("Updating course id({})", courseId);
         courseService.update(course);
         log.info("Course id({}) is updated", courseId);
-        return REDIRECT_COURSES;
+        return defineRedirect(URI_COURSES);
     }
 
     @DeleteMapping("/{id}")
@@ -58,6 +60,6 @@ public class CourseController {
         log.debug("Deleting course id({})", courseId);
         courseService.delete(courseId);
         log.info("Course id({}) is deleted", courseId);
-        return REDIRECT_COURSES;
+        return defineRedirect(URI_COURSES);
     }
 }

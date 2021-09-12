@@ -85,64 +85,64 @@
     </div>
   </div>
 
-    <!--Edit Modal -->
-    <div id="editCourseModal" class="modal fade" data-bs-backdrop="static"
-         tabindex="-1" aria-labelledby="editCourseModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <form id="formEdit" th:method="put">
-            <div class="modal-header">
-              <h5 class="modal-title" id="editCourseModalLabel">Update Course</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal"
-                      aria-label="Close"></button>
+  <!--Edit Modal -->
+  <div id="editCourseModal" class="modal fade" data-bs-backdrop="static"
+       tabindex="-1" aria-labelledby="editCourseModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form id="formEdit" th:method="put">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editCourseModalLabel">Update Course</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="editCourseNameInput" class="form-label">Name</label>
+              <input type="text" class="form-control" id="editCourseNameInput"
+                     name="name" value="" required>
             </div>
-            <div class="modal-body">
-              <div class="mb-3">
-                <label for="editCourseNameInput" class="form-label">Name</label>
-                <input type="text" class="form-control" id="editCourseNameInput"
-                       name="name" value="" required>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary btn-sm"
-                      data-bs-dismiss="modal">Cancel
-              </button>
-              <input type="submit" class="btn btn-primary btn-sm" value="Update">
-            </div>
-          </form>
-        </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary btn-sm"
+                    data-bs-dismiss="modal">Cancel
+            </button>
+            <input type="submit" class="btn btn-primary btn-sm" value="Update">
+          </div>
+        </form>
       </div>
     </div>
+  </div>
 
-    <!--  Delete Modal-->
-    <div id="deleteCourseModal" class="modal fade" data-bs-backdrop="static"
-         tabindex="-1" aria-labelledby="DeleteCourseModalLabel"
-         aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <form id="formDelete" th:method="delete">
-            <div class="modal-header">
-              <h5 id="deleteCourseModalLabel" class="modal-title">Delete Course</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal"
-                      aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <p>Are you sure you want to delete
-                <span class="fw-bold" id="deletedCourseName"></span></p>
-              <p class="text-danger">
-                <small>This action cannot be undone.</small>
-              </p>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary btn-sm"
-                      data-bs-dismiss="modal">Cancel
-              </button>
-              <input type="submit" class="btn btn-danger btn-sm" value="Delete">
-            </div>
-          </form>
-        </div>
+  <!--  Delete Modal-->
+  <div id="deleteCourseModal" class="modal fade" data-bs-backdrop="static"
+       tabindex="-1" aria-labelledby="DeleteCourseModalLabel"
+       aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form id="formDelete" th:method="delete">
+          <div class="modal-header">
+            <h5 id="deleteCourseModalLabel" class="modal-title">Delete Course</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to delete
+              <span class="fw-bold" id="deletedCourseName"></span></p>
+            <p class="text-danger">
+              <small>This action cannot be undone.</small>
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary btn-sm"
+                    data-bs-dismiss="modal">Cancel
+            </button>
+            <input type="submit" class="btn btn-danger btn-sm" value="Delete">
+          </div>
+        </form>
       </div>
     </div>
+  </div>
 
 </div>
 
@@ -151,37 +151,37 @@
   // NEW MODAL
   $(function () {
     $('#newCourseModal').on('shown.bs.modal', function () {
-      $('#newCourseNameInput').focus()
-    })
-  })
+      $('#newCourseNameInput').focus();
+    });
+  });
 
   // EDIT MODAL
   $(function () {
     $('.editButton').on('click', function () {
-      let href = '/courses/' + $(this).attr('data-bs-id')
-      $('#formEdit').attr('action', href)
+      let href = '/courses/' + $(this).attr('data-bs-id');
+      $('#formEdit').attr('action', href);
       $.get(href, function (course) {
-        $('#editCourseNameInput').val(course.name)
-      })
-    })
-  })
+        $('#editCourseNameInput').val(course.name);
+      });
+    });
+  });
   $(function () {
     $('#editCourseModal').on('shown.bs.modal', function () {
-      $('#editCourseNameInput').focus()
-    })
-  })
+      $('#editCourseNameInput').focus();
+    });
+  });
 
   // DELETE MODAL
   $(function () {
     $('.deleteButton').on('click', function () {
-      let id = $(this).attr('data-bs-id')
-      let row = $(this).parent().parent().parent().parent()
-      let name = row.children('.course_name').text()
+      let id = $(this).attr('data-bs-id');
+      let row = $(this).parent().parent().parent().parent();
+      let name = row.children('.course_name').text();
       $('#deletedCourseName').
-        text('\'' + name + '\'?')
-      $('#formDelete').attr('action', '/courses/' + id)
-    })
-  })
+        text('\'' + name + '\'?');
+      $('#formDelete').attr('action', '/courses/' + id);
+    });
+  });
 
 </script>
 
