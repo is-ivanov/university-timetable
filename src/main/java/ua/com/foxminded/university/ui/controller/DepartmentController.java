@@ -10,6 +10,7 @@ import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 import static ua.com.foxminded.university.ui.Util.defineRedirect;
@@ -52,11 +53,11 @@ public class DepartmentController {
 
     @PostMapping
     public String createDepartment(@ModelAttribute Department department,
-                                   @RequestParam(required = false) String uri) {
+                                   HttpServletRequest request) {
         log.debug("Creating {}", department);
         departmentService.add(department);
         log.info("{} is created", department);
-        return defineRedirect(uri);
+        return defineRedirect(request);
     }
 
     @GetMapping("/{id}")
@@ -71,20 +72,20 @@ public class DepartmentController {
     @PutMapping("/{id}")
     public String updateDepartment(@ModelAttribute Department department,
                                    @PathVariable("id") int departmentId,
-                                   @RequestParam(required = false) String uri) {
+                                   HttpServletRequest request) {
         log.debug("Updating department id({})", departmentId);
         departmentService.update(department);
         log.info("Department id({}) is updated", departmentId);
-        return defineRedirect(uri);
+        return defineRedirect(request);
     }
 
     @DeleteMapping("/{id}")
     public String deleteDepartment(@PathVariable("id") int departmentId,
-                                   @RequestParam(required = false) String uri) {
+                                   HttpServletRequest request) {
         log.debug("Deleting department id({})", departmentId);
         departmentService.delete(departmentId);
         log.info("Department id({}) is deleted", departmentId);
-        return defineRedirect(uri);
+        return defineRedirect(request);
     }
 
 }

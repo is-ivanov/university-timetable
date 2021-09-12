@@ -119,8 +119,6 @@
             <button type="button" class="btn btn-secondary btn-sm"
                     data-bs-dismiss="modal">Cancel
             </button>
-            <input type="hidden" name="uri"
-                   th:value="${#request.requestURI} + (${#request.queryString}? '?' + ${#request.queryString} : '')">
             <input type="submit" class="btn btn-primary btn-sm"
                    value="Create Department">
           </div>
@@ -163,8 +161,6 @@
             <button type="button" class="btn btn-secondary btn-sm"
                     data-bs-dismiss="modal">Cancel
             </button>
-            <input type="hidden" name="uri"
-                   th:value="${#request.requestURI} + (${#request.queryString}? '?' + ${#request.queryString} : '')">
             <input type="submit" class="btn btn-primary btn-sm" value="Update">
           </div>
         </form>
@@ -195,8 +191,6 @@
             <button type="button" class="btn btn-secondary btn-sm"
                     data-bs-dismiss="modal">Cancel
             </button>
-            <input type="hidden" name="uri"
-                   th:value="${#request.requestURI} + (${#request.queryString}? '?' + ${#request.queryString} : '')">
             <input type="submit" class="btn btn-danger btn-sm" value="Delete">
           </div>
         </form>
@@ -210,39 +204,39 @@
   // NEW MODAL
   $(function () {
     $('#newDepartmentModal').on('shown.bs.modal', function () {
-      $('#newDepartmentNameInput').focus()
-    })
-  })
+      $('#newDepartmentNameInput').focus();
+    });
+  });
 
   // EDIT MODAL
   $(function () {
     $('.editButton').on('click', function () {
-      let href = '/departments/' + $(this).attr('data-bs-id')
-      $('#formEdit').attr('action', href)
+      let href = '/departments/' + $(this).attr('data-bs-id');
+      $('#formEdit').attr('action', href);
       $.get(href, function (department) {
-        $('#editDepartmentNameInput').val(department.name)
-        let facultyId = department.faculty.id
-        $('#editDepartmentFacultySelect option[value=' + facultyId + ']').prop('selected', true)
-      })
-    })
-  })
+        $('#editDepartmentNameInput').val(department.name);
+        let facultyId = department.faculty.id;
+        $('#editDepartmentFacultySelect option[value=' + facultyId + ']').prop('selected', true);
+      });
+    });
+  });
   $(function () {
     $('#editDepartmentModal').on('shown.bs.modal', function () {
-      $('#editDepartmentNameInput').focus()
-    })
-  })
+      $('#editDepartmentNameInput').focus();
+    });
+  });
 
   // DELETE MODAL
   $(function () {
     $('.deleteButton').on('click', function () {
-      let id = $(this).attr('data-bs-id')
-      let row = $(this).parent().parent().parent().parent()
-      let name = row.children('.department_name').text()
+      let id = $(this).attr('data-bs-id');
+      let row = $(this).parent().parent().parent().parent();
+      let name = row.children('.department_name').text();
       $('#deletedDepartmentName').
-        text('\'' + name + '\'?')
-      $('#formDelete').attr('action', '/departments/' + id)
-    })
-  })
+        text('\'' + name + '\'?');
+      $('#formDelete').attr('action', '/departments/' + id);
+    });
+  });
 
 </script>
 </body>
