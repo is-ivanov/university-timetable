@@ -9,8 +9,11 @@ import org.springframework.web.bind.annotation.*;
 import ua.com.foxminded.university.domain.entity.Room;
 import ua.com.foxminded.university.domain.service.interfaces.RoomService;
 
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static ua.com.foxminded.university.ui.Util.defineRedirect;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -18,7 +21,7 @@ import java.util.List;
 @RequestMapping("/rooms")
 public class RoomController {
 
-    public static final String REDIRECT_ROOMS = "redirect:/rooms";
+    public static final String URI_ROOMS = "/rooms";
 
     private final RoomService roomService;
 
@@ -28,7 +31,7 @@ public class RoomController {
         model.addAttribute("rooms", roomService.getAll());
         model.addAttribute("newRoom", new Room());
         log.info("The list of rooms is loaded into the model");
-        return "room";
+        return defineRedirect(URI_ROOMS);
     }
 
     @GetMapping("/{id}")
@@ -60,7 +63,7 @@ public class RoomController {
         log.debug("Creating {}", room);
         roomService.add(room);
         log.info("{} is created", room);
-        return REDIRECT_ROOMS;
+        return defineRedirect(URI_ROOMS);
     }
 
     @PutMapping("/{id}")
@@ -69,7 +72,7 @@ public class RoomController {
         log.debug("Updating room id({})", roomId);
         roomService.update(room);
         log.info("Room id({}) is updated", roomId);
-        return REDIRECT_ROOMS;
+        return defineRedirect(URI_ROOMS);
     }
 
     @DeleteMapping("/{id}")
@@ -77,6 +80,6 @@ public class RoomController {
         log.debug("Deleting room with id({})", roomId);
         roomService.delete(roomId);
         log.info("Room id({}) is deleted", roomId);
-        return REDIRECT_ROOMS;
+        return defineRedirect(URI_ROOMS);
     }
 }
