@@ -133,8 +133,6 @@
             <button type="button" class="btn btn-secondary btn-sm"
                     data-bs-dismiss="modal">Cancel
             </button>
-            <input type="hidden" name="uri"
-                   th:value="${#request.requestURI} + (${#request.queryString}? '?' + ${#request.queryString} : '')">
             <input type="submit" class="btn btn-primary btn-sm" value="Create Group">
           </div>
         </form>
@@ -183,8 +181,6 @@
             <button type="button" class="btn btn-secondary btn-sm"
                     data-bs-dismiss="modal">Cancel
             </button>
-            <input type="hidden" name="uri"
-                   th:value="${#request.requestURI} + (${#request.queryString}? '?' + ${#request.queryString} : '')">
             <input type="submit" class="btn btn-primary btn-sm" value="Update">
           </div>
         </form>
@@ -215,8 +211,6 @@
             <button type="button" class="btn btn-secondary btn-sm"
                     data-bs-dismiss="modal">Cancel
             </button>
-            <input type="hidden" name="uri"
-                   th:value="${#request.requestURI} + (${#request.queryString}? '?' + ${#request.queryString} : '')">
             <input type="submit" class="btn btn-danger btn-sm" value="Delete">
           </div>
         </form>

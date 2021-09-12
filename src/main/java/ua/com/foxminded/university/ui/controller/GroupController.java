@@ -13,6 +13,7 @@ import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 import ua.com.foxminded.university.domain.service.interfaces.StudentService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -57,16 +58,16 @@ public class GroupController {
 
     @PostMapping
     public String createGroup(@ModelAttribute Group group,
-                              @RequestParam(required = false) String uri) {
+                              HttpServletRequest request) {
         log.debug("Creating {}", group);
         groupService.add(group);
         log.info("{} is created", group);
-        return defineRedirect(uri);
+        return defineRedirect(request);
     }
 
     @GetMapping("/{id}")
     @ResponseBody
-    public Group showGroup(@PathVariable("id") int groupId) {
+    public Group getGroup(@PathVariable("id") int groupId) {
         log.debug("Getting group id({})", groupId);
         Group group = groupService.getById(groupId);
         log.info("Found {}", group);
@@ -76,35 +77,35 @@ public class GroupController {
     @PutMapping("/{id}")
     public String updateGroup(@ModelAttribute Group group,
                               @PathVariable("id") int groupId,
-                              @RequestParam(required = false) String uri) {
+                              HttpServletRequest request) {
         log.debug("Updating group id({})", groupId);
         groupService.update(group);
         log.info("Group id({}) is updated", groupId);
-        return defineRedirect(uri);
+        return defineRedirect(request);
     }
 
     @DeleteMapping("/{id}")
     public String deleteGroup(@PathVariable("id") int groupId,
-                              @RequestParam(required = false) String uri) {
+                              HttpServletRequest request) {
         log.debug("Deleting group id({})", groupId);
         groupService.delete(groupId);
         log.info("Group id({}) is deleted", groupId);
-        return defineRedirect(uri);
+        return defineRedirect(request);
     }
 
     @GetMapping("/{id}/students")
     @ResponseBody
-    public List<StudentDto> getStudentsFromGroup(@PathVariable int id) {
-        log.debug("Getting students from group id({})", id);
+    public List<StudentDto> getStudentsFromGroup(@PathVariable("id") int groupId) {
+        log.debug("Getting students from group id({})", groupId);
         List<StudentDto> studentDtos = studentDtoMapper.studentsToStudentDtos(
-            studentService.getStudentsByGroup(id));
+            studentService.getStudentsByGroup(groupId));
         log.info("Found {} students", studentDtos.size());
         return studentDtos;
     }
 
     @GetMapping("/{id}/students/free")
     @ResponseBody
-    public List<StudentDto> getFreeStudentsFromGroup(@PathVariable int id,
+    public List<StudentDto> getFreeStudentsFromGroup(@PathVariable("id") int groupId,
                                                      @RequestParam("time_start")
                                                      @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
                                                          LocalDateTime startTime,
@@ -112,9 +113,9 @@ public class GroupController {
                                                      @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
                                                          LocalDateTime endTime) {
         log.debug("Getting active students from group id({}) free from {} to {}",
-            id, startTime, endTime);
+            groupId, startTime, endTime);
         List<StudentDto> freeStudentsFromGroup = studentDtoMapper.studentsToStudentDtos(
-            studentService.getFreeStudentsFromGroup(id, startTime, endTime));
+            studentService.getFreeStudentsFromGroup(groupId, startTime, endTime));
         log.info("Found {} students", freeStudentsFromGroup.size());
         return freeStudentsFromGroup;
     }
