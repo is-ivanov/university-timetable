@@ -18,4 +18,6 @@ public interface LessonService extends Service<Lesson> {
     List<Lesson> getAllWithFilter(LessonFilter filter);
 
     void removeStudentFromLesson(int lessonId, int studentId);
+
+    void removeStudentsFromLesson(int lessonId, int[] studentIds);
 }

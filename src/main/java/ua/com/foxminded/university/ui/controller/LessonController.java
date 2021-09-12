@@ -10,7 +10,6 @@ import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.*;
 import ua.com.foxminded.university.domain.filter.LessonFilter;
 import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
-import ua.com.foxminded.university.domain.mapper.StudentDtoMapper;
 import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.*;
 
@@ -36,10 +35,8 @@ public class LessonController {
     private final CourseService courseService;
     private final RoomService roomService;
     private final GroupService groupService;
-    private final StudentService studentService;
     private final LessonDtoMapper lessonDtoMapper;
     private final TeacherDtoMapper teacherDtoMapper;
-    private final StudentDtoMapper studentDtoMapper;
 
     @GetMapping
     public String showLessons(Model model) {
@@ -208,14 +205,19 @@ public class LessonController {
         return defineRedirect(request);
     }
 
-    @DeleteMapping("/{id}/students/{studentId}")
+    @DeleteMapping("/{id}/students")
     public String removeStudentFromLesson(@PathVariable("id") int lessonId,
-                                          @PathVariable int studentId,
+                                          @RequestParam int[] studentIds,
                                           HttpServletRequest request) {
-        log.debug("Remove student id({}) from lesson id({})", studentId, lessonId);
-        lessonService.removeStudentFromLesson(lessonId, studentId);
-        log.info("Student id({}) successfully removed from lesson id({})",
-            studentId, lessonId);
+        if (studentIds.length == 1) {
+            log.debug("Remove student id({}) from lesson id({})", studentIds, lessonId);
+            lessonService.removeStudentFromLesson(lessonId, studentIds[0]);
+        } else {
+            log.debug("Remove students id({}) from lesson id({})", studentIds, lessonId);
+            lessonService.removeStudentsFromLesson(lessonId, studentIds);
+        }
+        log.info("Students id({}) successfully removed from lesson id({})",
+            studentIds, lessonId);
         return defineRedirect(request);
     }
 

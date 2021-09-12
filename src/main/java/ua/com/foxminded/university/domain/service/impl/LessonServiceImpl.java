@@ -150,6 +150,17 @@ public class LessonServiceImpl implements LessonService {
             studentId, lessonId);
     }
 
+    @Override
+    @Transactional
+    public void removeStudentsFromLesson(int lessonId, int[] studentIds) {
+        log.debug("Removing students id({}) from lesson id({})", studentIds, lessonId);
+        for (int studentId : studentIds) {
+            lessonDao.removeStudentFromLesson(lessonId, studentId);
+        }
+        log.info("Students id({}) successfully removed from lesson id({})",
+            studentIds, lessonId);
+    }
+
     private void checkAndSaveStudentToLesson(Lesson lesson, Student student) {
         if (student.isActive()) {
             if (checkAvailableStudentForLesson(lesson, student)) {
