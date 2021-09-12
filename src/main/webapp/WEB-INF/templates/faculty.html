@@ -147,35 +147,35 @@
   // NEW MODAL
   $(function () {
     $('#newFacultyModal').on('shown.bs.modal', function () {
-      $('#newFacultyNameInput').focus().select()
-    })
-  })
+      $('#newFacultyNameInput').focus().select();
+    });
+  });
 
   // EDIT MODAL
   $(function () {
     $('.editButton').on('click', function () {
-      let href = '/faculties/' + $(this).attr('data-bs-id')
-      $('#formEdit').attr('action', href)
+      let href = '/faculties/' + $(this).attr('data-bs-id');
+      $('#formEdit').attr('action', href);
       $.get(href, function (faculty) {
-        $('#editFacultyNameInput').val(faculty.name)
-      })
-    })
-  })
+        $('#editFacultyNameInput').val(faculty.name);
+      });
+    });
+  });
   $(function () {
     $('#editFacultyModal').on('show.bs.modal', function () {
-      $('#editFacultyNameInput').focus().select()
-    })
-  })
+      $('#editFacultyNameInput').focus().select();
+    });
+  });
 
   // DELETE MODAL
   $(function () {
     $('.deleteButton').on('click', function () {
-      let id = $(this).attr('data-bs-id')
-      let name = $(this).attr('data-bs-name')
-      $('#deletedFacultyName').text('Are you sure you want to delete \'' + name + '\'?')
-      $('#formDelete').attr('action', '/faculties/' + id)
-    })
-  })
+      let id = $(this).attr('data-bs-id');
+      let name = $(this).attr('data-bs-name');
+      $('#deletedFacultyName').text('Are you sure you want to delete \'' + name + '\'?');
+      $('#formDelete').attr('action', '/faculties/' + id);
+    });
+  });
 
 </script>
 </body>

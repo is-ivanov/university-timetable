@@ -168,42 +168,42 @@
 </div>
 
 <script layout:fragment="script">
-    // NEW MODAL
-    $(function () {
-      $('#newRoomModal').on('shown.bs.modal', function () {
-        $('#newRoomBuildingInput').focus()
-      })
-    })
+  // NEW MODAL
+  $(function () {
+    $('#newRoomModal').on('shown.bs.modal', function () {
+      $('#newRoomBuildingInput').focus();
+    });
+  });
 
   // EDIT MODAL
   $(function () {
     $('.editButton').on('click', function () {
-      let href = '/rooms/' + $(this).attr('data-bs-id')
-      $('#formEdit').attr('action', href)
+      let href = '/rooms/' + $(this).attr('data-bs-id');
+      $('#formEdit').attr('action', href);
       $.get(href, function (room) {
-        $('#editRoomBuildingInput').val(room.building)
-        $('#editRoomNumberInput').val(room.number)
-      })
-    })
-  })
+        $('#editRoomBuildingInput').val(room.building);
+        $('#editRoomNumberInput').val(room.number);
+      });
+    });
+  });
   $(function () {
     $('#editRoomModal').on('shown.bs.modal', function () {
-      $('#editRoomBuildingInput').focus()
-    })
-  })
+      $('#editRoomBuildingInput').focus();
+    });
+  });
 
   // DELETE MODAL
   $(function () {
     $('.deleteButton').on('click', function () {
-      let id = $(this).attr('data-bs-id')
-      let row = $(this).parent().parent().parent().parent()
-      let building = row.children('.room_building').text()
-      let number = row.children('.room_number').text()
+      let id = $(this).attr('data-bs-id');
+      let row = $(this).parent().parent().parent().parent();
+      let building = row.children('.room_building').text();
+      let number = row.children('.room_number').text();
       $('#deletedRoomName').
-        text(' room (building \'' + building + '\', number \'' + number + '\'?')
-      $('#formDelete').attr('action', '/rooms/' + id)
-    })
-  })
+        text(' room (building \'' + building + '\', number \'' + number + '\'?');
+      $('#formDelete').attr('action', '/rooms/' + id);
+    });
+  });
 
 </script>
 </body>
