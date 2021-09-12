@@ -14,13 +14,15 @@ import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static ua.com.foxminded.university.ui.Util.defineRedirect;
+
 @Slf4j
 @RequiredArgsConstructor
 @Controller
 @RequestMapping("/faculties")
 public class FacultyController {
 
-    public static final String REDIRECT_FACULTIES = "redirect:/faculties";
+    public static final String URI_FACULTIES = "/faculties";
 
     private final FacultyService facultyService;
     private final GroupService groupService;
@@ -39,7 +41,7 @@ public class FacultyController {
         log.debug("Creating {}", faculty);
         facultyService.add(faculty);
         log.info("{} is created", faculty);
-        return REDIRECT_FACULTIES;
+        return defineRedirect(URI_FACULTIES);
     }
 
     @GetMapping("/{id}")
@@ -57,7 +59,7 @@ public class FacultyController {
         log.debug("Updating faculty with id({})", faculty);
         facultyService.update(faculty);
         log.info("Faculty id({}) is updated", facultyId);
-        return REDIRECT_FACULTIES;
+        return defineRedirect(URI_FACULTIES);
     }
 
     @DeleteMapping("/{id}")
@@ -65,25 +67,24 @@ public class FacultyController {
         log.debug("Deleting faculty with id({})", facultyId);
         facultyService.delete(facultyId);
         log.info("Faculty id({}) is deleted", facultyId);
-        return REDIRECT_FACULTIES;
+        return defineRedirect(URI_FACULTIES);
     }
 
-    @GetMapping("/{id}/groups")
+    @GetMapping("/{facultyId}/groups")
     @ResponseBody
-    public List<Group> getGroupsFromFaculty(@PathVariable int id) {
-        log.debug("Getting groups by faculty id({})", id);
-        if (id == 0) {
+    public List<Group> getGroupsFromFaculty(@PathVariable int facultyId) {
+        if (facultyId == 0) {
             log.debug("Get all groups for selector");
             return groupService.getAll();
         } else {
-            log.debug("Get groups for selector by faculty id({})", id);
-            return groupService.getAllByFacultyId(id);
+            log.debug("Get groups for selector by faculty id({})", facultyId);
+            return groupService.getAllByFacultyId(facultyId);
         }
     }
 
-    @GetMapping("/{id}/groups/free")
+    @GetMapping("/{facultyId}/groups/free")
     @ResponseBody
-    public List<Group> getFreeGroupsFromFaculty(@PathVariable int id,
+    public List<Group> getFreeGroupsFromFaculty(@PathVariable int facultyId,
                                                 @RequestParam("time_start")
                                                 @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
                                                     LocalDateTime startTime,
@@ -91,9 +92,9 @@ public class FacultyController {
                                                 @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
                                                     LocalDateTime endTime) {
         log.debug("Getting active groups from faculty id({}) free from {} to {}",
-            id, startTime, endTime);
+            facultyId, startTime, endTime);
         List<Group> freeGroups = groupService
-            .getFreeGroupsByFacultyOnLessonTime(id, startTime, endTime);
+            .getFreeGroupsByFacultyOnLessonTime(facultyId, startTime, endTime);
         log.info("Found {} groups", freeGroups.size());
         return freeGroups;
     }

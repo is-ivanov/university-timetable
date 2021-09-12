@@ -7,7 +7,6 @@ public class Util {
     public static final String REDIRECT = "redirect:";
 
     private Util() {
-        throw new IllegalStateException("Utility class");
     }
 
     public static String defineRedirect(String uri) {
