@@ -79,19 +79,10 @@ function updateSelectStudentsFilteredByGroupAndDate (
  * @param {Number} facultyId - Selected faculty id
  * @param {HTMLSelectElement} select - The select element for filling data
  */
-//TODO Refactor this function
 function updateSelectDepartmentsFilteredByFaculty (facultyId, select) {
-  let uri = '/faculties/' + facultyId + 'departments';
-  let faculty = $('#selectFaculty').val();
-  $.get('/teachers/departments?facultyId=' + faculty, function (data) {
-    $('#selectDepartment').
-      empty().
-      append('<option value="0" selected>Please select department...</option>');
-    data.sort(sortByName);
-    data.forEach(function (item) {
-      let option = '<option value = ' + item.id + '>' + item.name + '</option>';
-      $('#selectDepartment').append(option);
-    });
+  let uri = '/faculties/' + facultyId + '/departments';
+  $.get(uri, function (data) {
+    fillSelectDepartment(select, data);
   });
 }
 
@@ -163,7 +154,7 @@ function fillSelectRoomFilteredByDate (select, data) {
  * Fills in the selector for selecting a group with data from the database
  *
  * @param {HTMLSelectElement} select - The select element for filling data
- * @param {Object} data - The id selected faculty (0 when not selected)
+ * @param {Object} data - Returned data from GET response
  * @param {Boolean} isShowInactive - With true we show inactive groups
  */
 function fillSelectGroups (select, data, isShowInactive) {
@@ -172,7 +163,24 @@ function fillSelectGroups (select, data, isShowInactive) {
     empty().
     append('<option value="0" selected>Please select group...</option>');
   data.forEach(function (group) {
-    fillSelectActive(group.id, group.name, group.active, isShowInactive, select);
+    fillSelectActive(group.id, group.name, group.active, isShowInactive,
+      select);
+  });
+}
+
+/**
+ * Fills option in the selector for selecting a department
+ *
+ * @param {HTMLSelectElement} select - The select element for filling data
+ * @param {Object} data - Returned data from GET response
+ */
+function fillSelectDepartment (select, data) {
+  data.sort(sortByName);
+  $(select).
+    empty().
+    append('<option value="0" selected>Please select department...</option>');
+  data.forEach(function (department) {
+    fillSelectWithoutActive(department.id, department.name, select);
   });
 }
 
@@ -193,7 +201,7 @@ function fillSelectStudents (select, facultyId, groupId, isShowInactive) {
   }
   uri = uri + '/students';
   $.get(uri, function (data) {
-    select.
+    $(select).
       empty().
       append(
         '<option value="" disabled selected>Please select student...</option>');
@@ -230,12 +238,23 @@ function fillSelectActive (value, text, isActive, isShowInactive, select) {
 }
 
 /**
+ * Fills select without active fields
+ *
+ * @param {Number}            value
+ * @param {Text}              text
+ * @param {HTMLSelectElement} select
+ */
+function fillSelectWithoutActive (value, text, select) {
+  let option = '<option value = ' + value + '>' + text + '</option>';
+  select.append(option);
+}
+
+/**
  * Fill select 'selectTeacher' with teachers data from the DB
  *
  * @param {HTMLSelectElement} select The select element for filling data
- * @param {Number} facultyId - The id selected faculty (0 when not selected)
- * @param {Number}            valueSelect The value from 'select' with condition
- * @param {String}            type        Type of select (faculty; department)
+ * @param {Number} valueSelect The value from 'select' with condition
+ * @param {String} type Type of select (faculty; department)
  */
 function fillSelectTeachers (select, valueSelect, type) {
   let uri;

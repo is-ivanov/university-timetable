@@ -1,35 +1,39 @@
 /**
- * Add/remove style 'd-none' for show/hide rows in table
+ * Show/hide rows in table
  *
  * @param {HTMLTableElement} table    The table to switch
  * @param {HTMLInputElement} checkbox The checkbox switcher
  */
 function showInactiveTableRow (table, checkbox) {
 
-  if (checkbox.checked) {
-    table.querySelectorAll('tr.inactive').forEach(tr =>
-      tr.classList.remove('d-none'))
-  } else {
-    table.tBodies[0].querySelectorAll('tr.inactive').forEach(tr =>
-      tr.classList.add('d-none'))
-  }
+  $(table).find('tr.inactive').each(function () {
+    showInactiveElement($(this), checkbox);
+  });
 }
 
 /**
- * Add/remove style 'd-none' for show/hide option in select
+ * Show/hide option in select
  *
  * @param {HTMLSelectElement} select     The input 'select' to switch
  * @param {HTMLInputElement}  checkbox   The checkbox switcher
  */
 function showInactiveSelectOption (select, checkbox) {
 
-  const optionsInactive = select.querySelectorAll('option.inactive')
-  if (checkbox.checked) {
-    optionsInactive.forEach(option =>
-      option.classList.remove('d-none'))
-  } else {
-    optionsInactive.forEach(option =>
-      option.classList.add('d-none'))
-  }
+  $(select).find('option.inactive').each(function () {
+    showInactiveElement($(this), checkbox);
+  });
+}
 
+/**
+ * Add/remove style 'd-none' for show/hide option in element
+ *
+ * @param element
+ * @param checkbox
+ */
+function showInactiveElement (element, checkbox) {
+  if ($(checkbox).is(':checked')) {
+    $(element).removeClass('d-none');
+  } else {
+    $(element).addClass('d-none');
+  }
 }

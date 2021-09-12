@@ -6,8 +6,11 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ua.com.foxminded.university.dao.impl.TeacherDaoImpl;
+import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
+import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 
@@ -26,6 +29,7 @@ public class FacultyController {
 
     private final FacultyService facultyService;
     private final GroupService groupService;
+    private final DepartmentService departmentService;
 
     @GetMapping
     public String showFaculties(Model model) {
@@ -70,9 +74,9 @@ public class FacultyController {
         return defineRedirect(URI_FACULTIES);
     }
 
-    @GetMapping("/{facultyId}/groups")
+    @GetMapping("/{id}/groups")
     @ResponseBody
-    public List<Group> getGroupsFromFaculty(@PathVariable int facultyId) {
+    public List<Group> getGroupsFromFaculty(@PathVariable("id") int facultyId) {
         if (facultyId == 0) {
             log.debug("Get all groups for selector");
             return groupService.getAll();
@@ -82,9 +86,9 @@ public class FacultyController {
         }
     }
 
-    @GetMapping("/{facultyId}/groups/free")
+    @GetMapping("/{id}/groups/free")
     @ResponseBody
-    public List<Group> getFreeGroupsFromFaculty(@PathVariable int facultyId,
+    public List<Group> getFreeGroupsFromFaculty(@PathVariable("id") int facultyId,
                                                 @RequestParam("time_start")
                                                 @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
                                                     LocalDateTime startTime,
@@ -99,4 +103,16 @@ public class FacultyController {
         return freeGroups;
     }
 
+    @GetMapping("/{id}/departments")
+    @ResponseBody
+    public List<Department> getDepartmentsFromFaculty(@PathVariable int id){
+        log.debug("Getting departments for selector");
+        if (id == 0) {
+            log.debug("Get all departments for selector");
+            return departmentService.getAll();
+        } else {
+            log.debug("Get departments for selector by facultyId ({})", id);
+            return departmentService.getAllByFaculty(id);
+        }
+    }
 }

@@ -17,8 +17,7 @@
         <label for="selectFaculty" class="col-form-label">Faculty</label>
       </div>
       <div class="col-md ps-1">
-        <select class="form-select" id="selectFaculty" name="facultyId"
-                onchange="fillSelectDepartmentsTeachers()">
+        <select class="form-select" id="selectFaculty" name="facultyId">
           <option value="0" selected>Please select faculty...</option>
           <option th:each="faculty : ${faculties}"
                   th:value="${faculty.id}"
@@ -181,8 +180,6 @@
             <button type="button" class="btn btn-secondary btn-sm"
                     data-bs-dismiss="modal">Cancel
             </button>
-            <input type="hidden" name="uri"
-                   th:value="${#request.requestURI} + (${#request.queryString}? '?' + ${#request.queryString} : '')">
             <input type="submit" class="btn btn-primary btn-sm" value="Create Teacher">
           </div>
         </form>
@@ -243,8 +240,6 @@
             <button type="button" class="btn btn-secondary"
                     data-bs-dismiss="modal">Cancel
             </button>
-            <input type="hidden" name="uri"
-                   th:value="${#request.requestURI} + (${#request.queryString}? '?' + ${#request.queryString} : '')">
             <input type="submit" class="btn btn-primary" value="Update">
           </div>
         </form>
@@ -275,8 +270,6 @@
             <button type="button" class="btn btn-secondary"
                     data-bs-dismiss="modal">Cancel
             </button>
-            <input type="hidden" name="uri"
-                   th:value="${#request.requestURI} + (${#request.queryString}? '?' + ${#request.queryString} : '')">
             <input type="submit" class="btn btn-danger" value="Delete">
           </div>
         </form>
@@ -288,27 +281,27 @@
 </div>
 <!--Scripts-->
 <script layout:fragment="script">
+
   function showInactiveTeachersInTable () {
-    const table = document.getElementById('mainTable');
-    const check = document.getElementById('switchShowInactiveTeachersMainTable');
+    const table = $('#mainTable');
+    const check = $('#switchShowInactiveTeachersMainTable');
     showInactiveTableRow(table, check);
   }
-  //TODO call onclick and pass parameter selected value faculty Id
-  $('#selectFaculty').change(function () {
 
-  })
+  let selectFaculty = $('#selectFaculty');
 
-  function fillSelectDepartmentsTeachers () {
-    updateSelectDepartments();
+  selectFaculty.change(function () {
+    let facultyId = $(this).val();
+    let select = $('#selectDepartment');
+    updateSelectDepartmentsFilteredByFaculty(facultyId, select);
     switchSubmitEnabled();
-  }
+  });
 
   function switchSubmitEnabled () {
-    if ($('#selectFaculty').val() > 0 ||
-      $('#selectDepartment').val() > 0) {
+    if (selectFaculty.val() > 0 || $('#selectDepartment').val() > 0) {
       $('#submit').removeAttr('disabled');
     } else {
-      $('#submit').attr('disabled', 'disabled');
+      $('#submit').prop('disabled', true);
     }
   }
 
@@ -351,11 +344,8 @@
     $('.deleteButton').on('click', function () {
       let id = $(this).attr('data-bs-id');
       let row = $(this).parent().parent().parent().parent();
-      let firstName = row.children('.first_name').text();
-      let patronymic = row.children('.patronymic').text();
-      let lastName = row.children('.last_name').text();
-      let teacher = '\'' + firstName + ' ' + patronymic + ' ' + lastName + '\'?';
-      $('#deletedTeacher').text(teacher);
+      let teacher = getPersonFullNameFromRow(row, 'teacher')
+      $('#deletedTeacher').text(teacher + '?');
       $('#formDelete').attr('action', '/teachers/' + id);
     });
   });

@@ -7,13 +7,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
-import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Teacher;
 import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -67,19 +67,6 @@ public class TeacherController {
         return "teacher";
     }
 
-    @GetMapping("/departments")
-    @ResponseBody
-    public List<Department> getDepartments(@RequestParam Integer facultyId) {
-        log.debug("Getting departments for selector");
-        if (facultyId == 0) {
-            log.debug("Get all departments for selector");
-            return departmentService.getAll();
-        } else {
-            log.debug("Get departments for selector by facultyId ({})", facultyId);
-            return departmentService.getAllByFaculty(facultyId);
-        }
-    }
-
     @GetMapping("/free")
     @ResponseBody
     public List<TeacherDto> getFreeTeachers(@RequestParam("time_start")
@@ -97,18 +84,18 @@ public class TeacherController {
 
     @PostMapping
     public String createTeacher(@ModelAttribute TeacherDto teacherDto,
-                                @RequestParam(required = false) String uri) {
+                                HttpServletRequest request) {
         log.debug("Creating teacher [{} {} {}]", teacherDto.getFirstName(),
             teacherDto.getPatronymic(), teacherDto.getLastName());
         teacherService.add(teacherMapper.teacherDtoToTeacher(teacherDto));
         log.info("Teacher [{}, {}, {}] is created", teacherDto.getFirstName(),
             teacherDto.getPatronymic(), teacherDto.getLastName());
-        return defineRedirect(uri);
+        return defineRedirect(request);
     }
 
     @GetMapping("/{id}")
     @ResponseBody
-    public TeacherDto showTeacher(@PathVariable("id") int teacherId) {
+    public TeacherDto getTeacher(@PathVariable("id") int teacherId) {
         log.debug("Getting teacher id({})", teacherId);
         Teacher teacher = teacherService.getById(teacherId);
         log.info("Found teacher [{} {} {}]", teacher.getFirstName(),
@@ -119,20 +106,20 @@ public class TeacherController {
     @PutMapping("/{id}")
     public String updateTeacher(@ModelAttribute TeacherDto teacherDto,
                                 @PathVariable("id") int teacherId,
-                                @RequestParam(required = false) String uri) {
+                                HttpServletRequest request) {
         log.debug("Updating teacher id({})", teacherId);
         teacherService.update(teacherMapper.teacherDtoToTeacher(teacherDto));
         log.info("Teacher id({}) is updated", teacherId);
-        return defineRedirect(uri);
+        return defineRedirect(request);
     }
 
     @DeleteMapping("/{id}")
     public String deleteTeacher(@PathVariable("id") int teacherId,
-                                @RequestParam(required = false) String uri) {
+                                HttpServletRequest request) {
         log.debug("Deleting teacher id({})", teacherId);
         teacherService.delete(teacherId);
         log.info("Teacher id({}) is deleted", teacherId);
-        return defineRedirect(uri);
+        return defineRedirect(request);
     }
 
 }
