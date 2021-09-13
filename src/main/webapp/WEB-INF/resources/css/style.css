@@ -95,3 +95,8 @@ td.inactive {
 tr.selected {
   --bs-table-accent-bg: var(--bs-table-hover-bg);
 }
+
+.nav-link.active{
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+}
