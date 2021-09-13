@@ -344,7 +344,7 @@
     $('.deleteButton').on('click', function () {
       let id = $(this).attr('data-bs-id');
       let row = $(this).parent().parent().parent().parent();
-      let teacher = getPersonFullNameFromRow(row, 'teacher')
+      let teacher = getPersonFullNameFromRow(row, 'teacher');
       $('#deletedTeacher').text(teacher + '?');
       $('#formDelete').attr('action', '/teachers/' + id);
     });

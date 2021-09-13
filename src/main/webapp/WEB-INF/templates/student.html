@@ -16,8 +16,7 @@
         <label for="selectFaculty" class="col-form-label">Faculty</label>
       </div>
       <div class="col-md ps-1">
-        <select class="form-select" id="selectFaculty" name="facultyId"
-                onchange="fillSelectGroupsStudents()">
+        <select class="form-select" id="selectFaculty" name="facultyId">
           <option value="0" selected>Please select faculty...</option>
           <option th:each="faculty : ${faculties}"
                   th:value="${faculty.id}"
@@ -190,8 +189,6 @@
             <button type="button" class="btn btn-secondary btn-sm"
                     data-bs-dismiss="modal">Cancel
             </button>
-            <input type="hidden" name="uri"
-                   th:value="${#request.requestURI} + (${#request.queryString}? '?' + ${#request.queryString} : '')">
             <input type="submit" class="btn btn-primary btn-sm" value="Create Student">
           </div>
         </form>
@@ -252,8 +249,6 @@
             <button type="button" class="btn btn-secondary"
                     data-bs-dismiss="modal">Cancel
             </button>
-            <input type="hidden" name="uri"
-                   th:value="${#request.requestURI} + (${#request.queryString}? '?' + ${#request.queryString} : '')">
             <input type="submit" class="btn btn-primary" value="Update">
           </div>
         </form>
@@ -284,8 +279,6 @@
             <button type="button" class="btn btn-secondary"
                     data-bs-dismiss="modal">Cancel
             </button>
-            <input type="hidden" name="uri"
-                   th:value="${#request.requestURI} + (${#request.queryString}? '?' + ${#request.queryString} : '')">
             <input type="submit" class="btn btn-danger" value="Delete">
           </div>
         </form>
@@ -298,32 +291,34 @@
 
 <!--Scripts-->
 <script layout:fragment="script">
+
   function showInactiveGroupsInSelect () {
-    const check = document.getElementById('switchShowInactiveGroups');
-    const select = document.getElementById('selectGroup');
-    showInactiveSelectOption(select, check);
+    const checkbox = $('#switchShowInactiveGroups');
+    showInactiveSelectOption(selectGroup, checkbox);
   }
 
   function showInactiveStudentsInTable () {
-    const table = document.getElementById('mainTable');
-    const check = document.getElementById('switchShowInactiveStudentsMainTable');
-    showInactiveTableRow(table, check);
+    const table = $('#mainTable');
+    const checkbox = $('#switchShowInactiveStudentsMainTable');
+    showInactiveTableRow(table, checkbox);
   }
 
-  function fillSelectGroupsStudents () {
-    let select = $('#selectGroup');
-    let facultyId = $('#selectFaculty').val();
+  let selectFaculty = $('#selectFaculty');
+  let selectGroup = $('#selectGroup');
+
+  selectFaculty.change(function () {
+    let facultyId = $(this).val();
     let isShowInactive = $('#switchShowInactiveGroups').is(':checked');
-    updateSelectGroupFilteredByFaculty(facultyId, select, isShowInactive);
+    updateSelectGroupFilteredByFaculty(facultyId, selectGroup, isShowInactive);
     switchSubmitEnabled();
-  }
+  });
 
   function switchSubmitEnabled () {
-    if ($('#selectFaculty').val() > 0 ||
-      $('#selectGroup').val() > 0) {
-      $('#submit').removeAttr('disabled');
+    let submit = $('#submit');
+    if (selectFaculty.val() > 0 || selectGroup.val() > 0) {
+      submit.removeAttr('disabled');
     } else {
-      $('#submit').attr('disabled', 'disabled');
+      submit.prop('disabled', true);
     }
   }
 
@@ -366,7 +361,7 @@
     $('.deleteButton').on('click', function () {
       let id = $(this).attr('data-bs-id');
       let row = $(this).parent().parent().parent().parent();
-      let student = getPersonFullNameFromRow(row);
+      let student = getPersonFullNameFromRow(row, 'student');
       $('#deletedStudent').text(student + '?');
       $('#formDelete').attr('action', '/students/' + id);
     });

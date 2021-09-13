@@ -6,7 +6,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ua.com.foxminded.university.dao.impl.TeacherDaoImpl;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
@@ -50,7 +49,7 @@ public class FacultyController {
 
     @GetMapping("/{id}")
     @ResponseBody
-    public Faculty showFaculty(@PathVariable("id") int facultyId) {
+    public Faculty getFaculty(@PathVariable("id") int facultyId) {
         log.debug("Getting faculty by id({})", facultyId);
         Faculty faculty = facultyService.getById(facultyId);
         log.info("Found {}", faculty);

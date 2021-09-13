@@ -222,54 +222,54 @@
 <script layout:fragment="script">
 
   function showInactiveGroupsInTable () {
-    const table = document.getElementById('mainTable')
-    const checkbox = document.getElementById('switchShowInactiveGroupsMainTable')
-    showInactiveTableRow(table, checkbox)
+    const table = document.getElementById('mainTable');
+    const checkbox = document.getElementById('switchShowInactiveGroupsMainTable');
+    showInactiveTableRow(table, checkbox);
   }
 
   // NEW MODAL
   $(function () {
     $('#newGroupModal').on('show.bs.modal', function () {
-      $('#switchActiveNewGroup').prop('checked', true)
-    })
-  })
+      $('#switchActiveNewGroup').prop('checked', true);
+    });
+  });
 
   $(function () {
     $('#newGroupModal').on('shown.bs.modal', function () {
-      $('#newGroupNameInput').focus()
-    })
-  })
+      $('#newGroupNameInput').focus();
+    });
+  });
 
   // EDIT MODAL
   $(function () {
     $('.editButton').on('click', function () {
-      let href = '/groups/' + $(this).attr('data-bs-id')
-      $('#formEdit').attr('action', href)
+      let href = '/groups/' + $(this).attr('data-bs-id');
+      $('#formEdit').attr('action', href);
       $.get(href, function (group) {
-        $('#editGroupNameInput').val(group.name)
-        let facultyId = group.faculty.id
-        $('#switchActiveEditGroup').prop('checked', group.active)
-        $('#editGroupFacultySelect option[value=' + facultyId + ']').prop('selected', true)
-      })
-    })
-  })
+        $('#editGroupNameInput').val(group.name);
+        let facultyId = group.faculty.id;
+        $('#switchActiveEditGroup').prop('checked', group.active);
+        $('#editGroupFacultySelect option[value=' + facultyId + ']').prop('selected', true);
+      });
+    });
+  });
   $(function () {
     $('#editGroupModal').on('shown.bs.modal', function () {
-      $('#editGroupNameInput').focus()
-    })
-  })
+      $('#editGroupNameInput').focus();
+    });
+  });
 
   // DELETE MODAL
   $(function () {
     $('.deleteButton').on('click', function () {
-      let id = $(this).attr('data-bs-id')
-      let row = $(this).parent().parent().parent().parent()
-      let name = row.children('.group_name').text()
+      let id = $(this).attr('data-bs-id');
+      let row = $(this).parent().parent().parent().parent();
+      let name = row.children('.group_name').text();
       $('#deletedGroupName').
-        text('\'' + name + '\'?')
-      $('#formDelete').attr('action', '/groups/' + id)
-    })
-  })
+        text('\'' + name + '\'?');
+      $('#formDelete').attr('action', '/groups/' + id);
+    });
+  });
 
 </script>
 </body>

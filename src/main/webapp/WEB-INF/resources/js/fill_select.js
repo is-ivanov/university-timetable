@@ -185,35 +185,6 @@ function fillSelectDepartment (select, data) {
 }
 
 /**
- * Fills in the selector for selecting a student with data from the database
- *
- * @param {HTMLSelectElement} select - The select element for filling data
- * @param {Number} facultyId - Id selected faculty (0 when not selected)
- * @param {Number} groupId - Id selected group (0 when not selected)
- * @param {Boolean} isShowInactive - With true we show inactive students
- */
-function fillSelectStudents (select, facultyId, groupId, isShowInactive) {
-  let uri;
-  if (groupId > 0) {
-    uri = '/groups/' + groupId;
-  } else if (groupId === 0 && facultyId >= 0) {
-    uri = '/faculties/' + facultyId;
-  }
-  uri = uri + '/students';
-  $.get(uri, function (data) {
-    $(select).
-      empty().
-      append(
-        '<option value="" disabled selected>Please select student...</option>');
-    data.sort(sortByFullName);
-    data.forEach(function (studentDto) {
-      fillSelectActive(studentDto.id, studentDto.fullName, studentDto.active,
-        isShowInactive, select);
-    });
-  });
-}
-
-/**
  * Fills select with active fields
  *
  * @param {Number}            value
