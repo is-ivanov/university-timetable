@@ -292,6 +292,9 @@
 <!--Scripts-->
 <script layout:fragment="script">
 
+  let selectFaculty = $('#selectFaculty');
+  let selectGroup = $('#selectGroup');
+
   function showInactiveGroupsInSelect () {
     const checkbox = $('#switchShowInactiveGroups');
     showInactiveSelectOption(selectGroup, checkbox);
@@ -302,9 +305,6 @@
     const checkbox = $('#switchShowInactiveStudentsMainTable');
     showInactiveTableRow(table, checkbox);
   }
-
-  let selectFaculty = $('#selectFaculty');
-  let selectGroup = $('#selectGroup');
 
   selectFaculty.change(function () {
     let facultyId = $(this).val();

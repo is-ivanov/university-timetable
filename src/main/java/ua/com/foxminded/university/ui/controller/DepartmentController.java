@@ -5,10 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
+import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
+import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -23,6 +26,8 @@ public class DepartmentController {
 
     private final DepartmentService departmentService;
     private final FacultyService facultyService;
+    private final TeacherService teacherService;
+    private final TeacherDtoMapper teacherDtoMapper;
 
     @GetMapping
     public String showDepartments(@RequestParam(required = false) Integer facultyId,
@@ -88,4 +93,13 @@ public class DepartmentController {
         return defineRedirect(request);
     }
 
+    @GetMapping("/{id}/teachers")
+    @ResponseBody
+    public List<TeacherDto> getTeachersByDepartment(@PathVariable("id") int departmentId) {
+        log.debug("Getting teacherDtos by department id({})", departmentId);
+        List<TeacherDto> teachers = teacherDtoMapper
+            .teachersToTeacherDtos(teacherService.getAllByDepartment(departmentId));
+        log.info("Found {} teachers",teachers.size() );
+        return teachers;
+    }
 }

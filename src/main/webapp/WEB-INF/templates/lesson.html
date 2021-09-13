@@ -32,8 +32,10 @@
               <!--Date start-->
               <div class="col">
                 <label for="dateStartPickerLesson" class="form-label">Time start</label>
-                <div class="input-group date" id="dateStartPickerLesson" data-target-input="nearest">
-                  <input type="text" class="form-control datetimepicker-input" data-target="#dateStartPickerLesson"
+                <div class="input-group date"  data-target-input="nearest">
+                  <input type="text" class="form-control datetimepicker-input"
+                         data-target="#dateStartPickerLesson"
+                         id="dateStartPickerLesson"
                          th:value="${#temporals.format(lesson.timeStart, 'yyyy-MM-dd HH:mm')}"
                          name="timeStart" required disabled/>
                   <div class="input-group-text" data-target="#dateStartPickerLesson"
@@ -45,8 +47,10 @@
               <!--Date end-->
               <div class="col">
                 <label for="dateEndPickerLesson" class="form-label">Time end</label>
-                <div class="input-group date" id="dateEndPickerLesson" data-target-input="nearest">
-                  <input type="text" class="form-control datetimepicker-input" data-target="#dateEndPickerLesson"
+                <div class="input-group date" data-target-input="nearest">
+                  <input type="text" class="form-control datetimepicker-input"
+                         data-target="#dateEndPickerLesson"
+                         id="dateEndPickerLesson"
                          th:value="${#temporals.format(lesson.timeEnd, 'yyyy-MM-dd HH:mm')}"
                          name="timeEnd" required disabled/>
                   <div class="input-group-text" data-target="#dateEndPickerLesson"

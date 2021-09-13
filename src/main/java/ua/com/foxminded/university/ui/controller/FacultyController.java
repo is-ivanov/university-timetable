@@ -6,12 +6,15 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
+import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
+import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,6 +32,8 @@ public class FacultyController {
     private final FacultyService facultyService;
     private final GroupService groupService;
     private final DepartmentService departmentService;
+    private final TeacherService teacherService;
+    private final TeacherDtoMapper teacherDtoMapper;
 
     @GetMapping
     public String showFaculties(Model model) {
@@ -75,26 +80,26 @@ public class FacultyController {
 
     @GetMapping("/{id}/groups")
     @ResponseBody
-    public List<Group> getGroupsFromFaculty(@PathVariable("id") int facultyId) {
+    public List<Group> getGroupsByFaculty(@PathVariable("id") int facultyId) {
         if (facultyId == 0) {
-            log.debug("Get all groups for selector");
+            log.debug("Get all groups");
             return groupService.getAll();
         } else {
-            log.debug("Get groups for selector by faculty id({})", facultyId);
+            log.debug("Getting groups by faculty id({})", facultyId);
             return groupService.getAllByFacultyId(facultyId);
         }
     }
 
     @GetMapping("/{id}/groups/free")
     @ResponseBody
-    public List<Group> getFreeGroupsFromFaculty(@PathVariable("id") int facultyId,
-                                                @RequestParam("time_start")
-                                                @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-                                                    LocalDateTime startTime,
-                                                @RequestParam("time_end")
-                                                @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-                                                    LocalDateTime endTime) {
-        log.debug("Getting active groups from faculty id({}) free from {} to {}",
+    public List<Group> getFreeGroupsByFaculty(@PathVariable("id") int facultyId,
+                                              @RequestParam("time_start")
+                                              @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+                                                  LocalDateTime startTime,
+                                              @RequestParam("time_end")
+                                              @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+                                                  LocalDateTime endTime) {
+        log.debug("Getting active groups by faculty id({}) free from {} to {}",
             facultyId, startTime, endTime);
         List<Group> freeGroups = groupService
             .getFreeGroupsByFacultyOnLessonTime(facultyId, startTime, endTime);
@@ -104,14 +109,23 @@ public class FacultyController {
 
     @GetMapping("/{id}/departments")
     @ResponseBody
-    public List<Department> getDepartmentsFromFaculty(@PathVariable int id){
-        log.debug("Getting departments for selector");
-        if (id == 0) {
-            log.debug("Get all departments for selector");
+    public List<Department> getDepartmentsByFaculty(@PathVariable("id") int facultyId) {
+        if (facultyId == 0) {
+            log.debug("Getting all departments");
             return departmentService.getAll();
         } else {
-            log.debug("Get departments for selector by facultyId ({})", id);
-            return departmentService.getAllByFaculty(id);
+            log.debug("Getting departments by facultyId ({})", facultyId);
+            return departmentService.getAllByFaculty(facultyId);
         }
+    }
+
+    @GetMapping("/{id}/teachers")
+    @ResponseBody
+    public List<TeacherDto> getTeachersByFaculty(@PathVariable("id") int facultyId) {
+        log.debug("Getting teacherDtos by faculty id({})", facultyId);
+        List<TeacherDto> teachers = teacherDtoMapper
+            .teachersToTeacherDtos(teacherService.getAllByFaculty(facultyId));
+        log.info("Found {} teachers", teachers.size());
+        return teachers;
     }
 }

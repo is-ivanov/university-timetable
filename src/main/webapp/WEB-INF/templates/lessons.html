@@ -19,8 +19,7 @@
             <label for="selectFaculty" class="col-form-label">Faculty</label>
           </div>
           <div class="col-md ps-1">
-            <select class="form-select" id="selectFaculty" name="facultyId"
-                    onchange="fillSelectDepartmentsAndTeachers()">
+            <select class="form-select" id="selectFaculty" name="facultyId">
               <option value="0" selected>Please select faculty...</option>
               <option th:each="faculty : ${faculties}"
                       th:value="${faculty.id}"
@@ -36,8 +35,7 @@
             <label for="selectDepartment" class="col-form-label">Department</label>
           </div>
           <div class="col-md ps-1">
-            <select class="form-select" id="selectDepartment" name="departmentId"
-                    onchange="fillSelectTeachersLesson()">
+            <select class="form-select" id="selectDepartment" name="departmentId">
               <option value="0" selected>Please select department...</option>
               <option th:each="department : ${departments}"
                       th:value="${department.id}"
@@ -124,7 +122,9 @@
               <div class="col pe-1">
                 <div class="input-group date" id="dateStartPicker" data-target-input="nearest">
                   <span class="input-group-text">from</span>
-                  <input type="text" class="form-control datetimepicker-input" data-target="#dateStartPicker"
+                  <label class="visually-hidden" for="dateFrom"></label>
+                  <input type="text" class="form-control datetimepicker-input"
+                         data-target="#dateStartPicker" id="dateFrom"
                          th:field="*{dateFrom}"
                          th:value="${#temporals.format(lessonFilter.dateFrom, 'yyyy-MM-dd')}"
                          placeholder="dddd-mm-dd hh:mm"/>
@@ -137,7 +137,9 @@
               <div class="col ps-1">
                 <div class="input-group date" id="dateEndPicker" data-target-input="nearest">
                   <span class="input-group-text">to</span>
-                  <input type="text" class="form-control datetimepicker-input" data-target="#dateEndPicker"
+                  <label class="visually-hidden" for="dateTo"></label>
+                  <input type="text" class="form-control datetimepicker-input"
+                         data-target="#dateEndPicker" id="dateTo"
                          th:field="*{dateTo}"
                          th:value="${#temporals.format(lessonFilter.dateTo, 'yyyy-MM-dd')}"
                          placeholder="dddd-mm-dd hh:mm"/>
@@ -231,9 +233,9 @@
   <!--  Main Table End-->
 
   <!--  Modal Forms-->
-  <!--  Create Modal-->
+  <!--  Create Lesson Modal-->
   <!--  TODO 1. In create and edit lesson modal first position
-   input date_start ans date_end, after course then teacher and room\
+   input date_start and date_end, after course then teacher and room\
         TODO 2. After update time fill selectors teachers and rooms-->
   <div id="newLessonModal" class="modal fade" data-bs-backdrop="static"
        tabindex="-1" aria-labelledby="NewLessonModalLabel"
@@ -249,6 +251,7 @@
             </button>
           </div>
           <div class="modal-body">
+
             <!-- Select course-->
             <div class="mb-3">
               <label for="selectCourseNewLesson" class="form-label">Course</label>
@@ -298,8 +301,10 @@
             <div class="mb-3">
               <label for="dateStartPickerNewLesson" class="form-label">Time start</label>
               <div class="input-group date" id="dateStartPickerNewLesson" data-target-input="nearest">
-                <input type="text" class="form-control datetimepicker-input" data-target="#dateStartPickerNewLesson"
-                       name="timeStart" required/>
+                <label class="visually-hidden" for="timeStart"></label>
+                <input type="text" class="form-control datetimepicker-input"
+                       data-target="#dateStartPickerNewLesson"
+                       id="timeStart" name="timeStart" required/>
                 <div data-target="#dateStartPickerNewLesson" data-toggle="datetimepicker">
                   <div class="input-group-text"><i class="bi bi-calendar3"></i></div>
                 </div>
@@ -309,20 +314,21 @@
             <div class="mb-3">
               <label for="dateEndPickerNewLesson" class="form-label">Time end</label>
               <div class="input-group date" id="dateEndPickerNewLesson" data-target-input="nearest">
-                <input type="text" class="form-control datetimepicker-input" data-target="#dateEndPickerNewLesson"
-                       name="timeEnd" required/>
+                <label class="visually-hidden" for="timeEnd"></label>
+                <input type="text" class="form-control datetimepicker-input"
+                       data-target="#dateEndPickerNewLesson"
+                       id="timeEnd" name="timeEnd" required/>
                 <div data-target="#dateEndPickerNewLesson" data-toggle="datetimepicker">
                   <div class="input-group-text"><i class="bi bi-calendar3"></i></div>
                 </div>
               </div>
             </div>
           </div>
+
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary btn-sm"
                     data-bs-dismiss="modal">Cancel
             </button>
-            <input type="hidden" name="uri"
-                   th:value="${#request.requestURI} + (${#request.queryString}? '?' + ${#request.queryString} : '')">
             <input type="submit" class="btn btn-primary btn-sm" value="Create Lesson">
           </div>
         </form>
@@ -330,7 +336,7 @@
     </div>
   </div>
 
-  <!--Edit Modal -->
+  <!--Edit Lesson Modal -->
   <div id="editLessonModal" class="modal fade" data-bs-backdrop="static"
        tabindex="-1" aria-labelledby="editLessonModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -390,8 +396,10 @@
             <div class="mb-3">
               <label for="dateStartPickerEditLesson" class="form-label">Time start</label>
               <div class="input-group date" id="dateStartPickerEditLesson" data-target-input="nearest">
-                <input type="text" class="form-control datetimepicker-input" data-target="#dateStartPickerEditLesson"
-                       name="timeStart" required/>
+                <label class="visually-hidden" for="timeStartEditModal"></label>
+                <input type="text" class="form-control datetimepicker-input"
+                       data-target="#dateStartPickerEditLesson"
+                       id="timeStartEditModal" name="timeStart" required/>
                 <div data-target="#dateStartPickerEditLesson" data-toggle="datetimepicker">
                   <div class="input-group-text"><i class="bi bi-calendar3"></i></div>
                 </div>
@@ -401,8 +409,10 @@
             <div class="mb-3">
               <label for="dateEndPickerEditLesson" class="form-label">Time end</label>
               <div class="input-group date" id="dateEndPickerEditLesson" data-target-input="nearest">
-                <input type="text" class="form-control datetimepicker-input" data-target="#dateEndPickerEditLesson"
-                       name="timeEnd" required/>
+                <label class="visually-hidden" for="timeEndEditModal"></label>
+                <input type="text" class="form-control datetimepicker-input"
+                       data-target="#dateEndPickerEditLesson"
+                       id="timeEndEditModal" name="timeEnd" required/>
                 <div data-target="#dateEndPickerEditLesson" data-toggle="datetimepicker">
                   <div class="input-group-text"><i class="bi bi-calendar3"></i></div>
                 </div>
@@ -414,8 +424,6 @@
             <button type="button" class="btn btn-secondary"
                     data-bs-dismiss="modal">Cancel
             </button>
-            <input type="hidden" name="uri"
-                   th:value="${#request.requestURI} + (${#request.queryString}? '?' + ${#request.queryString} : '')">
             <input type="submit" class="btn btn-primary" value="Update">
           </div>
         </form>
@@ -423,7 +431,7 @@
     </div>
   </div>
 
-  <!--  Delete Modal-->
+  <!--  Delete Lesson Modal-->
   <div id="deleteLessonModal" class="modal fade" data-bs-backdrop="static"
        tabindex="-1" aria-labelledby="DeleteLessonModalLabel"
        aria-hidden="true">
@@ -446,8 +454,6 @@
             <button type="button" class="btn btn-secondary"
                     data-bs-dismiss="modal">Cancel
             </button>
-            <input type="hidden" name="uri"
-                   th:value="${#request.requestURI} + (${#request.queryString}? '?' + ${#request.queryString} : '')">
             <input type="submit" class="btn btn-danger" value="Delete">
           </div>
         </form>
@@ -459,117 +465,137 @@
 </div>
 <!--Scripts-->
 <script layout:fragment="script">
-  function fillSelectDepartmentsAndTeachers () {
-    updateSelectDepartments()
 
-    const select = document.getElementById('selectFaculty').value
-    fillSelectTeachers(select, 'faculty')
-    switchSubmitEnabled()
-  }
+  let selectFaculty = $('#selectFaculty');
+  let selectDepartment = $('#selectDepartment');
+  let selectTeacher = $('#selectTeacher');
+  let switchShowInactiveTeachers = $('#switchShowInactiveTeachers');
 
-  function fillSelectTeachersLesson () {
-    const select = document.getElementById('selectDepartment').value
-    fillSelectTeachers(select, 'department')
-    switchSubmitEnabled()
+  selectFaculty.change(function () {
+    let facultyId = $(this).val();
+    updateSelectDepartmentsFilteredByFaculty(facultyId, selectDepartment);
+
+    updateSelectTeacherFilteredByFaculty(facultyId, selectTeacher,
+      checkedShowInactiveTeachers());
+
+    switchSubmitEnabled();
+  });
+
+  selectDepartment.change(function () {
+    let departmentId = $(this).val();
+    updateSelectTeacherFilteredByDepartment(departmentId, selectTeacher,
+      checkedShowInactiveTeachers());
+
+    switchSubmitEnabled();
+  });
+
+  function checkedShowInactiveTeachers () {
+    return switchShowInactiveTeachers.is(':checked');
   }
 
   function showInactiveTeachersInSelect () {
-    const check = document.getElementById('switchShowInactiveTeachers')
-    const select = document.getElementById('selectTeacher')
-    showInactiveSelectOption(select, check)
+    showInactiveSelectOption(selectTeacher, switchShowInactiveTeachers);
   }
 
   function showPastLessonsInTable () {
-    const table = document.getElementById('mainTable')
-    const check = document.getElementById('switchShowPastLessonsMainTable')
-    showInactiveTableRow(table, check)
+    const table = $('#mainTable');
+    const checkbox = $('#switchShowPastLessonsMainTable');
+    showInactiveTableRow(table, checkbox);
   }
 
   function switchSubmitEnabled () {
-    if ($('#selectFaculty').val() > 0 ||
-      $('#selectDepartment').val() > 0 ||
-      $('#selectTeacher').val() > 0 ||
-      $('#selectCourse').val() > 0 ||
-      $('#selectRoom').val() > 0 ||
-      $('#dateFrom').val() !== '' ||
-      $('#dateTo').val() !== '') {
+    let submit = $('#submit');
 
-      $('#submit').removeAttr('disabled')
+    if (selectFaculty.val() > 0 || selectDepartment.val() > 0 ||
+      selectTeacher.val() > 0 || $('#selectCourse').val() > 0 ||
+      $('#selectRoom').val() > 0 ||
+      $('#dateFrom').val() !== '' || $('#dateTo').val() !== '') {
+
+      submit.removeAttr('disabled');
     } else {
-      $('#submit').attr('disabled', 'disabled')
+      submit.prop('disabled', true);
     }
   }
+
   //Datetimepicker
   $(function () {
 
     $('#dateStartPicker').on('change.datetimepicker', function (e) {
-      $('#dateEndPicker').datetimepicker('minDate', e.date)
-      switchSubmitEnabled()
-    })
+      $('#dateEndPicker').datetimepicker('minDate', e.date);
+      switchSubmitEnabled();
+    });
     $('#dateEndPicker').on('change.datetimepicker', function (e) {
-      $('#dateStartPicker').datetimepicker('maxDate', e.date)
-      switchSubmitEnabled()
-    })
+      $('#dateStartPicker').datetimepicker('maxDate', e.date);
+      switchSubmitEnabled();
+    });
 
-    $('#dateStartPickerNewLesson').on('hide.datetimepicker', function (e) {
-      let picker = $('#dateEndPickerNewLesson')
-      picker.datetimepicker('defaultDate', e.date)
-      picker.datetimepicker('viewMode', 'times')
-      picker.datetimepicker('minDate', e.date)
-    })
+    let dateStartPickerNewLesson = $('#dateStartPickerNewLesson');
+    let dateEndPickerNewLesson = $('#dateEndPickerNewLesson');
 
-    $('#dateStartPickerEditLesson').on('hide.datetimepicker', function (e) {
-      let picker = $('#dateEndPickerEditLesson')
-      picker.children('input').val(moment(e.date).format('yyyy-MM-DD HH:mm'))
-      picker.datetimepicker('defaultDate', e.date)
-      picker.datetimepicker('viewMode', 'times')
-      picker.datetimepicker('minDate', e.date)
-    })
+    dateStartPickerNewLesson.on('hide.datetimepicker', function (e) {
+      updateEndDatetimepicker(dateEndPickerNewLesson, e);
+    });
 
-  })
+    dateEndPickerNewLesson.on('hide.datetimepicker', function (e) {
+      updateStartDatetimepicker(dateStartPickerNewLesson, e);
+    });
+
+    let dateStartPickerEditLesson = $('#dateStartPickerEditLesson');
+    let dateEndPickerEditLesson = $('#dateEndPickerEditLesson');
+
+    dateStartPickerEditLesson.on('hide.datetimepicker', function (e) {
+      updateEndDatetimepicker(dateEndPickerEditLesson, e);
+    });
+
+    dateEndPickerEditLesson.on('hide.datetimepicker', function (e) {
+      updateStartDatetimepicker(dateStartPickerEditLesson, e);
+    });
+
+  });
 
   // NEW MODAL
   $(function () {
     $('#newLessonModal').on('shown.bs.modal', function () {
-      $('#selectCourseNewLesson').focus()
-    })
-  })
+      $('#selectCourseNewLesson').focus();
+    });
+  });
 
   // EDIT MODAL
   $(function () {
     $('.editButton').on('click', function () {
-      let href = '/lessons/' + $(this).attr('data-bs-id')
-      $('#formEdit').attr('action', href)
+      let href = '/lessons/' + $(this).attr('data-bs-id');
+      $('#formEdit').attr('action', href);
       $.get(href, function (lessonDto) {
-        $('#selectCourseEditLesson option[value=' + lessonDto.courseId + ']').prop('selected', true)
-        $('#selectTeacherEditLesson option[value=' + lessonDto.teacherId + ']').prop('selected', true)
-        $('#selectRoomEditLesson option[value=' + lessonDto.roomId + ']').prop('selected', true)
-        $('#dateStartPickerEditLesson').children('.datetimepicker-input').val(lessonDto.timeStart)
-        $('#dateEndPickerEditLesson').children('.datetimepicker-input').val(lessonDto.timeEnd)
-      })
-    })
-  })
+        $('#selectCourseEditLesson option[value=' + lessonDto.courseId + ']').prop('selected', true);
+        $('#selectTeacherEditLesson option[value=' + lessonDto.teacherId + ']').prop('selected', true);
+        $('#selectRoomEditLesson option[value=' + lessonDto.roomId + ']').prop('selected', true);
+        $('#dateStartPickerEditLesson').children('.datetimepicker-input').val(lessonDto.timeStart);
+        $('#dateEndPickerEditLesson').children('.datetimepicker-input').val(lessonDto.timeEnd);
+      });
+    });
+  });
+
   $(function () {
     $('#editLessonModal').on('shown.bs.modal', function () {
-      $('#selectCourseEditLesson').focus()
-    })
-  })
+      $('#selectCourseEditLesson').focus();
+    });
+  });
 
   // DELETE MODAL
   $(function () {
     $('.deleteButton').on('click', function () {
-      let id = $(this).attr('data-bs-id')
-      let row = $(this).parent().parent().parent().parent()
-      let course = row.children('.course').text()
-      let teacher = row.children('.teacher').text()
-      let date_start = row.children('.date_start').text()
-      let time_start = row.children('.time_start').text()
+      let id = $(this).attr('data-bs-id');
+      let row = $(this).parent().parent().parent().parent();
+      let course = row.children('.course').text();
+      let teacher = row.children('.teacher').text();
+      let date_start = row.children('.date_start').text();
+      let time_start = row.children('.time_start').text();
       let lesson = '\' lesson(course \'' + course + '\'; teacher \'' + teacher
-        + '\'; date \'' + date_start + ' ' + time_start + '\'?'
-      $('#deletedLesson').text(lesson)
-      $('#formDelete').attr('action', '/lessons/' + id)
-    })
-  })
+        + '\'; date \'' + date_start + ' ' + time_start + '\'?';
+      $('#deletedLesson').text(lesson);
+      $('#formDelete').attr('action', '/lessons/' + id);
+    });
+  });
 
 </script>
 </body>

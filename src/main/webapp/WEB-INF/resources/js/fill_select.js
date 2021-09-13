@@ -1,5 +1,39 @@
+// FUNCTIONS WHICH SENDING GET REQUESTS
+
+//      TEACHERS
+
 /**
- * Send GET request and call function for filling select Teachers
+ * Send GET request for filling select teachers filtered by faculty
+ *
+ * @param {Number} facultyId - Selected faculty id
+ * @param {HTMLSelectElement} select - The select element for filling data
+ * @param {Boolean} isShowInactive - With true show inactive object
+ */
+function updateSelectTeacherFilteredByFaculty (
+  facultyId, select, isShowInactive) {
+  let uri = '/faculties/' + facultyId + '/teachers';
+  $.get(uri, function (data) {
+    fillSelectPerson(select, data, isShowInactive);
+  });
+}
+
+/**
+ * Send GET request for filling select teachers filtered by departments
+ *
+ * @param {Number} departmentId - Selected department id
+ * @param {HTMLSelectElement} select - The select element for filling data
+ * @param {Boolean} isShowInactive - With true show inactive object
+ */
+function updateSelectTeacherFilteredByDepartment (
+  departmentId, select, isShowInactive) {
+  let uri = '/departments/' + departmentId + '/teachers';
+  $.get(uri, function (data) {
+    fillSelectPerson(select, data, isShowInactive);
+  });
+}
+
+/**
+ * Send GET request for filling select teachers filtered by date
  *
  * @param {String} time_start - Time start lesson for GET request
  * @param {String} time_end - Time end lesson for GET request
@@ -12,53 +46,10 @@ function updateSelectTeacherFilteredByDate (time_start, time_end, select) {
     });
 }
 
-/**
- * Send GET request and call function for filling select Rooms
- *
- * @param {String} time_start - Time start lesson for GET request
- * @param {String} time_end - Time end lesson for GET request
- * @param {HTMLSelectElement} select - The select element for filling data
- */
-function updateSelectRoomFilteredByDate (time_start, time_end, select) {
-  $.get('/rooms/free', { time_start: time_start, time_end: time_end },
-    function (data) {
-      fillSelectRoomFilteredByDate(select, data);
-    });
-}
+//      STUDENTS
 
 /**
- * Send GET request and call function for filling select Groups
- *
- * @param {String} time_start - Time start lesson for GET request
- * @param {String} time_end - Time end lesson for GET request
- * @param {Number} facultyId - Selected faculty id
- * @param {HTMLSelectElement} select - The select element for filling data
- */
-function updateSelectGroupFilteredByFacultyAndDate (
-  time_start, time_end, facultyId, select) {
-  let uri = '/faculties/' + facultyId + '/groups/free';
-  $.get(uri, { time_start: time_start, time_end: time_end }, function (data) {
-    fillSelectGroups(select, data, false);
-  });
-}
-
-/**
- * Send GET request and call function for filling select Groups
- *
- * @param {Number} facultyId - Selected faculty id
- * @param {HTMLSelectElement} select - The select element for filling data
- * @param {Boolean} isShowInactive - With true show inactive object
- */
-function updateSelectGroupFilteredByFaculty (
-  facultyId, select, isShowInactive) {
-  let uri = '/faculties/' + facultyId + '/groups';
-  $.get(uri, function (data) {
-    fillSelectGroups(select, data, isShowInactive);
-  });
-}
-
-/**
- * Send GET request and call function for filling select Students
+ * Send GET request for filling select students filtered by group and date
  *
  * @param {String} time_start - Time start lesson for GET request
  * @param {String} time_end - Time end lesson for GET request
@@ -73,8 +64,43 @@ function updateSelectStudentsFilteredByGroupAndDate (
   });
 }
 
+//      GROUPS
+
 /**
- * Send GET request and call function for filling select departments
+ * Send GET request for filling select groups filtered by faculty
+ *
+ * @param {Number} facultyId - Selected faculty id
+ * @param {HTMLSelectElement} select - The select element for filling data
+ * @param {Boolean} isShowInactive - With true show inactive object
+ */
+function updateSelectGroupFilteredByFaculty (
+  facultyId, select, isShowInactive) {
+  let uri = '/faculties/' + facultyId + '/groups';
+  $.get(uri, function (data) {
+    fillSelectGroups(select, data, isShowInactive);
+  });
+}
+
+/**
+ * Send GET request for filling select groups filtered by faculty and date
+ *
+ * @param {String} time_start - Time start lesson for GET request
+ * @param {String} time_end - Time end lesson for GET request
+ * @param {Number} facultyId - Selected faculty id
+ * @param {HTMLSelectElement} select - The select element for filling data
+ */
+function updateSelectGroupFilteredByFacultyAndDate (
+  time_start, time_end, facultyId, select) {
+  let uri = '/faculties/' + facultyId + '/groups/free';
+  $.get(uri, { time_start: time_start, time_end: time_end }, function (data) {
+    fillSelectGroups(select, data, false);
+  });
+}
+
+//      DEPARTMENTS
+
+/**
+ * Send GET request for filling select departments filtered by faculty
  *
  * @param {Number} facultyId - Selected faculty id
  * @param {HTMLSelectElement} select - The select element for filling data
@@ -86,10 +112,26 @@ function updateSelectDepartmentsFilteredByFaculty (facultyId, select) {
   });
 }
 
-//--------------------------------------------------
+//      ROOMS
 
 /**
- * Fill options in selector for person filtered by date lesson
+ * Send GET request for filling select Rooms filtered by date
+ *
+ * @param {String} time_start - Time start lesson for GET request
+ * @param {String} time_end - Time end lesson for GET request
+ * @param {HTMLSelectElement} select - The select element for filling data
+ */
+function updateSelectRoomFilteredByDate (time_start, time_end, select) {
+  $.get('/rooms/free', { time_start: time_start, time_end: time_end },
+    function (data) {
+      fillSelectRoomFilteredByDate(select, data);
+    });
+}
+
+// FUNCTIONS FOR FILLING SELECTORS
+
+/**
+ * Fill options in selector for person with add default person
  *
  * @param {HTMLSelectElement} select - The select element for filling data
  * @param {Object} data - Returned data from GET response
@@ -111,7 +153,7 @@ function fillSelectPersonWithDefaultPerson (select, data, isShowInactive) {
 }
 
 /**
- * Fill options in selector for person filtered by date lesson
+ * Fill options in selector for person
  *
  * @param {HTMLSelectElement} select - The select element for filling data
  * @param {Object} data - Returned data from GET response
@@ -220,49 +262,49 @@ function fillSelectWithoutActive (value, text, select) {
   select.append(option);
 }
 
-/**
- * Fill select 'selectTeacher' with teachers data from the DB
- *
- * @param {HTMLSelectElement} select The select element for filling data
- * @param {Number} valueSelect The value from 'select' with condition
- * @param {String} type Type of select (faculty; department)
- */
-function fillSelectTeachers (select, valueSelect, type) {
-  let uri;
-  if (type === 'faculty') {
-    uri = 'lessons/faculties?facultyId=' + valueSelect;
-  } else if (type === 'department') {
-    uri = 'lessons/departments?departmentId=' + valueSelect;
-  }
-  $.get(uri, function (data) {
-    $('#selectTeacher').
-      empty().
-      append('<option value="0" selected>Please select teacher...</option>');
-    data.sort(function (a, b) {
-      const nameA = a.fullName.toLowerCase();
-      const nameB = b.fullName.toLowerCase();
-      if (nameA < nameB)
-        return -1;
-      if (nameA > nameB)
-        return 1;
-      return 0;
-    });
-    data.forEach(function (teacher) {
-      let option;
-      if (teacher.active === true) {
-        option = '<option class = \'active\' value = ' + teacher.id + '>' +
-          teacher.fullName + '</option>';
-      } else if ($('#switchShowInactiveTeachers').is(':checked')) {
-        option = '<option class = \'inactive\' value = ' + teacher.id + '>' +
-          teacher.fullName + ' - inactive' + '</option>';
-      } else {
-        option = '<option class = \'inactive d-none\' value = ' + teacher.id +
-          '>' + teacher.fullName + ' - inactive' + '</option>';
-      }
-      $('#selectTeacher').append(option);
-    });
-  });
-}
+// /**
+//  * Fill select 'selectTeacher' with teachers data from the DB
+//  *
+//  * @param {HTMLSelectElement} select The select element for filling data
+//  * @param {Number} valueSelect The value from 'select' with condition
+//  * @param {String} type Type of select (faculty; department)
+//  */
+// function fillSelectTeachers (select, valueSelect, type) {
+//   let uri;
+//   if (type === 'faculty') {
+//     uri = 'lessons/faculties?facultyId=' + valueSelect;
+//   } else if (type === 'department') {
+//     uri = 'lessons/departments?departmentId=' + valueSelect;
+//   }
+//   $.get(uri, function (data) {
+//     $('#selectTeacher').
+//       empty().
+//       append('<option value="0" selected>Please select teacher...</option>');
+//     data.sort(function (a, b) {
+//       const nameA = a.fullName.toLowerCase();
+//       const nameB = b.fullName.toLowerCase();
+//       if (nameA < nameB)
+//         return -1;
+//       if (nameA > nameB)
+//         return 1;
+//       return 0;
+//     });
+//     data.forEach(function (teacher) {
+//       let option;
+//       if (teacher.active === true) {
+//         option = '<option class = \'active\' value = ' + teacher.id + '>' +
+//           teacher.fullName + '</option>';
+//       } else if ($('#switchShowInactiveTeachers').is(':checked')) {
+//         option = '<option class = \'inactive\' value = ' + teacher.id + '>' +
+//           teacher.fullName + ' - inactive' + '</option>';
+//       } else {
+//         option = '<option class = \'inactive d-none\' value = ' + teacher.id +
+//           '>' + teacher.fullName + ' - inactive' + '</option>';
+//       }
+//       $('#selectTeacher').append(option);
+//     });
+//   });
+// }
 
 function sortByName (a, b) {
   const nameA = a.name.toLowerCase();

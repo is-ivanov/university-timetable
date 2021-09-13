@@ -90,7 +90,7 @@ public class LessonController {
 
     @GetMapping("/{id}")
     @ResponseBody
-    public LessonDto showLessonWithStudents(@PathVariable("id") int lessonId) {
+    public LessonDto getLessonWithStudents(@PathVariable("id") int lessonId) {
         log.debug("Getting lesson id({})", lessonId);
         LessonDto lessonDto = lessonDtoMapper.lessonToLessonDto(lessonService.getById(lessonId));
         log.info("Found lesson [teacher {}, course {}, room {}]",
@@ -166,11 +166,11 @@ public class LessonController {
 
     @PostMapping
     public String createLesson(@ModelAttribute LessonDto lessonDto,
-                               @RequestParam(required = false) String uri) {
+                               HttpServletRequest request) {
         log.debug("Creating lesson {}", lessonDto);
         lessonService.add(lessonDtoMapper.lessonDtoToLesson(lessonDto));
         log.info("Lesson {} is created", lessonDto);
-        return defineRedirect(uri);
+        return defineRedirect(request);
     }
 
     @PostMapping("/{id}/students")
@@ -223,11 +223,11 @@ public class LessonController {
 
     @DeleteMapping("/{id}")
     public String deleteLesson(@PathVariable("id") int lessonId,
-                               @RequestParam(required = false) String uri) {
+                               HttpServletRequest request) {
         log.debug("Deleting lesson id({})", lessonId);
         lessonService.delete(lessonId);
         log.info("Lesson id({}) is deleted", lessonId);
-        return defineRedirect(uri);
+        return defineRedirect(request);
     }
 
     @ModelAttribute("faculties")

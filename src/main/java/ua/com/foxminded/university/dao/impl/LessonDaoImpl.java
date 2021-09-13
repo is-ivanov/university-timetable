@@ -239,7 +239,7 @@ public class LessonDaoImpl implements LessonDao {
         addCourseFilter(query, filter.getCourseId());
         addRoomFilter(query, filter.getRoomId());
         addDateFilter(query, filter.getDateFrom(), filter.getDateTo());
-        log.info("query = {}", query.toString());
+        log.debug("query = {}", query);
         return query.toString();
     }
 
