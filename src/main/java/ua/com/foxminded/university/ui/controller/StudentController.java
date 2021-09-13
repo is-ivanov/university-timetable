@@ -13,6 +13,7 @@ import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 import ua.com.foxminded.university.domain.service.interfaces.StudentService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 import static ua.com.foxminded.university.ui.Util.defineRedirect;
@@ -84,18 +85,18 @@ public class StudentController {
 
     @PostMapping
     public String createStudent(@ModelAttribute StudentDto studentDto,
-                                @RequestParam(required = false) String uri) {
+                                HttpServletRequest request) {
         log.debug("Creating student [{} {} {}]", studentDto.getFirstName(),
             studentDto.getPatronymic(), studentDto.getLastName());
         studentService.add(studentMapper.studentDtoToStudent(studentDto));
         log.info("Student [{}, {}, {}] is created", studentDto.getFirstName(),
             studentDto.getPatronymic(), studentDto.getLastName());
-        return defineRedirect(uri);
+        return defineRedirect(request);
     }
 
     @GetMapping("/{id}")
     @ResponseBody
-    public StudentDto showStudent(@PathVariable("id") int studentId) {
+    public StudentDto getStudent(@PathVariable("id") int studentId) {
         log.debug("Getting student id({})", studentId);
         Student student = studentService.getById(studentId);
         log.info("Found student [{} {} {}]", student.getFirstName(),
@@ -106,20 +107,20 @@ public class StudentController {
     @PutMapping("/{id}")
     public String updateStudent(@ModelAttribute StudentDto studentDto,
                                 @PathVariable("id") int studentId,
-                                @RequestParam(required = false) String uri) {
+                                HttpServletRequest request) {
         log.debug("Updating student id({})", studentId);
         studentService.update(studentMapper.studentDtoToStudent(studentDto));
         log.info("Student id({}) is updated", studentId);
-        return defineRedirect(uri);
+        return defineRedirect(request);
     }
 
     @DeleteMapping("/{id}")
     public String deleteStudent(@PathVariable("id") int studentId,
-                                @RequestParam(required = false) String uri) {
+                                HttpServletRequest request) {
         log.debug("Deleting student id({})", studentId);
         studentService.delete(studentId);
         log.info("Student id({}) is deleted", studentId);
-        return defineRedirect(uri);
+        return defineRedirect(request);
     }
 
 }
