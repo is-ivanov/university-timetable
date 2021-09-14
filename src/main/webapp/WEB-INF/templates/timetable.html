@@ -4,11 +4,9 @@
 <head>
   <title>Timetable</title>
 
-  <meta charset='utf-8'/>
-  <link href='lib/main.css' th:href="@{/webjars/fullcalendar/main.css}" rel='stylesheet'/>
-  <script src='lib/main.js' th:src="@{/webjars/fullcalendar/main.js}"></script>
-  <script layout:fragment="script">
-
+  <link rel="stylesheet" th:href="@{/webjars/fullcalendar/main.css}"/>
+  <script th:src="@{/webjars/fullcalendar/main.js}"></script>
+  <script>
     document.addEventListener('DOMContentLoaded', function () {
         let calendarEl = document.getElementById('calendar');
         let calendar = new FullCalendar.Calendar(calendarEl, {
@@ -16,9 +14,8 @@
           headerToolbar: {
             left: 'prev,next today',
             center: 'title',
-            right: 'dayGridMonth,timeGridWeek',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay',
           },
-          themeSystem: 'bootstrap',
           firstDay: 1,
           allDaySlot: false,
           views: {
@@ -39,7 +36,7 @@
                 });
               },
             },
-            timeGridWeek: {
+            timeGrid: {
               eventTimeFormat: {
                 hour: '2-digit',
                 minute: '2-digit',
@@ -122,6 +119,9 @@
 </head>
 <body>
 <div layout:fragment="content">
+  <div class="container">
+
+  </div>
   <div id='calendar'></div>
 </div>
 </body>
