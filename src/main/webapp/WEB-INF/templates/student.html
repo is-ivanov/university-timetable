@@ -101,11 +101,14 @@
         <td class="py-0">
           <div class="row">
             <div class="col-auto">
-              <form th:action="@{/student/{id}/timetable(id = ${studentDto.id})}">
-                <button type="submit" class="btn btn-info btn-sm">
-                  <i class="bi-calendar3"></i> Timetable
-                </button>
-              </form>
+              <a href="#" th:href="@{/timetable/students/{id}(id = ${studentDto.id})}"
+                 class="btn btn-info btn-sm">
+              <i class="bi-calendar3"></i> Timetable
+              </a>
+<!--              <form th:action="@{/student/{id}/timetable(id = ${studentDto.id})}">-->
+<!--                <button type="submit" class="btn btn-info btn-sm">-->
+<!--                </button>-->
+<!--              </form>-->
             </div>
             <div class="col-auto">
               <a href="#editStudentModal"

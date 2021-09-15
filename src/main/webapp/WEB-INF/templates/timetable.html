@@ -1,132 +1,120 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout}">
 <head>
   <title>Timetable</title>
 
   <link rel="stylesheet" th:href="@{/webjars/fullcalendar/main.css}"/>
   <script th:src="@{/webjars/fullcalendar/main.js}"></script>
-  <script>
+  <script th:inline="javascript">
     document.addEventListener('DOMContentLoaded', function () {
-        let calendarEl = document.getElementById('calendar');
-        let calendar = new FullCalendar.Calendar(calendarEl, {
-          headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek',
-          },
-          initialView: 'timeGridWeek',
-          navLinks: true,
-          nowIndicator: true,
+      let url = '/' + [[${type}]] + '/' + [[${object.id}]] + '/timetable';
+      let calendarEl = document.getElementById('calendar');
+      let calendar = new FullCalendar.Calendar(calendarEl, {
+        aspectRatio: 1.5,
+        headerToolbar: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek',
+        },
+        initialView: 'timeGridWeek',
+        navLinks: true,
+        nowIndicator: true,
 
-          firstDay: 1,
-          allDaySlot: false,
+        firstDay: 1,
+        allDaySlot: false,
 
-          weekNumbers: true,
-          weekNumberCalculation: 'ISO',
+        weekNumbers: true,
+        weekNumberCalculation: 'ISO',
 
-          eventTimeFormat: {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false,
-          },
+        eventTimeFormat: {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        },
 
-          views: {
-            dayGridMonth: {
-              eventDidMount: function (info) {
-                let teacher = info.event.extendedProps.teacher;
-                let room = info.event.extendedProps.buildingAndRoom;
-                let textTooltip = teacher + '<br/>' + room;
-                new bootstrap.Tooltip(info.el, {
-                  html: true,
-                  title: textTooltip,
-                });
-              },
-            },
-            timeGrid: {
-              eventTimeFormat: {
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false,
-              },
-              eventDidMount: function (info) {
-                let event = info.event;
-                let el = info.el;
-                $(el).find('.fc-event-title').append('<br/>' + event.extendedProps.buildingAndRoom);
-                new bootstrap.Tooltip(el, {
-                  title: event.extendedProps.teacher,
-                });
-              },
-              slotMinTime: '07:00:00',
-              slotMaxTime: '22:00:00',
-              expandRows: true,
+        views: {
+          dayGridMonth: {
+            eventDidMount: function (info) {
+              let teacher = info.event.extendedProps.teacher;
+              let room = info.event.extendedProps.buildingAndRoom;
+              let textTooltip = teacher + '<br/>' + room;
+              new bootstrap.Tooltip(info.el, {
+                html: true,
+                title: textTooltip,
+              });
             },
           },
-          slotLabelFormat: [
-            {
-              hour12: false,
-              hour: 'numeric',
+          timeGrid: {
+            eventTimeFormat: {
+              hour: '2-digit',
               minute: '2-digit',
+              hour12: false,
             },
-          ],
-          defaultTimedEventDuration: '01:30',
-          eventDisplay: 'block',
+            eventDidMount: function (info) {
+              let event = info.event;
+              let el = info.el;
+              $(el).find('.fc-event-title').append('<br/>' + event.extendedProps.buildingAndRoom);
+              new bootstrap.Tooltip(el, {
+                title: event.extendedProps.teacher,
+              });
+            },
+            slotMinTime: '07:00:00',
+            slotMaxTime: '22:00:00',
+            expandRows: true,
+          },
+        },
+        slotLabelFormat: [
+          {
+            hour12: false,
+            hour: 'numeric',
+            minute: '2-digit',
+          },
+        ],
+        defaultTimedEventDuration: '01:30',
+        eventDisplay: 'block',
 
-          events: [
-            {
-              id: '12',
-              title: 'English',
-              start: '2021-09-14T08:30:00',
-              end: '2021-09-14T10:00:00',
-              description: 'description my',
-              extendedProps: {
-                buildingAndRoom: ' 78 Street - 218 B',
-                teacher: 'Cristel S.D.',
-              },
-            },
-            {
-              id: '189',
-              title: 'Chemistry',
-              start: '2021-09-14T10:15:00',
-              end: '2021-09-14T11:45:00',
-              extendedProps: {
-                buildingAndRoom: ' 465498 Street - asdas',
-                teacher: 'Teacher S.D.',
-              },
-            },
-            {
-              id: '97987',
-              title: 'Math',
-              start: '2021-09-14T12:15:00',
-              end: '2021-09-14T13:45:00',
-              extendedProps: {
-                buildingAndRoom: ' 78 Street - 218 B',
-                teacher: 'Cristel S.D.',
-              },
-            },
-            {
-              id: '32131',
-              title: 'Math',
-              start: '2021-09-14T14:15:00',
-              end: '2021-09-14T15:45:00',
-              extendedProps: {
-                buildingAndRoom: ' 78 Street - 218 B',
-                teacher: 'Cristel S.D.',
-              },
-            },
-          ],
-
-        });
-        calendar.render();
-      },
-    );
+        events: function (info, callback) {
+          $.get(url, {
+            start: info.startStr,
+            end: info.endStr,
+          }, function (lessons) {
+            let events = [];
+            lessons.forEach(function (lesson) {
+              events.push({
+                id: lesson.id,
+                title: lesson.courseName,
+                start: lesson.timeStart,
+                end: lesson.timeEnd,
+                teacher: lesson.teacherFullName,
+                buildingAndRoom: lesson.buildingAndRoom,
+              });
+            });
+            callback(events);
+          });
+        },
+        loading: function (isLoading) {
+          if (isLoading) {
+            $('#loading').show();
+          } else {
+            $('#loading').hide();
+          }
+        },
+      });
+      calendar.render();
+    });
 
   </script>
 </head>
 <body>
 <div layout:fragment="content">
-  <h3 th:utext="${'Timetable for ' + object}"></h3>
+  <h3 th:with="description=${object.fullName} ?: ${object.buildingAndRoom}"
+      th:utext="'Timetable for ' + ${description}"></h3>
   <div id='calendar'></div>
+  <div id="loading" style="display: none;">
+    <img id="loading-image" th:src="@{/img/Spin-1s-200px.svg}" alt="Loading..."/>
+  </div>
 </div>
 </body>
 </html>

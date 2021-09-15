@@ -1,5 +1,6 @@
 package ua.com.foxminded.university.dao.interfaces;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import ua.com.foxminded.university.domain.entity.Lesson;
@@ -20,4 +21,8 @@ public interface LessonDao extends Dao<Lesson> {
     void removeStudentFromLesson(int lessonId, int studentId);
 
     List<Lesson> getAllWithFilter(LessonFilter filter);
+
+    List<Lesson> getAllForStudentForTimePeriod(int studentId,
+                                               LocalDateTime startTime,
+                                               LocalDateTime endTime);
 }

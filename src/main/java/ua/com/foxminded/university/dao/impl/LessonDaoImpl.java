@@ -34,6 +34,7 @@ public class LessonDaoImpl implements LessonDao {
     private static final String QUERY_GET_ALL_BY_TEACHER = "lesson.getAllByTeacher";
     private static final String QUERY_GET_ALL_BY_ROOM = "lesson.getAllByRoom";
     private static final String QUERY_GET_ALL_BY_STUDENT = "lesson.getAllByStudent";
+    private static final String QUERY_GET_ALL_BY_STUDENT_FOR_TIME_PERIOD = "lesson.getAllByStudentForTimePeriod";
     private static final String MESSAGE_LESSON_NOT_FOUND = "Lesson id(%d) not found";
     private static final String MESSAGE_UPDATE_LESSON_NOT_FOUND = "Can't update because lesson id(%d) not found";
     private static final String MESSAGE_DELETE_LESSON_NOT_FOUND = "Can't delete because lesson id(%d) not found";
@@ -226,6 +227,19 @@ public class LessonDaoImpl implements LessonDao {
     public List<Lesson> getAllWithFilter(LessonFilter filter) {
         log.debug("Getting all lessons with ({})", filter);
         List<Lesson> lessons = jdbcTemplate.query(createQuery(filter), lessonExtractor);
+        log.info(FOUND_LESSONS, lessons.size());
+        return lessons;
+    }
+
+    @Override
+    public List<Lesson> getAllForStudentForTimePeriod(int studentId,
+                                                      LocalDateTime startTime,
+                                                      LocalDateTime endTime) {
+        log.debug("Getting lessons for student id({}) from {} to {}", studentId,
+            startTime, endTime);
+        List<Lesson> lessons = jdbcTemplate.query(
+            env.getRequiredProperty(QUERY_GET_ALL_BY_STUDENT_FOR_TIME_PERIOD),
+            lessonExtractor, studentId, startTime, endTime);
         log.info(FOUND_LESSONS, lessons.size());
         return lessons;
     }
