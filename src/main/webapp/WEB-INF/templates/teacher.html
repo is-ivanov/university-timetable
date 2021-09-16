@@ -92,11 +92,10 @@
         <td class="py-0">
           <div class="row">
             <div class="col-auto">
-              <form th:action="@{/teacher/{id}/timetable(id = ${teacherDto.id})}">
-                <button type="submit" class="btn btn-info btn-sm">
-                  <i class="bi-calendar3"></i> Timetable
-                </button>
-              </form>
+              <a href="#" th:href="@{/timetable/teachers/{id}(id = ${teacherDto.id})}"
+                 class="btn btn-info btn-sm">
+                <i class="bi-calendar3"></i> Timetable
+              </a>
             </div>
             <div class="col-auto">
               <a href="#editTeacherModal"
