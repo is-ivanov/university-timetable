@@ -5,7 +5,6 @@
 <head>
   <title>Timetable</title>
 
-  <link rel="stylesheet" th:href="@{/webjars/fullcalendar/main.css}"/>
   <script th:src="@{/webjars/fullcalendar/main.js}"></script>
   <script th:inline="javascript">
     document.addEventListener('DOMContentLoaded', function () {
@@ -76,23 +75,26 @@
         eventDisplay: 'block',
 
         events: function (info, callback) {
-          $.get(url, {
-            start: info.startStr,
-            end: info.endStr,
-          }, function (lessons) {
-            let events = [];
-            lessons.forEach(function (lesson) {
-              events.push({
-                id: lesson.id,
-                title: lesson.courseName,
-                start: lesson.timeStart,
-                end: lesson.timeEnd,
-                teacher: lesson.teacherFullName,
-                buildingAndRoom: lesson.buildingAndRoom,
+          $.get(
+            url,
+            {
+              start: info.startStr,
+              end: info.endStr,
+            },
+            function (lessons) {
+              let events = [];
+              lessons.forEach(function (lesson) {
+                events.push({
+                  id: lesson.id,
+                  title: lesson.courseName,
+                  start: lesson.timeStart,
+                  end: lesson.timeEnd,
+                  teacher: lesson.teacherFullName,
+                  buildingAndRoom: lesson.buildingAndRoom,
+                });
               });
+              callback(events);
             });
-            callback(events);
-          });
         },
         loading: function (isLoading) {
           if (isLoading) {
@@ -109,11 +111,12 @@
 </head>
 <body>
 <div layout:fragment="content">
-  <h3 th:with="description=${object.fullName} ?: ${object.buildingAndRoom}"
+  <h3 th:with="description=${type eq 'rooms'} ? ${object.getBuildingAndRoom()} : ${object.fullName}"
       th:utext="'Timetable for ' + ${description}"></h3>
   <div id='calendar'></div>
   <div id="loading" style="display: none;">
-    <img id="loading-image" th:src="@{/img/Spin-1s-200px.svg}" alt="Loading..."/>
+    <img id="loading-image" src="../resources/img/Spin-1s-200px.svg"
+         th:src="@{/img/Spin-1s-200px.svg}" alt="Loading..."/>
   </div>
 </div>
 </body>
