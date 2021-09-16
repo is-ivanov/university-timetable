@@ -2,6 +2,9 @@ package ua.com.foxminded.university.ui.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +21,9 @@ import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static ua.com.foxminded.university.ui.Util.defineRedirect;
 
@@ -127,5 +133,26 @@ public class FacultyController {
             .teachersToTeacherDtos(teacherService.getAllByFaculty(facultyId));
         log.info("Found {} teachers", teachers.size());
         return teachers;
+    }
+
+    @GetMapping("/list")
+    public String getPageFaculties(@RequestParam("page") Optional<Integer> page,
+                                          @RequestParam("size") Optional<Integer> size,
+                                          Model model) {
+        int currentPage = page.orElse(1);
+        int pageSize = size.orElse(5);
+
+        Page<Faculty> facultyPage = facultyService.getAllPaginated(
+            PageRequest.of(currentPage - 1, pageSize));
+        model.addAttribute("facultyPage", facultyPage);
+        int totalPages = facultyPage.getTotalPages();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                .boxed()
+                .collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
+
+        return "facultyPage";
     }
 }
