@@ -22,6 +22,14 @@ public interface LessonService extends Service<Lesson> {
                                                LocalDateTime startTime,
                                                LocalDateTime endTime);
 
+    List<Lesson> getAllForTeacherForTimePeriod(int studentId,
+                                               LocalDateTime startTime,
+                                               LocalDateTime endTime);
+
+    List<Lesson> getAllForRoomForTimePeriod(int roomId,
+                                            LocalDateTime startTime,
+                                            LocalDateTime endTime);
+
     void removeStudentFromLesson(int lessonId, int studentId);
 
     void removeStudentsFromLesson(int lessonId, int[] studentIds);

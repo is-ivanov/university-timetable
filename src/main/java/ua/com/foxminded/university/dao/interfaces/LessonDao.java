@@ -25,4 +25,12 @@ public interface LessonDao extends Dao<Lesson> {
     List<Lesson> getAllForStudentForTimePeriod(int studentId,
                                                LocalDateTime startTime,
                                                LocalDateTime endTime);
+
+    List<Lesson> getAllForTeacherForTimePeriod(int studentId,
+                                               LocalDateTime startTime,
+                                               LocalDateTime endTime);
+
+    List<Lesson> getAllForRoomForTimePeriod(int teacherId,
+                                            LocalDateTime startTime,
+                                            LocalDateTime endTime);
 }

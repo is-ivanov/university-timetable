@@ -155,6 +155,30 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
+    public List<Lesson> getAllForTeacherForTimePeriod(int teacherId,
+                                                      LocalDateTime startTime,
+                                                      LocalDateTime endTime){
+        log.debug("Getting lessons for teacher id({}) from {} to {})", teacherId,
+            startTime, endTime);
+        List<Lesson> lessonsForTeacher = lessonDao
+            .getAllForTeacherForTimePeriod(teacherId, startTime, endTime);
+        log.info(FOUND_LESSONS, lessonsForTeacher.size());
+        return lessonsForTeacher;
+    }
+
+    @Override
+    public List<Lesson> getAllForRoomForTimePeriod(int roomId,
+                                                   LocalDateTime startTime,
+                                                   LocalDateTime endTime){
+        log.debug("Getting lessons for room id({}) from {} to {})", roomId,
+            startTime, endTime);
+        List<Lesson> lessonsForRoom = lessonDao
+            .getAllForRoomForTimePeriod(roomId, startTime, endTime);
+        log.info(FOUND_LESSONS, lessonsForRoom.size());
+        return lessonsForRoom;
+    }
+
+    @Override
     public void removeStudentFromLesson(int lessonId, int studentId){
         log.debug("Removing student id({}) from lesson id({})", studentId, lessonId);
         lessonDao.removeStudentFromLesson(lessonId, studentId);

@@ -31,10 +31,12 @@ public class LessonDaoImpl implements LessonDao {
     private static final String QUERY_ADD_STUDENT_TO_LESSON = "lesson.addStudentToLesson";
     private static final String QUERY_DELETE_ALL_STUDENTS_FROM_LESSON = "lesson.deleteAllStudentsFromLesson";
     private static final String QUERY_DELETE_STUDENT_FROM_LESSON = "lesson.deleteStudentFromLesson";
-    private static final String QUERY_GET_ALL_BY_TEACHER = "lesson.getAllByTeacher";
-    private static final String QUERY_GET_ALL_BY_ROOM = "lesson.getAllByRoom";
-    private static final String QUERY_GET_ALL_BY_STUDENT = "lesson.getAllByStudent";
-    private static final String QUERY_GET_ALL_BY_STUDENT_FOR_TIME_PERIOD = "lesson.getAllByStudentForTimePeriod";
+    private static final String QUERY_GET_ALL_FOR_TEACHER = "lesson.getAllForTeacher";
+    private static final String QUERY_GET_ALL_FOR_ROOM = "lesson.getAllForRoom";
+    private static final String QUERY_GET_ALL_FOR_STUDENT = "lesson.getAllForStudent";
+    private static final String QUERY_GET_ALL_FOR_STUDENT_FOR_TIME_PERIOD = "lesson.getAllForStudentForTimePeriod";
+    private static final String QUERY_GET_ALL_FOR_TEACHER_FOR_TIME_PERIOD = "lesson.getAllForTeacherForTimePeriod";
+    private static final String QUERY_GET_ALL_FOR_ROOM_FOR_TIME_PERIOD = "lesson.getAllForRoomForTimePeriod";
     private static final String MESSAGE_LESSON_NOT_FOUND = "Lesson id(%d) not found";
     private static final String MESSAGE_UPDATE_LESSON_NOT_FOUND = "Can't update because lesson id(%d) not found";
     private static final String MESSAGE_DELETE_LESSON_NOT_FOUND = "Can't delete because lesson id(%d) not found";
@@ -197,7 +199,7 @@ public class LessonDaoImpl implements LessonDao {
     public List<Lesson> getAllForTeacher(int teacherId) {
         log.debug("Getting all lessons for teacher id({})", teacherId);
         List<Lesson> lessons = jdbcTemplate.query(
-            env.getRequiredProperty(QUERY_GET_ALL_BY_TEACHER),
+            env.getRequiredProperty(QUERY_GET_ALL_FOR_TEACHER),
             lessonExtractor, teacherId);
         log.info(FOUND_LESSONS, lessons.size());
         return lessons;
@@ -207,7 +209,7 @@ public class LessonDaoImpl implements LessonDao {
     public List<Lesson> getAllForRoom(int roomId) {
         log.debug("Getting all lessons for room id({})", roomId);
         List<Lesson> lessons = jdbcTemplate.query(
-            env.getRequiredProperty(QUERY_GET_ALL_BY_ROOM),
+            env.getRequiredProperty(QUERY_GET_ALL_FOR_ROOM),
             lessonExtractor, roomId);
         log.info(FOUND_LESSONS, lessons.size());
         return lessons;
@@ -217,7 +219,7 @@ public class LessonDaoImpl implements LessonDao {
     public List<Lesson> getAllForStudent(int studentId) {
         log.debug("Getting all lessons for student id({})", studentId);
         List<Lesson> lessons = jdbcTemplate.query(
-            env.getRequiredProperty(QUERY_GET_ALL_BY_STUDENT),
+            env.getRequiredProperty(QUERY_GET_ALL_FOR_STUDENT),
             lessonExtractor, studentId);
         log.info(FOUND_LESSONS, lessons.size());
         return lessons;
@@ -238,8 +240,34 @@ public class LessonDaoImpl implements LessonDao {
         log.debug("Getting lessons for student id({}) from {} to {}", studentId,
             startTime, endTime);
         List<Lesson> lessons = jdbcTemplate.query(
-            env.getRequiredProperty(QUERY_GET_ALL_BY_STUDENT_FOR_TIME_PERIOD),
+            env.getRequiredProperty(QUERY_GET_ALL_FOR_STUDENT_FOR_TIME_PERIOD),
             lessonExtractor, studentId, startTime, endTime);
+        log.info(FOUND_LESSONS, lessons.size());
+        return lessons;
+    }
+
+    @Override
+    public List<Lesson> getAllForTeacherForTimePeriod(int teacherId,
+                                                      LocalDateTime startTime,
+                                                      LocalDateTime endTime) {
+        log.debug("Getting lessons for teacher id({}) from {} to {}", teacherId,
+            startTime, endTime);
+        List<Lesson> lessons = jdbcTemplate.query(
+            env.getRequiredProperty(QUERY_GET_ALL_FOR_TEACHER_FOR_TIME_PERIOD),
+            lessonExtractor, teacherId, startTime, endTime);
+        log.info(FOUND_LESSONS, lessons.size());
+        return lessons;
+    }
+
+    @Override
+    public List<Lesson> getAllForRoomForTimePeriod(int roomId,
+                                                   LocalDateTime startTime,
+                                                   LocalDateTime endTime) {
+        log.debug("Getting lessons for room id({}) from {} to {}", roomId,
+            startTime, endTime);
+        List<Lesson> lessons = jdbcTemplate.query(
+            env.getRequiredProperty(QUERY_GET_ALL_FOR_ROOM_FOR_TIME_PERIOD),
+            lessonExtractor, roomId, startTime, endTime);
         log.info(FOUND_LESSONS, lessons.size());
         return lessons;
     }
