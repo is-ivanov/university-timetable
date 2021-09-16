@@ -6,15 +6,21 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ua.com.foxminded.university.dao.impl.LessonDaoImpl;
+import ua.com.foxminded.university.domain.dto.LessonDto;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
+import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Teacher;
+import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
 import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
+import ua.com.foxminded.university.domain.service.interfaces.LessonService;
 import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import static ua.com.foxminded.university.ui.Util.defineRedirect;
@@ -29,6 +35,8 @@ public class TeacherController {
     private final FacultyService facultyService;
     private final DepartmentService departmentService;
     private final TeacherDtoMapper teacherMapper;
+    private final LessonService lessonService;
+    private final LessonDtoMapper lessonDtoMapper;
 
     @GetMapping
     public String showTeachers(@RequestParam(required = false) Integer facultyId,
@@ -120,6 +128,25 @@ public class TeacherController {
         teacherService.delete(teacherId);
         log.info("Teacher id({}) is deleted", teacherId);
         return defineRedirect(request);
+    }
+
+    @GetMapping("/{id}/timetable")
+    @ResponseBody
+    public List<LessonDto> getLessonsForTeacher(@PathVariable("id") int teacherId,
+                                                @RequestParam("start")
+                                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                    ZonedDateTime startTime,
+                                                @RequestParam("end")
+                                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                    ZonedDateTime endTime) {
+        log.debug("Getting lessons for teacher id({}) from {} to {}", teacherId,
+            startTime, endTime);
+        List<Lesson> lessonsForTeacher = lessonService
+            .getAllForTeacherForTimePeriod(teacherId,
+                startTime.toLocalDateTime(), endTime.toLocalDateTime());
+        List<LessonDto> lessonDtos = lessonDtoMapper.lessonsToLessonDtos(lessonsForTeacher);
+        log.info("Found {} lessons", lessonDtos.size());
+        return lessonDtos;
     }
 
 }

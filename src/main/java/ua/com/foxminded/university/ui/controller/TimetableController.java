@@ -36,7 +36,7 @@ public class TimetableController {
         StudentDto studentDto = studentDtoMapper
             .studentToStudentDto(studentService.getById(studentId));
         model.addAttribute(OBJECT, studentDto);
-        addTypeInModel(model, "student");
+        addTypeInModel(model, "students");
         return TIMETABLE_TEMPLATE;
     }
 
@@ -47,14 +47,14 @@ public class TimetableController {
         TeacherDto teacherDto = teacherDtoMapper
             .teacherToTeacherDto(teacherService.getById(teacherId));
         model.addAttribute(OBJECT, teacherDto);
-        addTypeInModel(model, "teacher");
+        addTypeInModel(model, "teachers");
         return TIMETABLE_TEMPLATE;
     }
 
     @GetMapping("/rooms/{id}")
     public String showRoomTimetable(@PathVariable("id") int roomId, Model model) {
         model.addAttribute(OBJECT, roomService.getById(roomId));
-        addTypeInModel(model, "room");
+        addTypeInModel(model, "rooms");
         return TIMETABLE_TEMPLATE;
     }
 
