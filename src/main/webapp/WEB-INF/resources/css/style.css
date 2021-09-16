@@ -121,3 +121,24 @@ tr.selected {
   margin: auto;
   z-index: 100;
 }
+
+.fc .fc-button-primary {
+  background-color: #198754;
+  border-color: #198754;
+}
+
+.fc .fc-button-primary:not(:disabled):active,
+.fc .fc-button-primary:not(:disabled).fc-button-active {
+  background-color: #146c43;
+  border-color: #13653f;
+}
+
+.fc .fc-button-primary:hover {
+  background-color: #157347;
+  border-color: #146c43;
+}
+
+.fc .fc-button-primary:disabled {
+  background-color: #198754;
+  border-color: #198754;
+}
