@@ -5,6 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ua.com.foxminded.university.dao.interfaces.FacultyDao;
@@ -23,13 +27,16 @@ public class FacultyDaoImpl implements FacultyDao {
 
     private static final String QUERY_ADD = "faculty.add";
     private static final String QUERY_GET_ALL = "faculty.getAll";
+    private static final String QUERY_GET_ALL_SORTED_PAGINATED = "faculty.getAllSortedPaginated";
     private static final String QUERY_GET_ALL_SORTED_NAME_ASC = "faculty.getAllSortedByNameAsc";
     private static final String QUERY_GET_BY_ID = "faculty.getById";
     private static final String QUERY_UPDATE = "faculty.update";
     private static final String QUERY_DELETE = "faculty.delete";
+    private static final String QUERY_COUNT_ALL = "faculty.countAll";
     private static final String MESSAGE_FACULTY_NOT_FOUND = "Faculty id(%d) not found";
     private static final String MESSAGE_UPDATE_FACULTY_NOT_FOUND = "Can't update because faculty id(%d) not found";
     private static final String MESSAGE_DELETE_FACULTY_NOT_FOUND = "Can't delete because faculty id(%d) not found";
+    public static final String FACULTY_NAME = "faculty_name";
 
     private final JdbcTemplate jdbcTemplate;
     private final Environment env;
@@ -126,4 +133,22 @@ public class FacultyDaoImpl implements FacultyDao {
         return faculties;
     }
 
+    @Override
+    public Page<Faculty> getAllSortedPaginated(Pageable pageable) {
+        log.debug("");
+        Order order = !pageable.getSort().isEmpty() ? pageable.getSort().toList().get(0) : Order.by(FACULTY_NAME);
+
+        List<Faculty> faculties = jdbcTemplate.query(
+            env.getRequiredProperty(QUERY_GET_ALL_SORTED_PAGINATED),
+            new FacultyMapper(),
+            order.getProperty(), order.getDirection().name(),
+            pageable.getOffset(), pageable.getPageSize());
+        return new PageImpl<>(faculties, pageable, countAll());
+    }
+
+    @Override
+    public int countAll(){
+        return jdbcTemplate.queryForObject(
+            env.getRequiredProperty(QUERY_COUNT_ALL), Integer.class);
+    }
 }

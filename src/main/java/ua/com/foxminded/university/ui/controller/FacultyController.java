@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -136,14 +138,10 @@ public class FacultyController {
     }
 
     @GetMapping("/list")
-    public String getPageFaculties(@RequestParam("page") Optional<Integer> page,
-                                          @RequestParam("size") Optional<Integer> size,
-                                          Model model) {
-        int currentPage = page.orElse(1);
-        int pageSize = size.orElse(5);
-
-        Page<Faculty> facultyPage = facultyService.getAllPaginated(
-            PageRequest.of(currentPage - 1, pageSize));
+    public String getPageFaculties(Model model,
+                                   @PageableDefault(sort = {"name"}, direction = Sort.Direction.ASC)
+                                       Pageable pageable) {
+        Page<Faculty> facultyPage = facultyService.getAllPaginated(pageable);
         model.addAttribute("facultyPage", facultyPage);
         int totalPages = facultyPage.getTotalPages();
         if (totalPages > 0) {
@@ -152,7 +150,6 @@ public class FacultyController {
                 .collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
         }
-
         return "facultyPage";
     }
 }

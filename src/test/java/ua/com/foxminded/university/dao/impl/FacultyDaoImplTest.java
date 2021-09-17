@@ -60,7 +60,7 @@ class FacultyDaoImplTest {
             dao.add(faculty);
             int expectedRowsInTable = 3;
             int actualRowsInTable = JdbcTestUtils.countRowsInTable(jdbcTemplate,
-                    TABLE_NAME);
+                TABLE_NAME);
             assertEquals(expectedRowsInTable, actualRowsInTable);
         }
     }
@@ -84,7 +84,7 @@ class FacultyDaoImplTest {
         @DisplayName("with id=3 should return DAOException")
         void testGetByIdFacultyException() throws DAOException {
             DAOException exception = assertThrows(DAOException.class,
-                    () -> dao.getById(ID3));
+                () -> dao.getById(ID3));
             assertEquals(MESSAGE_EXCEPTION, exception.getMessage());
         }
     }
@@ -97,7 +97,7 @@ class FacultyDaoImplTest {
         @DisplayName("should return List with size = 2")
         void testGetAllFaculties() {
             int expectedQuantityFaculties = JdbcTestUtils
-                    .countRowsInTable(jdbcTemplate, TABLE_NAME);
+                .countRowsInTable(jdbcTemplate, TABLE_NAME);
             int actualQuantityFaculties = dao.getAll().size();
             assertEquals(expectedQuantityFaculties, actualQuantityFaculties);
         }
@@ -120,7 +120,7 @@ class FacultyDaoImplTest {
         @Test
         @DisplayName("with faculty id=3 should write new log.warn with " +
             "expected message")
-        void testUpdateNonExistingFaculty_ExceptionWriteLogWarn(){
+        void testUpdateNonExistingFaculty_ExceptionWriteLogWarn() {
             LogCaptor logCaptor = LogCaptor.forClass(FacultyDaoImpl.class);
             Faculty faculty = new Faculty(ID3, TEST_FACULTY_NAME);
             String expectedLog = String.format(MESSAGE_UPDATE_MASK, faculty);
@@ -140,11 +140,11 @@ class FacultyDaoImplTest {
             "records table should equals 1")
         void testDeleteExistingFaculty_ReduceNumberRowsInTable() {
             int expectedQuantityFaculties = JdbcTestUtils
-                    .countRowsInTable(jdbcTemplate, TABLE_NAME) - 1;
+                .countRowsInTable(jdbcTemplate, TABLE_NAME) - 1;
             Faculty faculty = new Faculty(ID2, SECOND_FACULTY_NAME);
             dao.delete(faculty);
             int actualQuantityFaculties = JdbcTestUtils
-                    .countRowsInTable(jdbcTemplate, TABLE_NAME);
+                .countRowsInTable(jdbcTemplate, TABLE_NAME);
             assertEquals(expectedQuantityFaculties, actualQuantityFaculties);
         }
 
@@ -168,6 +168,18 @@ class FacultyDaoImplTest {
         List<Faculty> sortedFaculties = dao.getAllSortedByNameAsc();
         assertEquals(SECOND_FACULTY_NAME, sortedFaculties.get(0).getName());
         assertEquals(FIRST_FACULTY_NAME, sortedFaculties.get(1).getName());
+    }
+
+    @Nested
+    @DisplayName("test 'getAllSotedPaginated' method")
+    class getAllSortedPaginatedTest {
+
+        @Test
+        @DisplayName("when size 2 and page 1 then return first two faculty sorted by name")
+        void testShouldReturnTwoSortedFaculties() {
+            //TODO !!!!!!!!!!!!!!!!!!!!!!!
+        }
+
     }
 
 }
