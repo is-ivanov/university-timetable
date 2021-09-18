@@ -10,5 +10,5 @@ public interface FacultyService extends Service<Faculty> {
 
     List<Faculty> getAllSortedByNameAsc();
 
-    Page<Faculty> getAllPaginated(Pageable pageable);
+    Page<Faculty> getAllSortedPaginated(Pageable pageable);
 }

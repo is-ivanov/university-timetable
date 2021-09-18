@@ -3,9 +3,7 @@ package ua.com.foxminded.university.ui.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -23,7 +21,6 @@ import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -44,12 +41,17 @@ public class FacultyController {
     private final TeacherDtoMapper teacherDtoMapper;
 
     @GetMapping
-    public String showFaculties(Model model) {
+    public String showFaculties(Model model,
+                                @PageableDefault(sort = {"faculty_name"})
+                                    Pageable pageable) {
         log.debug("Getting data for faculty.html");
-        model.addAttribute("faculties", facultyService.getAll());
+        Page<Faculty> pageFaculties = facultyService.getAllSortedPaginated(pageable);
+        model.addAttribute("faculties", pageFaculties.getContent());
+        model.addAttribute("page", pageFaculties);
+        model.addAttribute("url", URI_FACULTIES);
         model.addAttribute("newFaculty", new Faculty());
         log.info("The list of faculties is loaded into the model");
-        return "faculty";
+        return "fragments/pager";
     }
 
     @PostMapping
@@ -139,9 +141,9 @@ public class FacultyController {
 
     @GetMapping("/list")
     public String getPageFaculties(Model model,
-                                   @PageableDefault(sort = {"name"}, direction = Sort.Direction.ASC)
+                                   @PageableDefault(sort = {"faculty_name"})
                                        Pageable pageable) {
-        Page<Faculty> facultyPage = facultyService.getAllPaginated(pageable);
+        Page<Faculty> facultyPage = facultyService.getAllSortedPaginated(pageable);
         model.addAttribute("facultyPage", facultyPage);
         int totalPages = facultyPage.getTotalPages();
         if (totalPages > 0) {

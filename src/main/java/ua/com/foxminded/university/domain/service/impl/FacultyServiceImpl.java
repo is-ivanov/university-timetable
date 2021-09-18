@@ -74,21 +74,12 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
     @Override
-    public Page<Faculty> getAllPaginated(Pageable pageable) {
-        int pageSize = pageable.getPageSize();
-        int currentPage = pageable.getPageNumber();
-        int startItem = currentPage + pageSize;
-        List<Faculty> list;
-
-        List<Faculty> faculties = facultyDao.getAll();
-        if (faculties.size() < startItem) {
-            list = Collections.emptyList();
-        } else {
-            int toIndex = Math.min(startItem + pageSize, faculties.size());
-            list = faculties.subList(startItem, toIndex);
-        }
-
-        return new PageImpl<>(list, PageRequest.of(currentPage, pageSize), faculties.size());
+    public Page<Faculty> getAllSortedPaginated(Pageable pageable) {
+        log.debug("Getting sorted page {} from list of faculties", pageable.getPageNumber());
+        Page<Faculty> facultyPage = facultyDao.getAllSortedPaginated(pageable);
+        log.info("Found {} faculties on page {}", facultyPage.getContent().size(),
+            facultyPage.getPageable().getPageNumber());
+        return facultyPage;
     }
 
 

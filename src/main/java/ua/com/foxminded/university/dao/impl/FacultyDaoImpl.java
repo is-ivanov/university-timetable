@@ -135,19 +135,23 @@ public class FacultyDaoImpl implements FacultyDao {
 
     @Override
     public Page<Faculty> getAllSortedPaginated(Pageable pageable) {
-        log.debug("");
-        Order order = !pageable.getSort().isEmpty() ? pageable.getSort().toList().get(0) : Order.by(FACULTY_NAME);
-
-        List<Faculty> faculties = jdbcTemplate.query(
-            env.getRequiredProperty(QUERY_GET_ALL_SORTED_PAGINATED),
-            new FacultyMapper(),
+        log.debug("Getting sorted page {} from list of faculties", pageable.getPageNumber());
+        Order order;
+        if (!pageable.getSort().isEmpty()) {
+            order = pageable.getSort().toList().get(0);
+        } else {
+            order = Order.by(FACULTY_NAME);
+        }
+        String query = String.format(env.getRequiredProperty(QUERY_GET_ALL_SORTED_PAGINATED),
             order.getProperty(), order.getDirection().name(),
             pageable.getOffset(), pageable.getPageSize());
+        List<Faculty> faculties = jdbcTemplate.query(query, new FacultyMapper());
+        log.info("Found {} faculties", faculties.size());
         return new PageImpl<>(faculties, pageable, countAll());
     }
 
     @Override
-    public int countAll(){
+    public int countAll() {
         return jdbcTemplate.queryForObject(
             env.getRequiredProperty(QUERY_COUNT_ALL), Integer.class);
     }

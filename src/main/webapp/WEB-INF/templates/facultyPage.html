@@ -8,8 +8,6 @@
 <table border="1">
   <thead>
   <tr>
-<!--    <th th:text="#{msg.id}" />-->
-<!--    <th th:text="#{msg.name}" />-->
   </tr>
   </thead>
   <tbody>
@@ -23,7 +21,7 @@
 </table>
 <div th:if="${facultyPage.totalPages > 0}" class="pagination"
      th:each="pageNumber : ${pageNumbers}">
-  <a th:href="@{/faculties/list(size=${facultyPage.size}, page=${pageNumber})}"
+  <a th:href="@{/faculties/list(size=${facultyPage.size}, page=${pageNumber - 1})}"
      th:text="${pageNumber}"
      th:class="${pageNumber==facultyPage.number + 1} ? active"></a>
 </div>

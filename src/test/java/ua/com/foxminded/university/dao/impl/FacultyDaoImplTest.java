@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -17,6 +20,8 @@ import ua.com.foxminded.university.springconfig.TestRootConfig;
 
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -175,9 +180,18 @@ class FacultyDaoImplTest {
     class getAllSortedPaginatedTest {
 
         @Test
-        @DisplayName("when size 2 and page 1 then return first two faculty sorted by name")
-        void testShouldReturnTwoSortedFaculties() {
-            //TODO !!!!!!!!!!!!!!!!!!!!!!!
+        @DisplayName("when size 1 and page 1 then return first one faculty")
+        void testShouldReturnOneSortedFaculties() {
+            int page = 1;
+            Pageable pageable = PageRequest.of(page - 1,1);
+            Page<Faculty> facultyPage = dao.getAllSortedPaginated(pageable);
+
+            Faculty actualFaculty = facultyPage.getContent().get(0);
+
+            assertThat(facultyPage.getTotalElements(), is(equalTo(2L)));
+            assertThat(facultyPage.getContent().size(), is(equalTo(1)));
+            assertThat(actualFaculty.getId(), is(equalTo(ID2)));
+            assertThat(actualFaculty.getName(), is(equalTo(SECOND_FACULTY_NAME)));
         }
 
     }
