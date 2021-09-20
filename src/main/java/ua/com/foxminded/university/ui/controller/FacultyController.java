@@ -51,7 +51,7 @@ public class FacultyController {
         model.addAttribute("url", URI_FACULTIES);
         model.addAttribute("newFaculty", new Faculty());
         log.info("The list of faculties is loaded into the model");
-        return "fragments/pager";
+        return "faculty";
     }
 
     @PostMapping
