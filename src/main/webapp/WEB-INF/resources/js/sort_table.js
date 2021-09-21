@@ -52,16 +52,18 @@ function sortTableByColumnFrontend (table, column, asc = true) {
 
 }
 
-/**
- * Sort a HTML table in backend
- *
- * @param {string} url - URL for GET request
- * @param {string} field - Field of tables in database for sorting
- * @param {string} direction - direction of sorting
- */
-function sortTableByColumnBackend (url, field, direction) {
-
-}
+// /**
+//  * Sort a HTML table in backend
+//  *
+//  * @param {string} url - URL for GET request
+//  * @param {string} field - Field of tables in database for sorting
+//  * @param {string} direction - direction of sorting
+//  */
+// function sortTableByColumnBackend (url, field, direction) {
+//   $.get(url, { sort: (field + ',' + direction) }, function (data) {
+//     $('html').html(data);
+//   });
+// }
 
 document.querySelectorAll('.table-sortable thead .th-sort').
   forEach(headerCell => {
@@ -74,8 +76,14 @@ document.querySelectorAll('.table-sortable thead .th-sort').
         sortTableByColumnFrontend(tableElement, headerIndex,
           !currentIsAscending);
       } else {
-
-        console.log('sorting server side' + headerCell.id);
+        // let sortProperty = headerCell.id;
+        // let sortDirection = 1;
+        // let url = window.location.href;
+        //
+        // // let
+        // console.log(url + '|' + sortProperty + '|');
+        //
+        // sortTableByColumnBackend(url, sortProperty, 'desc');
       }
     });
   });

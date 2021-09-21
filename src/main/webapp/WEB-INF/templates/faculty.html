@@ -10,7 +10,7 @@
 <div layout:fragment="content">
   <h3>Faculties</h3>
 
-<!--  Row Buttons-->
+  <!--  Row Buttons-->
   <div class="row">
     <div class="col">
       <button type="button" class="btn btn-primary mb-2 btn-sm" data-bs-toggle="modal"
@@ -25,9 +25,18 @@
     <table class="table table-striped table-hover table-sortable">
       <caption class="visually-hidden">List of faculties</caption>
       <thead class="bg-success">
-      <tr>
-        <th scope="col" class="col-1 th-sort sort-server" id="faculty_id">id</th>
-        <th scope="col" class="col th-sort th-sort-asc sort-server" id="faculty_name">Faculty Name</th>
+      <tr th:with="sortProperty=${page.sort.toList().get(0).property},
+        sortDirection=${#strings.toLowerCase(page.sort.toList().get(0).direction)},
+        sortClass='th-sort-' + ${sortDirection}">
+        <th scope="col" class="col-1 th-sort sort-server" id="faculty_id"
+            th:classappend="${sortProperty eq 'faculty_id'}? ${sortClass} : ''">
+          <a th:href="@{${url}(size=${page.size}, page=${page.number},
+          sort='faculty_id,' + (${sortProperty eq 'faculty_id' and sortDirection eq 'asc'}? 'desc' : 'asc'))}">id
+          </a>
+        </th>
+        <th scope="col" class="col th-sort sort-server" id="faculty_name"
+            th:classappend="${sortProperty eq 'faculty_name'} ? ${sortClass} : ''">Faculty Name
+        </th>
         <th scope="col" class="col">Action</th>
       </tr>
       </thead>
