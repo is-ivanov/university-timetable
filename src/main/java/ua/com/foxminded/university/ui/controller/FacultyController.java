@@ -19,6 +19,7 @@ import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -80,11 +81,12 @@ public class FacultyController {
     }
 
     @DeleteMapping("/{id}")
-    public String deleteFaculty(@PathVariable("id") int facultyId) {
+    public String deleteFaculty(@PathVariable("id") int facultyId,
+                                HttpServletRequest request) {
         log.debug("Deleting faculty with id({})", facultyId);
         facultyService.delete(facultyId);
         log.info("Faculty id({}) is deleted", facultyId);
-        return defineRedirect(URI_FACULTIES);
+        return defineRedirect(request);
     }
 
     @GetMapping("/{id}/groups")

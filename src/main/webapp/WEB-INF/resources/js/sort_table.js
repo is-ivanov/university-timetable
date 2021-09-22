@@ -52,19 +52,6 @@ function sortTableByColumnFrontend (table, column, asc = true) {
 
 }
 
-// /**
-//  * Sort a HTML table in backend
-//  *
-//  * @param {string} url - URL for GET request
-//  * @param {string} field - Field of tables in database for sorting
-//  * @param {string} direction - direction of sorting
-//  */
-// function sortTableByColumnBackend (url, field, direction) {
-//   $.get(url, { sort: (field + ',' + direction) }, function (data) {
-//     $('html').html(data);
-//   });
-// }
-
 document.querySelectorAll('.table-sortable thead .th-sort').
   forEach(headerCell => {
     headerCell.addEventListener('click', () => {
@@ -73,17 +60,10 @@ document.querySelectorAll('.table-sortable thead .th-sort').
         headerCell.parentElement.children, headerCell);
       const currentIsAscending = headerCell.classList.contains('th-sort-asc');
       if (!headerCell.classList.contains('sort-server')) {
-        sortTableByColumnFrontend(tableElement, headerIndex,
-          !currentIsAscending);
+        sortTableByColumnFrontend(tableElement, headerIndex, !currentIsAscending);
       } else {
-        // let sortProperty = headerCell.id;
-        // let sortDirection = 1;
-        // let url = window.location.href;
-        //
-        // // let
-        // console.log(url + '|' + sortProperty + '|');
-        //
-        // sortTableByColumnBackend(url, sortProperty, 'desc');
+        let url = headerCell.getAttribute('data-href')
+        window.location.href = url;
       }
     });
   });
