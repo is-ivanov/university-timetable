@@ -33,16 +33,7 @@
       rows per page
     </div>
   </div>
-  <div class="col-sm-12 col-md-7"
-       th:with="totalPages=${page.totalPages},
-            pageNumber=${page.number + 1},
-            head=${pageNumber gt 3 ? {1, -1} : {1, 2, 3} },
-            bodyBefore=${pageNumber gt 3 and pageNumber lt totalPages - 1 ? {pageNumber - 1} : {} },
-            body=${pageNumber gt 3 and pageNumber lt totalPages - 2 ? {pageNumber} : {} },
-            bodyAfter=${pageNumber gt 2 and pageNumber lt totalPages - 2 ? {pageNumber + 1} : {} },
-            tail=${pageNumber lt (totalPages - 2)? {-1, totalPages} : {totalPages - 2, totalPages - 1, totalPages} },
-            pages=${page.totalPages gt 5}? ${head + bodyBefore + body + bodyAfter + tail} : ${#numbers.sequence(1, page.totalPages)}
-            ">
+  <div class="col-sm-12 col-md-7">
     <nav aria-label="Page navigation">
       <ul class="pagination justify-content-end">
         <li class="page-item"
@@ -51,17 +42,17 @@
              th:href="@{${url}(size=${page.size}, page=${page.number - 1}, sort=${sortUrl})}">Previous
           </a>
         </li>
-        <!--        <li th:text="${pages}"></li>-->
-        <!--        <li class="page-item"-->
-        <!--            th:each="onePage : ${pages}"-->
-        <!--            th:classappend="${onePage eq (page.number + 1) ? 'active' : ''}">-->
-        <!--          <span class="page-link" th:text="${onePage}"-->
-        <!--                th:if="${onePage eq (page.number + 1)}">-->
-        <!--          </span>-->
-        <!--          <a class="page-link" th:href="@{${url}(size=${page.size}, page=${onePage - 1}, sort=${sortUrl})}"-->
-        <!--             th:text="${onePage}" th:if="${onePage ne (page.number + 1)}">-->
-        <!--          </a>-->
-        <!--        </li>-->
+        <li class="page-item"
+            th:each="onePage : ${pages}"
+            th:classappend="${onePage eq (page.number + 1) ? 'active' : ''}"
+            th:switch="${onePage}">
+          <span class="page-link" th:case="${(page.number + 1)}" th:text="${onePage}"></span>
+          <span class="page-link" th:case="${-1}" disabled>...</span>
+          <a class="page-link" th:case="*"
+             th:href="@{${url}(size=${page.size}, page=${onePage - 1}, sort=${sortUrl})}"
+             th:text="${onePage}">
+          </a>
+        </li>
 
         <li class="page-item"
             th:classappend="${(page.number + 1) eq page.totalPages ? 'disabled' : ''}">
@@ -71,14 +62,6 @@
         </li>
       </ul>
     </nav>
-    <p>totalPages = <span th:text="${totalPages}"></span></p>
-    <p>pageNumber = <span th:text="${pageNumber}"></span></p>
-    <p>head = <span th:text="${head}"></span></p>
-    <p>bodyBefore = <span th:text="${bodyBefore}"></span></p>
-    <p>body = <span th:text="${body}"></span></p>
-    <p>bodyAfter = <span th:text="${bodyAfter}"></span></p>
-    <p>tail = <span th:text="${tail}"></span></p>
-    <p>pages = <span th:text="${pages}"></span></p>
   </div>
 </div>
 

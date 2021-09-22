@@ -18,6 +18,7 @@ import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
+import ua.com.foxminded.university.ui.PageSequenceCreator;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -40,6 +41,7 @@ public class FacultyController {
     private final DepartmentService departmentService;
     private final TeacherService teacherService;
     private final TeacherDtoMapper teacherDtoMapper;
+    private final PageSequenceCreator pageSequenceCreator;
 
     @GetMapping
     public String showFaculties(Model model,
@@ -50,6 +52,7 @@ public class FacultyController {
         model.addAttribute("page", pageFaculties);
         model.addAttribute("url", URI_FACULTIES);
         model.addAttribute("newFaculty", new Faculty());
+        model.addAttribute("pages", pageSequenceCreator.createPageSequence(pageFaculties));
         log.info("The list of faculties is loaded into the model");
         return "faculty";
     }
