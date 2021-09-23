@@ -5,6 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ua.com.foxminded.university.dao.interfaces.CourseDao;
@@ -23,12 +27,15 @@ public class CourseDaoImpl implements CourseDao {
 
     private static final String QUERY_ADD = "course.add";
     private static final String QUERY_GET_ALL = "course.getAll";
+    private static final String QUERY_GET_ALL_SORTED_PAGINATED = "course.getAllSortedPaginated";
     private static final String QUERY_GET_BY_ID = "course.getById";
     private static final String QUERY_UPDATE = "course.update";
     private static final String QUERY_DELETE = "course.delete";
+    private static final String QUERY_COUNT_ALL = "course.countAll";
     private static final String MESSAGE_COURSE_NOT_FOUND = "Course id(%s) not found";
     private static final String MESSAGE_UPDATE_COURSE_NOT_FOUND = "Can't update because course id(%s) not found";
     private static final String MESSAGE_DELETE_COURSE_NOT_FOUND = "Can't delete because course id(%s) not found";
+    private static final String COURSE_NAME = "course_name";
 
     private final JdbcTemplate jdbcTemplate;
     private final Environment env;
@@ -115,4 +122,29 @@ public class CourseDaoImpl implements CourseDao {
         }
     }
 
+    @Override
+    public int countAll() {
+        log.debug("Count all courses in database");
+        Integer result = jdbcTemplate.queryForObject(
+            env.getRequiredProperty(QUERY_COUNT_ALL), Integer.class);
+        log.info("{} courses", result);
+        return (result != null ? result : 0);
+    }
+
+    @Override
+    public Page<Course> getAllSortedPaginated(Pageable pageable) {
+        log.debug("Getting sorted page {} from list of courses", pageable.getPageNumber());
+        Order order;
+        if (!pageable.getSort().isEmpty()) {
+            order = pageable.getSort().toList().get(0);
+        } else {
+            order = Order.by(COURSE_NAME);
+        }
+        String query = String.format(env.getRequiredProperty(QUERY_GET_ALL_SORTED_PAGINATED),
+            order.getProperty(), order.getDirection().name(),
+            pageable.getOffset(), pageable.getPageSize());
+        List<Course> courses = jdbcTemplate.query(query, new CourseMapper());
+        log.info("Found {} courses", courses.size());
+        return new PageImpl<>(courses, pageable, countAll());
+    }
 }

@@ -2,6 +2,8 @@ package ua.com.foxminded.university.domain.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ua.com.foxminded.university.dao.interfaces.CourseDao;
 import ua.com.foxminded.university.domain.entity.Course;
@@ -60,4 +62,12 @@ public class CourseServiceImpl implements CourseService {
         log.info("Delete course id({})", id);
     }
 
+    @Override
+    public Page<Course> getAllSortedPaginated(Pageable pageable) {
+        log.debug("Getting sorted page {} from list of courses", pageable.getPageNumber());
+        Page<Course> pageCourses = courseDao.getAllSortedPaginated(pageable);
+        log.info("Found {} courses on page {}", pageCourses.getContent().size(),
+            pageCourses.getNumber());
+        return pageCourses;
+    }
 }

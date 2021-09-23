@@ -9,8 +9,7 @@
 <div layout:fragment="content">
   <h3>Courses</h3>
 
-  <button type="button" class="btn btn-primary mb-2 btn-sm"
-          data-bs-toggle="modal"
+  <button type="button" class="btn btn-primary mb-2 btn-sm" data-bs-toggle="modal"
           data-bs-target="#newCourseModal">
     <i class="bi bi-plus-circle"></i> New Course
   </button>
@@ -18,11 +17,23 @@
   <!--  Table-->
   <div class="table-responsive-md">
     <table class="table table-striped table-hover table-sortable">
-      <caption>List of courses</caption>
+      <caption class="visually-hidden">List of courses</caption>
       <thead class="bg-success">
-      <tr>
-        <th scope="col" class="col-1 th-sort">id</th>
-        <th scope="col" class="col-6 th-sort">Name</th>
+      <tr th:with="sortProperty=${page.sort.toList().get(0).property},
+        sortDirection=${#strings.toLowerCase(page.sort.toList().get(0).direction)},
+        sortClass='th-sort-' + ${sortDirection}">
+        <th scope="col" class="col-1 th-sort sort-server" id="course_id"
+            th:classappend="${sortProperty eq 'course_id'}? ${sortClass} : ''"
+            th:data-href="@{${uri}(size=${page.size}, page=${page.number},
+              sort='course_id,' + (${sortProperty eq 'course_id' and sortDirection eq 'asc'}? 'desc' : 'asc'))}">
+          id
+        </th>
+        <th scope="col" class="col-6 th-sort sort-server" id="course_name"
+            th:classappend="${sortProperty eq 'course_name'}? ${sortClass} : ''"
+            th:data-href="@{${uri}(size=${page.size}, page=${page.number},
+              sort='course_name,' + (${sortProperty eq 'course_name' and sortDirection eq 'asc'}? 'desc' : 'asc'))}">
+          Name
+        </th>
         <th scope="col" class="col">Action</th>
       </tr>
       </thead>
@@ -50,6 +61,10 @@
       </tr>
       </tbody>
     </table>
+  </div>
+
+  <div class="row">
+    <div th:replace="fragments/pager :: pager"></div>
   </div>
 
   <!--  Modal Forms-->
