@@ -30,26 +30,25 @@ public class TimetableController {
     private final StudentDtoMapper studentDtoMapper;
     private final TeacherDtoMapper teacherDtoMapper;
 
-//    @GetMapping("/students/{id}")
-//    public String showStudentTimetable(@PathVariable("id") int studentId,
-//                                       Model model) {
-//        StudentDto studentDto = studentDtoMapper
-//            .studentToStudentDto(studentService.getById(studentId));
-//        model.addAttribute(OBJECT, studentDto);
-//        addTypeInModel(model, "students");
-//        return TIMETABLE_TEMPLATE;
-//    }
-//
-//
-//    @GetMapping("/teachers/{id}")
-//    public String showTeacherTimetable(@PathVariable("id") int teacherId,
-//                                       Model model) {
-//        TeacherDto teacherDto = teacherDtoMapper
-//            .teacherToTeacherDto(teacherService.getById(teacherId));
-//        model.addAttribute(OBJECT, teacherDto);
-//        addTypeInModel(model, "teachers");
-//        return TIMETABLE_TEMPLATE;
-//    }
+    @GetMapping("/students/{id}")
+    public String showStudentTimetable(@PathVariable("id") int studentId,
+                                       Model model) {
+        StudentDto studentDto = studentDtoMapper
+            .studentToStudentDto(studentService.getById(studentId));
+        model.addAttribute(OBJECT, studentDto);
+        addTypeInModel(model, "students");
+        return TIMETABLE_TEMPLATE;
+    }
+
+    @GetMapping("/teachers/{id}")
+    public String showTeacherTimetable(@PathVariable("id") int teacherId,
+                                       Model model) {
+        TeacherDto teacherDto = teacherDtoMapper
+            .teacherToTeacherDto(teacherService.getById(teacherId));
+        model.addAttribute(OBJECT, teacherDto);
+        addTypeInModel(model, "teachers");
+        return TIMETABLE_TEMPLATE;
+    }
 
     @GetMapping("/rooms/{id}")
     public String showRoomTimetable(@PathVariable("id") int roomId, Model model) {

@@ -95,19 +95,19 @@ public class FacultyController {
         log.info("Faculty id({}) is deleted", facultyId);
         return defineRedirect(request);
     }
-//
-//    @GetMapping("/{id}/groups")
-//    @ResponseBody
-//    public List<Group> getGroupsByFaculty(@PathVariable("id") int facultyId) {
-//        if (facultyId == 0) {
-//            log.debug("Get all groups");
-//            return groupService.getAll();
-//        } else {
-//            log.debug("Getting groups by faculty id({})", facultyId);
-//            return groupService.getAllByFacultyId(facultyId);
-//        }
-//    }
-//
+
+    @GetMapping("/{id}/groups")
+    @ResponseBody
+    public List<Group> getGroupsByFaculty(@PathVariable("id") int facultyId) {
+        if (facultyId == 0) {
+            log.debug("Get all groups");
+            return groupService.getAll();
+        } else {
+            log.debug("Getting groups by faculty id({})", facultyId);
+            return groupService.getAllByFacultyId(facultyId);
+        }
+    }
+
 //    @GetMapping("/{id}/groups/free")
 //    @ResponseBody
 //    public List<Group> getFreeGroupsByFaculty(@PathVariable("id") int facultyId,
@@ -125,26 +125,26 @@ public class FacultyController {
 //        return freeGroups;
 //    }
 //
-//    @GetMapping("/{id}/departments")
-//    @ResponseBody
-//    public List<Department> getDepartmentsByFaculty(@PathVariable("id") int facultyId) {
-//        if (facultyId == 0) {
-//            log.debug("Getting all departments");
-//            return departmentService.getAll();
-//        } else {
-//            log.debug("Getting departments by facultyId ({})", facultyId);
-//            return departmentService.getAllByFaculty(facultyId);
-//        }
-//    }
-//
-//    @GetMapping("/{id}/teachers")
-//    @ResponseBody
-//    public List<TeacherDto> getTeachersByFaculty(@PathVariable("id") int facultyId) {
-//        log.debug("Getting teacherDtos by faculty id({})", facultyId);
-//        List<TeacherDto> teachers = teacherDtoMapper
-//            .teachersToTeacherDtos(teacherService.getAllByFaculty(facultyId));
-//        log.info("Found {} teachers", teachers.size());
-//        return teachers;
-//    }
+    @GetMapping("/{id}/departments")
+    @ResponseBody
+    public List<Department> getDepartmentsByFaculty(@PathVariable("id") int facultyId) {
+        if (facultyId == 0) {
+            log.debug("Getting all departments");
+            return departmentService.getAll();
+        } else {
+            log.debug("Getting departments by facultyId ({})", facultyId);
+            return departmentService.getAllByFaculty(facultyId);
+        }
+    }
+
+    @GetMapping("/{id}/teachers")
+    @ResponseBody
+    public List<TeacherDto> getTeachersByFaculty(@PathVariable("id") int facultyId) {
+        log.debug("Getting teacherDtos by faculty id({})", facultyId);
+        List<TeacherDto> teachers = teacherDtoMapper
+            .teachersToTeacherDtos(teacherService.getAllByFaculty(facultyId));
+        log.info("Found {} teachers", teachers.size());
+        return teachers;
+    }
 
 }

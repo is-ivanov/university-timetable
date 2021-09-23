@@ -30,68 +30,68 @@ public class GroupController {
     private final StudentService studentService;
     private final StudentDtoMapper studentDtoMapper;
 
-//    @GetMapping
-//    public String showGroups(@RequestParam(required = false) Integer facultyId,
-//                             @RequestParam(required = false) String isShowInactive,
-//                             Model model) {
-//        log.debug("Getting data for group.html");
-//        if (isShowInactive != null && isShowInactive.equals("on")) {
-//            model.addAttribute("isShowInactive", true);
-//        }
-//        log.debug("Get faculties for selector");
-//        model.addAttribute("faculties", facultyService.getAllSortedByNameAsc());
-//        List<Group> groups;
-//        if (facultyId != null && facultyId > 0) {
-//            log.debug("get groups by facultyId ({})", facultyId);
-//            groups = groupService.getAllByFacultyId(facultyId);
-//        } else {
-//            log.debug("get all groups");
-//            groups = groupService.getAll();
-//        }
-//        log.debug("adding groups and selected faculty into model");
-//        model.addAttribute("groups", groups);
-//        model.addAttribute("facultyIdSelect", facultyId);
-//        model.addAttribute("newGroup", new Group());
-//        log.info("The list of groups and selected faculty is loaded into the model");
-//        return "group";
-//    }
-//
-//    @PostMapping
-//    public String createGroup(@ModelAttribute Group group,
-//                              HttpServletRequest request) {
-//        log.debug("Creating {}", group);
-//        groupService.add(group);
-//        log.info("{} is created", group);
-//        return defineRedirect(request);
-//    }
-//
-//    @GetMapping("/{id}")
-//    @ResponseBody
-//    public Group getGroup(@PathVariable("id") int groupId) {
-//        log.debug("Getting group id({})", groupId);
-//        Group group = groupService.getById(groupId);
-//        log.info("Found {}", group);
-//        return group;
-//    }
-//
-//    @PutMapping("/{id}")
-//    public String updateGroup(@ModelAttribute Group group,
-//                              @PathVariable("id") int groupId,
-//                              HttpServletRequest request) {
-//        log.debug("Updating group id({})", groupId);
-//        groupService.update(group);
-//        log.info("Group id({}) is updated", groupId);
-//        return defineRedirect(request);
-//    }
-//
-//    @DeleteMapping("/{id}")
-//    public String deleteGroup(@PathVariable("id") int groupId,
-//                              HttpServletRequest request) {
-//        log.debug("Deleting group id({})", groupId);
-//        groupService.delete(groupId);
-//        log.info("Group id({}) is deleted", groupId);
-//        return defineRedirect(request);
-//    }
+    @GetMapping
+    public String showGroups(@RequestParam(required = false) Integer facultyId,
+                             @RequestParam(required = false) String isShowInactive,
+                             Model model) {
+        log.debug("Getting data for group.html");
+        if (isShowInactive != null && isShowInactive.equals("on")) {
+            model.addAttribute("isShowInactive", true);
+        }
+        log.debug("Get faculties for selector");
+        model.addAttribute("faculties", facultyService.getAllSortedByNameAsc());
+        List<Group> groups;
+        if (facultyId != null && facultyId > 0) {
+            log.debug("get groups by facultyId ({})", facultyId);
+            groups = groupService.getAllByFacultyId(facultyId);
+        } else {
+            log.debug("get all groups");
+            groups = groupService.getAll();
+        }
+        log.debug("adding groups and selected faculty into model");
+        model.addAttribute("groups", groups);
+        model.addAttribute("facultyIdSelect", facultyId);
+        model.addAttribute("newGroup", new Group());
+        log.info("The list of groups and selected faculty is loaded into the model");
+        return "group";
+    }
+
+    @PostMapping
+    public String createGroup(@ModelAttribute Group group,
+                              HttpServletRequest request) {
+        log.debug("Creating {}", group);
+        groupService.add(group);
+        log.info("{} is created", group);
+        return defineRedirect(request);
+    }
+
+    @GetMapping("/{id}")
+    @ResponseBody
+    public Group getGroup(@PathVariable("id") int groupId) {
+        log.debug("Getting group id({})", groupId);
+        Group group = groupService.getById(groupId);
+        log.info("Found {}", group);
+        return group;
+    }
+
+    @PutMapping("/{id}")
+    public String updateGroup(@ModelAttribute Group group,
+                              @PathVariable("id") int groupId,
+                              HttpServletRequest request) {
+        log.debug("Updating group id({})", groupId);
+        groupService.update(group);
+        log.info("Group id({}) is updated", groupId);
+        return defineRedirect(request);
+    }
+
+    @DeleteMapping("/{id}")
+    public String deleteGroup(@PathVariable("id") int groupId,
+                              HttpServletRequest request) {
+        log.debug("Deleting group id({})", groupId);
+        groupService.delete(groupId);
+        log.info("Group id({}) is deleted", groupId);
+        return defineRedirect(request);
+    }
 //
 //    @GetMapping("/{id}/students")
 //    @ResponseBody
