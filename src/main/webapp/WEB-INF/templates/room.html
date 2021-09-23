@@ -10,8 +10,7 @@
 <div layout:fragment="content">
   <h3>Rooms</h3>
 
-  <button type="button" class="btn btn-primary mb-2 btn-sm"
-          data-bs-toggle="modal"
+  <button type="button" class="btn btn-primary mb-2 btn-sm" data-bs-toggle="modal"
           data-bs-target="#newRoomModal">
     <i class="bi bi-plus-circle"></i> New Room
   </button>
@@ -19,12 +18,29 @@
   <!--  Table-->
   <div class="table-responsive-md">
     <table class="table table-striped table-hover table-sortable">
-      <caption>List of rooms</caption>
+      <caption class="visually-hidden">List of rooms</caption>
       <thead class="bg-success">
-      <tr>
-        <th scope="col" class="col-1 th-sort">id</th>
-        <th scope="col" class="col th-sort">Building</th>
-        <th scope="col" class="col th-sort">Room Number</th>
+      <tr th:with="sortProperty=${page.sort.toList().get(0).property},
+        sortDirection=${#strings.toLowerCase(page.sort.toList().get(0).direction)},
+        sortClass='th-sort-' + ${sortDirection}">
+        <th scope="col" class="col-1 th-sort sort-server" id="room_id"
+            th:classappend="${sortProperty eq 'room_id'}? ${sortClass} : ''"
+            th:data-href="@{${uri}(size=${page.size}, page=${page.number},
+              sort='room_id,' + (${sortProperty eq 'room_id' and sortDirection eq 'asc'}? 'desc' : 'asc'))}">
+          id
+        </th>
+        <th scope="col" class="col th-sort sort-server" id="building"
+            th:classappend="${sortProperty eq 'building'}? ${sortClass} : ''"
+            th:data-href="@{${uri}(size=${page.size}, page=${page.number},
+              sort='building,' + (${sortProperty eq 'building' and sortDirection eq 'asc'}? 'desc' : 'asc'))}">
+          Building
+        </th>
+        <th scope="col" class="col th-sort sort-server" id="room_number"
+            th:classappend="${sortProperty eq 'room_number'}? ${sortClass} : ''"
+            th:data-href="@{${uri}(size=${page.size}, page=${page.number},
+              sort='room_number,' + (${sortProperty eq 'room_number' and sortDirection eq 'asc'}? 'desc' : 'asc'))}">
+          Room Number
+        </th>
         <th scope="col" class="col">Action</th>
       </tr>
       </thead>
@@ -59,6 +75,10 @@
       </tr>
       </tbody>
     </table>
+  </div>
+
+  <div class="row">
+    <div th:replace="fragments/pager :: pager"></div>
   </div>
   <!--  Modal Forms-->
   <!--  Create Modal-->

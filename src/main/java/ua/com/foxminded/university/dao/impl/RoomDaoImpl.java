@@ -5,6 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ua.com.foxminded.university.dao.interfaces.RoomDao;
@@ -24,13 +28,16 @@ public class RoomDaoImpl implements RoomDao {
 
     private static final String QUERY_ADD = "room.add";
     private static final String QUERY_GET_ALL = "room.getAll";
+    private static final String QUERY_GET_ALL_SORTED_PAGINATED = "room.getAllSortedPaginated";
     private static final String QUERY_GET_BY_ID = "room.getById";
     private static final String QUERY_UPDATE = "room.update";
     private static final String QUERY_DELETE = "room.delete";
     private static final String QUERY_GET_FREE_ROOMS = "room.getFreeRoomsOnLessonTime";
+    private static final String QUERY_COUNT_ALL = "room.countAll";
     private static final String MESSAGE_ROOM_NOT_FOUND = "Room id(%d) not found";
     private static final String MESSAGE_UPDATE_ROOM_NOT_FOUND = "Can't update because room id(%d) not found";
     private static final String MESSAGE_DELETE_ROOM_NOT_FOUND = "Can't delete because room id(%d) not found";
+    private static final String ROOM_NUMBER = "room_number";
 
     private final JdbcTemplate jdbcTemplate;
     private final Environment env;
@@ -125,6 +132,30 @@ public class RoomDaoImpl implements RoomDao {
             startTime, endTime, startTime, endTime);
         log.info("Found {} free rooms", freeRooms.size());
         return freeRooms;
+    }
+
+    @Override
+    public int countAll() {
+        Integer result = jdbcTemplate.queryForObject(
+            env.getRequiredProperty(QUERY_COUNT_ALL), Integer.class);
+        return (result != null ? result : 0);
+    }
+
+    @Override
+    public Page<Room> getAllSortedPaginated(Pageable pageable){
+        log.debug("Getting sorted page {} from list of rooms", pageable.getPageNumber());
+        Sort.Order order;
+        if (!pageable.getSort().isEmpty()) {
+            order = pageable.getSort().toList().get(0);
+        }else {
+            order = Sort.Order.by(ROOM_NUMBER);
+        }
+        String query = String.format(env.getRequiredProperty(QUERY_GET_ALL_SORTED_PAGINATED),
+            order.getProperty(), order.getDirection().name(),
+            pageable.getOffset(), pageable.getPageSize());
+        List<Room> rooms = jdbcTemplate.query(query, new RoomMapper());
+        log.info("Found {} rooms", rooms.size());
+        return new PageImpl<>(rooms, pageable, countAll());
     }
 
 }

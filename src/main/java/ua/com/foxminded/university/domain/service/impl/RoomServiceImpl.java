@@ -2,6 +2,8 @@ package ua.com.foxminded.university.domain.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ua.com.foxminded.university.dao.interfaces.RoomDao;
 import ua.com.foxminded.university.domain.entity.Room;
@@ -70,4 +72,12 @@ public class RoomServiceImpl implements RoomService {
         return freeRooms;
     }
 
+    @Override
+    public Page<Room> getAllSortedPaginated(Pageable pageable) {
+        log.debug("Getting sorted page {} from list of rooms", pageable.getPageNumber());
+        Page<Room> roomPage = roomDao.getAllSortedPaginated(pageable);
+        log.info("Found {} rooms on page {}", roomPage.getContent().size(),
+            roomPage.getNumber());
+        return roomPage;
+    }
 }

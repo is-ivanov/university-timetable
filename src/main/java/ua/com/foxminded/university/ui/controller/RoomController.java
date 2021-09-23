@@ -2,6 +2,9 @@ package ua.com.foxminded.university.ui.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +15,7 @@ import ua.com.foxminded.university.domain.entity.Room;
 import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.LessonService;
 import ua.com.foxminded.university.domain.service.interfaces.RoomService;
+import ua.com.foxminded.university.ui.PageSequenceCreator;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
@@ -30,12 +34,20 @@ public class RoomController {
     private final RoomService roomService;
     private final LessonService lessonService;
     private final LessonDtoMapper lessonDtoMapper;
+    private final PageSequenceCreator pageSequenceCreator;
 
     @GetMapping
-    public String showRooms(Model model) {
+    public String showRooms(Model model,
+                            @PageableDefault(sort = "room_number") Pageable pageable) {
         log.debug("Getting data for room.html");
-        model.addAttribute("rooms", roomService.getAll());
+        Page<Room> pageRooms = roomService.getAllSortedPaginated(pageable);
+        model.addAttribute("rooms", pageRooms.getContent());
+        model.addAttribute("page", pageRooms);
+        model.addAttribute("uri", URI_ROOMS);
         model.addAttribute("newRoom", new Room());
+        model.addAttribute("pages", pageSequenceCreator
+            .createPageSequence(pageRooms.getTotalPages(),
+                pageRooms.getNumber() + 1));
         log.info("The list of rooms is loaded into the model");
         return "room";
     }
