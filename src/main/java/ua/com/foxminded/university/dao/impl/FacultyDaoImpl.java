@@ -134,6 +134,13 @@ public class FacultyDaoImpl implements FacultyDao {
     }
 
     @Override
+    public int countAll() {
+        Integer result = jdbcTemplate.queryForObject(
+            env.getRequiredProperty(QUERY_COUNT_ALL), Integer.class);
+        return (result != null ? result : 0);
+    }
+
+    @Override
     public Page<Faculty> getAllSortedPaginated(Pageable pageable) {
         log.debug("Getting sorted page {} from list of faculties", pageable.getPageNumber());
         Order order;
@@ -150,9 +157,4 @@ public class FacultyDaoImpl implements FacultyDao {
         return new PageImpl<>(faculties, pageable, countAll());
     }
 
-    @Override
-    public int countAll() {
-        return jdbcTemplate.queryForObject(
-            env.getRequiredProperty(QUERY_COUNT_ALL), Integer.class);
-    }
 }

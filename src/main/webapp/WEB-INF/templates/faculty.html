@@ -10,15 +10,10 @@
 <div layout:fragment="content">
   <h3>Faculties</h3>
 
-  <!--  Row Buttons-->
-  <div class="row">
-    <div class="col">
-      <button type="button" class="btn btn-primary mb-2 btn-sm" data-bs-toggle="modal"
-              data-bs-target="#newFacultyModal">
-        <i class="bi bi-plus-circle"></i> New Faculty
-      </button>
-    </div>
-  </div>
+  <button type="button" class="btn btn-primary mb-2 btn-sm" data-bs-toggle="modal"
+          data-bs-target="#newFacultyModal">
+    <i class="bi bi-plus-circle"></i> New Faculty
+  </button>
 
   <!--  Table-->
   <div class="table-responsive-md">
@@ -30,13 +25,13 @@
         sortClass='th-sort-' + ${sortDirection}">
         <th scope="col" class="col-1 th-sort sort-server" id="faculty_id"
             th:classappend="${sortProperty eq 'faculty_id'}? ${sortClass} : ''"
-            th:data-href="@{${url}(size=${page.size}, page=${page.number},
+            th:data-href="@{${uri}(size=${page.size}, page=${page.number},
               sort='faculty_id,' + (${sortProperty eq 'faculty_id' and sortDirection eq 'asc'}? 'desc' : 'asc'))}">
           id
         </th>
         <th scope="col" class="col th-sort sort-server" id="faculty_name"
             th:classappend="${sortProperty eq 'faculty_name'} ? ${sortClass} : ''"
-            th:data-href="@{${url}(size=${page.size}, page=${page.number},
+            th:data-href="@{${uri}(size=${page.size}, page=${page.number},
               sort='faculty_name,' + (${sortProperty eq 'faculty_name' and sortDirection eq 'asc'}? 'desc' : 'asc'))}">
           Faculty Name
         </th>

@@ -45,14 +45,16 @@ public class FacultyController {
 
     @GetMapping
     public String showFaculties(Model model,
-                                @PageableDefault(sort = {"faculty_name"}) Pageable pageable) {
+                                @PageableDefault(sort = "faculty_name") Pageable pageable) {
         log.debug("Getting data for faculty.html");
         Page<Faculty> pageFaculties = facultyService.getAllSortedPaginated(pageable);
         model.addAttribute("faculties", pageFaculties.getContent());
         model.addAttribute("page", pageFaculties);
-        model.addAttribute("url", URI_FACULTIES);
+        model.addAttribute("uri", URI_FACULTIES);
         model.addAttribute("newFaculty", new Faculty());
-        model.addAttribute("pages", pageSequenceCreator.createPageSequence(pageFaculties));
+        model.addAttribute("pages", pageSequenceCreator
+                .createPageSequence(pageFaculties.getTotalPages(),
+                pageFaculties.getNumber() + 1));
         log.info("The list of faculties is loaded into the model");
         return "faculty";
     }
@@ -143,19 +145,19 @@ public class FacultyController {
         return teachers;
     }
 
-    @GetMapping("/list")
-    public String getPageFaculties(Model model,
-                                   @PageableDefault(sort = {"faculty_name"})
-                                       Pageable pageable) {
-        Page<Faculty> facultyPage = facultyService.getAllSortedPaginated(pageable);
-        model.addAttribute("facultyPage", facultyPage);
-        int totalPages = facultyPage.getTotalPages();
-        if (totalPages > 0) {
-            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
-                .boxed()
-                .collect(Collectors.toList());
-            model.addAttribute("pageNumbers", pageNumbers);
-        }
-        return "facultyPage";
-    }
+//    @GetMapping("/list")
+//    public String getPageFaculties(Model model,
+//                                   @PageableDefault(sort = {"faculty_name"})
+//                                       Pageable pageable) {
+//        Page<Faculty> facultyPage = facultyService.getAllSortedPaginated(pageable);
+//        model.addAttribute("facultyPage", facultyPage);
+//        int totalPages = facultyPage.getTotalPages();
+//        if (totalPages > 0) {
+//            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+//                .boxed()
+//                .collect(Collectors.toList());
+//            model.addAttribute("pageNumbers", pageNumbers);
+//        }
+//        return "facultyPage";
+//    }
 }

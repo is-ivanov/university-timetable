@@ -3,15 +3,12 @@ package ua.com.foxminded.university.domain.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ua.com.foxminded.university.dao.interfaces.FacultyDao;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 
-import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -78,7 +75,7 @@ public class FacultyServiceImpl implements FacultyService {
         log.debug("Getting sorted page {} from list of faculties", pageable.getPageNumber());
         Page<Faculty> facultyPage = facultyDao.getAllSortedPaginated(pageable);
         log.info("Found {} faculties on page {}", facultyPage.getContent().size(),
-            facultyPage.getPageable().getPageNumber());
+            facultyPage.getNumber());
         return facultyPage;
     }
 
