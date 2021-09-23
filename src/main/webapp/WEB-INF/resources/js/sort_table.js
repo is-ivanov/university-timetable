@@ -62,8 +62,7 @@ document.querySelectorAll('.table-sortable thead .th-sort').
       if (!headerCell.classList.contains('sort-server')) {
         sortTableByColumnFrontend(tableElement, headerIndex, !currentIsAscending);
       } else {
-        let url = headerCell.getAttribute('data-href')
-        window.location.href = url;
+        window.location.href = headerCell.getAttribute('data-href');
       }
     });
   });
