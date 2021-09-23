@@ -75,9 +75,9 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public Page<Room> getAllSortedPaginated(Pageable pageable) {
         log.debug("Getting sorted page {} from list of rooms", pageable.getPageNumber());
-        Page<Room> roomPage = roomDao.getAllSortedPaginated(pageable);
-        log.info("Found {} rooms on page {}", roomPage.getContent().size(),
-            roomPage.getNumber());
-        return roomPage;
+        Page<Room> pageRooms = roomDao.getAllSortedPaginated(pageable);
+        log.info("Found {} rooms on page {}", pageRooms.getContent().size(),
+            pageRooms.getNumber());
+        return pageRooms;
     }
 }

@@ -60,11 +60,12 @@ public class FacultyController {
     }
 
     @PostMapping
-    public String createFaculty(@ModelAttribute Faculty faculty) {
+    public String createFaculty(@ModelAttribute Faculty faculty,
+                                HttpServletRequest request) {
         log.debug("Creating {}", faculty);
         facultyService.add(faculty);
         log.info("{} is created", faculty);
-        return defineRedirect(URI_FACULTIES);
+        return defineRedirect(request);
     }
 
     @GetMapping("/{id}")
@@ -78,11 +79,12 @@ public class FacultyController {
 
     @PutMapping("/{id}")
     public String updateFaculty(@ModelAttribute Faculty faculty,
-                                @PathVariable("id") int facultyId) {
+                                @PathVariable("id") int facultyId,
+                                HttpServletRequest request) {
         log.debug("Updating faculty with id({})", faculty);
         facultyService.update(faculty);
         log.info("Faculty id({}) is updated", facultyId);
-        return defineRedirect(URI_FACULTIES);
+        return defineRedirect(request);
     }
 
     @DeleteMapping("/{id}")
@@ -93,71 +95,56 @@ public class FacultyController {
         log.info("Faculty id({}) is deleted", facultyId);
         return defineRedirect(request);
     }
-
-    @GetMapping("/{id}/groups")
-    @ResponseBody
-    public List<Group> getGroupsByFaculty(@PathVariable("id") int facultyId) {
-        if (facultyId == 0) {
-            log.debug("Get all groups");
-            return groupService.getAll();
-        } else {
-            log.debug("Getting groups by faculty id({})", facultyId);
-            return groupService.getAllByFacultyId(facultyId);
-        }
-    }
-
-    @GetMapping("/{id}/groups/free")
-    @ResponseBody
-    public List<Group> getFreeGroupsByFaculty(@PathVariable("id") int facultyId,
-                                              @RequestParam("time_start")
-                                              @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-                                                  LocalDateTime startTime,
-                                              @RequestParam("time_end")
-                                              @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-                                                  LocalDateTime endTime) {
-        log.debug("Getting active groups by faculty id({}) free from {} to {}",
-            facultyId, startTime, endTime);
-        List<Group> freeGroups = groupService
-            .getFreeGroupsByFacultyOnLessonTime(facultyId, startTime, endTime);
-        log.info("Found {} groups", freeGroups.size());
-        return freeGroups;
-    }
-
-    @GetMapping("/{id}/departments")
-    @ResponseBody
-    public List<Department> getDepartmentsByFaculty(@PathVariable("id") int facultyId) {
-        if (facultyId == 0) {
-            log.debug("Getting all departments");
-            return departmentService.getAll();
-        } else {
-            log.debug("Getting departments by facultyId ({})", facultyId);
-            return departmentService.getAllByFaculty(facultyId);
-        }
-    }
-
-    @GetMapping("/{id}/teachers")
-    @ResponseBody
-    public List<TeacherDto> getTeachersByFaculty(@PathVariable("id") int facultyId) {
-        log.debug("Getting teacherDtos by faculty id({})", facultyId);
-        List<TeacherDto> teachers = teacherDtoMapper
-            .teachersToTeacherDtos(teacherService.getAllByFaculty(facultyId));
-        log.info("Found {} teachers", teachers.size());
-        return teachers;
-    }
-
-//    @GetMapping("/list")
-//    public String getPageFaculties(Model model,
-//                                   @PageableDefault(sort = {"faculty_name"})
-//                                       Pageable pageable) {
-//        Page<Faculty> facultyPage = facultyService.getAllSortedPaginated(pageable);
-//        model.addAttribute("facultyPage", facultyPage);
-//        int totalPages = facultyPage.getTotalPages();
-//        if (totalPages > 0) {
-//            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
-//                .boxed()
-//                .collect(Collectors.toList());
-//            model.addAttribute("pageNumbers", pageNumbers);
+//
+//    @GetMapping("/{id}/groups")
+//    @ResponseBody
+//    public List<Group> getGroupsByFaculty(@PathVariable("id") int facultyId) {
+//        if (facultyId == 0) {
+//            log.debug("Get all groups");
+//            return groupService.getAll();
+//        } else {
+//            log.debug("Getting groups by faculty id({})", facultyId);
+//            return groupService.getAllByFacultyId(facultyId);
 //        }
-//        return "facultyPage";
 //    }
+//
+//    @GetMapping("/{id}/groups/free")
+//    @ResponseBody
+//    public List<Group> getFreeGroupsByFaculty(@PathVariable("id") int facultyId,
+//                                              @RequestParam("time_start")
+//                                              @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+//                                                  LocalDateTime startTime,
+//                                              @RequestParam("time_end")
+//                                              @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+//                                                  LocalDateTime endTime) {
+//        log.debug("Getting active groups by faculty id({}) free from {} to {}",
+//            facultyId, startTime, endTime);
+//        List<Group> freeGroups = groupService
+//            .getFreeGroupsByFacultyOnLessonTime(facultyId, startTime, endTime);
+//        log.info("Found {} groups", freeGroups.size());
+//        return freeGroups;
+//    }
+//
+//    @GetMapping("/{id}/departments")
+//    @ResponseBody
+//    public List<Department> getDepartmentsByFaculty(@PathVariable("id") int facultyId) {
+//        if (facultyId == 0) {
+//            log.debug("Getting all departments");
+//            return departmentService.getAll();
+//        } else {
+//            log.debug("Getting departments by facultyId ({})", facultyId);
+//            return departmentService.getAllByFaculty(facultyId);
+//        }
+//    }
+//
+//    @GetMapping("/{id}/teachers")
+//    @ResponseBody
+//    public List<TeacherDto> getTeachersByFaculty(@PathVariable("id") int facultyId) {
+//        log.debug("Getting teacherDtos by faculty id({})", facultyId);
+//        List<TeacherDto> teachers = teacherDtoMapper
+//            .teachersToTeacherDtos(teacherService.getAllByFaculty(facultyId));
+//        log.info("Found {} teachers", teachers.size());
+//        return teachers;
+//    }
+
 }

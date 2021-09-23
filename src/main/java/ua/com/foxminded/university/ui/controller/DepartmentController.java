@@ -92,14 +92,14 @@ public class DepartmentController {
         log.info("Department id({}) is deleted", departmentId);
         return defineRedirect(request);
     }
-
-    @GetMapping("/{id}/teachers")
-    @ResponseBody
-    public List<TeacherDto> getTeachersByDepartment(@PathVariable("id") int departmentId) {
-        log.debug("Getting teacherDtos by department id({})", departmentId);
-        List<TeacherDto> teachers = teacherDtoMapper
-            .teachersToTeacherDtos(teacherService.getAllByDepartment(departmentId));
-        log.info("Found {} teachers",teachers.size() );
-        return teachers;
-    }
+//
+//    @GetMapping("/{id}/teachers")
+//    @ResponseBody
+//    public List<TeacherDto> getTeachersByDepartment(@PathVariable("id") int departmentId) {
+//        log.debug("Getting teacherDtos by department id({})", departmentId);
+//        List<TeacherDto> teachers = teacherDtoMapper
+//            .teachersToTeacherDtos(teacherService.getAllByDepartment(departmentId));
+//        log.info("Found {} teachers",teachers.size() );
+//        return teachers;
+//    }
 }

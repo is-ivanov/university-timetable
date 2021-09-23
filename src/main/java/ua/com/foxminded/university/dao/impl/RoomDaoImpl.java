@@ -8,7 +8,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ua.com.foxminded.university.dao.interfaces.RoomDao;
@@ -136,19 +136,21 @@ public class RoomDaoImpl implements RoomDao {
 
     @Override
     public int countAll() {
+        log.debug("Count all rooms in database");
         Integer result = jdbcTemplate.queryForObject(
             env.getRequiredProperty(QUERY_COUNT_ALL), Integer.class);
+        log.info("{} rooms", result);
         return (result != null ? result : 0);
     }
 
     @Override
     public Page<Room> getAllSortedPaginated(Pageable pageable){
         log.debug("Getting sorted page {} from list of rooms", pageable.getPageNumber());
-        Sort.Order order;
+        Order order;
         if (!pageable.getSort().isEmpty()) {
             order = pageable.getSort().toList().get(0);
         }else {
-            order = Sort.Order.by(ROOM_NUMBER);
+            order = Order.by(ROOM_NUMBER);
         }
         String query = String.format(env.getRequiredProperty(QUERY_GET_ALL_SORTED_PAGINATED),
             order.getProperty(), order.getDirection().name(),

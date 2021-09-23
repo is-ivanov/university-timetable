@@ -135,8 +135,10 @@ public class FacultyDaoImpl implements FacultyDao {
 
     @Override
     public int countAll() {
+        log.debug("Count all faculties in database");
         Integer result = jdbcTemplate.queryForObject(
             env.getRequiredProperty(QUERY_COUNT_ALL), Integer.class);
+        log.info("{} faculties", result);
         return (result != null ? result : 0);
     }
 

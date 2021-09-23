@@ -8,6 +8,7 @@
   <script th:src="@{/webjars/fullcalendar/main.js}"></script>
   <script th:inline="javascript">
     document.addEventListener('DOMContentLoaded', function () {
+      let typeTimetable = [[${type}]];
       let url = '/' + [[${type}]] + '/' + [[${object.id}]] + '/timetable';
       let calendarEl = document.getElementById('calendar');
       let calendar = new FullCalendar.Calendar(calendarEl, {
@@ -54,14 +55,36 @@
             eventDidMount: function (info) {
               let event = info.event;
               let el = info.el;
-              $(el).find('.fc-event-title').append('<br/>' + event.extendedProps.buildingAndRoom);
+              let lessonDescription;
+              let lessonTooltip;
+              if (typeTimetable === 'rooms') {
+                lessonDescription = event.extendedProps.teacher;
+                lessonTooltip = event.extendedProps.buildingAndRoom;
+              } else {
+                lessonDescription = event.extendedProps.buildingAndRoom;
+                lessonTooltip = event.extendedProps.teacher;
+              }
+              $(el).find('.fc-event-title').append('<br/>' + lessonDescription);
               new bootstrap.Tooltip(el, {
-                title: event.extendedProps.teacher,
+                title: lessonTooltip,
               });
             },
             slotMinTime: '07:00:00',
             slotMaxTime: '22:00:00',
             expandRows: true,
+          },
+          listWeek: {
+            eventDidMount: function (info) {
+              let event = info.event;
+              let el = info.el;
+              let lessonDescription;
+              if (typeTimetable === 'rooms') {
+                lessonDescription = event.extendedProps.teacher;
+              } else {
+                lessonDescription = event.extendedProps.buildingAndRoom;
+              }
+              $(el).find('.fc-list-event-title > a').append('&nbsp;&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;&nbsp;' + lessonDescription);
+            },
           },
         },
         slotLabelFormat: [

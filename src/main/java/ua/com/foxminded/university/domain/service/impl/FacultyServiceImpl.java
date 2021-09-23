@@ -73,10 +73,10 @@ public class FacultyServiceImpl implements FacultyService {
     @Override
     public Page<Faculty> getAllSortedPaginated(Pageable pageable) {
         log.debug("Getting sorted page {} from list of faculties", pageable.getPageNumber());
-        Page<Faculty> facultyPage = facultyDao.getAllSortedPaginated(pageable);
-        log.info("Found {} faculties on page {}", facultyPage.getContent().size(),
-            facultyPage.getNumber());
-        return facultyPage;
+        Page<Faculty> pageFaculties = facultyDao.getAllSortedPaginated(pageable);
+        log.info("Found {} faculties on page {}", pageFaculties.getContent().size(),
+            pageFaculties.getNumber());
+        return pageFaculties;
     }
 
 

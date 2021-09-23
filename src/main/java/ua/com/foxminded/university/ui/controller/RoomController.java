@@ -17,6 +17,7 @@ import ua.com.foxminded.university.domain.service.interfaces.LessonService;
 import ua.com.foxminded.university.domain.service.interfaces.RoomService;
 import ua.com.foxminded.university.ui.PageSequenceCreator;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -60,45 +61,48 @@ public class RoomController {
         log.info("Found {}", room);
         return room;
     }
-
-    @GetMapping("/free")
-    @ResponseBody
-    public List<Room> getFreeRooms(@RequestParam("time_start")
-                                   @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-                                       LocalDateTime startTime,
-                                   @RequestParam("time_end")
-
-                                   @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-                                       LocalDateTime endTime) {
-        log.debug("Getting rooms free from {} to {}", startTime, endTime);
-        List<Room> freeRooms = roomService.getFreeRoomsOnLessonTime(startTime, endTime);
-        log.info("Found {} free rooms", freeRooms.size());
-        return freeRooms;
-    }
-
+//
+//    @GetMapping("/free")
+//    @ResponseBody
+//    public List<Room> getFreeRooms(@RequestParam("time_start")
+//                                   @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+//                                       LocalDateTime startTime,
+//                                   @RequestParam("time_end")
+//
+//                                   @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+//                                       LocalDateTime endTime) {
+//        log.debug("Getting rooms free from {} to {}", startTime, endTime);
+//        List<Room> freeRooms = roomService.getFreeRoomsOnLessonTime(startTime, endTime);
+//        log.info("Found {} free rooms", freeRooms.size());
+//        return freeRooms;
+//    }
+//
     @PostMapping
-    public String createRoom(@ModelAttribute Room room) {
+    public String createRoom(@ModelAttribute Room room,
+                             HttpServletRequest request) {
         log.debug("Creating {}", room);
         roomService.add(room);
         log.info("{} is created", room);
-        return defineRedirect(URI_ROOMS);
+        return defineRedirect(request);
     }
 
     @PutMapping("/{id}")
     public String updateRoom(@ModelAttribute Room room,
-                             @PathVariable("id") int roomId) {
+                             @PathVariable("id") int roomId,
+                             HttpServletRequest request) {
         log.debug("Updating room id({})", roomId);
         roomService.update(room);
         log.info("Room id({}) is updated", roomId);
-        return defineRedirect(URI_ROOMS);
+        return defineRedirect(request);
     }
 
     @DeleteMapping("/{id}")
-    public String deleteRoom(@PathVariable("id") int roomId) {
+    public String deleteRoom(@PathVariable("id") int roomId,
+                             HttpServletRequest request) {
         log.debug("Deleting room with id({})", roomId);
         roomService.delete(roomId);
         log.info("Room id({}) is deleted", roomId);
-        return defineRedirect(URI_ROOMS);
+        return defineRedirect(request);
     }
 
     @GetMapping("/{id}/timetable")
