@@ -99,7 +99,7 @@ public class DepartmentController {
         log.debug("Getting teacherDtos by department id({})", departmentId);
         List<TeacherDto> teachers = teacherDtoMapper
             .teachersToTeacherDtos(teacherService.getAllByDepartment(departmentId));
-        log.info("Found {} teachers",teachers.size() );
+        log.info("Found {} teachers", teachers.size());
         return teachers;
     }
 }

@@ -10,13 +10,14 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static ua.com.foxminded.university.ui.Util.DATE_TIME_PATTERN;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class LessonDto {
 
-    public static final String FORMAT_DATE_TIME = "yyyy-MM-dd HH:mm";
 
     private Integer id;
     private int courseId;
@@ -27,12 +28,12 @@ public class LessonDto {
     private String buildingAndRoom;
     private List<StudentDto> students;
 
-    @DateTimeFormat(pattern = FORMAT_DATE_TIME)
-    @JsonFormat(pattern = FORMAT_DATE_TIME)
+    @DateTimeFormat(pattern = DATE_TIME_PATTERN)
+    @JsonFormat(pattern = DATE_TIME_PATTERN)
     private LocalDateTime timeStart;
 
-    @DateTimeFormat(pattern = FORMAT_DATE_TIME)
-    @JsonFormat(pattern = FORMAT_DATE_TIME)
+    @DateTimeFormat(pattern = DATE_TIME_PATTERN)
+    @JsonFormat(pattern = DATE_TIME_PATTERN)
     private LocalDateTime timeEnd;
 
 }

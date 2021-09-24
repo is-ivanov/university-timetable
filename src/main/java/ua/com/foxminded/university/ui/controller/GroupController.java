@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static ua.com.foxminded.university.ui.Util.DATE_TIME_PATTERN;
 import static ua.com.foxminded.university.ui.Util.defineRedirect;
 
 @Slf4j
@@ -92,32 +93,22 @@ public class GroupController {
         log.info("Group id({}) is deleted", groupId);
         return defineRedirect(request);
     }
-//
-//    @GetMapping("/{id}/students")
-//    @ResponseBody
-//    public List<StudentDto> getStudentsFromGroup(@PathVariable("id") int groupId) {
-//        log.debug("Getting students from group id({})", groupId);
-//        List<StudentDto> studentDtos = studentDtoMapper.studentsToStudentDtos(
-//            studentService.getStudentsByGroup(groupId));
-//        log.info("Found {} students", studentDtos.size());
-//        return studentDtos;
-//    }
-//
-//    @GetMapping("/{id}/students/free")
-//    @ResponseBody
-//    public List<StudentDto> getFreeStudentsFromGroup(@PathVariable("id") int groupId,
-//                                                     @RequestParam("time_start")
-//                                                     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-//                                                         LocalDateTime startTime,
-//                                                     @RequestParam("time_end")
-//                                                     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-//                                                         LocalDateTime endTime) {
-//        log.debug("Getting active students from group id({}) free from {} to {}",
-//            groupId, startTime, endTime);
-//        List<StudentDto> freeStudentsFromGroup = studentDtoMapper.studentsToStudentDtos(
-//            studentService.getFreeStudentsFromGroup(groupId, startTime, endTime));
-//        log.info("Found {} students", freeStudentsFromGroup.size());
-//        return freeStudentsFromGroup;
-//    }
+
+    @GetMapping("/{id}/students/free")
+    @ResponseBody
+    public List<StudentDto> getFreeStudentsFromGroup(@PathVariable("id") int groupId,
+                                                     @RequestParam("time_start")
+                                                     @DateTimeFormat(pattern = DATE_TIME_PATTERN)
+                                                         LocalDateTime startTime,
+                                                     @RequestParam("time_end")
+                                                     @DateTimeFormat(pattern = DATE_TIME_PATTERN)
+                                                         LocalDateTime endTime) {
+        log.debug("Getting active students from group id({}) free from {} to {}",
+            groupId, startTime, endTime);
+        List<StudentDto> freeStudentsFromGroup = studentDtoMapper.studentsToStudentDtos(
+            studentService.getFreeStudentsFromGroup(groupId, startTime, endTime));
+        log.info("Found {} students", freeStudentsFromGroup.size());
+        return freeStudentsFromGroup;
+    }
 
 }

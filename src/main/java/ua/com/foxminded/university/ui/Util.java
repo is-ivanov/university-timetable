@@ -4,7 +4,8 @@ import javax.servlet.http.HttpServletRequest;
 
 public class Util {
 
-    public static final String REDIRECT = "redirect:";
+    public static final String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm";
+    private static final String REDIRECT = "redirect:";
 
     private Util() {
     }

@@ -18,7 +18,7 @@ public interface LessonDtoMapper {
     @Mapping(target = "teacherFullName", source = "teacher.fullName")
     @Mapping(target = "roomId", source = "room.id")
     @Mapping(target = "buildingAndRoom",
-        expression = "java(roomToBuildingAndRoom(lesson.getRoom()))")
+        expression = "java(lesson.getRoom().getBuildingAndRoom())")
     LessonDto lessonToLessonDto(Lesson lesson);
 
     @InheritInverseConfiguration(name = "lessonToLessonDto")
@@ -27,7 +27,4 @@ public interface LessonDtoMapper {
 
     List<LessonDto> lessonsToLessonDtos(List<Lesson> lessons);
 
-    default String roomToBuildingAndRoom(Room room) {
-        return String.format("%s - %s", room.getBuilding(), room.getNumber());
-    }
 }

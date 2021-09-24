@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import static ua.com.foxminded.university.ui.Util.DATE_TIME_PATTERN;
 import static ua.com.foxminded.university.ui.Util.defineRedirect;
 
 @Slf4j
@@ -61,22 +62,21 @@ public class RoomController {
         log.info("Found {}", room);
         return room;
     }
-//
-//    @GetMapping("/free")
-//    @ResponseBody
-//    public List<Room> getFreeRooms(@RequestParam("time_start")
-//                                   @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-//                                       LocalDateTime startTime,
-//                                   @RequestParam("time_end")
-//
-//                                   @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-//                                       LocalDateTime endTime) {
-//        log.debug("Getting rooms free from {} to {}", startTime, endTime);
-//        List<Room> freeRooms = roomService.getFreeRoomsOnLessonTime(startTime, endTime);
-//        log.info("Found {} free rooms", freeRooms.size());
-//        return freeRooms;
-//    }
-//
+
+    @GetMapping("/free")
+    @ResponseBody
+    public List<Room> getFreeRooms(@RequestParam("time_start")
+                                   @DateTimeFormat(pattern = DATE_TIME_PATTERN)
+                                       LocalDateTime startTime,
+                                   @RequestParam("time_end")
+                                   @DateTimeFormat(pattern = DATE_TIME_PATTERN)
+                                       LocalDateTime endTime) {
+        log.debug("Getting rooms free from {} to {}", startTime, endTime);
+        List<Room> freeRooms = roomService.getFreeRoomsOnLessonTime(startTime, endTime);
+        log.info("Found {} free rooms", freeRooms.size());
+        return freeRooms;
+    }
+
     @PostMapping
     public String createRoom(@ModelAttribute Room room,
                              HttpServletRequest request) {

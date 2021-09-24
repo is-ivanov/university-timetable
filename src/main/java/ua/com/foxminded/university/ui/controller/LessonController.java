@@ -27,6 +27,7 @@ import static ua.com.foxminded.university.ui.Util.defineRedirect;
 public class LessonController {
 
     public static final String GET_ALL_TEACHERS_FOR_SELECTOR = "Get all teachers for selector";
+    public static final String LESSONS = "lessons";
 
     private final LessonService lessonService;
     private final FacultyService facultyService;
@@ -42,7 +43,7 @@ public class LessonController {
     public String showLessons(Model model) {
         model.addAttribute("lessonFilter", new LessonFilter());
         log.info("The required data is loaded into the model. Loading page");
-        return "lessons";
+        return LESSONS;
     }
 
     @GetMapping("/filter")
@@ -81,11 +82,11 @@ public class LessonController {
             model.addAttribute("departments", departmentService.getAll());
         }
         log.debug("Get filtered lessons");
-        model.addAttribute("lessons",
+        model.addAttribute(LESSONS,
             lessonDtoMapper.lessonsToLessonDtos(lessonService.getAllWithFilter(lessonFilter)));
         model.addAttribute("newLesson", new LessonDto());
         log.info("The required data is loaded into the model");
-        return "lessons";
+        return LESSONS;
     }
 
     @GetMapping("/{id}")
@@ -99,71 +100,41 @@ public class LessonController {
         return lessonDto;
     }
 
-//    @GetMapping("/{id}/students")
-//    public String showLessonWithStudents(@PathVariable("id") int lessonId,
-//                                         Model model) {
-//        log.debug("Getting data for lesson.html for lesson id({})", lessonId);
-//        Lesson lesson = lessonService.getById(lessonId);
-//        LessonDto lessonDto = lessonDtoMapper.lessonToLessonDto(lesson);
-//        model.addAttribute("lesson", lessonDto);
-//
-//        LocalDateTime timeStart = lesson.getTimeStart();
-//        LocalDateTime timeEnd = lesson.getTimeEnd();
-//        Teacher teacher = lesson.getTeacher();
-//        Room room = lesson.getRoom();
-//
-//        log.debug("Loading free teachers in model");
-//        List<Teacher> freeTeachers = teacherService
-//            .getFreeTeachersOnLessonTime(timeStart, timeEnd);
-//        freeTeachers.add(teacher);
-//        model.addAttribute("teachers",
-//            teacherDtoMapper.teachersToTeacherDtos(freeTeachers));
-//
-//        log.debug("Loading free rooms in model");
-//        List<Room> freeRooms = roomService
-//            .getFreeRoomsOnLessonTime(timeStart, timeEnd);
-//        freeRooms.add(room);
-//        model.addAttribute("rooms", freeRooms);
-//
-//        log.debug("Loading active groups in model");
-//        model.addAttribute("groups",
-//            groupService.getFreeGroupsOnLessonTime(timeStart, timeEnd));
-//
-//        log.info("The required data is loaded into the model. Loading page lesson id({})",
-//            lessonId);
-//        return "lesson";
-//    }
-//
-//    @GetMapping("/departments")
-//    @ResponseBody
-//    public List<TeacherDto> getTeachersByDepartment(@RequestParam Integer departmentId) {
-//        log.debug("Getting teachers for selector");
-//        List<Teacher> teachersByDepartment;
-//        if (departmentId == 0) {
-//            log.debug(GET_ALL_TEACHERS_FOR_SELECTOR);
-//            teachersByDepartment = teacherService.getAll();
-//        } else {
-//            log.debug("Get teachers for selector by departmentId ({})", departmentId);
-//            teachersByDepartment = teacherService.getAllByDepartment(departmentId);
-//        }
-//        return teacherDtoMapper.teachersToTeacherDtos(teachersByDepartment);
-//    }
-//
-//    @GetMapping("/faculties")
-//    @ResponseBody
-//    public List<TeacherDto> getTeachersByFaculty(@RequestParam Integer facultyId) {
-//        log.debug("Getting teachers for selector");
-//        List<Teacher> teachersByFaculty;
-//        if (facultyId == 0) {
-//            log.debug(GET_ALL_TEACHERS_FOR_SELECTOR);
-//            teachersByFaculty = teacherService.getAll();
-//        } else {
-//            log.debug("Get teachers for selector by facultyId ({})", facultyId);
-//            teachersByFaculty = teacherService.getAllByFaculty(facultyId);
-//        }
-//        return teacherDtoMapper.teachersToTeacherDtos(teachersByFaculty);
-//    }
-//
+    @GetMapping("/{id}/students")
+    public String showLessonWithStudents(@PathVariable("id") int lessonId,
+                                         Model model) {
+        log.debug("Getting data for lesson.html for lesson id({})", lessonId);
+        Lesson lesson = lessonService.getById(lessonId);
+        LessonDto lessonDto = lessonDtoMapper.lessonToLessonDto(lesson);
+        model.addAttribute("lesson", lessonDto);
+
+        LocalDateTime timeStart = lesson.getTimeStart();
+        LocalDateTime timeEnd = lesson.getTimeEnd();
+        Teacher teacher = lesson.getTeacher();
+        Room room = lesson.getRoom();
+
+        log.debug("Loading free teachers in model");
+        List<Teacher> freeTeachers = teacherService
+            .getFreeTeachersOnLessonTime(timeStart, timeEnd);
+        freeTeachers.add(teacher);
+        model.addAttribute("teachers",
+            teacherDtoMapper.teachersToTeacherDtos(freeTeachers));
+
+        log.debug("Loading free rooms in model");
+        List<Room> freeRooms = roomService
+            .getFreeRoomsOnLessonTime(timeStart, timeEnd);
+        freeRooms.add(room);
+        model.addAttribute("rooms", freeRooms);
+
+        log.debug("Loading active groups in model");
+        model.addAttribute("groups",
+            groupService.getFreeGroupsOnLessonTime(timeStart, timeEnd));
+
+        log.info("The required data is loaded into the model. Loading page lesson id({})",
+            lessonId);
+        return "lesson";
+    }
+
     @PostMapping
     public String createLesson(@ModelAttribute LessonDto lessonDto,
                                HttpServletRequest request) {
@@ -173,27 +144,27 @@ public class LessonController {
         return defineRedirect(request);
     }
 
-//    @PostMapping("/{id}/students")
-//    public String addStudentToLesson(@PathVariable("id") int lessonId,
-//                                     @RequestParam int studentId,
-//                                     HttpServletRequest request) {
-//        log.debug("Adding student id({}) to lesson id({})", studentId, lessonId);
-//        lessonService.addStudentToLesson(lessonId, studentId);
-//        log.info("Student id({}) added to lesson id({}) successfully", studentId, lessonId);
-//        return defineRedirect(request);
-//    }
-//
-//    @PostMapping("/{id}/groups")
-//    public String addStudentsFromGroupToLesson(@PathVariable("id") int lessonId,
-//                                               @RequestParam int groupId,
-//                                               HttpServletRequest request) {
-//        log.debug("Adding all students from group id({}) to lesson id({})",
-//            groupId, lessonId);
-//        lessonService.addStudentsFromGroupToLesson(groupId, lessonId);
-//        log.info("Student from group id({}) is added to lesson id({})", groupId,
-//            lessonId);
-//        return defineRedirect(request);
-//    }
+    @PostMapping("/{id}/students")
+    public String addStudentToLesson(@PathVariable("id") int lessonId,
+                                     @RequestParam int studentId,
+                                     HttpServletRequest request) {
+        log.debug("Adding student id({}) to lesson id({})", studentId, lessonId);
+        lessonService.addStudentToLesson(lessonId, studentId);
+        log.info("Student id({}) added to lesson id({}) successfully", studentId, lessonId);
+        return defineRedirect(request);
+    }
+
+    @PostMapping("/{id}/groups")
+    public String addStudentsFromGroupToLesson(@PathVariable("id") int lessonId,
+                                               @RequestParam int groupId,
+                                               HttpServletRequest request) {
+        log.debug("Adding all students from group id({}) to lesson id({})",
+            groupId, lessonId);
+        lessonService.addStudentsFromGroupToLesson(groupId, lessonId);
+        log.info("Student from group id({}) is added to lesson id({})", groupId,
+            lessonId);
+        return defineRedirect(request);
+    }
 
     @PutMapping("/{id}")
     public String updateLesson(@ModelAttribute LessonDto lessonDto,
@@ -204,22 +175,22 @@ public class LessonController {
         log.info("Lesson id({}) updated successfully", lessonId);
         return defineRedirect(request);
     }
-//
-//    @DeleteMapping("/{id}/students")
-//    public String removeStudentFromLesson(@PathVariable("id") int lessonId,
-//                                          @RequestParam int[] studentIds,
-//                                          HttpServletRequest request) {
-//        if (studentIds.length == 1) {
-//            log.debug("Remove student id({}) from lesson id({})", studentIds, lessonId);
-//            lessonService.removeStudentFromLesson(lessonId, studentIds[0]);
-//        } else {
-//            log.debug("Remove students id({}) from lesson id({})", studentIds, lessonId);
-//            lessonService.removeStudentsFromLesson(lessonId, studentIds);
-//        }
-//        log.info("Students id({}) successfully removed from lesson id({})",
-//            studentIds, lessonId);
-//        return defineRedirect(request);
-//    }
+
+    @DeleteMapping("/{id}/students")
+    public String removeStudentFromLesson(@PathVariable("id") int lessonId,
+                                          @RequestParam int[] studentIds,
+                                          HttpServletRequest request) {
+        if (studentIds.length == 1) {
+            log.debug("Remove student id({}) from lesson id({})", studentIds, lessonId);
+            lessonService.removeStudentFromLesson(lessonId, studentIds[0]);
+        } else {
+            log.debug("Remove students id({}) from lesson id({})", studentIds, lessonId);
+            lessonService.removeStudentsFromLesson(lessonId, studentIds);
+        }
+        log.info("Students id({}) successfully removed from lesson id({})",
+            studentIds, lessonId);
+        return defineRedirect(request);
+    }
 
     @DeleteMapping("/{id}")
     public String deleteLesson(@PathVariable("id") int lessonId,

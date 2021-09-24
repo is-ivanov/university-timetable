@@ -30,8 +30,6 @@ public class WebConfig implements WebMvcConfigurer {
         templateResolver.setApplicationContext(this.applicationContext);
         templateResolver.setPrefix("/WEB-INF/templates/");
         templateResolver.setSuffix(".html");
-        //TODO change setCacheable to false before production
-        templateResolver.setCacheable(false);
         return templateResolver;
     }
 

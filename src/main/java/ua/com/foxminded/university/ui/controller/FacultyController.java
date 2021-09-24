@@ -23,9 +23,8 @@ import ua.com.foxminded.university.ui.PageSequenceCreator;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
+import static ua.com.foxminded.university.ui.Util.DATE_TIME_PATTERN;
 import static ua.com.foxminded.university.ui.Util.defineRedirect;
 
 @Slf4j
@@ -53,7 +52,7 @@ public class FacultyController {
         model.addAttribute("uri", URI_FACULTIES);
         model.addAttribute("newFaculty", new Faculty());
         model.addAttribute("pages", pageSequenceCreator
-                .createPageSequence(pageFaculties.getTotalPages(),
+            .createPageSequence(pageFaculties.getTotalPages(),
                 pageFaculties.getNumber() + 1));
         log.info("The list of faculties is loaded into the model");
         return "faculty";
@@ -108,23 +107,23 @@ public class FacultyController {
         }
     }
 
-//    @GetMapping("/{id}/groups/free")
-//    @ResponseBody
-//    public List<Group> getFreeGroupsByFaculty(@PathVariable("id") int facultyId,
-//                                              @RequestParam("time_start")
-//                                              @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-//                                                  LocalDateTime startTime,
-//                                              @RequestParam("time_end")
-//                                              @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-//                                                  LocalDateTime endTime) {
-//        log.debug("Getting active groups by faculty id({}) free from {} to {}",
-//            facultyId, startTime, endTime);
-//        List<Group> freeGroups = groupService
-//            .getFreeGroupsByFacultyOnLessonTime(facultyId, startTime, endTime);
-//        log.info("Found {} groups", freeGroups.size());
-//        return freeGroups;
-//    }
-//
+    @GetMapping("/{id}/groups/free")
+    @ResponseBody
+    public List<Group> getFreeGroupsByFaculty(@PathVariable("id") int facultyId,
+                                              @RequestParam("time_start")
+                                              @DateTimeFormat(pattern = DATE_TIME_PATTERN)
+                                                  LocalDateTime startTime,
+                                              @RequestParam("time_end")
+                                              @DateTimeFormat(pattern = DATE_TIME_PATTERN)
+                                                  LocalDateTime endTime) {
+        log.debug("Getting active groups by faculty id({}) free from {} to {}",
+            facultyId, startTime, endTime);
+        List<Group> freeGroups = groupService
+            .getFreeGroupsByFacultyOnLessonTime(facultyId, startTime, endTime);
+        log.info("Found {} groups", freeGroups.size());
+        return freeGroups;
+    }
+
     @GetMapping("/{id}/departments")
     @ResponseBody
     public List<Department> getDepartmentsByFaculty(@PathVariable("id") int facultyId) {

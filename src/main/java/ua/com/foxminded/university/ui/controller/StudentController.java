@@ -8,7 +8,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ua.com.foxminded.university.domain.dto.LessonDto;
 import ua.com.foxminded.university.domain.dto.StudentDto;
-import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
@@ -78,19 +77,6 @@ public class StudentController {
         return "student";
     }
 
-//    @GetMapping(value = "/groups")
-//    @ResponseBody
-//    public List<Group> getGroups(@RequestParam Integer facultyId) {
-//        log.debug("Getting groups for selector");
-//        if (facultyId == 0) {
-//            log.debug("Get all groups for selector");
-//            return groupService.getAll();
-//        } else {
-//            log.debug("Get groups for selector by facultyId ({})", facultyId);
-//            return groupService.getAllByFacultyId(facultyId);
-//        }
-//    }
-//
     @PostMapping
     public String createStudent(@ModelAttribute StudentDto studentDto,
                                 HttpServletRequest request) {

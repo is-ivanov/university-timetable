@@ -6,7 +6,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ua.com.foxminded.university.dao.impl.LessonDaoImpl;
 import ua.com.foxminded.university.domain.dto.LessonDto;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.Lesson;
@@ -23,6 +22,7 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import static ua.com.foxminded.university.ui.Util.DATE_TIME_PATTERN;
 import static ua.com.foxminded.university.ui.Util.defineRedirect;
 
 @Slf4j
@@ -74,22 +74,22 @@ public class TeacherController {
         log.info("The required data is loaded into the model");
         return "teacher";
     }
-//
-//    @GetMapping("/free")
-//    @ResponseBody
-//    public List<TeacherDto> getFreeTeachers(@RequestParam("time_start")
-//                                            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-//                                                LocalDateTime startTime,
-//                                            @RequestParam("time_end")
-//                                            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-//                                                LocalDateTime endTime) {
-//        log.debug("Getting teachers free from {} to {}", startTime, endTime);
-//        List<Teacher> freeTeachers =
-//            teacherService.getFreeTeachersOnLessonTime(startTime, endTime);
-//        log.info("Found {} active free teachers", freeTeachers.size());
-//        return teacherMapper.teachersToTeacherDtos(freeTeachers);
-//    }
-//
+
+    @GetMapping("/free")
+    @ResponseBody
+    public List<TeacherDto> getFreeTeachers(@RequestParam("time_start")
+                                            @DateTimeFormat(pattern = DATE_TIME_PATTERN)
+                                                LocalDateTime startTime,
+                                            @RequestParam("time_end")
+                                            @DateTimeFormat(pattern = DATE_TIME_PATTERN)
+                                                LocalDateTime endTime) {
+        log.debug("Getting teachers free from {} to {}", startTime, endTime);
+        List<Teacher> freeTeachers =
+            teacherService.getFreeTeachersOnLessonTime(startTime, endTime);
+        log.info("Found {} active free teachers", freeTeachers.size());
+        return teacherMapper.teachersToTeacherDtos(freeTeachers);
+    }
+
     @PostMapping
     public String createTeacher(@ModelAttribute TeacherDto teacherDto,
                                 HttpServletRequest request) {

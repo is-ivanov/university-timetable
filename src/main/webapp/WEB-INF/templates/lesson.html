@@ -4,17 +4,17 @@
 <head>
   <title>Lesson</title>
 
-  <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
-        th:href="@{/webjars/font-awesome/css/all.css}"/>
-  <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/css/tempusdominus-bootstrap-4.min.css"
-        th:href="@{/webjars/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}"/>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/css/bootstrap.min.css"
-        th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
-  <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.min.css"
-        th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.css}">
-  <link href="../resources/css/style.css" rel="stylesheet" th:href="@{/css/style.css}"/>
+<!--  <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"-->
+<!--        th:href="@{/webjars/font-awesome/css/all.css}"/>-->
+<!--  <link rel="stylesheet"-->
+<!--        href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/css/tempusdominus-bootstrap-4.min.css"-->
+<!--        th:href="@{/webjars/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}"/>-->
+<!--  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/css/bootstrap.min.css"-->
+<!--        th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>-->
+<!--  <link rel="stylesheet"-->
+<!--        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.min.css"-->
+<!--        th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.css}">-->
+<!--  <link href="../resources/css/style.css" rel="stylesheet" th:href="@{/css/style.css}"/>-->
 </head>
 <body>
 <div layout:fragment="content">
@@ -32,10 +32,9 @@
               <!--Date start-->
               <div class="col">
                 <label for="dateStartPickerLesson" class="form-label">Time start</label>
-                <div class="input-group date"  data-target-input="nearest">
+                <div class="input-group date"  data-target-input="nearest" id="dateStartPickerLesson">
                   <input type="text" class="form-control datetimepicker-input"
                          data-target="#dateStartPickerLesson"
-                         id="dateStartPickerLesson"
                          th:value="${#temporals.format(lesson.timeStart, 'yyyy-MM-dd HH:mm')}"
                          name="timeStart" required disabled/>
                   <div class="input-group-text" data-target="#dateStartPickerLesson"
@@ -47,10 +46,9 @@
               <!--Date end-->
               <div class="col">
                 <label for="dateEndPickerLesson" class="form-label">Time end</label>
-                <div class="input-group date" data-target-input="nearest">
+                <div class="input-group date" data-target-input="nearest" id="dateEndPickerLesson">
                   <input type="text" class="form-control datetimepicker-input"
                          data-target="#dateEndPickerLesson"
-                         id="dateEndPickerLesson"
                          th:value="${#temporals.format(lesson.timeEnd, 'yyyy-MM-dd HH:mm')}"
                          name="timeEnd" required disabled/>
                   <div class="input-group-text" data-target="#dateEndPickerLesson"
@@ -101,7 +99,7 @@
                   </option>
                   <option th:each="room : ${rooms}"
                           th:value="${room.id}"
-                          th:utext="${room.building} + ' - ' + ${room.number}"
+                          th:utext="${room.getBuildingAndRoom()}"
                           th:selected="${lesson.roomId ne null and room.id eq lesson.roomId}">...
                   </option>
                 </select>
@@ -373,7 +371,7 @@
       let studentId = $(this).attr('data-bs-id');
       let lessonId = $('#lessonId').val();
       let row = $(this).parent().parent().parent();
-      let student = getPersonFullNameFromRow(row);
+      let student = getPersonFullNameFromRow(row, 'student');
       let course = $('#selectCourseEditLesson > option:selected').text();
       let timeStart = $('#dateStartPickerLesson > input').val();
       let lesson = student + 'from lesson: ' + course + ' on ' + timeStart;
@@ -392,14 +390,13 @@
       let timeStart = $('#dateStartPickerLesson > input').val();
       let textWarning = 'next students from lesson: ' + course + ' on ' + timeStart + ':';
       selectedRows.each(function () {
-        textWarning = textWarning + '\n' + getPersonFullNameFromRow(this);
+        textWarning = textWarning + '\n' + getPersonFullNameFromRow(this, 'student');
       });
       $('#removedStudent').text(textWarning);
       let studentIds = [];
       selectedRows.each(function () {
         studentIds.push($(this).data('bs-id'));
       });
-      console.log(studentIds);
       $('#removedStudentId').val(studentIds);
       $('#formDelete').attr('action', '/lessons/' + lessonId + '/students');
 
@@ -408,17 +405,17 @@
 
   //  DateTimePicker
   $(function () {
-
+    let dateStartPickerLesson = $('#dateStartPickerLesson')
     let dateEndPickerLesson = $('#dateEndPickerLesson');
 
-    $('#dateStartPickerLesson').on('hide.datetimepicker', function (e) {
+    dateStartPickerLesson.on('hide.datetimepicker', function (e) {
       updateEndDatetimepicker(dateEndPickerLesson, e);
       updateOptionsSelectTeacherAndRoom();
       dateEndPickerLesson.focus();
     });
 
     dateEndPickerLesson.on('hide.datetimepicker', function (e) {
-      updateStartDatetimepicker($('#dateStartPickerLesson'), e);
+      updateStartDatetimepicker(dateStartPickerLesson, e);
       updateOptionsSelectTeacherAndRoom();
     });
 

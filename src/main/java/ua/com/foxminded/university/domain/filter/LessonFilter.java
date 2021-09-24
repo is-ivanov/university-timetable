@@ -6,8 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+import static ua.com.foxminded.university.ui.Util.DATE_TIME_PATTERN;
 
 
 @Data
@@ -22,10 +23,10 @@ public class LessonFilter {
     private Integer courseId;
     private Integer roomId;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    @DateTimeFormat(pattern = DATE_TIME_PATTERN)
     private LocalDateTime dateFrom;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    @DateTimeFormat(pattern = DATE_TIME_PATTERN)
     private LocalDateTime dateTo;
 
 }
