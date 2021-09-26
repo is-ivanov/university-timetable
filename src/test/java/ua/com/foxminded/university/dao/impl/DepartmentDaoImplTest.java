@@ -13,7 +13,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
-import ua.com.foxminded.university.exception.DAOException;
+import ua.com.foxminded.university.exception.DaoException;
 import ua.com.foxminded.university.springconfig.TestRootConfig;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,6 +33,7 @@ class DepartmentDaoImplTest {
     private static final String MESSAGE_EXCEPTION = "Department id(3) not found";
     private static final String MESSAGE_UPDATE_MASK = "Can't update %s";
     private static final String MESSAGE_DELETE_MASK = "Can't delete %s";
+    private static final String MESSAGE_DELETE_ID_MASK = "Can't delete department id(%s)";
     private static final String MESSAGE_UPDATE_EXCEPTION = "Can't update because " +
         "department id(3) not found";
     private static final String MESSAGE_DELETE_EXCEPTION = "Can't delete because " +
@@ -46,7 +47,7 @@ class DepartmentDaoImplTest {
 
     @Nested
     @DisplayName("test 'add' method")
-    class addTest {
+    class AddTest {
 
         @Test
         @DisplayName("add test department should CountRowsTable = 3")
@@ -69,11 +70,11 @@ class DepartmentDaoImplTest {
 
     @Nested
     @DisplayName("test 'getById' method")
-    class getByIdTest {
+    class GetByIdTest {
 
         @Test
         @DisplayName("with id=1 should return expected department)")
-        void testGetByIdDepartment() throws DAOException {
+        void testGetByIdDepartment() throws DaoException {
             Faculty expectedFaculty = new Faculty();
             expectedFaculty.setId(ID1);
             expectedFaculty.setName(FIRST_FACULTY_NAME);
@@ -87,8 +88,8 @@ class DepartmentDaoImplTest {
 
         @Test
         @DisplayName("with id=3 should return DAOException")
-        void testGetByIdDepartmentException() throws DAOException {
-            DAOException exception = assertThrows(DAOException.class,
+        void testGetByIdDepartmentException() throws DaoException {
+            DaoException exception = assertThrows(DaoException.class,
                 () -> dao.getById(ID3));
             assertEquals(MESSAGE_EXCEPTION, exception.getMessage());
         }
@@ -96,7 +97,7 @@ class DepartmentDaoImplTest {
 
     @Nested
     @DisplayName("test 'getAll' method")
-    class getAllTest {
+    class GetAllTest {
 
         @Test
         @DisplayName("should return List with size = 2")
@@ -111,12 +112,12 @@ class DepartmentDaoImplTest {
 
     @Nested
     @DisplayName("test 'update' method")
-    class updateTest {
+    class UpdateTest {
 
         @Test
         @DisplayName("with department id=1 should write new fields and " +
             "getById(1) return expected department")
-        void testUpdateExistingDepartment_WriteNewDepartmentFields() throws DAOException {
+        void testUpdateExistingDepartment_WriteNewDepartmentFields() throws DaoException {
             Faculty expectedFaculty = new Faculty(ID1, FIRST_FACULTY_NAME);
             Department expectedDepartment = new Department(ID1,
                 TEST_DEPARTMENT_NAME, expectedFaculty);
@@ -133,7 +134,7 @@ class DepartmentDaoImplTest {
             Department department = new Department(ID3, TEST_DEPARTMENT_NAME,
                 new Faculty());
             String expectedLog = String.format(MESSAGE_UPDATE_MASK, department);
-            Exception ex = assertThrows(DAOException.class,
+            Exception ex = assertThrows(DaoException.class,
                 () -> dao.update(department));
             assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
             assertEquals(MESSAGE_UPDATE_EXCEPTION, ex.getMessage());
@@ -142,40 +143,74 @@ class DepartmentDaoImplTest {
 
     @Nested
     @DisplayName("test 'delete' method")
-    class deleteTest {
+    class DeleteTest {
 
-        @Test
-        @DisplayName("with department id=1 should delete one record and " +
-            "number records table should equals 1")
-        void testDeleteExistingDepartment_ReduceNumberRowsInTable() {
-            int expectedQuantityDepartment = JdbcTestUtils
-                .countRowsInTable(jdbcTemplate, TABLE_NAME) - 1;
-            Department department = new Department();
-            department.setId(ID1);
-            dao.delete(department);
-            int actualQuantityDepartments = JdbcTestUtils
-                .countRowsInTable(jdbcTemplate, TABLE_NAME);
-            assertEquals(expectedQuantityDepartment, actualQuantityDepartments);
+        @Nested
+        @DisplayName("delete(department) method")
+        class DeleteDepartmentTest {
+
+            @Test
+            @DisplayName("with department id=1 should delete one record and " +
+                "number records table should equals 1")
+            void testDeleteExistingDepartment_ReduceNumberRowsInTable() {
+                int expectedQuantityDepartment = JdbcTestUtils
+                    .countRowsInTable(jdbcTemplate, TABLE_NAME) - 1;
+                Department department = new Department();
+                department.setId(ID1);
+                dao.delete(department);
+                int actualQuantityDepartments = JdbcTestUtils
+                    .countRowsInTable(jdbcTemplate, TABLE_NAME);
+                assertEquals(expectedQuantityDepartment, actualQuantityDepartments);
+            }
+
+            @Test
+            @DisplayName("with department id=3 should write new log.warn and throw " +
+                "new DAOException")
+            void testDeleteNonExistingDepartment_ExceptionWriteLogWarn() {
+                LogCaptor logCaptor = LogCaptor.forClass(DepartmentDaoImpl.class);
+                Department department = new Department(ID3, TEST_DEPARTMENT_NAME,
+                    new Faculty());
+                String expectedLog = String.format(MESSAGE_DELETE_MASK, department);
+                Exception ex = assertThrows(DaoException.class,
+                    () -> dao.delete(department));
+                assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
+                assertEquals(MESSAGE_DELETE_EXCEPTION, ex.getMessage());
+            }
         }
 
-        @Test
-        @DisplayName("with department id=3 should write new log.warn and throw " +
-            "new DAOException")
-        void testDeleteNonExistingDepartment_ExceptionWriteLogWarn() {
-            LogCaptor logCaptor = LogCaptor.forClass(DepartmentDaoImpl.class);
-            Department department = new Department(ID3, TEST_DEPARTMENT_NAME,
-                new Faculty());
-            String expectedLog = String.format(MESSAGE_DELETE_MASK, department);
-            Exception ex = assertThrows(DAOException.class,
-                () -> dao.delete(department));
-            assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
-            assertEquals(MESSAGE_DELETE_EXCEPTION, ex.getMessage());
+        @Nested
+        @DisplayName("delete(departmentId) method")
+        class DeleteDepartmentIdTest {
+
+            @Test
+            @DisplayName("with department id=1 should delete one record and " +
+                "number records table should equals 1")
+            void testDeleteExistingDepartmentId1_ReduceNumberRowsInTable() {
+                int expectedQuantityDepartment = JdbcTestUtils
+                    .countRowsInTable(jdbcTemplate, TABLE_NAME) - 1;
+                dao.delete(ID1);
+                int actualQuantityDepartments = JdbcTestUtils
+                    .countRowsInTable(jdbcTemplate, TABLE_NAME);
+                assertEquals(expectedQuantityDepartment, actualQuantityDepartments);
+            }
+
+            @Test
+            @DisplayName("with department id=3 should write new log.warn and throw " +
+                "new DAOException")
+            void testDeleteNonExistingDepartment_ExceptionWriteLogWarn() {
+                LogCaptor logCaptor = LogCaptor.forClass(DepartmentDaoImpl.class);
+                String expectedLog = String.format(MESSAGE_DELETE_ID_MASK, ID3);
+                Exception ex = assertThrows(DaoException.class,
+                    () -> dao.delete(ID3));
+                assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
+                assertEquals(MESSAGE_DELETE_EXCEPTION, ex.getMessage());
+            }
         }
     }
 
     @Nested
     @DisplayName("test 'getAllByFacultyId' method")
-    class getAllByFacultyIdTest {
+    class GetAllByFacultyIdTest {
 
         @Test
         @DisplayName("with faculty id=1 should return List with size = 2")

@@ -15,7 +15,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import ua.com.foxminded.university.domain.entity.Faculty;
-import ua.com.foxminded.university.exception.DAOException;
+import ua.com.foxminded.university.exception.DaoException;
 import ua.com.foxminded.university.springconfig.TestRootConfig;
 
 import java.util.List;
@@ -76,7 +76,7 @@ class FacultyDaoImplTest {
 
         @Test
         @DisplayName("with id=1 should return faculty (1, 'Foreign Language')")
-        void testGetByIdFaculty() throws DAOException {
+        void testGetByIdFaculty() throws DaoException {
             Faculty expectedFaculty = new Faculty();
             expectedFaculty.setId(ID1);
             expectedFaculty.setName(FIRST_FACULTY_NAME);
@@ -87,8 +87,8 @@ class FacultyDaoImplTest {
 
         @Test
         @DisplayName("with id=3 should return DAOException")
-        void testGetByIdFacultyException() throws DAOException {
-            DAOException exception = assertThrows(DAOException.class,
+        void testGetByIdFacultyException() throws DaoException {
+            DaoException exception = assertThrows(DaoException.class,
                 () -> dao.getById(ID3));
             assertEquals(MESSAGE_EXCEPTION, exception.getMessage());
         }
@@ -115,7 +115,7 @@ class FacultyDaoImplTest {
         @Test
         @DisplayName("with faculty id=1 should write new fields and" +
             " getById(1) return expected faculty")
-        void testUpdateExistingFaculty_WriteNewFacultyName() throws DAOException {
+        void testUpdateExistingFaculty_WriteNewFacultyName() throws DaoException {
             Faculty expectedFaculty = new Faculty(ID1, TEST_FACULTY_NAME);
             dao.update(expectedFaculty);
             Faculty actualFaculty = dao.getById(ID1).orElse(new Faculty());
@@ -129,7 +129,7 @@ class FacultyDaoImplTest {
             LogCaptor logCaptor = LogCaptor.forClass(FacultyDaoImpl.class);
             Faculty faculty = new Faculty(ID3, TEST_FACULTY_NAME);
             String expectedLog = String.format(MESSAGE_UPDATE_MASK, faculty);
-            Exception ex = assertThrows(DAOException.class,
+            Exception ex = assertThrows(DaoException.class,
                 () -> dao.update(faculty));
             assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
             assertEquals(MESSAGE_UPDATE_EXCEPTION, ex.getMessage());
@@ -160,7 +160,7 @@ class FacultyDaoImplTest {
             LogCaptor logCaptor = LogCaptor.forClass(FacultyDaoImpl.class);
             Faculty faculty = new Faculty(ID3, TEST_FACULTY_NAME);
             String expectedLog = String.format(MESSAGE_DELETE_MASK, faculty);
-            Exception ex = assertThrows(DAOException.class,
+            Exception ex = assertThrows(DaoException.class,
                 () -> dao.delete(faculty));
             assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
             assertEquals(MESSAGE_DELETE_EXCEPTION, ex.getMessage());
@@ -176,14 +176,15 @@ class FacultyDaoImplTest {
     }
 
     @Nested
-    @DisplayName("test 'getAllSotedPaginated' method")
+    @DisplayName("test 'getAllSortedPaginated' method")
     class getAllSortedPaginatedTest {
 
         @Test
-        @DisplayName("when size 1 and page 1 then return first one faculty")
+        @DisplayName("when size 1 and first page then return first one faculty")
         void testShouldReturnOneSortedFaculties() {
-            int page = 1;
-            Pageable pageable = PageRequest.of(page - 1,1);
+            int pageNumber = 0;
+            int pageSize = 1;
+            Pageable pageable = PageRequest.of(pageNumber,pageSize);
             Page<Faculty> facultyPage = dao.getAllSortedPaginated(pageable);
 
             Faculty actualFaculty = facultyPage.getContent().get(0);

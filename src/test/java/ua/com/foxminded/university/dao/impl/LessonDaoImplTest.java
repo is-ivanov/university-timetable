@@ -13,7 +13,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import ua.com.foxminded.university.domain.entity.*;
 import ua.com.foxminded.university.domain.filter.LessonFilter;
-import ua.com.foxminded.university.exception.DAOException;
+import ua.com.foxminded.university.exception.DaoException;
 import ua.com.foxminded.university.springconfig.TestRootConfig;
 
 import java.time.LocalDateTime;
@@ -114,7 +114,7 @@ class LessonDaoImplTest {
 
         @Test
         @DisplayName("with id=1 should return expected lesson)")
-        void testGetByIdLesson() throws DAOException {
+        void testGetByIdLesson() throws DaoException {
             Faculty faculty = new Faculty();
             faculty.setId(ID1);
             faculty.setName(FACULTY_NAME);
@@ -177,8 +177,8 @@ class LessonDaoImplTest {
 
         @Test
         @DisplayName("with id=5 should return DAOException")
-        void testGetByIdLessonException() throws DAOException {
-            DAOException exception = assertThrows(DAOException.class,
+        void testGetByIdLessonException() throws DaoException {
+            DaoException exception = assertThrows(DaoException.class,
                 () -> dao.getById(ID5));
             assertEquals(MESSAGE_EXCEPTION, exception.getMessage());
         }
@@ -205,7 +205,7 @@ class LessonDaoImplTest {
         @Test
         @DisplayName("with lesson id=1 should write new fields and getById(1) " +
             "return this fields")
-        void testUpdateExistingLesson_WriteNewFields() throws DAOException {
+        void testUpdateExistingLesson_WriteNewFields() throws DaoException {
             Faculty faculty = new Faculty(ID1, FACULTY_NAME);
             Department department = new Department(ID1, DEPARTMENT_NAME,
                 faculty);
@@ -278,7 +278,7 @@ class LessonDaoImplTest {
             room.setId(ID3);
             lesson.setRoom(room);
             String expectedLog = String.format(MESSAGE_UPDATE_MASK, ID5);
-            Exception ex = assertThrows(DAOException.class,
+            Exception ex = assertThrows(DaoException.class,
                 () -> dao.update(lesson));
             assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
             assertEquals(MESSAGE_UPDATE_EXCEPTION, ex.getMessage());
@@ -311,7 +311,7 @@ class LessonDaoImplTest {
             Lesson lesson = new Lesson();
             lesson.setId(ID5);
             String expectedLog = String.format(MESSAGE_DELETE_MASK, ID5);
-            Exception ex = assertThrows(DAOException.class,
+            Exception ex = assertThrows(DaoException.class,
                 () -> dao.delete(lesson));
             assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
             assertEquals(MESSAGE_DELETE_EXCEPTION, ex.getMessage());

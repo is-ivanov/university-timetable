@@ -11,7 +11,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.foxminded.university.dao.interfaces.LessonDao;
 import ua.com.foxminded.university.domain.entity.*;
 import ua.com.foxminded.university.domain.filter.LessonFilter;
-import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
 import ua.com.foxminded.university.exception.ServiceException;
 
 import java.time.LocalDateTime;
@@ -23,7 +22,8 @@ import java.util.Optional;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
@@ -44,9 +44,6 @@ class LessonServiceImplTest {
 
     @Mock
     private LessonDao lessonDaoMock;
-
-    @Mock
-    private LessonDtoMapper lessonDtoMapperMock;
 
     @InjectMocks
     private LessonServiceImpl lessonService;

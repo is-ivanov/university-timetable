@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 import ua.com.foxminded.university.dao.interfaces.FacultyDao;
 import ua.com.foxminded.university.dao.mapper.FacultyMapper;
 import ua.com.foxminded.university.domain.entity.Faculty;
-import ua.com.foxminded.university.exception.DAOException;
+import ua.com.foxminded.university.exception.DaoException;
 
 import java.util.List;
 import java.util.Optional;
@@ -49,7 +49,7 @@ public class FacultyDaoImpl implements FacultyDao {
                 faculty.getName());
         } catch (DataAccessException e) {
             log.error("An error occurred while adding the {}", faculty, e);
-            throw new DAOException(e.getMessage(), e);
+            throw new DaoException(e.getMessage(), e);
         }
         log.info("{} added successfully", faculty);
     }
@@ -64,7 +64,7 @@ public class FacultyDaoImpl implements FacultyDao {
                 new FacultyMapper(), id);
         } catch (DataAccessException e) {
             log.error("Faculty id({}) not found", id, e);
-            throw new DAOException(String.format(MESSAGE_FACULTY_NOT_FOUND,
+            throw new DaoException(String.format(MESSAGE_FACULTY_NOT_FOUND,
                 id), e);
         }
         log.info("Found {}", result);
@@ -88,7 +88,7 @@ public class FacultyDaoImpl implements FacultyDao {
             faculty.getName(), faculty.getId());
         if (numberUpdatedRows == 0) {
             log.warn("Can't update {}", faculty);
-            throw new DAOException(String.format(MESSAGE_UPDATE_FACULTY_NOT_FOUND,
+            throw new DaoException(String.format(MESSAGE_UPDATE_FACULTY_NOT_FOUND,
                 faculty.getId()));
         } else {
             log.info("Update {}", faculty);
@@ -102,7 +102,7 @@ public class FacultyDaoImpl implements FacultyDao {
             env.getRequiredProperty(QUERY_DELETE), faculty.getId());
         if (numberDeletedRows == 0) {
             log.warn("Can't delete {}", faculty);
-            throw new DAOException(String.format(MESSAGE_DELETE_FACULTY_NOT_FOUND,
+            throw new DaoException(String.format(MESSAGE_DELETE_FACULTY_NOT_FOUND,
                 faculty.getId()));
         } else {
             log.info("Delete {}", faculty);
@@ -116,7 +116,7 @@ public class FacultyDaoImpl implements FacultyDao {
             env.getRequiredProperty(QUERY_DELETE), id);
         if (numberDeletedRows == 0) {
             log.warn("Can't delete faculty id({})", id);
-            throw new DAOException(String.format(MESSAGE_DELETE_FACULTY_NOT_FOUND,
+            throw new DaoException(String.format(MESSAGE_DELETE_FACULTY_NOT_FOUND,
                 id));
         } else {
             log.info("Delete faculty id({})", id);

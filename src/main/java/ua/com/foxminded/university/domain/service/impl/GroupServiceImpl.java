@@ -18,6 +18,8 @@ import java.util.List;
 @Service
 public class GroupServiceImpl implements GroupService {
 
+    public static final String FOUND_GROUPS = "Found {} groups";
+
     private final GroupDao groupDao;
     private final StudentDao studentDao;
 
@@ -40,7 +42,7 @@ public class GroupServiceImpl implements GroupService {
     public List<Group> getAll() {
         log.debug("Getting all groups");
         List<Group> groups = groupDao.getAll();
-        log.info("Found {} groups", groups.size());
+        log.info(FOUND_GROUPS, groups.size());
         return groups;
     }
 
@@ -104,7 +106,7 @@ public class GroupServiceImpl implements GroupService {
     public List<Group> getAllByFacultyId(int facultyId) {
         log.debug("Getting all groups by faculty id({})", facultyId);
         List<Group> groups = groupDao.getAllByFacultyId(facultyId);
-        log.info("Found {} groups", groups.size());
+        log.info(FOUND_GROUPS, groups.size());
         return groups;
     }
 
@@ -113,7 +115,7 @@ public class GroupServiceImpl implements GroupService {
                                                  LocalDateTime endTime) {
         log.debug("Getting groups free from {} to {}", startTime, endTime);
         List<Group> groups = groupDao.getFreeGroupsOnLessonTime(startTime, endTime);
-        log.info("Found {} groups", groups.size());
+        log.info(FOUND_GROUPS, groups.size());
         return groups;
     }
 
@@ -125,7 +127,7 @@ public class GroupServiceImpl implements GroupService {
             facultyId, startTime, endTime);
         List<Group> freeGroups = groupDao
             .getFreeGroupsByFacultyOnLessonTime(facultyId, startTime, endTime);
-        log.info("Found {} groups", freeGroups.size());
+        log.info(FOUND_GROUPS, freeGroups.size());
         return freeGroups;
     }
 
@@ -133,7 +135,7 @@ public class GroupServiceImpl implements GroupService {
     public List<Group> getActiveGroups() {
         log.debug("Getting all active groups");
         List<Group> groups = groupDao.getActiveGroups();
-        log.info("Found {} groups", groups.size());
+        log.info(FOUND_GROUPS, groups.size());
         return groups;
     }
 }

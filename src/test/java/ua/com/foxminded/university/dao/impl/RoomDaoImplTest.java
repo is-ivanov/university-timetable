@@ -12,7 +12,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import ua.com.foxminded.university.domain.entity.Room;
-import ua.com.foxminded.university.exception.DAOException;
+import ua.com.foxminded.university.exception.DaoException;
 import ua.com.foxminded.university.springconfig.TestRootConfig;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -72,7 +72,7 @@ class RoomDaoImplTest {
 
         @Test
         @DisplayName("with id = 1 should return room (1, 'building-1', '1457a')")
-        void testGetByIdRoom() throws DAOException {
+        void testGetByIdRoom() throws DaoException {
             Room expectedRoom = new Room();
             expectedRoom.setId(ID1);
             expectedRoom.setBuilding(FIRST_ROOM_BUILDING);
@@ -83,8 +83,8 @@ class RoomDaoImplTest {
 
         @Test
         @DisplayName("with id=4 should return DAOException")
-        void testGetByIdRoomException() throws DAOException {
-            DAOException exception = assertThrows(DAOException.class,
+        void testGetByIdRoomException() throws DaoException {
+            DaoException exception = assertThrows(DaoException.class,
                 () -> dao.getById(ID4));
             assertEquals(MESSAGE_EXCEPTION, exception.getMessage());
         }
@@ -111,7 +111,7 @@ class RoomDaoImplTest {
         @Test
         @DisplayName("with room id=1 should write new fields and getById(1) " +
             "return expected room")
-        void testUpdateExistingRooms_WriteNewFields() throws DAOException {
+        void testUpdateExistingRooms_WriteNewFields() throws DaoException {
             Room expectedRoom = new Room(ID1, TEST_BUILDING,
                 TEST_ROOM_NUMBER);
             dao.update(expectedRoom);
@@ -126,7 +126,7 @@ class RoomDaoImplTest {
             LogCaptor logCaptor = LogCaptor.forClass(RoomDaoImpl.class);
             Room room = new Room(ID4, TEST_BUILDING, TEST_ROOM_NUMBER);
             String expectedLog = String.format(MESSAGE_UPDATE_MASK, room);
-            Exception ex = assertThrows(DAOException.class,
+            Exception ex = assertThrows(DaoException.class,
                 () -> dao.update(room));
             assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
             assertEquals(MESSAGE_UPDATE_EXCEPTION, ex.getMessage());
@@ -157,7 +157,7 @@ class RoomDaoImplTest {
             LogCaptor logCaptor = LogCaptor.forClass(RoomDaoImpl.class);
             Room room = new Room(ID4, TEST_BUILDING,TEST_ROOM_NUMBER);
             String expectedLog = String.format(MESSAGE_DELETE_MASK, room);
-            Exception ex = assertThrows(DAOException.class,
+            Exception ex = assertThrows(DaoException.class,
                 () -> dao.delete(room));
             assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
             assertEquals(MESSAGE_DELETE_EXCEPTION, ex.getMessage());

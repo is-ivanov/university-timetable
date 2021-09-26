@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import ua.com.foxminded.university.dao.interfaces.GroupDao;
 import ua.com.foxminded.university.dao.mapper.GroupMapper;
 import ua.com.foxminded.university.domain.entity.Group;
-import ua.com.foxminded.university.exception.DAOException;
+import ua.com.foxminded.university.exception.DaoException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -47,7 +47,7 @@ public class GroupDaoImpl implements GroupDao {
                 group.getName(), group.isActive(), group.getFaculty().getId());
         } catch (DataAccessException e) {
             log.error("An error occurred while adding the {}", group, e);
-            throw new DAOException(e.getMessage(), e);
+            throw new DaoException(e.getMessage(), e);
         }
         log.info("{} added successfully", group);
     }
@@ -62,7 +62,7 @@ public class GroupDaoImpl implements GroupDao {
                 new GroupMapper(), id);
         } catch (DataAccessException e) {
             log.error("Group id({}) not found", id, e);
-            throw new DAOException(String.format(MESSAGE_GROUP_NOT_FOUND, id), e);
+            throw new DaoException(String.format(MESSAGE_GROUP_NOT_FOUND, id), e);
         }
         log.info("Found {}", result);
         return Optional.ofNullable(result);
@@ -85,7 +85,7 @@ public class GroupDaoImpl implements GroupDao {
             group.isActive(), group.getFaculty().getId(), group.getId());
         if (numberUpdatedRows == 0) {
             log.warn("Can't update {}", group);
-            throw new DAOException(String.format(MESSAGE_UPDATE_GROUP_NOT_FOUND,
+            throw new DaoException(String.format(MESSAGE_UPDATE_GROUP_NOT_FOUND,
                 group.getId()));
         } else {
             log.info("Update {}", group);
@@ -99,7 +99,7 @@ public class GroupDaoImpl implements GroupDao {
             env.getRequiredProperty(QUERY_DELETE), group.getId());
         if (numberDeletedRows == 0) {
             log.warn("Can't delete {}", group);
-            throw new DAOException(String.format(MESSAGE_DELETE_GROUP_NOT_FOUND,
+            throw new DaoException(String.format(MESSAGE_DELETE_GROUP_NOT_FOUND,
                 group.getId()));
         } else {
             log.info("Delete {}", group);
@@ -113,7 +113,7 @@ public class GroupDaoImpl implements GroupDao {
             env.getRequiredProperty(QUERY_DELETE), id);
         if (numberDeletedRows == 0) {
             log.warn("Can't delete group id({})", id);
-            throw new DAOException(String.format(MESSAGE_DELETE_GROUP_NOT_FOUND,
+            throw new DaoException(String.format(MESSAGE_DELETE_GROUP_NOT_FOUND,
                 id));
         } else {
             log.info("Delete group id({})", id);

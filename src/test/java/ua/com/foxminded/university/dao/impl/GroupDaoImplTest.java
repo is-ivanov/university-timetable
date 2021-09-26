@@ -13,7 +13,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
-import ua.com.foxminded.university.exception.DAOException;
+import ua.com.foxminded.university.exception.DaoException;
 import ua.com.foxminded.university.springconfig.TestRootConfig;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -95,7 +95,7 @@ class GroupDaoImplTest {
 
         @Test
         @DisplayName("with id=1 should return group (1, '20Eng-1', faculty id=1, true)")
-        void testGetByIdGroup() throws DAOException {
+        void testGetByIdGroup() throws DaoException {
             Faculty expectedFaculty = new Faculty();
             expectedFaculty.setId(ID1);
             expectedFaculty.setName(FIRST_FACULTY_NAME);
@@ -109,8 +109,8 @@ class GroupDaoImplTest {
 
         @Test
         @DisplayName("with id=3 should return DAOException")
-        void testGetByIdGroupException() throws DAOException {
-            DAOException exception = assertThrows(DAOException.class,
+        void testGetByIdGroupException() throws DaoException {
+            DaoException exception = assertThrows(DaoException.class,
                 () -> dao.getById(ID3));
             assertEquals(MESSAGE_EXCEPTION, exception.getMessage());
         }
@@ -137,7 +137,7 @@ class GroupDaoImplTest {
         @Test
         @DisplayName("with group id=1 should write new fields and getById(1) " +
             "return expected group")
-        void testUpdateExistingGroup_WriteExpectedGroup() throws DAOException {
+        void testUpdateExistingGroup_WriteExpectedGroup() throws DaoException {
             Faculty expectedFaculty = new Faculty(ID2, SECOND_FACULTY_NAME);
             Group expectedGroup = new Group(ID1, TEST_GROUP_NAME,
                 expectedFaculty, true);
@@ -153,7 +153,7 @@ class GroupDaoImplTest {
             LogCaptor logCaptor = LogCaptor.forClass(GroupDaoImpl.class);
             Group group = new Group(ID3, TEST_GROUP_NAME, new Faculty(), true);
             String expectedLog = String.format(MESSAGE_UPDATE_MASK, group);
-            Exception ex = assertThrows(DAOException.class,
+            Exception ex = assertThrows(DaoException.class,
                 () -> dao.update(group));
             assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
             assertEquals(MESSAGE_UPDATE_EXCEPTION, ex.getMessage());
@@ -185,7 +185,7 @@ class GroupDaoImplTest {
             LogCaptor logCaptor = LogCaptor.forClass(GroupDaoImpl.class);
             Group group = new Group(ID3, TEST_GROUP_NAME, new Faculty(), true);
             String expectedLog = String.format(MESSAGE_DELETE_MASK, group);
-            Exception ex = assertThrows(DAOException.class,
+            Exception ex = assertThrows(DaoException.class,
                 () -> dao.delete(group));
             assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
             assertEquals(MESSAGE_DELETE_EXCEPTION, ex.getMessage());

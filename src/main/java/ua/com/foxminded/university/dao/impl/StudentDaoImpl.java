@@ -13,7 +13,7 @@ import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Student;
-import ua.com.foxminded.university.exception.DAOException;
+import ua.com.foxminded.university.exception.DaoException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -55,7 +55,7 @@ public class StudentDaoImpl implements StudentDao {
                 student.getGroup().getId());
         } catch (DataAccessException e) {
             log.error("An error occurred while adding the {}", student, e);
-            throw new DAOException(e.getMessage(), e);
+            throw new DaoException(e.getMessage(), e);
         }
         log.info("Student [{} {} {}, active={}, group {}] added successfully",
             student.getFirstName(), student.getPatronymic(),
@@ -73,7 +73,7 @@ public class StudentDaoImpl implements StudentDao {
                 new StudentMapper(), id);
         } catch (DataAccessException e) {
             log.error("Student id({}) not found", id, e);
-            throw new DAOException(String.format(MESSAGE_STUDENT_NOT_FOUND, id),
+            throw new DaoException(String.format(MESSAGE_STUDENT_NOT_FOUND, id),
                 e);
         }
         log.info("Found {}", result);
@@ -102,7 +102,7 @@ public class StudentDaoImpl implements StudentDao {
             student.getId());
         if (numberUpdatedRows == 0) {
             log.warn("Can't update student id({})", student.getId());
-            throw new DAOException(String.format(MESSAGE_UPDATE_STUDENT_NOT_FOUND,
+            throw new DaoException(String.format(MESSAGE_UPDATE_STUDENT_NOT_FOUND,
                 student.getId()));
         } else {
             log.info("Update student id({})", student.getId());
@@ -118,7 +118,7 @@ public class StudentDaoImpl implements StudentDao {
             env.getRequiredProperty(QUERY_DELETE), student.getId());
         if (numberDeletedRows == 0) {
             log.warn("Can't delete student id({})", student.getId());
-            throw new DAOException(String.format(MESSAGE_DELETE_STUDENT_NOT_FOUND,
+            throw new DaoException(String.format(MESSAGE_DELETE_STUDENT_NOT_FOUND,
                 student.getId()));
         } else {
             log.info("Delete student id({})", student.getId());
@@ -132,7 +132,7 @@ public class StudentDaoImpl implements StudentDao {
             env.getRequiredProperty(QUERY_DELETE), id);
         if (numberDeletedRows == 0) {
             log.warn("Can't delete student id({})", id);
-            throw new DAOException(String.format(MESSAGE_DELETE_STUDENT_NOT_FOUND,
+            throw new DaoException(String.format(MESSAGE_DELETE_STUDENT_NOT_FOUND,
                 id));
         } else {
             log.info("Delete student id({})", id);

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import ua.com.foxminded.university.dao.interfaces.TeacherDao;
 import ua.com.foxminded.university.dao.mapper.TeacherMapper;
 import ua.com.foxminded.university.domain.entity.Teacher;
-import ua.com.foxminded.university.exception.DAOException;
+import ua.com.foxminded.university.exception.DaoException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -50,7 +50,7 @@ public class TeacherDaoImpl implements TeacherDao {
                 teacher.getDepartment().getId());
         } catch (DataAccessException e) {
             log.error("An error occurred while adding the {}", teacher, e);
-            throw new DAOException(e.getMessage(), e);
+            throw new DaoException(e.getMessage(), e);
         }
         log.info("Teacher [{} {} {}, active={}, department {}] added " +
                 "successfully", teacher.getFirstName(), teacher.getPatronymic(),
@@ -68,7 +68,7 @@ public class TeacherDaoImpl implements TeacherDao {
                 new TeacherMapper(), id);
         } catch (DataAccessException e) {
             log.error("Teacher id({}) not found", id, e);
-            throw new DAOException(String.format(MESSAGE_TEACHER_NOT_FOUND, id),
+            throw new DaoException(String.format(MESSAGE_TEACHER_NOT_FOUND, id),
                 e);
         }
         log.info("Found {}", result);
@@ -96,7 +96,7 @@ public class TeacherDaoImpl implements TeacherDao {
             teacher.getDepartment().getId(), teacher.getId());
         if (numberUpdatedRows == 0) {
             log.warn("Can't update teacher id({})", teacher.getId());
-            throw new DAOException(String.format(MESSAGE_UPDATE_TEACHER_NOT_FOUND,
+            throw new DaoException(String.format(MESSAGE_UPDATE_TEACHER_NOT_FOUND,
                 teacher.getId()));
         } else {
             log.info("Update teacher id({})", teacher.getId());
@@ -112,7 +112,7 @@ public class TeacherDaoImpl implements TeacherDao {
             env.getRequiredProperty(QUERY_DELETE), teacher.getId());
         if (numberDeletedRows == 0) {
             log.warn("Can't delete teacher id({})", teacher.getId());
-            throw new DAOException(String.format(MESSAGE_DELETE_TEACHER_NOT_FOUND,
+            throw new DaoException(String.format(MESSAGE_DELETE_TEACHER_NOT_FOUND,
                 teacher.getId()));
         } else {
             log.info("Delete teacher id({})", teacher.getId());
@@ -126,7 +126,7 @@ public class TeacherDaoImpl implements TeacherDao {
             env.getRequiredProperty(QUERY_DELETE), id);
         if (numberDeletedRows == 0) {
             log.warn("Can't delete teacher id({})", id);
-            throw new DAOException(String.format(MESSAGE_DELETE_TEACHER_NOT_FOUND,
+            throw new DaoException(String.format(MESSAGE_DELETE_TEACHER_NOT_FOUND,
                 id));
         } else {
             log.info("Delete teacher id({})", id);

@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 import ua.com.foxminded.university.dao.interfaces.RoomDao;
 import ua.com.foxminded.university.dao.mapper.RoomMapper;
 import ua.com.foxminded.university.domain.entity.Room;
-import ua.com.foxminded.university.exception.DAOException;
+import ua.com.foxminded.university.exception.DaoException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -50,7 +50,7 @@ public class RoomDaoImpl implements RoomDao {
                 room.getBuilding(), room.getNumber());
         } catch (DataAccessException e) {
             log.error("An error occurred while adding the {}", room, e);
-            throw new DAOException(e.getMessage(), e);
+            throw new DaoException(e.getMessage(), e);
         }
         log.info("{} added successfully", room);
     }
@@ -65,7 +65,7 @@ public class RoomDaoImpl implements RoomDao {
                 id);
         } catch (DataAccessException e) {
             log.error("Room id({}) not found", id, e);
-            throw new DAOException(String.format(MESSAGE_ROOM_NOT_FOUND, id), e);
+            throw new DaoException(String.format(MESSAGE_ROOM_NOT_FOUND, id), e);
         }
         log.info("Found {}", result);
         return Optional.ofNullable(result);
@@ -88,7 +88,7 @@ public class RoomDaoImpl implements RoomDao {
             room.getBuilding(), room.getNumber(), room.getId());
         if (numberUpdatedRows == 0) {
             log.warn("Can't update {}", room);
-            throw new DAOException(String.format(MESSAGE_UPDATE_ROOM_NOT_FOUND,
+            throw new DaoException(String.format(MESSAGE_UPDATE_ROOM_NOT_FOUND,
                 room.getId()));
         } else {
             log.info("Update {}", room);
@@ -102,7 +102,7 @@ public class RoomDaoImpl implements RoomDao {
             env.getRequiredProperty(QUERY_DELETE), room.getId());
         if (numberDeletedRows == 0) {
             log.warn("Can't delete {}", room);
-            throw new DAOException(String.format(MESSAGE_DELETE_ROOM_NOT_FOUND,
+            throw new DaoException(String.format(MESSAGE_DELETE_ROOM_NOT_FOUND,
                 room.getId()));
         } else {
             log.info("Delete {}", room);
@@ -116,7 +116,7 @@ public class RoomDaoImpl implements RoomDao {
             env.getRequiredProperty(QUERY_DELETE), id);
         if (numberDeletedRows == 0) {
             log.warn("Can't delete room id({})", id);
-            throw new DAOException(String.format(MESSAGE_DELETE_ROOM_NOT_FOUND,
+            throw new DaoException(String.format(MESSAGE_DELETE_ROOM_NOT_FOUND,
                 id));
         } else {
             log.info("Delete room id({})", id);

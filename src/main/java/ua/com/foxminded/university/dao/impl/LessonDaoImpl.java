@@ -11,7 +11,7 @@ import ua.com.foxminded.university.dao.interfaces.LessonDao;
 import ua.com.foxminded.university.dao.mapper.LessonExtractor;
 import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.filter.LessonFilter;
-import ua.com.foxminded.university.exception.DAOException;
+import ua.com.foxminded.university.exception.DaoException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -70,7 +70,7 @@ public class LessonDaoImpl implements LessonDao {
                 timeEnd);
         } catch (DataAccessException e) {
             log.error("An error occurred while adding the {}", lesson, e);
-            throw new DAOException(e.getMessage(), e);
+            throw new DaoException(e.getMessage(), e);
         }
         log.info("Lesson id({}) added successfully", lesson.getId());
     }
@@ -89,7 +89,7 @@ public class LessonDaoImpl implements LessonDao {
             }
         } catch (DataAccessException | IndexOutOfBoundsException e) {
             log.error("Lesson id({}) not found", id, e);
-            throw new DAOException(String.format(MESSAGE_LESSON_NOT_FOUND, id),
+            throw new DaoException(String.format(MESSAGE_LESSON_NOT_FOUND, id),
                 e);
         }
         log.info("Found lesson: course [{}], room[{}], teacher[{}]",
@@ -117,7 +117,7 @@ public class LessonDaoImpl implements LessonDao {
             lesson.getTimeEnd(), lesson.getId());
         if (numberUpdatedRows == 0) {
             log.warn("Can't update lesson id({})", lesson.getId());
-            throw new DAOException(String.format(MESSAGE_UPDATE_LESSON_NOT_FOUND,
+            throw new DaoException(String.format(MESSAGE_UPDATE_LESSON_NOT_FOUND,
                 lesson.getId()));
         } else {
             log.info("Lesson id({}) updated successfully", lesson.getId());
@@ -131,7 +131,7 @@ public class LessonDaoImpl implements LessonDao {
             env.getRequiredProperty(QUERY_DELETE), lesson.getId());
         if (numberDeletedRows == 0) {
             log.warn("Can't delete lesson id({})", lesson.getId());
-            throw new DAOException(String.format(MESSAGE_DELETE_LESSON_NOT_FOUND,
+            throw new DaoException(String.format(MESSAGE_DELETE_LESSON_NOT_FOUND,
                 lesson.getId()));
         } else {
             log.info("Delete lesson id({})", lesson.getId());
@@ -145,7 +145,7 @@ public class LessonDaoImpl implements LessonDao {
             env.getRequiredProperty(QUERY_DELETE), id);
         if (numberDeletedRows == 0) {
             log.warn("Can't delete lesson id({})", id);
-            throw new DAOException(String.format(MESSAGE_DELETE_LESSON_NOT_FOUND,
+            throw new DaoException(String.format(MESSAGE_DELETE_LESSON_NOT_FOUND,
                 id));
         } else {
             log.info("Delete lesson id({})", id);
@@ -162,7 +162,7 @@ public class LessonDaoImpl implements LessonDao {
         } catch (DataAccessException e) {
             log.error("An error occurred while adding student id({}) to " +
                 "lesson id({})", studentId, lessonId);
-            throw new DAOException(e.getMessage(), e);
+            throw new DaoException(e.getMessage(), e);
         }
         log.info("Student id({}) added to lesson({}) successfully", studentId,
             lessonId);
@@ -187,7 +187,7 @@ public class LessonDaoImpl implements LessonDao {
         if (numberDeletedRows == 0) {
             log.warn("Can't remove student id({}) from lesson id({})",
                 studentId, lessonId);
-            throw new DAOException(String.format(
+            throw new DaoException(String.format(
                 MESSAGE_STUDENT_NOT_FOUND_IN_LESSON, studentId, lessonId));
         } else {
             log.info("Student id({}) successfully removed from lesson id({})",

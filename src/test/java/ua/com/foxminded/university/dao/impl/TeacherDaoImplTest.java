@@ -14,7 +14,7 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Teacher;
-import ua.com.foxminded.university.exception.DAOException;
+import ua.com.foxminded.university.exception.DaoException;
 import ua.com.foxminded.university.springconfig.TestRootConfig;
 
 import java.time.LocalDateTime;
@@ -96,7 +96,7 @@ class TeacherDaoImplTest {
 
         @Test
         @DisplayName("with id=1 should return expected teacher)")
-        void testGetByIdTeacher() throws DAOException {
+        void testGetByIdTeacher() throws DaoException {
             Faculty expectedFaculty = new Faculty();
             expectedFaculty.setId(ID1);
             expectedFaculty.setName(FIRST_FACULTY_NAME);
@@ -120,8 +120,8 @@ class TeacherDaoImplTest {
 
         @Test
         @DisplayName("with id=4 should return DAOException")
-        void testGetByIdTeacherException() throws DAOException {
-            DAOException exception = assertThrows(DAOException.class,
+        void testGetByIdTeacherException() throws DaoException {
+            DaoException exception = assertThrows(DaoException.class,
                 () -> dao.getById(ID4));
             assertEquals(MESSAGE_EXCEPTION, exception.getMessage());
         }
@@ -148,7 +148,7 @@ class TeacherDaoImplTest {
         @Test
         @DisplayName("with teacher id=1 should write new fields and " +
             "getById(1) return expected teacher")
-        void testUpdateExistingTeacher_WriteNewFields() throws DAOException {
+        void testUpdateExistingTeacher_WriteNewFields() throws DaoException {
             Faculty expectedFaculty = new Faculty(ID1, FIRST_FACULTY_NAME);
             Department expectedDepartment = new Department(ID2,
                 SECOND_DEPARTMENT_NAME, expectedFaculty);
@@ -173,7 +173,7 @@ class TeacherDaoImplTest {
             teacher.setDepartment(new Department(ID1, TEST_DEPARTMENT_NAME,
                 new Faculty()));
             String expectedLog = String.format(MESSAGE_UPDATE_MASK, ID4);
-            Exception ex = assertThrows(DAOException.class,
+            Exception ex = assertThrows(DaoException.class,
                 () -> dao.update(teacher));
             assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
             assertEquals(MESSAGE_UPDATE_EXCEPTION, ex.getMessage());
@@ -208,7 +208,7 @@ class TeacherDaoImplTest {
             teacher.setDepartment(new Department(ID1, TEST_DEPARTMENT_NAME,
                 new Faculty()));
             String expectedLog = String.format(MESSAGE_DELETE_MASK, ID4);
-            DAOException ex = assertThrows(DAOException.class,
+            DaoException ex = assertThrows(DaoException.class,
                 () -> dao.delete(teacher));
             assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
             assertEquals(MESSAGE_DELETE_EXCEPTION, ex.getMessage());
@@ -238,7 +238,7 @@ class TeacherDaoImplTest {
         void testDeleteNonExistingTeacher_ExceptionWriteLogWarn() {
             LogCaptor logCaptor = LogCaptor.forClass(TeacherDaoImpl.class);
             String expectedLog = String.format(MESSAGE_DELETE_MASK, ID4);
-            DAOException ex = assertThrows(DAOException.class,
+            DaoException ex = assertThrows(DaoException.class,
                 () -> dao.delete(ID4));
             assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
             assertEquals(MESSAGE_DELETE_EXCEPTION, ex.getMessage());

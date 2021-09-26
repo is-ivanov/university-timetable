@@ -1,4 +1,4 @@
-package ua.com.foxminded.university.domain.service.checker;
+package ua.com.foxminded.university.domain.checker.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -14,7 +14,14 @@ public class AvailableLessonChecker {
 
     public static final String MESSAGE_EXCEPTION = "Lesson id(%d) intersect with lesson id(%d)";
 
-    public boolean checkLessonTime(Lesson checkedLesson, List<Lesson> lessons) {
+    public void checkAvailableLesson(Lesson checkedLesson, List<Lesson> lessons) {
+        if (checkLessonsIsEmpty(lessons)) {
+            return;
+        }
+        checkLessonTime(checkedLesson, lessons);
+    }
+
+    public void checkLessonTime(Lesson checkedLesson, List<Lesson> lessons) {
         log.debug("Checking the intersection of time lesson id({}) with other lessons",
             checkedLesson.getId());
         LocalDateTime timeStartCheckedLesson = checkedLesson.getTimeStart();
@@ -33,7 +40,15 @@ public class AvailableLessonChecker {
             }
         }
         log.info("Checking passed");
-        return true;
+    }
+
+    private boolean checkLessonsIsEmpty(List<Lesson> lessons){
+        log.debug("Checking list lessons is empty");
+        if (lessons.isEmpty()){
+            log.info("Checking passed");
+            return true;
+        }
+        return false;
     }
 
 }

@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 import ua.com.foxminded.university.dao.interfaces.CourseDao;
 import ua.com.foxminded.university.dao.mapper.CourseMapper;
 import ua.com.foxminded.university.domain.entity.Course;
-import ua.com.foxminded.university.exception.DAOException;
+import ua.com.foxminded.university.exception.DaoException;
 
 import java.util.List;
 import java.util.Optional;
@@ -48,7 +48,7 @@ public class CourseDaoImpl implements CourseDao {
                 course.getName());
         } catch (DataAccessException e) {
             log.error("An error occurred while adding the {}", course, e);
-            throw new DAOException(e.getMessage(), e);
+            throw new DaoException(e.getMessage(), e);
         }
         log.info("{} added successfully", course);
     }
@@ -63,7 +63,7 @@ public class CourseDaoImpl implements CourseDao {
                 new CourseMapper(), id);
         } catch (DataAccessException e) {
             log.error("Course id({}) not found", id, e);
-            throw new DAOException(String.format(MESSAGE_COURSE_NOT_FOUND, id), e);
+            throw new DaoException(String.format(MESSAGE_COURSE_NOT_FOUND, id), e);
         }
         log.info("Found {}", result);
         return Optional.ofNullable(result);
@@ -87,7 +87,7 @@ public class CourseDaoImpl implements CourseDao {
             course.getName(), course.getId());
         if (numberUpdatedRows == 0) {
             log.warn("Can't update {}", course);
-            throw new DAOException(String.format(MESSAGE_UPDATE_COURSE_NOT_FOUND,
+            throw new DaoException(String.format(MESSAGE_UPDATE_COURSE_NOT_FOUND,
                 course.getId()));
         } else {
             log.info("Update {}", course);
@@ -101,7 +101,7 @@ public class CourseDaoImpl implements CourseDao {
             env.getRequiredProperty(QUERY_DELETE), course.getId());
         if (numberDeletedRows == 0) {
             log.warn("Can't delete {}", course);
-            throw new DAOException(String.format(MESSAGE_DELETE_COURSE_NOT_FOUND,
+            throw new DaoException(String.format(MESSAGE_DELETE_COURSE_NOT_FOUND,
                 course.getId()));
         } else {
             log.info("Delete {}", course);
@@ -115,7 +115,7 @@ public class CourseDaoImpl implements CourseDao {
             env.getRequiredProperty(QUERY_DELETE), id);
         if (numberDeletedRows == 0) {
             log.warn("Can't delete course id({})", id);
-            throw new DAOException(String.format(MESSAGE_DELETE_COURSE_NOT_FOUND,
+            throw new DaoException(String.format(MESSAGE_DELETE_COURSE_NOT_FOUND,
                 id));
         } else {
             log.info("Delete course id({})", id);
