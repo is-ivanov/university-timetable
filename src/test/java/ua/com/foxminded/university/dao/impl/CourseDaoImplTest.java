@@ -220,6 +220,7 @@ class CourseDaoImplTest {
     @Nested
     @DisplayName("test 'getAllSortedPaginated' method")
     class GetAllSortedPaginatedTest {
+
         long totalCourses = 3L;
 
         @Test

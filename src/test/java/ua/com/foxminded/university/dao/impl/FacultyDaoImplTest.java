@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -41,6 +42,7 @@ class FacultyDaoImplTest {
     private static final String MESSAGE_EXCEPTION = "Faculty id(3) not found";
     private static final String MESSAGE_UPDATE_MASK = "Can't update %s";
     private static final String MESSAGE_DELETE_MASK = "Can't delete %s";
+    private static final String MESSAGE_DELETE_ID_MASK = "Can't delete faculty id(%d)";
     private static final String MESSAGE_UPDATE_EXCEPTION = "Can't update " +
         "because faculty id(3) not found";
     private static final String MESSAGE_DELETE_EXCEPTION = "Can't delete " +
@@ -54,7 +56,7 @@ class FacultyDaoImplTest {
 
     @Nested
     @DisplayName("test 'add' method")
-    class addTest {
+    class AddTest {
 
         @Test
         @DisplayName("add test faculty should CountRowsTable = 3")
@@ -72,7 +74,7 @@ class FacultyDaoImplTest {
 
     @Nested
     @DisplayName("test 'getById' method")
-    class getByIdTest {
+    class GetByIdTest {
 
         @Test
         @DisplayName("with id=1 should return faculty (1, 'Foreign Language')")
@@ -96,7 +98,7 @@ class FacultyDaoImplTest {
 
     @Nested
     @DisplayName("test 'getAll' method")
-    class getAllTest {
+    class GetAllTest {
 
         @Test
         @DisplayName("should return List with size = 2")
@@ -110,7 +112,7 @@ class FacultyDaoImplTest {
 
     @Nested
     @DisplayName("test 'update' method")
-    class updateTest {
+    class UpdateTest {
 
         @Test
         @DisplayName("with faculty id=1 should write new fields and" +
@@ -138,32 +140,68 @@ class FacultyDaoImplTest {
 
     @Nested
     @DisplayName("test 'delete' method")
-    class deleteTest {
+    class DeleteTest {
 
-        @Test
-        @DisplayName("with faculty id=2 should delete one record and number " +
-            "records table should equals 1")
-        void testDeleteExistingFaculty_ReduceNumberRowsInTable() {
-            int expectedQuantityFaculties = JdbcTestUtils
-                .countRowsInTable(jdbcTemplate, TABLE_NAME) - 1;
-            Faculty faculty = new Faculty(ID2, SECOND_FACULTY_NAME);
-            dao.delete(faculty);
-            int actualQuantityFaculties = JdbcTestUtils
-                .countRowsInTable(jdbcTemplate, TABLE_NAME);
-            assertEquals(expectedQuantityFaculties, actualQuantityFaculties);
+        @Nested
+        @DisplayName("delete(faculty) method")
+        class DeleteFacultyTest {
+
+            @Test
+            @DisplayName("with faculty id=2 should delete one record and number " +
+                "records table should equals 1")
+            void testDeleteExistingFaculty_ReduceNumberRowsInTable() {
+                int expectedQuantityFaculties = JdbcTestUtils
+                    .countRowsInTable(jdbcTemplate, TABLE_NAME) - 1;
+                Faculty faculty = new Faculty(ID2, SECOND_FACULTY_NAME);
+                dao.delete(faculty);
+                int actualQuantityFaculties = JdbcTestUtils
+                    .countRowsInTable(jdbcTemplate, TABLE_NAME);
+                assertEquals(expectedQuantityFaculties, actualQuantityFaculties);
+            }
+
+            @Test
+            @DisplayName("with faculty id=3 should write new log.warn with " +
+                "expected message")
+            void testDeleteNonExistingFaculty_ExceptionWriteLogWarn() {
+                LogCaptor logCaptor = LogCaptor.forClass(FacultyDaoImpl.class);
+                Faculty faculty = new Faculty(ID3, TEST_FACULTY_NAME);
+                String expectedLog = String.format(MESSAGE_DELETE_MASK, faculty);
+                Exception ex = assertThrows(DaoException.class,
+                    () -> dao.delete(faculty));
+                assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
+                assertEquals(MESSAGE_DELETE_EXCEPTION, ex.getMessage());
+            }
+
         }
 
-        @Test
-        @DisplayName("with faculty id=3 should write new log.warn with " +
-            "expected message")
-        void testDeleteNonExistingFaculty_ExceptionWriteLogWarn() {
-            LogCaptor logCaptor = LogCaptor.forClass(FacultyDaoImpl.class);
-            Faculty faculty = new Faculty(ID3, TEST_FACULTY_NAME);
-            String expectedLog = String.format(MESSAGE_DELETE_MASK, faculty);
-            Exception ex = assertThrows(DaoException.class,
-                () -> dao.delete(faculty));
-            assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
-            assertEquals(MESSAGE_DELETE_EXCEPTION, ex.getMessage());
+        @Nested
+        @DisplayName("delete(facultyId) method")
+        class DeleteFacultyIdTest {
+
+            @Test
+            @DisplayName("with faculty id=2 should delete one record and number " +
+                "records table should equals 1")
+            void testDeleteExistingFacultyId2_ReduceNumberRowsInTable() {
+                int expectedQuantityFaculties = JdbcTestUtils
+                    .countRowsInTable(jdbcTemplate, TABLE_NAME) - 1;
+                dao.delete(ID2);
+                int actualQuantityFaculties = JdbcTestUtils
+                    .countRowsInTable(jdbcTemplate, TABLE_NAME);
+                assertEquals(expectedQuantityFaculties, actualQuantityFaculties);
+            }
+
+            @Test
+            @DisplayName("with faculty id=3 should write new log.warn with " +
+                "expected message")
+            void testDeleteNonExistingFaculty_ExceptionWriteLogWarn() {
+                LogCaptor logCaptor = LogCaptor.forClass(FacultyDaoImpl.class);
+                String expectedLog = String.format(MESSAGE_DELETE_ID_MASK, ID3);
+                Exception ex = assertThrows(DaoException.class,
+                    () -> dao.delete(ID3));
+                assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
+                assertEquals(MESSAGE_DELETE_EXCEPTION, ex.getMessage());
+            }
+
         }
     }
 
@@ -177,22 +215,43 @@ class FacultyDaoImplTest {
 
     @Nested
     @DisplayName("test 'getAllSortedPaginated' method")
-    class getAllSortedPaginatedTest {
+    class GetAllSortedPaginatedTest {
+
+        long totalFaculties = 2L;
 
         @Test
         @DisplayName("when size 1 and first page then return first one faculty")
         void testShouldReturnOneSortedFaculties() {
             int pageNumber = 0;
             int pageSize = 1;
-            Pageable pageable = PageRequest.of(pageNumber,pageSize);
-            Page<Faculty> facultyPage = dao.getAllSortedPaginated(pageable);
+            Pageable pageable = PageRequest.of(pageNumber, pageSize);
+            Page<Faculty> page = dao.getAllSortedPaginated(pageable);
 
-            Faculty actualFaculty = facultyPage.getContent().get(0);
+            Faculty actualFaculty = page.getContent().get(0);
 
-            assertThat(facultyPage.getTotalElements(), is(equalTo(2L)));
-            assertThat(facultyPage.getContent().size(), is(equalTo(1)));
+            assertThat(page.getTotalElements(), is(equalTo(totalFaculties)));
+            assertThat(page.getContent().size(), is(equalTo(pageSize)));
             assertThat(actualFaculty.getId(), is(equalTo(ID2)));
             assertThat(actualFaculty.getName(), is(equalTo(SECOND_FACULTY_NAME)));
+        }
+
+        @Test
+        @DisplayName("when pageable with sort by ID then return sorted by ID page")
+        void test_Size1_WithSortingById() {
+            int pageNumber = 0;
+            int pageSize = 1;
+
+            Sort sort = Sort.by(Sort.Direction.ASC, "faculty_id");
+            Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+
+            Page<Faculty> page = dao.getAllSortedPaginated(pageable);
+
+            Faculty actualFaculty = page.getContent().get(0);
+
+            assertThat(page.getTotalElements(), is(equalTo(totalFaculties)));
+            assertThat(page.getContent().size(), is(equalTo(pageSize)));
+            assertThat(actualFaculty.getId(), is(equalTo(ID1)));
+            assertThat(actualFaculty.getName(), is(equalTo(FIRST_FACULTY_NAME)));
         }
 
     }

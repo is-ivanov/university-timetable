@@ -16,6 +16,11 @@ import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.exception.DaoException;
 import ua.com.foxminded.university.springconfig.TestRootConfig;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
@@ -31,15 +36,21 @@ class GroupDaoImplTest {
     private static final int ID2 = 2;
     private static final int ID3 = 3;
     private static final String FIRST_GROUP_NAME = "20Eng-1";
+    private static final String SECOND_GROUP_NAME = "21Ger-1";
     private static final String FIRST_FACULTY_NAME = "Foreign Language";
     private static final String SECOND_FACULTY_NAME = "Chemical Technology";
     private static final String MESSAGE_EXCEPTION = "Group id(3) not found";
     private static final String MESSAGE_UPDATE_MASK = "Can't update %s";
     private static final String MESSAGE_DELETE_MASK = "Can't delete %s";
+    private static final String MESSAGE_DELETE_ID_MASK = "Can't delete group id(%d)";
     private static final String MESSAGE_UPDATE_EXCEPTION = "Can't update " +
         "because group id(3) not found";
     private static final String MESSAGE_DELETE_EXCEPTION = "Can't delete " +
         "because group id(3) not found";
+    private static final LocalDateTime START_FIRST_LESSON = LocalDateTime.of(2021, 6, 12, 14, 0);
+    private static final LocalDateTime END_FIRST_LESSON = LocalDateTime.of(2021, 6, 12, 15, 30);
+    private static final LocalDateTime START_SECOND_LESSON = LocalDateTime.of(2021, 6, 10, 14, 0);
+    private static final LocalDateTime END_SECOND_LESSON = LocalDateTime.of(2021, 6, 10, 15, 30);
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -49,7 +60,7 @@ class GroupDaoImplTest {
 
     @Nested
     @DisplayName("test 'add' method")
-    class addTest {
+    class AddTest {
 
         @Test
         @DisplayName("after add test group should CountRowsTable = 3")
@@ -91,7 +102,7 @@ class GroupDaoImplTest {
 
     @Nested
     @DisplayName("test 'getById' method")
-    class getByIdTest {
+    class GetByIdTest {
 
         @Test
         @DisplayName("with id=1 should return group (1, '20Eng-1', faculty id=1, true)")
@@ -118,7 +129,7 @@ class GroupDaoImplTest {
 
     @Nested
     @DisplayName("test 'getAll' method")
-    class getAllTest {
+    class GetAllTest {
 
         @Test
         @DisplayName("should return List with size = 2")
@@ -132,7 +143,7 @@ class GroupDaoImplTest {
 
     @Nested
     @DisplayName("test 'update' method")
-    class updateTest {
+    class UpdateTest {
 
         @Test
         @DisplayName("with group id=1 should write new fields and getById(1) " +
@@ -162,39 +173,73 @@ class GroupDaoImplTest {
 
     @Nested
     @DisplayName("test 'delete' method")
-    class deleteTest {
+    class DeleteTest {
 
-        @Test
-        @DisplayName("with group id=1 should delete one record and number " +
-            "records table should equals 1")
-        void testDeleteExistingGroup_ReduceNumberRowsInTable() {
-            int expectedQuantityGroups = JdbcTestUtils
-                .countRowsInTable(jdbcTemplate, TABLE_NAME) - 1;
-            Faculty faculty = new Faculty(ID1, FIRST_FACULTY_NAME);
-            Group group = new Group(ID1, FIRST_GROUP_NAME, faculty, true);
-            dao.delete(group);
-            int actualQuantityGroups = JdbcTestUtils
-                .countRowsInTable(jdbcTemplate, TABLE_NAME);
-            assertEquals(expectedQuantityGroups, actualQuantityGroups);
+        @Nested
+        @DisplayName("delete(group) method")
+        class DeleteGroupTest {
+
+            @Test
+            @DisplayName("with group id=1 should delete one record and number " +
+                "records table should equals 1")
+            void testDeleteExistingGroup_ReduceNumberRowsInTable() {
+                int expectedQuantityGroups = JdbcTestUtils
+                    .countRowsInTable(jdbcTemplate, TABLE_NAME) - 1;
+                Faculty faculty = new Faculty(ID1, FIRST_FACULTY_NAME);
+                Group group = new Group(ID1, FIRST_GROUP_NAME, faculty, true);
+                dao.delete(group);
+                int actualQuantityGroups = JdbcTestUtils
+                    .countRowsInTable(jdbcTemplate, TABLE_NAME);
+                assertEquals(expectedQuantityGroups, actualQuantityGroups);
+            }
+
+            @Test
+            @DisplayName("with group id=3 should write new log.warn with " +
+                "expected message")
+            void testDeleteNonExistingGroup_ExceptionWriteLogWarn() {
+                LogCaptor logCaptor = LogCaptor.forClass(GroupDaoImpl.class);
+                Group group = new Group(ID3, TEST_GROUP_NAME, new Faculty(), true);
+                String expectedLog = String.format(MESSAGE_DELETE_MASK, group);
+                Exception ex = assertThrows(DaoException.class,
+                    () -> dao.delete(group));
+                assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
+                assertEquals(MESSAGE_DELETE_EXCEPTION, ex.getMessage());
+            }
         }
 
-        @Test
-        @DisplayName("with group id=3 should write new log.warn with " +
-            "expected message")
-        void testDeleteNonExistingGroup_ExceptionWriteLogWarn() {
-            LogCaptor logCaptor = LogCaptor.forClass(GroupDaoImpl.class);
-            Group group = new Group(ID3, TEST_GROUP_NAME, new Faculty(), true);
-            String expectedLog = String.format(MESSAGE_DELETE_MASK, group);
-            Exception ex = assertThrows(DaoException.class,
-                () -> dao.delete(group));
-            assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
-            assertEquals(MESSAGE_DELETE_EXCEPTION, ex.getMessage());
+        @Nested
+        @DisplayName("delete(groupId) method")
+        class DeleteGroupIdTest {
+
+            @Test
+            @DisplayName("with group id=1 should delete one record and number " +
+                "records table should equals 1")
+            void testDeleteExistingGroupId1_ReduceNumberRowsInTable() {
+                int expectedQuantityGroups = JdbcTestUtils
+                    .countRowsInTable(jdbcTemplate, TABLE_NAME) - 1;
+                dao.delete(ID1);
+                int actualQuantityGroups = JdbcTestUtils
+                    .countRowsInTable(jdbcTemplate, TABLE_NAME);
+                assertEquals(expectedQuantityGroups, actualQuantityGroups);
+            }
+
+            @Test
+            @DisplayName("with group id=3 should write new log.warn with " +
+                "expected message")
+            void testDeleteNonExistingGroup_ExceptionWriteLogWarn() {
+                LogCaptor logCaptor = LogCaptor.forClass(GroupDaoImpl.class);
+                String expectedLog = String.format(MESSAGE_DELETE_ID_MASK, ID3);
+                Exception ex = assertThrows(DaoException.class,
+                    () -> dao.delete(ID3));
+                assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
+                assertEquals(MESSAGE_DELETE_EXCEPTION, ex.getMessage());
+            }
         }
     }
 
     @Nested
-    @DisplayName("test 'getByFacultyId' method")
-    class getByFacultyIdTest {
+    @DisplayName("test 'getAllByFacultyId' method")
+    class GetAllByFacultyIdTest {
 
         @Test
         @DisplayName("with faculty id=1 should return List with size = 2")
@@ -210,4 +255,74 @@ class GroupDaoImplTest {
             assertTrue(dao.getAllByFacultyId(ID2).isEmpty());
         }
     }
+
+    @Nested
+    @DisplayName("test 'getFreeGroupsOnLessonTime' method")
+    class GetFreeGroupsOnLessonTimeTest {
+
+        @Nested
+        @DisplayName("when all students from group have lesson on checked time")
+        class AllStudentFromGroupHaveLesson {
+
+            @Nested
+            @DisplayName("if checked lesson")
+            class IfCheckedLesson {
+
+                @Test
+                @DisplayName("starts at the same time as the scheduled lesson then don't return this group")
+                void lessonStartsAtSameTimeScheduledLesson() {
+
+                    List<Group> freeGroupsOnSecondLessonTime = dao
+                        .getFreeGroupsOnLessonTime(START_SECOND_LESSON,
+                            END_SECOND_LESSON.plusMinutes(2));
+
+                    assertThat(freeGroupsOnSecondLessonTime.size(), is(equalTo(1)));
+
+                    Group actualGroup = freeGroupsOnSecondLessonTime.get(0);
+
+                    assertThat(actualGroup.getName(), is(not(equalTo(SECOND_GROUP_NAME))));
+                    assertThat(actualGroup.getId(), is(equalTo(ID1)));
+                }
+
+                @Test
+                @DisplayName("starts before the scheduled lesson and ends during" +
+                    " the scheduled lesson then don't return this group")
+                void lessonStartsBeforeAndEndsDuringScheduledLesson() {
+
+                    List<Group> freeGroupsOnSecondLessonTime = dao
+                        .getFreeGroupsOnLessonTime(START_SECOND_LESSON.minusHours(1),
+                            START_SECOND_LESSON.plusHours(1));
+
+                    assertThat(freeGroupsOnSecondLessonTime.size(), is(equalTo(1)));
+
+                    Group actualGroup = freeGroupsOnSecondLessonTime.get(0);
+
+                    assertThat(actualGroup.getName(), is(not(equalTo(SECOND_GROUP_NAME))));
+                    assertThat(actualGroup.getId(), is(equalTo(ID1)));
+                }
+
+                @Test
+                @DisplayName("starts and ends during the scheduled lesson " +
+                    " the scheduled lesson then don't return this group")
+                void lessonStartsAndEndsDuringScheduledLesson() {
+
+                    List<Group> freeGroupsOnSecondLessonTime = dao
+                        .getFreeGroupsOnLessonTime(START_SECOND_LESSON.plusMinutes(1),
+                            END_SECOND_LESSON.minusMinutes(1));
+
+                    assertThat(freeGroupsOnSecondLessonTime.size(), is(equalTo(1)));
+
+                    Group actualGroup = freeGroupsOnSecondLessonTime.get(0);
+
+                    assertThat(actualGroup.getName(), is(not(equalTo(SECOND_GROUP_NAME))));
+                    assertThat(actualGroup.getId(), is(equalTo(ID1)));
+                }
+
+            }
+
+        }
+
+
+    }
+
 }

@@ -142,6 +142,7 @@ class LessonDaoImplTest {
             group.setId(ID1);
             group.setName(FIRST_GROUP_NAME);
             group.setFaculty(faculty);
+            group.setActive(ACTIVE);
 
             List<Student> students = new LinkedList<>();
             Student firstStudent = new Student();
@@ -227,6 +228,7 @@ class LessonDaoImplTest {
             group.setId(ID1);
             group.setName(FIRST_GROUP_NAME);
             group.setFaculty(faculty);
+            group.setActive(ACTIVE);
 
             List<Student> students = new ArrayList<>();
             Student firstStudent = new Student();

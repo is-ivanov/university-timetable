@@ -113,6 +113,7 @@ class StudentDaoImplTest {
             expectedGroup.setId(ID1);
             expectedGroup.setName(FIRST_GROUP_NAME);
             expectedGroup.setFaculty(expectedFaculty);
+            expectedGroup.setActive(true);
 
             Student expectedStudent = new Student();
             expectedStudent.setId(ID1);
@@ -159,7 +160,7 @@ class StudentDaoImplTest {
         void testUpdateExistingStudent_WriteNewFields() throws DaoException {
             Faculty expectedFaculty = new Faculty(ID2, SECOND_FACULTY_NAME);
             Group expectedGroup = new Group(ID2, SECOND_GROUP_NAME,
-                expectedFaculty, false);
+                expectedFaculty, true);
             Student expectedStudent = new Student();
             expectedStudent.setId(ID1);
             expectedStudent.setFirstName(TEST_STUDENT_FIRST_NAME);
