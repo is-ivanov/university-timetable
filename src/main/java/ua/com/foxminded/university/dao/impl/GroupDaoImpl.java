@@ -135,7 +135,7 @@ public class GroupDaoImpl implements GroupDao {
                                                  LocalDateTime endTime) {
         log.debug("Getting groups free from {} to {}", startTime, endTime);
         List<Group> groups = jdbcTemplate.query(env.getRequiredProperty(QUERY_GET_FREE_GROUPS),
-            new GroupMapper(), startTime, endTime, startTime, endTime);
+            new GroupMapper(), startTime, endTime);
         log.info(LOG_FOUND_GROUPS, groups.size());
         return groups;
     }
@@ -148,7 +148,7 @@ public class GroupDaoImpl implements GroupDao {
             facultyId, startTime, endTime);
         List<Group> freeGroups = jdbcTemplate.query(
             env.getRequiredProperty(QUERY_GET_FREE_GROUPS_BY_FACULTY),
-            new GroupMapper(), facultyId, startTime, endTime, startTime, endTime);
+            new GroupMapper(), facultyId, startTime, endTime);
         log.info(LOG_FOUND_GROUPS, freeGroups.size());
         return freeGroups;
     }

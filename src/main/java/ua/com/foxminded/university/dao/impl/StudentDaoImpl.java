@@ -188,7 +188,7 @@ public class StudentDaoImpl implements StudentDao {
             groupId, startTime, endTime);
         List<Student> freeStudents = jdbcTemplate.query(
             env.getRequiredProperty(QUERY_GET_FREE_STUDENTS_BY_GROUP),
-            new StudentMapper(), groupId, startTime, endTime, startTime, endTime);
+            new StudentMapper(), groupId, startTime, endTime);
         log.info("Found {} free student from group id({})", freeStudents.size(), groupId);
         return freeStudents;
     }

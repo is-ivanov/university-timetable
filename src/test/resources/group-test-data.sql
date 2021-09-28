@@ -6,7 +6,9 @@ VALUES ('Chemical Technology');
 INSERT INTO groups (group_name, group_active, faculty_id)
 VALUES ('20Eng-1', TRUE, 1);
 INSERT INTO groups (group_name, group_active, faculty_id)
-VALUES ('21Ger-1', FALSE, 1);
+VALUES ('21Ger-1', TRUE, 1);
+INSERT INTO groups (group_name, group_active, faculty_id)
+VALUES ('21ORG-3', FALSE, 1);
 
 INSERT INTO departments (department_name, faculty_id)
 VALUES ('Chemistry', 1);

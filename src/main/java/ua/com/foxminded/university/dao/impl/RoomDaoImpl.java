@@ -129,7 +129,7 @@ public class RoomDaoImpl implements RoomDao {
         log.debug("Getting free rooms from {} to {}", startTime, endTime);
         List<Room> freeRooms = jdbcTemplate.query(
             env.getRequiredProperty(QUERY_GET_FREE_ROOMS), new RoomMapper(),
-            startTime, endTime, startTime, endTime);
+            startTime, endTime);
         log.info("Found {} free rooms", freeRooms.size());
         return freeRooms;
     }
