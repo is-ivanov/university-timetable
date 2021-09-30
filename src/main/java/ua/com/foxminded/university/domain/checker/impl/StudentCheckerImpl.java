@@ -1,14 +1,12 @@
 package ua.com.foxminded.university.domain.checker.impl;
 
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ua.com.foxminded.university.dao.interfaces.LessonDao;
+import ua.com.foxminded.university.domain.checker.interfaces.StudentChecker;
 import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Student;
-import ua.com.foxminded.university.domain.checker.interfaces.StudentChecker;
 import ua.com.foxminded.university.domain.service.interfaces.LessonService;
 import ua.com.foxminded.university.exception.ServiceException;
 

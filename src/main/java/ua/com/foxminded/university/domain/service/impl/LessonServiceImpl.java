@@ -102,13 +102,14 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
+    @Transactional
     public void addStudentToLesson(int lessonId, int studentId) {
         log.debug("Getting lesson by lessonId({})", lessonId);
         Lesson lesson = lessonDao.getById(lessonId)
             .orElseThrow(() -> new EntityNotFoundException(
                 String.format(MESSAGE_LESSON_NOT_FOUND, lessonId)));
         Student student = studentDao.getById(studentId)
-            .orElseThrow(() -> new ServiceException(
+            .orElseThrow(() -> new EntityNotFoundException(
                 String.format("Student id(%d) not found", studentId)));
         checkAndSaveStudentToLesson(lesson, student);
     }

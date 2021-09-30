@@ -159,7 +159,7 @@ public class TeacherDaoImpl implements TeacherDao {
         log.debug("Getting active teachers free from {} to {}", startTime, endTime);
         List<Teacher> freeTeachers = jdbcTemplate.query(
             env.getRequiredProperty(QUERY_GET_FREE_TEACHERS), new TeacherMapper(),
-            startTime, endTime, startTime, endTime);
+            startTime, endTime);
         log.info("Found {} active free teachers", freeTeachers.size());
         return freeTeachers;
     }

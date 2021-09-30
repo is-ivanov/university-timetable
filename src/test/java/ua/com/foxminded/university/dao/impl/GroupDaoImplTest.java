@@ -99,7 +99,7 @@ class GroupDaoImplTest {
 
             dao.add(groupForAdding);
 
-            Group addedGroup = dao.getById(ID4).orElse(null);
+            Group addedGroup = dao.getById(ID4).orElse(new Group());
             assertThat(addedGroup.getName(), is(equalTo(TEST_GROUP_NAME)));
             assertThat(addedGroup.isActive(), is(equalTo(true)));
         }
