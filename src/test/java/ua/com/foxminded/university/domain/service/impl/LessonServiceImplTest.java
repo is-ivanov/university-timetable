@@ -9,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.foxminded.university.dao.interfaces.LessonDao;
+import ua.com.foxminded.university.domain.checker.interfaces.LessonChecker;
 import ua.com.foxminded.university.domain.checker.interfaces.StudentChecker;
 import ua.com.foxminded.university.domain.entity.*;
 import ua.com.foxminded.university.domain.filter.LessonFilter;
@@ -49,6 +50,9 @@ class LessonServiceImplTest {
 
     @Mock
     private StudentChecker studentChecker;
+
+    @Mock
+    private LessonChecker lessonChecker;
 
     @InjectMocks
     private LessonServiceImpl lessonService;
@@ -110,48 +114,25 @@ class LessonServiceImplTest {
     class addTest {
 
         @Test
-        @DisplayName("when checks return true should call lessonDao.add " +
-            "once")
-        void testAdd_CallDaoOnce() {
+        @DisplayName("when check is passed then should call lessonDao.add once")
+        void testAddCheckPassed_CallDaoOnce() {
             Lesson testLesson = createTestLesson();
+            doNothing().when(lessonChecker).check(testLesson);
             lessonService.add(testLesson);
             verify(lessonDaoMock).add(testLesson);
         }
 
         @Test
-        @DisplayName("if teacher's time is busy then should throw " +
-            "ServiceException with message")
-        void testAdd_TeacherBusy_ThrowException() {
+        @DisplayName("when check is false then should throw ServiceException with message")
+        void testAddCheckFalse_ThrowException() {
             Lesson testLesson = createTestLesson();
-            Lesson lessonWithTeacherBusyTime = createLessonWithBusyTime();
-            List<Lesson> lessonsThisTeacher = new ArrayList<>();
-            lessonsThisTeacher.add(lessonWithTeacherBusyTime);
-            when(lessonDaoMock.getAllForTeacher(ID1))
-                .thenReturn(lessonsThisTeacher);
+            doThrow(new ServiceException(MESSAGE_TEACHER_NOT_AVAILABLE))
+                .when(lessonChecker).check(testLesson);
+
             ServiceException e = assertThrows(ServiceException.class,
                 () -> lessonService.add(testLesson));
-            String expectedMessage =
-                String.format(MESSAGE_TEACHER_NOT_AVAILABLE, testLesson.getTeacher());
-            assertEquals(expectedMessage, e.getMessage());
+            assertThat(e.getMessage(), is(equalTo(MESSAGE_TEACHER_NOT_AVAILABLE)));
         }
-
-        @Test
-        @DisplayName("if room's time is busy then should throw " +
-            "ServiceException with message")
-        void testAdd_RoomBusy_ThrowException() {
-            Lesson testLesson = createTestLesson();
-            Lesson lessonWithRoomBusyTime = createLessonWithBusyTime();
-            List<Lesson> lessonsThisRoom = new ArrayList<>();
-            lessonsThisRoom.add(lessonWithRoomBusyTime);
-
-            when(lessonDaoMock.getAllForRoom(ID2)).thenReturn(lessonsThisRoom);
-            Exception e = assertThrows(ServiceException.class,
-                () -> lessonService.add(testLesson));
-            String expectedMessage =
-                String.format(MESSAGE_ROOM_NOT_AVAILABLE, testLesson.getRoom());
-            assertEquals(expectedMessage, e.getMessage());
-        }
-
     }
 
     @Nested
@@ -159,46 +140,24 @@ class LessonServiceImplTest {
     class updateTest {
 
         @Test
-        @DisplayName("when checks return true should call lessonDao.update " +
-            "once")
-        void testUpdate_CallDaoOnce() throws ServiceException {
+        @DisplayName("when check is passed should call lessonDao.update once")
+        void testUpdateCheckPassed_CallDaoOnce() throws ServiceException {
             Lesson testLesson = createTestLesson();
+            doNothing().when(lessonChecker).check(testLesson);
             lessonService.update(testLesson);
             verify(lessonDaoMock).update(testLesson);
         }
 
         @Test
-        @DisplayName("if teacher's time is busy then should throw " +
-            "ServiceException with message")
-        void testUpdate_TeacherBusy_ThrowException() {
+        @DisplayName("when check is false then should throw ServiceException with message")
+        void testUpdateCheckFalse_ThrowException() {
             Lesson testLesson = createTestLesson();
-            Lesson lessonWithTeacherBusyTime = createLessonWithBusyTime();
-            List<Lesson> lessonsThisTeacher = new ArrayList<>();
-            lessonsThisTeacher.add(lessonWithTeacherBusyTime);
-            when(lessonDaoMock.getAllForTeacher(ID1))
-                .thenReturn(lessonsThisTeacher);
+            doThrow(new ServiceException(MESSAGE_TEACHER_NOT_AVAILABLE))
+                .when(lessonChecker).check(testLesson);
+
             ServiceException e = assertThrows(ServiceException.class,
                 () -> lessonService.update(testLesson));
-            String expectedMessage =
-                String.format(MESSAGE_TEACHER_NOT_AVAILABLE, testLesson.getTeacher());
-            assertEquals(expectedMessage, e.getMessage());
-        }
-
-        @Test
-        @DisplayName("if room's time is busy then should throw " +
-            "ServiceException with message")
-        void testUpdate_RoomBusy_ThrowException() {
-            Lesson testLesson = createTestLesson();
-            Lesson lessonWithRoomBusyTime = createLessonWithBusyTime();
-            List<Lesson> lessonsThisRoom = new ArrayList<>();
-            lessonsThisRoom.add(lessonWithRoomBusyTime);
-
-            when(lessonDaoMock.getAllForRoom(ID2)).thenReturn(lessonsThisRoom);
-            Exception e = assertThrows(ServiceException.class,
-                () -> lessonService.update(testLesson));
-            String expectedMessage =
-                String.format(MESSAGE_ROOM_NOT_AVAILABLE, testLesson.getRoom());
-            assertEquals(expectedMessage, e.getMessage());
+            assertThat(e.getMessage(), is(equalTo(MESSAGE_TEACHER_NOT_AVAILABLE)));
         }
     }
 
