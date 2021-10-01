@@ -16,7 +16,7 @@
         <java.version>8</java.version>
         <spring.version>5.3.10</spring.version>
         <mockito.version>3.12.4</mockito.version>
-        <junit.version>5.8.0</junit.version>
+        <junit.version>5.8.1</junit.version>
         <slf4j.version>1.7.32</slf4j.version>
         <logback.version>1.2.6</logback.version>
         <thymeleaf.version>3.0.12.RELEASE</thymeleaf.version>
@@ -46,7 +46,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.2.23</version>
+            <version>42.2.24</version>
         </dependency>
 
         <dependency>
@@ -128,7 +128,7 @@
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>bootstrap</artifactId>
-            <version>5.1.0</version>
+            <version>5.1.1</version>
         </dependency>
         <dependency>
             <groupId>org.webjars.npm</groupId>
