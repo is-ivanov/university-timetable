@@ -1,21 +1,41 @@
 package ua.com.foxminded.university.ui.controller;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.*;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import ua.com.foxminded.university.domain.entity.Course;
 import ua.com.foxminded.university.domain.service.interfaces.CourseService;
 import ua.com.foxminded.university.ui.PageSequenceCreator;
 
-//@ExtendWith(MockitoExtension.class)
+import java.util.Arrays;
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+
+@ExtendWith(MockitoExtension.class)
 class CourseControllerTest {
 
     public static final int ID1 = 1;
     public static final int ID2 = 2;
     public static final String NAME_FIRST_COURSE = "firstCourse";
     public static final String NAME_SECOND_COURSE = "secondCourse";
+
+    private MockMvc mockMvc;
 
     @Mock
     private CourseService courseServiceMock;
@@ -26,27 +46,42 @@ class CourseControllerTest {
     @InjectMocks
     private CourseController courseController;
 
-    private CourseRequestBuilder requestBuilder;
-
     @BeforeEach
     void setUp() {
-        MockMvc mockMvc = MockMvcBuilders
+        mockMvc = MockMvcBuilders
             .standaloneSetup(courseController)
+            .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
             .build();
-        requestBuilder = new CourseRequestBuilder(mockMvc);
+    }
+
+    @Nested
+    @DisplayName("test 'showCourses' method")
+    class ShowCoursesTest {
+
+        @Test
+        @DisplayName("when ")
+        void test() throws Exception {
+            Pageable pageable = PageRequest.of(0, 10, Sort.by("course_name"));
+            Course firstCourse = new Course(ID1, NAME_FIRST_COURSE);
+            Course secondCourse = new Course(ID2, NAME_SECOND_COURSE);
+
+            List<Course> expectedCourses = Arrays.asList(firstCourse, secondCourse);
+            Page<Course> pageCourses = new PageImpl<>(expectedCourses, pageable, expectedCourses.size());
+
+            when(courseServiceMock.getAllSortedPaginated(pageable)).thenReturn(pageCourses);
+
+
+            mockMvc.perform(get("/courses"))
+                .andDo(print())
+                .andExpectAll(
+                    status().isOk(),
+                    view().name("course")
+                );
+
+        }
     }
 
 
-//
-//    @BeforeEach
-//    public void setUp() {
-////        InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
-////        viewResolver.setPrefix("/WEB-INF/templates/");
-////        viewResolver.setSuffix(".html");
-//        mockMvc = MockMvcBuilders.standaloneSetup(courseController)
-////            .setViewResolvers(viewResolver)
-//            .build();
-//    }
 //
 //    @Test
 //    @DisplayName("Test showCourses")
