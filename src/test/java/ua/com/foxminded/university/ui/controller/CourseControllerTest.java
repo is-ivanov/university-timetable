@@ -20,8 +20,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.mockito.Mockito.when;
+import static com.sun.deploy.uitoolkit.impl.awt.AWTClientPrintHelper.print;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -60,7 +63,7 @@ class CourseControllerTest {
         @Test
         @DisplayName("when GET request without parameters then should use " +
             "@PageableDefault values")
-        void testGetWithoutParameters() throws Exception {
+        void testGetRequestWithoutParameters() throws Exception {
             Pageable pageable = PageRequest.of(0, 10, Sort.by("course_name"));
             Course firstCourse = new Course(ID1, NAME_FIRST_COURSE);
             Course secondCourse = new Course(ID2, NAME_SECOND_COURSE);
@@ -90,7 +93,7 @@ class CourseControllerTest {
         @Test
         @DisplayName("when GET request with parameter page = 2 then should use " +
             "this value and the rest of the parameters by default")
-        void testGetWithPage2() throws Exception {
+        void testGetRequestWithPage2() throws Exception {
             int page = 2;
 
             Pageable pageable = PageRequest.of(page, 10, Sort.by("course_name"));
@@ -114,6 +117,55 @@ class CourseControllerTest {
                     model().attribute("page", pageCourses),
                     model().attribute("uri", URI_COURSES)
                 );
+        }
+
+        @Test
+        @DisplayName("when GET request with parameters page, size and sort then " +
+            "should use this parameters")
+        void testGetRequestWithPageSizeAndSort() throws Exception {
+            int page = 3;
+            int size = 7;
+            String sort = "id,desc";
+
+            Pageable pageable = PageRequest.of(page, size,
+                Sort.by(Sort.Order.desc("id")));
+            Course firstCourse = new Course(ID1, NAME_FIRST_COURSE);
+            Course secondCourse = new Course(ID2, NAME_SECOND_COURSE);
+
+            List<Course> expectedCourses = Arrays.asList(firstCourse, secondCourse);
+            Page<Course> pageCourses = new PageImpl<>(expectedCourses, pageable, expectedCourses.size());
+
+            when(courseServiceMock.getAllSortedPaginated(pageable)).thenReturn(pageCourses);
+
+            mockMvc.perform(get(URI_COURSES)
+                    .param("page", String.valueOf(page))
+                    .param("size", String.valueOf(size))
+                    .param("sort", sort))
+                .andDo(print())
+                .andExpectAll(
+                    status().isOk(),
+                    view().name("course")
+                );
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'createCourse' method")
+    class CreateCourseTest {
+
+        @Test
+        @DisplayName("when POST request with parameter courseName then should " +
+            "call courseService.add once and redirect")
+        void testPostRequestCreateCourse() throws Exception {
+            mockMvc.perform(post(URI_COURSES)
+                    .param("name", NAME_FIRST_COURSE))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection());
+
+            Course course = new Course();
+            course.setName(NAME_FIRST_COURSE);
+
+            verify(courseServiceMock).add(course);
         }
     }
 
