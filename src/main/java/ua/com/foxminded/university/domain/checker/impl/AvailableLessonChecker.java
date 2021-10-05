@@ -27,16 +27,18 @@ public class AvailableLessonChecker {
         LocalDateTime timeStartCheckedLesson = checkedLesson.getTimeStart();
         LocalDateTime timeEndCheckedLesson = checkedLesson.getTimeEnd();
         for (Lesson lesson : lessons) {
-            LocalDateTime timeStartLesson = lesson.getTimeStart();
-            LocalDateTime timeEndLesson = lesson.getTimeEnd();
-            if ((timeStartCheckedLesson.isAfter(timeStartLesson)
-                && timeStartCheckedLesson.isBefore(timeEndLesson))
-                || (timeEndCheckedLesson.isAfter(timeStartLesson)
-                && timeEndCheckedLesson.isBefore(timeEndLesson))) {
-                log.warn("Time lesson id({}) intersect with time lesson id({})",
-                    checkedLesson.getId(), lesson.getId());
-                throw new ServiceException(
-                    String.format(MESSAGE_EXCEPTION, checkedLesson.getId(), lesson.getId()));
+            if (lesson.getId() != checkedLesson.getId()) {
+                LocalDateTime timeStartLesson = lesson.getTimeStart();
+                LocalDateTime timeEndLesson = lesson.getTimeEnd();
+                if ((timeStartCheckedLesson.isAfter(timeStartLesson)
+                    && timeStartCheckedLesson.isBefore(timeEndLesson))
+                    || (timeEndCheckedLesson.isAfter(timeStartLesson)
+                    && timeEndCheckedLesson.isBefore(timeEndLesson))) {
+                    log.warn("Time lesson id({}) intersect with time lesson id({})",
+                        checkedLesson.getId(), lesson.getId());
+                    throw new ServiceException(
+                        String.format(MESSAGE_EXCEPTION, checkedLesson.getId(), lesson.getId()));
+                }
             }
         }
         log.info("Checking passed");
