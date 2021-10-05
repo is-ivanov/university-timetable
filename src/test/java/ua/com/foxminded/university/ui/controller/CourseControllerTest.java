@@ -125,10 +125,10 @@ class CourseControllerTest {
         void testGetRequestWithPageSizeAndSort() throws Exception {
             int page = 3;
             int size = 7;
-            String sort = "id,desc";
+            String sort = "course_id,desc";
 
             Pageable pageable = PageRequest.of(page, size,
-                Sort.by(Sort.Order.desc("id")));
+                Sort.by(Sort.Order.desc("course_id")));
             Course firstCourse = new Course(ID1, NAME_FIRST_COURSE);
             Course secondCourse = new Course(ID2, NAME_SECOND_COURSE);
 
