@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ua.com.foxminded.university.domain.entity.Course;
@@ -20,11 +21,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static com.sun.deploy.uitoolkit.impl.awt.AWTClientPrintHelper.print;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.hamcrest.Matchers.containsString;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -63,7 +64,7 @@ class CourseControllerTest {
         @Test
         @DisplayName("when GET request without parameters then should use " +
             "@PageableDefault values")
-        void testGetRequestWithoutParameters() throws Exception {
+        void getRequestWithoutParameters() throws Exception {
             Pageable pageable = PageRequest.of(0, 10, Sort.by("course_name"));
             Course firstCourse = new Course(ID1, NAME_FIRST_COURSE);
             Course secondCourse = new Course(ID2, NAME_SECOND_COURSE);
@@ -93,7 +94,7 @@ class CourseControllerTest {
         @Test
         @DisplayName("when GET request with parameter page = 2 then should use " +
             "this value and the rest of the parameters by default")
-        void testGetRequestWithPage2() throws Exception {
+        void getRequestWithPage2() throws Exception {
             int page = 2;
 
             Pageable pageable = PageRequest.of(page, 10, Sort.by("course_name"));
@@ -122,7 +123,7 @@ class CourseControllerTest {
         @Test
         @DisplayName("when GET request with parameters page, size and sort then " +
             "should use this parameters")
-        void testGetRequestWithPageSizeAndSort() throws Exception {
+        void getRequestWithPageSizeAndSort() throws Exception {
             int page = 3;
             int size = 7;
             String sort = "course_id,desc";
@@ -154,9 +155,9 @@ class CourseControllerTest {
     class CreateCourseTest {
 
         @Test
-        @DisplayName("when POST request with parameter courseName then should " +
-            "call courseService.add once and redirect")
-        void testPostRequestCreateCourse() throws Exception {
+        @DisplayName("when POST request with parameter name then should call " +
+            "courseService.add once and redirect")
+        void postRequestCreateCourse() throws Exception {
             mockMvc.perform(post(URI_COURSES)
                     .param("name", NAME_FIRST_COURSE))
                 .andDo(print())
@@ -166,6 +167,66 @@ class CourseControllerTest {
             course.setName(NAME_FIRST_COURSE);
 
             verify(courseServiceMock).add(course);
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'getCourse' method")
+    class GetCourseTest {
+
+        @Test
+        @DisplayName("when GET request with @PathParameter 'id' then should return " +
+            "JSON with expected course")
+        void getRequestWithId() throws Exception {
+            int courseId = anyInt();
+            Course expectedCourse = new Course(courseId, NAME_FIRST_COURSE);
+
+            when(courseServiceMock.getById(courseId)).thenReturn(expectedCourse);
+
+            mockMvc.perform(get("/courses/{id}", courseId))
+                .andDo(print())
+                .andExpectAll(
+                    status().isOk(),
+                    content().contentType(MediaType.APPLICATION_JSON),
+                    content().string(containsString(String.valueOf(courseId))),
+                    content().string(containsString(NAME_FIRST_COURSE))
+                );
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'updateCourse' method")
+    class UpdateCourseTest {
+
+        @Test
+        @DisplayName("when PUT request with parameters id and name then call " +
+            "courseService.update once and redirect")
+        void testPutRequestWithIdAndName() throws Exception {
+            int courseId = anyInt();
+            mockMvc.perform(put("/courses/{id}", courseId)
+                .param("name", NAME_FIRST_COURSE))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection());
+
+            Course updatedCourse = new Course(courseId, NAME_FIRST_COURSE);
+            verify(courseServiceMock).update(updatedCourse);
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'deleteCourse' method")
+    class DeleteCourseTest {
+
+        @Test
+        @DisplayName("when DELETE request with @PathParameter 'id' then call " +
+            "courseService.delete once and redirect")
+        void testDeleteRequestWithId() throws Exception {
+            int courseId = anyInt();
+            mockMvc.perform(delete("/courses/{id}", courseId))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection());
+
+            verify(courseServiceMock).delete(courseId);
         }
     }
 
