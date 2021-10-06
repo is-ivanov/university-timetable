@@ -11,7 +11,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import ua.com.foxminded.university.domain.entity.Faculty;
+import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
+import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
+import ua.com.foxminded.university.domain.service.interfaces.GroupService;
+import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
+import ua.com.foxminded.university.ui.PageSequenceCreator;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,17 +40,26 @@ class FacultyControllerTest {
     @Mock
     private FacultyService facultyServiceMock;
 
-    @InjectMocks
+    @Mock
+    private GroupService groupServiceMock;
+
+    @Mock
+    private DepartmentService departmentServiceMock;
+
+    @Mock
+    private TeacherService teacherServiceMock;
+
+    @Mock
+    private TeacherDtoMapper teacherDtoMapperMock;
+
+    @Mock
+    private PageSequenceCreator pageSequenceCreatorMock;
+
     private FacultyController facultyController;
 
     @BeforeEach
     void setUp() {
-        InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
-        viewResolver.setPrefix("/WEB-INF/templates/");
-        viewResolver.setSuffix(".html");
-        mockMvc = MockMvcBuilders.standaloneSetup(facultyController)
-            .setViewResolvers(viewResolver)
-            .build();
+        mockMvc = MockMvcBuilders.standaloneSetup(facultyController).build();
     }
 
     @Test
