@@ -12,26 +12,26 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
+import ua.com.foxminded.university.domain.entity.Teacher;
 import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static com.sun.deploy.uitoolkit.impl.awt.AWTClientPrintHelper.print;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -45,6 +45,11 @@ class DepartmentControllerTest {
     public static final String NAME_FIRST_DEPARTMENT = "First department";
     public static final String NAME_SECOND_DEPARTMENT = "Second department";
     public static final String URI_DEPARTMENTS = "/departments";
+    public static final String URL_DEPARTMENTS_ID = "/departments/{id}";
+    public static final String FIRST_NAME_FIRST_STUDENT = "John";
+    public static final String LAST_NAME_FIRST_STUDENT = "Johnson";
+    public static final String FIRST_NAME_SECOND_STUDENT = "Anna";
+    public static final String LAST_NAME_SECOND_STUDENT = "Peterson";
 
     private MockMvc mockMvc;
 
@@ -58,7 +63,7 @@ class DepartmentControllerTest {
     private TeacherService teacherServiceMock;
 
     @Mock
-    private TeacherDtoMapper teacherDtoMapper;
+    private TeacherDtoMapper teacherDtoMapperMock;
 
     @InjectMocks
     private DepartmentController departmentController;
@@ -139,11 +144,10 @@ class DepartmentControllerTest {
         @DisplayName("when POST request with parameters name and faculty.id then " +
             "should call departmentService.add once and redirect")
         void postRequestWithParametersNameAndFacultyId() throws Exception {
-            String departmentName = NAME_FIRST_DEPARTMENT;
             String facultyId = String.valueOf(ID1);
 
             mockMvc.perform(post(URI_DEPARTMENTS)
-                    .param("name", departmentName)
+                    .param("name", NAME_FIRST_DEPARTMENT)
                     .param("faculty.Id", facultyId))
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
@@ -173,7 +177,7 @@ class DepartmentControllerTest {
 
             when(departmentServiceMock.getById(departmentId)).thenReturn(expectedDepartment);
 
-            mockMvc.perform(get("/departments/{id}", departmentId))
+            mockMvc.perform(get(URL_DEPARTMENTS_ID, departmentId))
                 .andDo(print())
                 .andExpectAll(
                     status().isOk(),
@@ -181,6 +185,100 @@ class DepartmentControllerTest {
                     content().string(containsString(String.valueOf(departmentId))),
                     content().string(containsString(NAME_FIRST_DEPARTMENT))
                 );
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'updateDepartment' method")
+    class UpdateDepartmentTest {
+
+        @Test
+        @DisplayName("when PUT request with parameters 'id' and 'name' and 'faculty.Id' " +
+            "then should call departmentService.update once an redirect")
+        void putRequestWithIdAndName() throws Exception {
+            int departmentId = anyInt();
+
+            mockMvc.perform(put(URL_DEPARTMENTS_ID, departmentId)
+                    .param("name", NAME_FIRST_DEPARTMENT)
+                    .param("faculty.Id", String.valueOf(ID1)))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection());
+
+            ArgumentCaptor<Department> requestCaptor =
+                ArgumentCaptor.forClass(Department.class);
+            verify(departmentServiceMock).update(requestCaptor.capture());
+
+            Department expectedCreatedDepartment = requestCaptor.getValue();
+            assertThat(expectedCreatedDepartment.getName(), is(NAME_FIRST_DEPARTMENT));
+            assertThat(expectedCreatedDepartment.getFaculty().getId(), is(ID1));
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'deleteDepartment' method")
+    class DeleteDepartmentTest {
+
+        @Test
+        @DisplayName("when DELETE request with @PathParameter 'id' then should call " +
+            "departmentService.delete once and redirect")
+        void deleteRequestWithId() throws Exception {
+            int departmentId = anyInt();
+            mockMvc.perform(delete(URL_DEPARTMENTS_ID, departmentId))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection());
+
+            verify(departmentServiceMock).delete(departmentId);
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'getTeachersByDepartment' method")
+    class getTeachersByDepartmentTest {
+
+        @Test
+        @DisplayName("when GET request with parameters 'id' then should return " +
+            "expected list teacherDTO")
+        void GetTeachersByDepartment() throws Exception {
+            int departmentId = anyInt();
+
+            List<Teacher> teachers = new ArrayList<>();
+            TeacherDto teacher1 = TeacherDto.builder()
+                .id(ID1)
+                .firstName(FIRST_NAME_FIRST_STUDENT)
+                .lastName(LAST_NAME_FIRST_STUDENT)
+                .departmentId(departmentId)
+                .departmentName(NAME_FIRST_DEPARTMENT)
+                .build();
+            TeacherDto teacher2 = TeacherDto.builder()
+                .id(ID2)
+                .firstName(FIRST_NAME_SECOND_STUDENT)
+                .lastName(LAST_NAME_SECOND_STUDENT)
+                .departmentId(departmentId)
+                .departmentName(NAME_FIRST_DEPARTMENT)
+                .build();
+            List<TeacherDto> teacherDtos = Arrays.asList(teacher1, teacher2);
+
+            when(teacherServiceMock.getAllByDepartment(departmentId)).thenReturn(teachers);
+            when(teacherDtoMapperMock.teachersToTeacherDtos(anyList())).thenReturn(teacherDtos);
+
+            mockMvc.perform(get("/departments/{id}/teachers", departmentId))
+                .andDo(print())
+                .andExpectAll(
+                    status().isOk(),
+                    content().contentType(MediaType.APPLICATION_JSON),
+                    jsonPath("$", hasSize(2)),
+                    jsonPath("$[0].id", is(ID1)),
+                    jsonPath("$[0].firstName", is(FIRST_NAME_FIRST_STUDENT)),
+                    jsonPath("$[0].lastName", is(LAST_NAME_FIRST_STUDENT)),
+                    jsonPath("$[0].departmentId", is(departmentId)),
+                    jsonPath("$[0].departmentName", is(NAME_FIRST_DEPARTMENT)),
+                    jsonPath("$[1].id", is(ID2)),
+                    jsonPath("$[1].firstName", is(FIRST_NAME_SECOND_STUDENT)),
+                    jsonPath("$[1].lastName", is(LAST_NAME_SECOND_STUDENT)),
+                    jsonPath("$[1].departmentId", is(departmentId)),
+                    jsonPath("$[1].departmentName", is(NAME_FIRST_DEPARTMENT))
+                );
+            verify(teacherServiceMock).getAllByDepartment(departmentId);
         }
     }
 }
