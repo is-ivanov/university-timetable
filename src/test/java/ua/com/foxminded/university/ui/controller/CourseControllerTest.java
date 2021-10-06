@@ -201,7 +201,7 @@ class CourseControllerTest {
         @Test
         @DisplayName("when PUT request with parameters id and name then call " +
             "courseService.update once and redirect")
-        void testPutRequestWithIdAndName() throws Exception {
+        void putRequestWithIdAndName() throws Exception {
             int courseId = anyInt();
             mockMvc.perform(put("/courses/{id}", courseId)
                 .param("name", NAME_FIRST_COURSE))
@@ -220,7 +220,7 @@ class CourseControllerTest {
         @Test
         @DisplayName("when DELETE request with @PathParameter 'id' then call " +
             "courseService.delete once and redirect")
-        void testDeleteRequestWithId() throws Exception {
+        void deleteRequestWithId() throws Exception {
             int courseId = anyInt();
             mockMvc.perform(delete("/courses/{id}", courseId))
                 .andDo(print())
