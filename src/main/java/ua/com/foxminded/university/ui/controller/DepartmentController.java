@@ -67,7 +67,7 @@ public class DepartmentController {
 
     @GetMapping("/{id}")
     @ResponseBody
-    public Department showDepartment(@PathVariable("id") int departmentId) {
+    public Department getDepartment(@PathVariable("id") int departmentId) {
         log.debug("Getting department id({})", departmentId);
         Department department = departmentService.getById(departmentId);
         log.info("Found {}", department);
