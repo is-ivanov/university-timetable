@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -29,8 +30,7 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -52,6 +52,9 @@ class DepartmentControllerTest {
     public static final String LAST_NAME_SECOND_STUDENT = "Peterson";
 
     private MockMvc mockMvc;
+
+    @Captor
+    ArgumentCaptor<Department> departmentCaptor;
 
     @Mock
     private DepartmentService departmentServiceMock;
@@ -150,11 +153,9 @@ class DepartmentControllerTest {
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
 
-            ArgumentCaptor<Department> requestCaptor =
-                ArgumentCaptor.forClass(Department.class);
-            verify(departmentServiceMock).add(requestCaptor.capture());
+            verify(departmentServiceMock).add(departmentCaptor.capture());
 
-            Department expectedCreatedDepartment = requestCaptor.getValue();
+            Department expectedCreatedDepartment = departmentCaptor.getValue();
             assertThat(expectedCreatedDepartment.getName(), is(NAME_FIRST_DEPARTMENT));
             assertThat(expectedCreatedDepartment.getFaculty().getId(), is(ID1));
         }
@@ -191,9 +192,9 @@ class DepartmentControllerTest {
     class UpdateDepartmentTest {
 
         @Test
-        @DisplayName("when PUT request with parameters 'id' and 'name' and 'faculty.Id' " +
+        @DisplayName("when PUT request with parameters 'id', 'name' and 'faculty.Id' " +
             "then should call departmentService.update once an redirect")
-        void putRequestWithIdAndName() throws Exception {
+        void putRequestWithIdNameAndFacultyId() throws Exception {
             int departmentId = anyInt();
 
             mockMvc.perform(put(URI_DEPARTMENTS_ID, departmentId)
@@ -202,11 +203,9 @@ class DepartmentControllerTest {
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
 
-            ArgumentCaptor<Department> requestCaptor =
-                ArgumentCaptor.forClass(Department.class);
-            verify(departmentServiceMock).update(requestCaptor.capture());
+            verify(departmentServiceMock).update(departmentCaptor.capture());
 
-            Department expectedCreatedDepartment = requestCaptor.getValue();
+            Department expectedCreatedDepartment = departmentCaptor.getValue();
             assertThat(expectedCreatedDepartment.getName(), is(NAME_FIRST_DEPARTMENT));
             assertThat(expectedCreatedDepartment.getFaculty().getId(), is(ID1));
         }
@@ -225,7 +224,7 @@ class DepartmentControllerTest {
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
 
-            verify(departmentServiceMock).delete(departmentId);
+            verify(departmentServiceMock, times(1)).delete(departmentId);
         }
     }
 

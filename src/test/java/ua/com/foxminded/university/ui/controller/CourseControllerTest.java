@@ -37,6 +37,7 @@ class CourseControllerTest {
     public static final String NAME_FIRST_COURSE = "firstCourse";
     public static final String NAME_SECOND_COURSE = "secondCourse";
     public static final String URI_COURSES = "/courses";
+    public static final String URI_COURSES_ID = "/courses/{id}";
 
     private MockMvc mockMvc;
 
@@ -65,16 +66,19 @@ class CourseControllerTest {
         @DisplayName("when GET request without parameters then should use " +
             "@PageableDefault values")
         void getRequestWithoutParameters() throws Exception {
-            Pageable pageable = PageRequest.of(0, 10, Sort.by("course_name"));
+            int totalPages = 1;
+            int currentPage = 0;
+            Pageable pageable = PageRequest.of(currentPage, 10, Sort.by("course_name"));
             Course firstCourse = new Course(ID1, NAME_FIRST_COURSE);
             Course secondCourse = new Course(ID2, NAME_SECOND_COURSE);
 
             List<Course> expectedCourses = Arrays.asList(firstCourse, secondCourse);
-            Page<Course> pageCourses = new PageImpl<>(expectedCourses, pageable, expectedCourses.size());
+            Page<Course> pageCourses = new PageImpl<>(expectedCourses, pageable, totalPages);
             List<Integer> pages = Collections.singletonList(1);
 
             when(courseServiceMock.getAllSortedPaginated(pageable)).thenReturn(pageCourses);
-            when(pageSequenceCreatorMock.createPageSequence(1, 1)).thenReturn(pages);
+            when(pageSequenceCreatorMock.createPageSequence(totalPages, currentPage + 1))
+                .thenReturn(pages);
 
             mockMvc.perform(get(URI_COURSES))
                 .andDo(print())
@@ -134,7 +138,7 @@ class CourseControllerTest {
             Course secondCourse = new Course(ID2, NAME_SECOND_COURSE);
 
             List<Course> expectedCourses = Arrays.asList(firstCourse, secondCourse);
-            Page<Course> pageCourses = new PageImpl<>(expectedCourses, pageable, expectedCourses.size());
+            Page<Course> pageCourses = new PageImpl<>(expectedCourses, pageable, 5);
 
             when(courseServiceMock.getAllSortedPaginated(pageable)).thenReturn(pageCourses);
 
@@ -183,7 +187,7 @@ class CourseControllerTest {
 
             when(courseServiceMock.getById(courseId)).thenReturn(expectedCourse);
 
-            mockMvc.perform(get("/courses/{id}", courseId))
+            mockMvc.perform(get(URI_COURSES_ID, courseId))
                 .andDo(print())
                 .andExpectAll(
                     status().isOk(),
@@ -203,7 +207,7 @@ class CourseControllerTest {
             "courseService.update once and redirect")
         void putRequestWithIdAndName() throws Exception {
             int courseId = anyInt();
-            mockMvc.perform(put("/courses/{id}", courseId)
+            mockMvc.perform(put(URI_COURSES_ID, courseId)
                 .param("name", NAME_FIRST_COURSE))
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
@@ -222,7 +226,7 @@ class CourseControllerTest {
             "courseService.delete once and redirect")
         void deleteRequestWithId() throws Exception {
             int courseId = anyInt();
-            mockMvc.perform(delete("/courses/{id}", courseId))
+            mockMvc.perform(delete(URI_COURSES_ID, courseId))
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
 

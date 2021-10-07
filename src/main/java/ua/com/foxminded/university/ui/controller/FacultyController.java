@@ -54,7 +54,7 @@ public class FacultyController {
         model.addAttribute("pages", pageSequenceCreator
             .createPageSequence(pageFaculties.getTotalPages(),
                 pageFaculties.getNumber() + 1));
-        log.info("The list of faculties is loaded into the model");
+        log.info("The required data is loaded into the model");
         return "faculty";
     }
 

@@ -2,15 +2,21 @@ package ua.com.foxminded.university.ui.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.*;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import ua.com.foxminded.university.domain.entity.Faculty;
+import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
@@ -18,14 +24,19 @@ import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
 import ua.com.foxminded.university.ui.PageSequenceCreator;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.ResultMatcher.matchAll;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static ua.com.foxminded.university.ui.controller.FacultyController.URI_FACULTIES;
 
 @ExtendWith(MockitoExtension.class)
 class FacultyControllerTest {
@@ -34,6 +45,14 @@ class FacultyControllerTest {
     public static final int ID2 = 2;
     public static final String NAME_FIRST_FACULTY = "Faculty1 name";
     public static final String NAME_SECOND_FACULTY = "Faculty2 name";
+    public static final String FACULTY_NAME = "faculty_name";
+    public static final String URI_FACULTIES_ID = "/faculties/{id}";
+    public static final String NAME_FIRST_GROUP = "99XT-1";
+    public static final String URI_FACULTIES_ID_GROUPS = "/faculties/{id}/groups";
+    private static final String NAME_SECOND_GROUP = "56FDS";
+
+    @Captor
+    ArgumentCaptor<Faculty> facultyCaptor;
 
     private MockMvc mockMvc;
 
@@ -55,28 +74,294 @@ class FacultyControllerTest {
     @Mock
     private PageSequenceCreator pageSequenceCreatorMock;
 
+    @InjectMocks
     private FacultyController facultyController;
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(facultyController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(facultyController)
+            .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
+            .build();
     }
 
-    @Test
-    @DisplayName("Test showFaculties")
-    void testShowFaculties() throws Exception {
-        Faculty faculty1 = new Faculty(ID1, NAME_FIRST_FACULTY);
-        Faculty faculty2 = new Faculty(ID2, NAME_SECOND_FACULTY);
-        List<Faculty> expectedFaculties = Arrays.asList(faculty1, faculty2);
-
-        when(facultyServiceMock.getAll()).thenReturn(expectedFaculties);
-
-        mockMvc.perform(get("/faculties"))
-            .andDo(print())
-            .andExpect(matchAll(
-               status().isOk(),
-                view().name("faculty"),
-                model().attribute("faculties", expectedFaculties)
-            ));
+    private List<Group> createTestGroups(int facultyId) {
+        Faculty faculty = new Faculty(facultyId, NAME_FIRST_FACULTY);
+        Group group1 = new Group(ID1, NAME_FIRST_GROUP, faculty, true);
+        Group group2 = new Group(ID2, NAME_SECOND_GROUP, faculty, false);
+        return Arrays.asList(group1, group2);
     }
+
+    @Nested
+    @DisplayName("test 'showFaculties' method")
+    class ShowFacultiesTest {
+
+        @Test
+        @DisplayName("when GET request without parameters then should use " +
+            "@PageableDefault values")
+        void getRequestWithoutParameters() throws Exception {
+            int totalPages = 1;
+            int currentPage = 0;
+            Pageable pageable = PageRequest.of(currentPage, 10,
+                Sort.by(FACULTY_NAME));
+            Faculty faculty1 = new Faculty(ID1, NAME_FIRST_FACULTY);
+            Faculty faculty2 = new Faculty(ID2, NAME_SECOND_FACULTY);
+            List<Faculty> expectedFaculties = Arrays.asList(faculty1, faculty2);
+            Page<Faculty> pageFaculties = new PageImpl<>(expectedFaculties,
+                pageable, totalPages);
+            List<Integer> pages = Collections.singletonList(1);
+
+            when(facultyServiceMock.getAllSortedPaginated(pageable))
+                .thenReturn(pageFaculties);
+            when(pageSequenceCreatorMock.createPageSequence(totalPages, currentPage + 1))
+                .thenReturn(pages);
+
+            mockMvc.perform(get(URI_FACULTIES))
+                .andDo(print())
+                .andExpectAll(
+                    status().isOk(),
+                    view().name("faculty"),
+                    model().attributeExists("faculties", "page", "uri",
+                        "newFaculty", "pages"),
+                    model().attribute("faculties", expectedFaculties),
+                    model().attribute("page", pageFaculties),
+                    model().attribute("pages", pages)
+                );
+        }
+
+        @Test
+        @DisplayName("when GET request with parameter page = 3 then should use " +
+            "this value and the rest of the parameters by default")
+        void getRequestWithPage3() throws Exception {
+            int currentPage = 3;
+            int totalPages = 5;
+            Pageable pageable = PageRequest.of(currentPage, 10,
+                Sort.by(FACULTY_NAME));
+            Faculty faculty1 = new Faculty(ID1, NAME_FIRST_FACULTY);
+            Faculty faculty2 = new Faculty(ID2, NAME_SECOND_FACULTY);
+            List<Faculty> expectedFaculties = Arrays.asList(faculty1, faculty2);
+            Page<Faculty> pageFaculties = new PageImpl<>(expectedFaculties,
+                pageable, totalPages);
+
+            when(facultyServiceMock.getAllSortedPaginated(pageable))
+                .thenReturn(pageFaculties);
+
+            mockMvc.perform(get(URI_FACULTIES)
+                    .param("page", String.valueOf(currentPage)))
+                .andDo(print())
+                .andExpectAll(
+                    status().isOk(),
+                    view().name("faculty"),
+                    model().attribute("faculties", expectedFaculties),
+                    model().attribute("page", pageFaculties)
+                );
+        }
+
+        @Test
+        @DisplayName("when GET request with parameters page, size and sort then " +
+            "should use this parameters")
+        void getRequestWithPageSizeAndSort() throws Exception {
+            int page = 2;
+            int size = 10;
+            String sort = "faculty_id";
+            int totalPages = 15;
+
+            Pageable pageable = PageRequest.of(page, size,
+                Sort.by(Sort.Order.asc("faculty_id")));
+            List<Faculty> faculties = new ArrayList<>();
+            Page<Faculty> pageFaculties = new PageImpl<>(faculties,
+                pageable, totalPages);
+
+            when(facultyServiceMock.getAllSortedPaginated(pageable))
+                .thenReturn(pageFaculties);
+
+            mockMvc.perform(get(URI_FACULTIES)
+                    .param("page", String.valueOf(page))
+                    .param("size", String.valueOf(size))
+                    .param("sort", sort))
+                .andDo(print())
+                .andExpectAll(
+                    status().isOk(),
+                    view().name("faculty")
+                );
+        }
+
+    }
+
+    @Nested
+    @DisplayName("test 'createFaculty' method")
+    class CreateFacultyTest {
+
+        @Test
+        @DisplayName("when POST request with parameter name then should call " +
+            "facultyService.add once and redirect")
+        void postRequestWithParameterName() throws Exception {
+            mockMvc.perform(post(URI_FACULTIES)
+                    .param("name", NAME_FIRST_FACULTY))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection());
+
+            verify(facultyServiceMock, times(1)).add(facultyCaptor.capture());
+            assertThat(facultyCaptor.getValue().getName(), is(equalTo(NAME_FIRST_FACULTY)));
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'getFaculty' method")
+    class GetFacultyTest {
+
+        @Test
+        @DisplayName("when GET request with @PathVariable 'id' then should return " +
+            "JSON with expected faculty")
+        void getRequestWithId() throws Exception {
+            int facultyId = anyInt();
+            Faculty expectedFaculty = new Faculty(facultyId, NAME_FIRST_FACULTY);
+
+            when(facultyServiceMock.getById(facultyId)).thenReturn(expectedFaculty);
+
+            mockMvc.perform(get(URI_FACULTIES_ID, facultyId))
+                .andDo(print())
+                .andExpectAll(
+                    status().isOk(),
+                    content().contentType(MediaType.APPLICATION_JSON),
+                    jsonPath("$.id", is(equalTo(facultyId))),
+                    jsonPath("$.name", is(equalTo(NAME_FIRST_FACULTY)))
+                );
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'updateFaculty' method")
+    class UpdateFaculty {
+
+        @Test
+        @DisplayName("when PUT request with parameters 'id' and 'name' then should " +
+            "call facultyService.update call and redirect")
+        void putRequestWithIdAndName() throws Exception {
+            int facultyId = anyInt();
+            Faculty faculty = new Faculty(facultyId, NAME_FIRST_FACULTY);
+
+            mockMvc.perform(put(URI_FACULTIES_ID, facultyId)
+                    .param("name", NAME_FIRST_FACULTY))
+                .andDo(print())
+                .andExpectAll(
+                    status().is3xxRedirection()
+                );
+
+            verify(facultyServiceMock, times(1)).update(faculty);
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'deleteFaculty' method")
+    class DeleteFacultyTest {
+
+        @Test
+        @DisplayName("when DELETE request with @PathVariable 'id' then should " +
+            "call facultyService.delete once and redirect")
+        void deleteRequestWithId() throws Exception {
+            int facultyId = anyInt();
+            mockMvc.perform(delete(URI_FACULTIES_ID, facultyId))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection());
+
+            verify(facultyServiceMock, times(1)).delete(facultyId);
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'getGroupsByFaculty' method")
+    class GetGroupsByFacultyTest {
+
+        @Test
+        @DisplayName("when GET request with parameter id = 0 then should call " +
+            "groupService.getAll once and return JSON with groups")
+        void getRequestWithId0() throws Exception {
+            int facultyId = 0;
+            List<Group> testGroups = createTestGroups(facultyId);
+
+            when(groupServiceMock.getAll()).thenReturn(testGroups);
+
+            mockMvc.perform(get(URI_FACULTIES_ID_GROUPS, facultyId))
+                .andDo(print())
+                .andExpectAll(
+                    status().isOk(),
+                    content().contentType(MediaType.APPLICATION_JSON),
+                    jsonPath("$", hasSize(testGroups.size())),
+                    jsonPath("$[0].id", is(ID1)),
+                    jsonPath("$[0].name", is(NAME_FIRST_GROUP)),
+                    jsonPath("$[0].faculty.id", is(facultyId)),
+                    jsonPath("$[0].faculty.name", is(NAME_FIRST_FACULTY)),
+                    jsonPath("$[1].id", is(ID2)),
+                    jsonPath("$[1].name", is(NAME_SECOND_GROUP)),
+                    jsonPath("$[1].faculty.id", is(facultyId)),
+                    jsonPath("$[1].faculty.name", is(NAME_FIRST_FACULTY))
+                );
+            verify(groupServiceMock, times(1)).getAll();
+        }
+
+        @Test
+        @DisplayName("when GET request with parameter id != 0 then should call " +
+            "groupService.getAllByFacultyId once and return JSON with groups")
+        void getRequestWithId2() throws Exception {
+            int facultyId = 3;
+            List<Group> testGroups = createTestGroups(facultyId);
+            when(groupServiceMock.getAllByFacultyId(facultyId)).thenReturn(testGroups);
+
+            mockMvc.perform(get(URI_FACULTIES_ID_GROUPS, facultyId))
+                .andDo(print())
+                .andExpectAll(
+                    status().isOk(),
+                    content().contentType(MediaType.APPLICATION_JSON),
+                    jsonPath("$", hasSize(testGroups.size())),
+                    jsonPath("$[0].id", is(ID1)),
+                    jsonPath("$[0].name", is(NAME_FIRST_GROUP)),
+                    jsonPath("$[0].faculty.id", is(facultyId)),
+                    jsonPath("$[0].faculty.name", is(NAME_FIRST_FACULTY)),
+                    jsonPath("$[1].id", is(ID2)),
+                    jsonPath("$[1].name", is(NAME_SECOND_GROUP)),
+                    jsonPath("$[1].faculty.id", is(facultyId)),
+                    jsonPath("$[1].faculty.name", is(NAME_FIRST_FACULTY))
+                );
+            verify(groupServiceMock, times(1)).getAllByFacultyId(facultyId);
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'getFreeGroupsByFaculty' method")
+    class GetFreeGroupsByFacultyTest {
+
+        @Test
+        @DisplayName("when GET request with parameters then should call " +
+            "groupService.getFreeGroupsByFacultyOnLessonTime once return JSON with groups")
+        void getRequestWithParameters() throws Exception {
+            int facultyId = 4;
+            LocalDateTime startTime = LocalDateTime.of(2021, 5, 25, 10, 30);
+            LocalDateTime endTime = LocalDateTime.of(2021, 5, 25, 11, 0);
+
+            List<Group> testGroups = createTestGroups(facultyId);
+
+            when(groupServiceMock.getFreeGroupsByFacultyOnLessonTime(facultyId, startTime, endTime))
+                .thenReturn(testGroups);
+            mockMvc.perform(get("/faculties/{id}/groups/free", facultyId)
+                    .param("time_start", "2021-05-25 10:30")
+                    .param("time_end", "2021-05-25 11:00"))
+                .andDo(print())
+                .andExpectAll(
+                    status().isOk(),
+                    content().contentType(MediaType.APPLICATION_JSON),
+                    jsonPath("$", hasSize(testGroups.size())),
+                    jsonPath("$[0].id", is(ID1)),
+                    jsonPath("$[0].name", is(NAME_FIRST_GROUP)),
+                    jsonPath("$[0].faculty.id", is(facultyId)),
+                    jsonPath("$[0].faculty.name", is(NAME_FIRST_FACULTY)),
+                    jsonPath("$[1].id", is(ID2)),
+                    jsonPath("$[1].name", is(NAME_SECOND_GROUP)),
+                    jsonPath("$[1].faculty.id", is(facultyId)),
+                    jsonPath("$[1].faculty.name", is(NAME_FIRST_FACULTY))
+                );
+            verify(groupServiceMock, times(1))
+                .getFreeGroupsByFacultyOnLessonTime(facultyId, startTime, endTime);
+        }
+    }
+
 }
