@@ -11,10 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.jdbc.JdbcTestUtils;
-import ua.com.foxminded.university.domain.entity.Faculty;
-import ua.com.foxminded.university.domain.entity.Group;
-import ua.com.foxminded.university.domain.entity.Lesson;
-import ua.com.foxminded.university.domain.entity.Student;
+import ua.com.foxminded.university.domain.entity.*;
 import ua.com.foxminded.university.exception.DaoException;
 import ua.com.foxminded.university.springconfig.TestRootConfig;
 
@@ -25,6 +22,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static ua.com.foxminded.university.TestObjects.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestRootConfig.class)
@@ -45,16 +43,9 @@ class StudentDaoImplTest {
     private static final String SECOND_GROUP_NAME = "21Ger-1";
     private static final String FIRST_FACULTY_NAME = "Foreign Language";
     private static final String SECOND_FACULTY_NAME = "Chemical Technology";
-    private static final String FIRST_STUDENT_NAME = "Mike";
-    private static final String SECOND_STUDENT_NAME = "Alan";
-    private static final String THIRD_STUDENT_NAME = "Peter";
-    private static final String FIRST_STUDENT_LAST_NAME = "Smith";
-    private static final String FIRST_STUDENT_PATRONYMIC = "Jr";
     private static final String MESSAGE_EXCEPTION = "Student id(4) not found";
-    private static final String MESSAGE_UPDATE_MASK = "Can't update student " +
-        "id(%s)";
-    private static final String MESSAGE_DELETE_MASK = "Can't delete student " +
-        "id(%s)";
+    private static final String MESSAGE_UPDATE_MASK = "Can't update student id(%s)";
+    private static final String MESSAGE_DELETE_MASK = "Can't delete student id(%s)";
     private static final String MESSAGE_UPDATE_EXCEPTION = "Can't update " +
         "because student id(4) not found";
     private static final String MESSAGE_DELETE_EXCEPTION = "Can't delete " +
@@ -270,7 +261,7 @@ class StudentDaoImplTest {
             List<Student> actualStudents = dao.getStudentsByFaculty(faculty);
             assertThat(actualStudents, hasSize(2));
             List<String> listFirstNames = actualStudents.stream()
-                .map(student -> student.getFirstName()).collect(Collectors.toList());
+                .map(Person::getFirstName).collect(Collectors.toList());
             assertThat(listFirstNames,
                 containsInAnyOrder(FIRST_STUDENT_NAME, SECOND_STUDENT_NAME));
             assertThat(listFirstNames, not(hasItem(THIRD_STUDENT_NAME)));
