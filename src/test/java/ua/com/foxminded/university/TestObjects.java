@@ -37,8 +37,16 @@ public class TestObjects {
         return new Faculty(facultyId, NAME_FIRST_FACULTY);
     }
 
+    public static Group createTestGroup() {
+        return new Group(ID1, NAME_FIRST_GROUP, createTestFaculty(), true);
+    }
+
     public static Group createTestGroup(int facultyId) {
         return new Group(ID1, NAME_FIRST_GROUP, createTestFaculty(facultyId), true);
+    }
+
+    public static Group createTestGroup(int facultyId, int groupId) {
+        return new Group(groupId, NAME_FIRST_GROUP, createTestFaculty(facultyId), true);
     }
 
     public static Department createTestDepartment(int facultyId){

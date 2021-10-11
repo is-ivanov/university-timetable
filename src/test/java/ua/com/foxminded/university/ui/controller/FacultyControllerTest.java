@@ -202,9 +202,9 @@ class FacultyControllerTest {
             "JSON with expected faculty")
         void getRequestWithId() throws Exception {
             int facultyId = anyInt();
-            Faculty expectedFaculty = new Faculty(facultyId, NAME_FIRST_FACULTY);
+            Faculty testFaculty = createTestFaculty(facultyId);
 
-            when(facultyServiceMock.getById(facultyId)).thenReturn(expectedFaculty);
+            when(facultyServiceMock.getById(facultyId)).thenReturn(testFaculty);
 
             mockMvc.perform(get(URI_FACULTIES_ID, facultyId))
                 .andDo(print())
@@ -214,6 +214,7 @@ class FacultyControllerTest {
                     jsonPath("$.id", is(equalTo(facultyId))),
                     jsonPath("$.name", is(equalTo(NAME_FIRST_FACULTY)))
                 );
+            verify(facultyServiceMock, times(1)).getById(facultyId);
         }
     }
 
