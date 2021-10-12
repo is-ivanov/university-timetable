@@ -11,37 +11,31 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import ua.com.foxminded.university.domain.dto.LessonDto;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.*;
 import ua.com.foxminded.university.domain.filter.LessonFilter;
+import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
+import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.ResultMatcher.matchAll;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static ua.com.foxminded.university.TestObjects.*;
 
 @ExtendWith(MockitoExtension.class)
 class LessonControllerTest {
 
-    private static final int ID1 = 1;
-    private static final int ID2 = 2;
-    public static final String NAME_FIRST_FACULTY = "faculty1";
-    public static final String NAME_SECOND_FACULTY = "faculty2";
-    public static final String NAME_FIRST_DEPARTMENT = "dep1";
-    public static final String NAME_SECOND_DEPARTMENT = "dep2";
-
+    public static final String URI_LESSONS = "/lessons";
     private MockMvc mockMvc;
 
     @Mock
@@ -62,66 +56,59 @@ class LessonControllerTest {
     @Mock
     private RoomService roomServiceMock;
 
+    @Mock
+    private GroupService groupServiceMock;
+
+    @Mock
+    private LessonDtoMapper lessonDtoMapperMock;
+
+    @Mock
+    private TeacherDtoMapper teacherDtoMapperMock;
+
     @InjectMocks
     private LessonController lessonController;
 
     @BeforeEach
     void setUp() {
-        InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
-        viewResolver.setPrefix("/WEB-INF/templates/");
-        viewResolver.setSuffix(".html");
-        mockMvc = MockMvcBuilders.standaloneSetup(lessonController)
-            .setViewResolvers(viewResolver)
-            .build();
+        mockMvc = MockMvcBuilders.standaloneSetup(lessonController).build();
     }
 
+
     @Nested
-    @DisplayName("test showLessons")
-    class TestShowLessons {
+    @DisplayName("test 'showLessons' method")
+    class ShowLessonsTest {
 
         @Test
-        @DisplayName("without parameters")
+        @DisplayName("when GET request without parameters")
         void withoutParameters() throws Exception {
-            Faculty faculty1 = new Faculty(ID1, NAME_FIRST_FACULTY);
-            Faculty faculty2 = new Faculty(ID2, NAME_SECOND_FACULTY);
-            List<Faculty> faculties = Arrays.asList(faculty1, faculty2);
-
-            Department department1 = new Department(ID1, NAME_FIRST_DEPARTMENT,
-                faculty1);
-            Department department2 = new Department(ID2, NAME_SECOND_DEPARTMENT,
-                faculty2);
-            List<Department> departments = Arrays.asList(department1, department2);
-
-            TeacherDto teacherDto1 = new TeacherDto();
-            List<TeacherDto> teachers = Collections.singletonList(teacherDto1);
-
-            Course course = new Course();
-            List<Course> courses = Collections.singletonList(course);
-
-            Room room = new Room(ID1, "building", "212");
-            List<Room> rooms = Collections.singletonList(room);
+            List<Faculty> faculties = createTestFaculties();
+            List<Department> departments = createTestDepartments();
+            List<Teacher> teachers = createTestTeachers(ID1);
+            List<TeacherDto> teacherDtos = createTestTeacherDtos(ID1);
+            List<Course> courses = createTestCourses();
+            List<Room> rooms = createTestRooms();
 
             when(facultyServiceMock.getAllSortedByNameAsc()).thenReturn(faculties);
             when(departmentServiceMock.getAll()).thenReturn(departments);
-            //TODO
-            //            when(teacherServiceMock.convertListTeachersToDtos(any())).thenReturn(teachers);
+            when(teacherServiceMock.getAll()).thenReturn(teachers);
+            when(teacherDtoMapperMock.teachersToTeacherDtos(teachers)).thenReturn(teacherDtos);
             when(courseServiceMock.getAll()).thenReturn(courses);
             when(roomServiceMock.getAll()).thenReturn(rooms);
 
-            mockMvc.perform(get("/lesson"))
+            mockMvc.perform(get(URI_LESSONS))
                 .andDo(print())
-                .andExpect(matchAll(
+                .andExpectAll(
                     status().isOk(),
-                    view().name("lesson"),
+                    view().name("all_lessons"),
                     model().attributeDoesNotExist("isShowInactiveTeachers",
                         "isShowPastLessons", "lessons"),
                     model().attribute("lessonFilter", new LessonFilter()),
                     model().attribute("faculties", faculties),
                     model().attribute("departments", departments),
-                    model().attribute("teachers", teachers),
+                    model().attribute("teachers", teacherDtos),
                     model().attribute("courses", courses),
                     model().attribute("rooms", rooms)
-                ));
+                );
         }
     }
 
@@ -151,7 +138,7 @@ class LessonControllerTest {
 
             mockMvc.perform(post("/lesson/filter"))
                 .andDo(print())
-                .andExpect(matchAll(
+                .andExpectAll(
                     status().isOk(),
                     view().name("lesson"),
                     model().attributeDoesNotExist("isShowInactiveTeachers",
@@ -159,7 +146,7 @@ class LessonControllerTest {
                     model().attribute("teachers", teachers),
                     model().attribute("departments", departments),
                     model().attribute("lessons", lessonDtos)
-                ));
+                );
         }
 
         @Test
@@ -194,14 +181,14 @@ class LessonControllerTest {
                     .param("isShowInactiveTeachers", "on")
                     .param("isShowPastLessons", "on"))
                 .andDo(print())
-                .andExpect(matchAll(
+                .andExpectAll(
                     status().isOk(),
                     view().name("lesson"),
                     model().attribute("isShowInactiveTeachers", true),
                     model().attribute("isShowPastLessons", true),
                     model().attribute("teachers", teacherDtos),
                     model().attribute("departments", departments)
-                ));
+                );
             verify(lessonServiceMock, times(1)).getAllWithFilter(lessonFilter);
         }
 

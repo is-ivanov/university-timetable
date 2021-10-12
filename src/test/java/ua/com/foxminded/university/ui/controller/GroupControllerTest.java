@@ -13,30 +13,35 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import ua.com.foxminded.university.domain.dto.StudentDto;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
+import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.domain.mapper.StudentDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 import ua.com.foxminded.university.domain.service.interfaces.StudentService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ua.com.foxminded.university.TestObjects.*;
+import static ua.com.foxminded.university.ui.controller.FacultyControllerTest.TIME_END;
+import static ua.com.foxminded.university.ui.controller.FacultyControllerTest.TIME_START;
 
 @ExtendWith(MockitoExtension.class)
 class GroupControllerTest {
 
     public static final String URI_GROUPS = "/groups";
-    public static final String ON = "on";
     public static final String URI_GROUPS_ID = "/groups/{id}";
+    public static final String URI_GROUPS_ID_STUDENTS_FREE = "/groups/{id}/students/free";
+    public static final String ON = "on";
 
     @Captor
     ArgumentCaptor<Group> groupCaptor;
@@ -60,8 +65,7 @@ class GroupControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(groupController)
-            .build();
+        mockMvc = MockMvcBuilders.standaloneSetup(groupController).build();
     }
 
     @Nested
@@ -171,6 +175,7 @@ class GroupControllerTest {
                     jsonPath("$.faculty.id", is(equalTo(ID1))),
                     jsonPath("$.faculty.name", is(equalTo(NAME_FIRST_FACULTY)))
                 );
+            verify(groupServiceMock,times(1)).getById(groupId);
         }
     }
 
@@ -209,7 +214,58 @@ class GroupControllerTest {
         void deleteRequestWithId() throws Exception {
             int groupId = anyInt();
             mockMvc.perform(delete(URI_GROUPS_ID, groupId))
-                .andDo(print());
+                .andDo(print())
+                .andExpect(status().is3xxRedirection());
+            verify(groupServiceMock, times(1)).delete(groupId);
         }
     }
+
+    @Nested
+    @DisplayName("test 'getFreeStudentsFromGroup' method")
+    class GetFreeStudentsFromGroupTest {
+
+        @Test
+        @DisplayName("when GET request with parameters 'id', 'time_start' and " +
+            "'time_end' then should return expected list StudentDtos")
+        void getRequestWithPathParameterId() throws Exception {
+            int groupId = 5;
+            LocalDateTime startTime = LocalDateTime.of(2021, 10, 12, 13, 15);
+            LocalDateTime endTime = LocalDateTime.of(2021, 10, 12, 14, 45);
+
+            List<Student> testStudents = createTestStudents();
+            List<StudentDto> testStudentDtos = createTestStudentDtos(groupId);
+
+            when(studentServiceMock.getFreeStudentsFromGroup(groupId, startTime,
+                endTime)).thenReturn(testStudents);
+            when(studentDtoMapperMock.studentsToStudentDtos(testStudents))
+                .thenReturn(testStudentDtos);
+
+            mockMvc.perform(get(URI_GROUPS_ID_STUDENTS_FREE, groupId)
+                    .param(TIME_START, "2021-10-12 13:15")
+                    .param(TIME_END, "2021-10-12 14:45"))
+                .andDo(print())
+                .andExpectAll(
+                    status().isOk(),
+                    content().contentType(MediaType.APPLICATION_JSON),
+                    jsonPath("$", hasSize(testStudentDtos.size())),
+                    jsonPath("$[0].id", is(ID1)),
+                    jsonPath("$[0].firstName", is(NAME_FIRST_STUDENT)),
+                    jsonPath("$[0].patronymic", is(PATRONYMIC_FIRST_STUDENT)),
+                    jsonPath("$[0].lastName", is(LAST_NAME_FIRST_STUDENT)),
+                    jsonPath("$[0].active", is(true)),
+                    jsonPath("$[0].groupId", is(groupId)),
+                    jsonPath("$[0].groupName", is(NAME_FIRST_GROUP)),
+                    jsonPath("$[1].id", is(ID2)),
+                    jsonPath("$[1].firstName", is(NAME_SECOND_STUDENT)),
+                    jsonPath("$[1].patronymic", is(PATRONYMIC_SECOND_STUDENT)),
+                    jsonPath("$[1].lastName", is(LAST_NAME_SECOND_STUDENT)),
+                    jsonPath("$[1].active", is(false)),
+                    jsonPath("$[1].groupId", is(groupId)),
+                    jsonPath("$[1].groupName", is(NAME_FIRST_GROUP))
+                );
+                verify(studentServiceMock, times(1))
+                    .getFreeStudentsFromGroup(groupId, startTime, endTime);
+        }
+    }
+
 }

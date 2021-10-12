@@ -19,7 +19,6 @@ import java.util.List;
 
 import static ua.com.foxminded.university.ui.Util.defineRedirect;
 
-
 @Slf4j
 @RequiredArgsConstructor
 @Controller
@@ -27,7 +26,7 @@ import static ua.com.foxminded.university.ui.Util.defineRedirect;
 public class LessonController {
 
     public static final String GET_ALL_TEACHERS_FOR_SELECTOR = "Get all teachers for selector";
-    public static final String LESSONS = "lessons";
+    public static final String LESSONS = "all_lessons";
 
     private final LessonService lessonService;
     private final FacultyService facultyService;
@@ -51,7 +50,7 @@ public class LessonController {
                                       @RequestParam(required = false) String isShowPastLessons,
                                       @ModelAttribute LessonFilter lessonFilter,
                                       Model model) {
-        log.debug("Getting data for lessons.html with filter");
+        log.debug("Getting data for all_lessons.html with filter");
         if (isShowInactiveTeachers != null && isShowInactiveTeachers.equals("on")) {
             model.addAttribute("isShowInactiveTeachers", true);
         }
@@ -60,30 +59,15 @@ public class LessonController {
         }
         Integer departmentId = lessonFilter.getDepartmentId();
         Integer facultyId = lessonFilter.getFacultyId();
-        List<Teacher> teachers;
-        if (departmentId != null && departmentId > 0) {
-            log.debug("Get teachers for selector by departmentId ({})",
-                departmentId);
-            teachers = teacherService.getAllByDepartment(departmentId);
-        } else if (facultyId != null && facultyId > 0) {
-            log.debug("Get teachers for selector by facultyId ({})", facultyId);
-            teachers = teacherService.getAllByFaculty(facultyId);
-        } else {
-            log.debug(GET_ALL_TEACHERS_FOR_SELECTOR);
-            teachers = teacherService.getAll();
-        }
+        List<Teacher> teachers = getTeachersByFacultyOrDepartment(departmentId, facultyId);
         model.addAttribute("teachers",
             teacherDtoMapper.teachersToTeacherDtos(teachers));
-        if (facultyId != null && facultyId > 0) {
-            log.debug("Get departments for selector by facultyId ({})", facultyId);
-            model.addAttribute("departments", departmentService.getAllByFaculty(facultyId));
-        } else {
-            log.debug("Get all departments for selector");
-            model.addAttribute("departments", departmentService.getAll());
-        }
+        model.addAttribute("departments", getDepartmentsByFaculty(facultyId));
+
         log.debug("Get filtered lessons");
-        model.addAttribute(LESSONS,
-            lessonDtoMapper.lessonsToLessonDtos(lessonService.getAllWithFilter(lessonFilter)));
+        model.addAttribute("lessons",
+            lessonDtoMapper.lessonsToLessonDtos(
+                lessonService.getAllWithFilter(lessonFilter)));
         model.addAttribute("newLesson", new LessonDto());
         log.info("The required data is loaded into the model");
         return LESSONS;
@@ -231,4 +215,29 @@ public class LessonController {
         return roomService.getAll();
     }
 
+    private List<Department> getDepartmentsByFaculty(Integer facultyId) {
+        if (facultyId != null && facultyId > 0) {
+            log.debug("Get departments for selector by facultyId ({})", facultyId);
+            return departmentService.getAllByFaculty(facultyId);
+        } else {
+            log.debug("Get all departments for selector");
+            return departmentService.getAll();
+        }
+    }
+
+    private List<Teacher> getTeachersByFacultyOrDepartment(Integer departmentId, Integer facultyId) {
+        List<Teacher> teachers;
+        if (departmentId != null && departmentId > 0) {
+            log.debug("Get teachers for selector by departmentId ({})",
+                departmentId);
+            teachers = teacherService.getAllByDepartment(departmentId);
+        } else if (facultyId != null && facultyId > 0) {
+            log.debug("Get teachers for selector by facultyId ({})", facultyId);
+            teachers = teacherService.getAllByFaculty(facultyId);
+        } else {
+            log.debug(GET_ALL_TEACHERS_FOR_SELECTOR);
+            teachers = teacherService.getAll();
+        }
+        return teachers;
+    }
 }

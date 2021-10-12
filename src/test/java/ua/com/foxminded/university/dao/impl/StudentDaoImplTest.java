@@ -108,9 +108,9 @@ class StudentDaoImplTest {
 
             Student expectedStudent = new Student();
             expectedStudent.setId(ID1);
-            expectedStudent.setFirstName(FIRST_STUDENT_NAME);
-            expectedStudent.setLastName(FIRST_STUDENT_LAST_NAME);
-            expectedStudent.setPatronymic(FIRST_STUDENT_PATRONYMIC);
+            expectedStudent.setFirstName(NAME_FIRST_STUDENT);
+            expectedStudent.setLastName(LAST_NAME_FIRST_STUDENT);
+            expectedStudent.setPatronymic(PATRONYMIC_FIRST_STUDENT);
             expectedStudent.setActive(true);
             expectedStudent.setGroup(expectedGroup);
 
@@ -263,8 +263,8 @@ class StudentDaoImplTest {
             List<String> listFirstNames = actualStudents.stream()
                 .map(Person::getFirstName).collect(Collectors.toList());
             assertThat(listFirstNames,
-                containsInAnyOrder(FIRST_STUDENT_NAME, SECOND_STUDENT_NAME));
-            assertThat(listFirstNames, not(hasItem(THIRD_STUDENT_NAME)));
+                containsInAnyOrder(NAME_FIRST_STUDENT, NAME_SECOND_STUDENT));
+            assertThat(listFirstNames, not(hasItem(NAME_THIRD_STUDENT)));
         }
 
         @Test

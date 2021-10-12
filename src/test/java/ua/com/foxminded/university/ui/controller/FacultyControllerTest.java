@@ -49,6 +49,8 @@ class FacultyControllerTest {
     public static final String URI_FACULTIES_ID_TEACHERS = "/faculties/{id}/teachers";
     public static final String URI_FACULTIES_ID_GROUPS_FREE = "/faculties/{id}/groups/free";
     public static final String FACULTY_NAME = "faculty_name";
+    public static final String TIME_START = "time_start";
+    public static final String TIME_END = "time_end";
 
     @Captor
     ArgumentCaptor<Faculty> facultyCaptor;
@@ -332,8 +334,8 @@ class FacultyControllerTest {
             when(groupServiceMock.getFreeGroupsByFacultyOnLessonTime(facultyId, startTime, endTime))
                 .thenReturn(testGroups);
             mockMvc.perform(get(URI_FACULTIES_ID_GROUPS_FREE, facultyId)
-                    .param("time_start", "2021-05-25 10:30")
-                    .param("time_end", "2021-05-25 11:00"))
+                    .param(TIME_START, "2021-05-25 10:30")
+                    .param(TIME_END, "2021-05-25 11:00"))
                 .andDo(print())
                 .andExpectAll(
                     status().isOk(),
@@ -424,12 +426,12 @@ class FacultyControllerTest {
                     status().isOk(),
                     content().contentType(MediaType.APPLICATION_JSON),
                     jsonPath("$", hasSize(testTeachers.size())),
-                    jsonPath("$[0].firstName", is(FIRST_TEACHER_NAME)),
-                    jsonPath("$[0].lastName", is(FIRST_TEACHER_LAST_NAME)),
-                    jsonPath("$[0].patronymic", is(FIRST_TEACHER_PATRONYMIC)),
-                    jsonPath("$[1].firstName", is(SECOND_TEACHER_NAME)),
-                    jsonPath("$[1].lastName", is(SECOND_TEACHER_LAST_NAME)),
-                    jsonPath("$[1].patronymic", is(SECOND_TEACHER_PATRONYMIC))
+                    jsonPath("$[0].firstName", is(NAME_FIRST_TEACHER)),
+                    jsonPath("$[0].lastName", is(LAST_NAME_FIRST_TEACHER)),
+                    jsonPath("$[0].patronymic", is(PATRONYMIC_FIRST_TEACHER)),
+                    jsonPath("$[1].firstName", is(NAME_SECOND_TEACHER)),
+                    jsonPath("$[1].lastName", is(LAST_NAME_SECOND_TEACHER)),
+                    jsonPath("$[1].patronymic", is(PATRONYMIC_SECOND_TEACHER))
                 );
         }
     }
