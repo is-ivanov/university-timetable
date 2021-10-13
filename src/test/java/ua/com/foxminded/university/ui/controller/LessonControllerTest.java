@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -31,6 +32,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ua.com.foxminded.university.TestObjects.*;
+import static ua.com.foxminded.university.ui.controller.GroupControllerTest.ON;
 
 @ExtendWith(MockitoExtension.class)
 class LessonControllerTest {
@@ -79,7 +81,8 @@ class LessonControllerTest {
     class ShowLessonsTest {
 
         @Test
-        @DisplayName("when GET request without parameters")
+        @DisplayName("when GET request without parameters then should load into " +
+            "model expected data")
         void withoutParameters() throws Exception {
             List<Faculty> faculties = createTestFaculties();
             List<Department> departments = createTestDepartments();
@@ -113,83 +116,64 @@ class LessonControllerTest {
     }
 
     @Nested
-    @DisplayName("test showFilteredLesson")
-    class TestShowFilteredLesson {
+    @DisplayName("test 'showFilteredLesson' method")
+    class ShowFilteredLessonTest {
 
         @Test
-        @DisplayName("without parameters")
-        void withoutParameters() throws Exception {
-            Department department1 = new Department();
-            department1.setId(ID2);
-            List<Department> departments = Collections.singletonList(department1);
-
-            TeacherDto teacherDto1 = new TeacherDto();
-            teacherDto1.setId(ID1);
-            List<TeacherDto> teachers = Collections.singletonList(teacherDto1);
-
-            LessonDto lessonDto1 = LessonDto.builder()
-                .id(ID1)
-                .build();
-            List<LessonDto> lessonDtos = Collections.singletonList(lessonDto1);
-//TODO
-//            when(teacherServiceMock.convertListTeachersToDtos(any())).thenReturn(teachers);
-            when(departmentServiceMock.getAll()).thenReturn(departments);
-//            when(lessonServiceMock.convertListLessonsToDtos(any())).thenReturn(lessonDtos);
-
-            mockMvc.perform(post("/lesson/filter"))
-                .andDo(print())
-                .andExpectAll(
-                    status().isOk(),
-                    view().name("lesson"),
-                    model().attributeDoesNotExist("isShowInactiveTeachers",
-                        "isShowPastLessons"),
-                    model().attribute("teachers", teachers),
-                    model().attribute("departments", departments),
-                    model().attribute("lessons", lessonDtos)
-                );
-        }
-
-        @Test
-        @DisplayName("Test with all parameters")
+        @DisplayName("when GET request with all parameters")
         void testWithAllParameters() throws Exception {
-
+            int departmentId = 4;
+            int facultyId = 2;
+            int teacherId = 1;
+            int courseId = 5;
+            int roomId = 10;
             LocalDateTime dateFrom = LocalDateTime.of(2021, 8, 10, 8, 0);
             LocalDateTime dateTo = LocalDateTime.of(2021, 9, 15, 23, 0);
             LessonFilter lessonFilter = LessonFilter.builder()
-                .facultyId(1)
-                .departmentId(2)
-                .teacherId(1)
-                .courseId(5)
-                .roomId(10)
+                .facultyId(facultyId)
+                .departmentId(departmentId)
+                .teacherId(teacherId)
+                .courseId(courseId)
+                .roomId(roomId)
                 .dateFrom(dateFrom)
                 .dateTo(dateTo)
                 .build();
 
-            List<Teacher> teachers = Collections.singletonList(new Teacher());
-            List<TeacherDto> teacherDtos = Collections.singletonList(new TeacherDto());
-            when(teacherServiceMock.getAllByDepartment(ID2)).thenReturn(teachers);
-            when(teacherServiceMock.getAll()).thenReturn(null);
-//            TODO
-//            doReturn(teacherDtos).when(teacherServiceMock).convertListTeachersToDtos(teachers);
-//            doReturn(null).when(teacherServiceMock).convertListTeachersToDtos(null);
+            List<Teacher> teachers = createTestTeachers(ID1);
+            List<TeacherDto> teacherDtos = createTestTeacherDtos(ID1);
+            when(teacherServiceMock.getAllByDepartment(departmentId))
+                .thenReturn(teachers);
+            when(teacherDtoMapperMock.teachersToTeacherDtos(teachers))
+                .thenReturn(teacherDtos);
 
-            List<Department> departments = Collections.singletonList(new Department());
-            when(departmentServiceMock.getAllByFaculty(ID1)).thenReturn(departments);
+            List<Department> departments = createTestDepartments();
+            when(departmentServiceMock.getAllByFaculty(facultyId))
+                .thenReturn(departments);
 
-            mockMvc.perform(post("/lesson/filter")
+            List<Lesson> testLessons = createTestLessons();
+            when(lessonServiceMock.getAllWithFilter(lessonFilter))
+                .thenReturn(testLessons);
+
+            List<LessonDto> testLessonDtos = createTestLessonDtos();
+            when(lessonDtoMapperMock.lessonsToLessonDtos(testLessons))
+                .thenReturn(testLessonDtos);
+
+            mockMvc.perform(get("/lessons/filter")
                     .flashAttr("lessonFilter", lessonFilter)
-                    .param("isShowInactiveTeachers", "on")
-                    .param("isShowPastLessons", "on"))
+                    .param("isShowInactiveTeachers", ON)
+                    .param("isShowPastLessons", ON))
                 .andDo(print())
                 .andExpectAll(
                     status().isOk(),
-                    view().name("lesson"),
+                    view().name("all_lessons"),
                     model().attribute("isShowInactiveTeachers", true),
                     model().attribute("isShowPastLessons", true),
                     model().attribute("teachers", teacherDtos),
                     model().attribute("departments", departments)
                 );
+
             verify(lessonServiceMock, times(1)).getAllWithFilter(lessonFilter);
+            verify(teacherServiceMock, times(0)).getAllByFaculty(anyInt());
         }
 
         @Test

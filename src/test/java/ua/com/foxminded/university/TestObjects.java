@@ -1,9 +1,11 @@
 package ua.com.foxminded.university;
 
+import ua.com.foxminded.university.domain.dto.LessonDto;
 import ua.com.foxminded.university.domain.dto.StudentDto;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.*;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -20,6 +22,7 @@ public class TestObjects {
     public static final String NAME_SECOND_COURSE = "English";
     public static final String BUILDING_FIRST_ROOM = "building-1";
     public static final String NUMBER_FIRST_ROOM = "1457a";
+    public static final String BUILDING_AND_NUMBER_FIRST_ROOM = "building-1 - 1457a";
     public static final String BUILDING_SECOND_ROOM = "building-2";
     public static final String NUMBER_SECOND_ROOM = "101";
     public static final String NAME_FIRST_STUDENT = "Mike";
@@ -31,10 +34,19 @@ public class TestObjects {
     public static final String NAME_FIRST_TEACHER = "Ivan";
     public static final String PATRONYMIC_FIRST_TEACHER = "Petrovich";
     public static final String LAST_NAME_FIRST_TEACHER = "Ivanov";
+    public static final String FULL_NAME_FIRST_TEACHER = "Ivanov I.P.";
     public static final String NAME_SECOND_TEACHER = "Oleg";
     public static final String PATRONYMIC_SECOND_TEACHER = "Ivanovich";
     public static final String LAST_NAME_SECOND_TEACHER = "Petrov";
     public static final String NAME_THIRD_STUDENT = "Peter";
+    public static final LocalDateTime DATE_START_FIRST_LESSON =
+        LocalDateTime.of(2021, 8, 10, 8, 0);
+    public static final LocalDateTime DATE_END_FIRST_LESSON =
+        LocalDateTime.of(2021, 8, 10, 9, 30);
+    public static final LocalDateTime DATE_START_SECOND_LESSON =
+        LocalDateTime.of(2021, 10, 4, 12, 15);
+    public static final LocalDateTime DATE_END_SECOND_LESSON =
+        LocalDateTime.of(2021, 10, 4, 13, 45);
 
     public static Faculty createTestFaculty() {
         return new Faculty(ID1, NAME_FIRST_FACULTY);
@@ -50,7 +62,11 @@ public class TestObjects {
         return Arrays.asList(faculty1, faculty2);
     }
 
-    public static List<Course> createTestCourses(){
+    public static Course createTestCourse() {
+        return new Course(ID1, NAME_FIRST_COURSE);
+    }
+
+    public static List<Course> createTestCourses() {
         Course course1 = new Course(ID1, NAME_FIRST_COURSE);
         Course course2 = new Course(ID2, NAME_SECOND_COURSE);
         return Arrays.asList(course1, course2);
@@ -82,7 +98,7 @@ public class TestObjects {
         return Arrays.asList(group1, group2);
     }
 
-    public static Department createTestDepartment(int facultyId){
+    public static Department createTestDepartment(int facultyId) {
         return new Department(ID1, NAME_FIRST_DEPARTMENT, createTestFaculty(facultyId));
     }
 
@@ -145,6 +161,17 @@ public class TestObjects {
         return Arrays.asList(studentDto1, studentDto2);
     }
 
+    public static Teacher createTestTeacher() {
+        return Teacher.builder()
+            .id(ID1)
+            .firstName(NAME_FIRST_TEACHER)
+            .patronymic(PATRONYMIC_FIRST_TEACHER)
+            .lastName(LAST_NAME_FIRST_TEACHER)
+            .department(createTestDepartment(ID1))
+            .active(true)
+            .build();
+    }
+
     public static List<Teacher> createTestTeachers(int facultyId) {
         Department testDepartment = createTestDepartment(facultyId);
         Teacher teacher1 = Teacher.builder()
@@ -191,9 +218,63 @@ public class TestObjects {
         return Arrays.asList(teacherDto1, teacherDto2);
     }
 
+    public static Room createTestRoom() {
+        return new Room(ID1, BUILDING_FIRST_ROOM, NUMBER_FIRST_ROOM);
+    }
+
     public static List<Room> createTestRooms() {
         Room room1 = new Room(ID1, BUILDING_FIRST_ROOM, NUMBER_FIRST_ROOM);
         Room room2 = new Room(ID2, BUILDING_SECOND_ROOM, NUMBER_SECOND_ROOM);
         return Arrays.asList(room1, room2);
+    }
+
+    public static List<Lesson> createTestLessons() {
+        Lesson lesson1 = Lesson.builder()
+            .id(ID1)
+            .course(createTestCourse())
+            .teacher(createTestTeacher())
+            .room(createTestRoom())
+            .timeStart(DATE_START_FIRST_LESSON)
+            .timeEnd(DATE_END_FIRST_LESSON)
+            .students(createTestStudents())
+            .build();
+        Lesson lesson2 = Lesson.builder()
+            .id(ID2)
+            .course(createTestCourse())
+            .teacher(createTestTeacher())
+            .room(createTestRoom())
+            .timeStart(DATE_START_SECOND_LESSON)
+            .timeEnd(DATE_END_SECOND_LESSON)
+            .students(createTestStudents())
+            .build();
+        return Arrays.asList(lesson1, lesson2);
+    }
+
+    public static List<LessonDto> createTestLessonDtos() {
+        LessonDto lessonDto1 = LessonDto.builder()
+            .id(ID1)
+            .courseId(ID1)
+            .courseName(NAME_FIRST_COURSE)
+            .teacherId(ID1)
+            .teacherFullName(FULL_NAME_FIRST_TEACHER)
+            .roomId(ID1)
+            .buildingAndRoom(BUILDING_AND_NUMBER_FIRST_ROOM)
+            .timeStart(DATE_START_FIRST_LESSON)
+            .timeEnd(DATE_END_FIRST_LESSON)
+            .students(createTestStudentDtos(ID2))
+            .build();
+        LessonDto lessonDto2 = LessonDto.builder()
+            .id(ID2)
+            .courseId(ID1)
+            .courseName(NAME_FIRST_COURSE)
+            .teacherId(ID1)
+            .teacherFullName(FULL_NAME_FIRST_TEACHER)
+            .roomId(ID1)
+            .buildingAndRoom(BUILDING_AND_NUMBER_FIRST_ROOM)
+            .timeStart(DATE_START_SECOND_LESSON)
+            .timeEnd(DATE_END_SECOND_LESSON)
+            .students(createTestStudentDtos(ID2))
+            .build();
+        return Arrays.asList(lessonDto1, lessonDto2);
     }
 }
