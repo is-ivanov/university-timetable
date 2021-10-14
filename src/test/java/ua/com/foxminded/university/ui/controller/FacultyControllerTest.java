@@ -213,8 +213,8 @@ class FacultyControllerTest {
                 .andExpectAll(
                     status().isOk(),
                     content().contentType(MediaType.APPLICATION_JSON),
-                    jsonPath("$.id", is(equalTo(facultyId))),
-                    jsonPath("$.name", is(equalTo(NAME_FIRST_FACULTY)))
+                    jsonPath("$.id", is(facultyId)),
+                    jsonPath("$.name", is(NAME_FIRST_FACULTY))
                 );
             verify(facultyServiceMock, times(1)).getById(facultyId);
         }

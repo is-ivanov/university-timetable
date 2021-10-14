@@ -75,7 +75,7 @@ class GroupControllerTest {
         @Test
         @DisplayName("when GET request without parameters then should call " +
             "groupService.getAll once")
-        void testShowGroupsWithoutParameters() throws Exception {
+        void getRequestWithoutParameters() throws Exception {
             List<Faculty> allFaculties = createTestFaculties();
             List<Group> allGroups = createTestGroups();
 
@@ -99,7 +99,7 @@ class GroupControllerTest {
         @Test
         @DisplayName("when GET request with parameters facultyId and isShowInactive " +
             "then should call groupService.getAllByFacultyId once")
-        void testShowGroupsWithParameters() throws Exception {
+        void getRequestWithParameters() throws Exception {
             int facultyId = 1;
 
             List<Faculty> expectedFaculties = createTestFaculties();
@@ -169,11 +169,11 @@ class GroupControllerTest {
                 .andExpectAll(
                     status().isOk(),
                     content().contentType(MediaType.APPLICATION_JSON),
-                    jsonPath("$.id", is(equalTo(groupId))),
-                    jsonPath("$.name", is(equalTo(NAME_FIRST_GROUP))),
+                    jsonPath("$.id", is(groupId)),
+                    jsonPath("$.name", is(NAME_FIRST_GROUP)),
                     jsonPath("$.active", is(true)),
-                    jsonPath("$.faculty.id", is(equalTo(ID1))),
-                    jsonPath("$.faculty.name", is(equalTo(NAME_FIRST_FACULTY)))
+                    jsonPath("$.faculty.id", is(ID1)),
+                    jsonPath("$.faculty.name", is(NAME_FIRST_FACULTY))
                 );
             verify(groupServiceMock,times(1)).getById(groupId);
         }

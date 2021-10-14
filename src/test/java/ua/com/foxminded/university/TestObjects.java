@@ -6,6 +6,7 @@ import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -41,8 +42,10 @@ public class TestObjects {
     public static final String NAME_THIRD_STUDENT = "Peter";
     public static final LocalDateTime DATE_START_FIRST_LESSON =
         LocalDateTime.of(2021, 8, 10, 8, 0);
+    public static final String TEXT_DATE_START_FIRST_LESSON = "2021-08-10 08:00";
     public static final LocalDateTime DATE_END_FIRST_LESSON =
         LocalDateTime.of(2021, 8, 10, 9, 30);
+    public static final String TEXT_DATE_END_FIRST_LESSON = "2021-08-10 09:30";
     public static final LocalDateTime DATE_START_SECOND_LESSON =
         LocalDateTime.of(2021, 10, 4, 12, 15);
     public static final LocalDateTime DATE_END_SECOND_LESSON =
@@ -59,7 +62,7 @@ public class TestObjects {
     public static List<Faculty> createTestFaculties() {
         Faculty faculty1 = new Faculty(ID1, NAME_FIRST_FACULTY);
         Faculty faculty2 = new Faculty(ID2, NAME_SECOND_FACULTY);
-        return Arrays.asList(faculty1, faculty2);
+        return new ArrayList<>(Arrays.asList(faculty1, faculty2));
     }
 
     public static Course createTestCourse() {
@@ -69,7 +72,7 @@ public class TestObjects {
     public static List<Course> createTestCourses() {
         Course course1 = new Course(ID1, NAME_FIRST_COURSE);
         Course course2 = new Course(ID2, NAME_SECOND_COURSE);
-        return Arrays.asList(course1, course2);
+        return new ArrayList<>(Arrays.asList(course1, course2));
     }
 
     public static Group createTestGroup() {
@@ -88,14 +91,14 @@ public class TestObjects {
         Faculty faculty = createTestFaculty();
         Group group1 = new Group(ID1, NAME_FIRST_GROUP, faculty, true);
         Group group2 = new Group(ID2, NAME_SECOND_GROUP, faculty, true);
-        return Arrays.asList(group1, group2);
+        return new ArrayList<>(Arrays.asList(group1, group2));
     }
 
     public static List<Group> createTestGroups(int facultyId) {
         Faculty faculty = createTestFaculty(facultyId);
         Group group1 = new Group(ID1, NAME_FIRST_GROUP, faculty, true);
         Group group2 = new Group(ID2, NAME_SECOND_GROUP, faculty, true);
-        return Arrays.asList(group1, group2);
+        return new ArrayList<>(Arrays.asList(group1, group2));
     }
 
     public static Department createTestDepartment(int facultyId) {
@@ -106,14 +109,14 @@ public class TestObjects {
         Faculty faculty = createTestFaculty();
         Department department1 = new Department(ID1, NAME_FIRST_DEPARTMENT, faculty);
         Department department2 = new Department(ID2, NAME_SECOND_DEPARTMENT, faculty);
-        return Arrays.asList(department1, department2);
+        return new ArrayList<>(Arrays.asList(department1, department2));
     }
 
     public static List<Department> createTestDepartments(int facultyId) {
         Faculty faculty = createTestFaculty(facultyId);
         Department department1 = new Department(ID1, NAME_FIRST_DEPARTMENT, faculty);
         Department department2 = new Department(ID2, NAME_SECOND_DEPARTMENT, faculty);
-        return Arrays.asList(department1, department2);
+        return new ArrayList<>(Arrays.asList(department1, department2));
     }
 
     public static List<Student> createTestStudents() {
@@ -135,7 +138,7 @@ public class TestObjects {
             .active(true)
             .build();
 
-        return Arrays.asList(student1, student2);
+        return new ArrayList<>(Arrays.asList(student1, student2));
     }
 
     public static List<StudentDto> createTestStudentDtos(int groupId) {
@@ -158,7 +161,7 @@ public class TestObjects {
             .groupName(NAME_FIRST_GROUP)
             .build();
 
-        return Arrays.asList(studentDto1, studentDto2);
+        return new ArrayList<>(Arrays.asList(studentDto1, studentDto2));
     }
 
     public static Teacher createTestTeacher() {
@@ -191,7 +194,7 @@ public class TestObjects {
             .active(true)
             .build();
 
-        return Arrays.asList(teacher1, teacher2);
+        return new ArrayList<>(Arrays.asList(teacher1, teacher2));
     }
 
     public static List<TeacherDto> createTestTeacherDtos(int facultyId) {
@@ -215,7 +218,7 @@ public class TestObjects {
             .active(true)
             .build();
 
-        return Arrays.asList(teacherDto1, teacherDto2);
+        return new ArrayList<>(Arrays.asList(teacherDto1, teacherDto2));
     }
 
     public static Room createTestRoom() {
@@ -225,12 +228,12 @@ public class TestObjects {
     public static List<Room> createTestRooms() {
         Room room1 = new Room(ID1, BUILDING_FIRST_ROOM, NUMBER_FIRST_ROOM);
         Room room2 = new Room(ID2, BUILDING_SECOND_ROOM, NUMBER_SECOND_ROOM);
-        return Arrays.asList(room1, room2);
+        return new ArrayList<>(Arrays.asList(room1, room2));
     }
 
-    public static List<Lesson> createTestLessons() {
-        Lesson lesson1 = Lesson.builder()
-            .id(ID1)
+    public static Lesson createTestLesson(int lessonId) {
+        return Lesson.builder()
+            .id(lessonId)
             .course(createTestCourse())
             .teacher(createTestTeacher())
             .room(createTestRoom())
@@ -238,6 +241,10 @@ public class TestObjects {
             .timeEnd(DATE_END_FIRST_LESSON)
             .students(createTestStudents())
             .build();
+    }
+
+    public static List<Lesson> createTestLessons() {
+        Lesson lesson1 = createTestLesson(ID1);
         Lesson lesson2 = Lesson.builder()
             .id(ID2)
             .course(createTestCourse())
@@ -247,12 +254,12 @@ public class TestObjects {
             .timeEnd(DATE_END_SECOND_LESSON)
             .students(createTestStudents())
             .build();
-        return Arrays.asList(lesson1, lesson2);
+        return new ArrayList<>(Arrays.asList(lesson1, lesson2));
     }
 
-    public static List<LessonDto> createTestLessonDtos() {
-        LessonDto lessonDto1 = LessonDto.builder()
-            .id(ID1)
+    public static LessonDto createTestLessonDto(int lessonId) {
+        return LessonDto.builder()
+            .id(lessonId)
             .courseId(ID1)
             .courseName(NAME_FIRST_COURSE)
             .teacherId(ID1)
@@ -263,6 +270,10 @@ public class TestObjects {
             .timeEnd(DATE_END_FIRST_LESSON)
             .students(createTestStudentDtos(ID2))
             .build();
+    }
+
+    public static List<LessonDto> createTestLessonDtos() {
+        LessonDto lessonDto1 = createTestLessonDto(ID1);
         LessonDto lessonDto2 = LessonDto.builder()
             .id(ID2)
             .courseId(ID1)
@@ -275,6 +286,6 @@ public class TestObjects {
             .timeEnd(DATE_END_SECOND_LESSON)
             .students(createTestStudentDtos(ID2))
             .build();
-        return Arrays.asList(lessonDto1, lessonDto2);
+        return new ArrayList<>(Arrays.asList(lessonDto1, lessonDto2));
     }
 }

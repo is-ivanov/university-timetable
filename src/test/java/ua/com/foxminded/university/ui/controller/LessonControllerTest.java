@@ -5,13 +5,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.servlet.mvc.method.annotation.RequestAttributeMethodArgumentResolver;
 import ua.com.foxminded.university.domain.dto.LessonDto;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.*;
@@ -21,12 +21,11 @@ import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.*;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.ResultMatcher.matchAll;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -38,6 +37,8 @@ import static ua.com.foxminded.university.ui.controller.GroupControllerTest.ON;
 class LessonControllerTest {
 
     public static final String URI_LESSONS = "/lessons";
+    public static final String URI_LESSONS_FILTER = "/lessons/filter";
+    public static final String URI_LESSONS_ID_STUDENTS = "/lessons/{id}/students";
     private MockMvc mockMvc;
 
     @Mock
@@ -72,7 +73,9 @@ class LessonControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(lessonController).build();
+        mockMvc = MockMvcBuilders
+            .standaloneSetup(lessonController)
+            .build();
     }
 
 
@@ -83,7 +86,7 @@ class LessonControllerTest {
         @Test
         @DisplayName("when GET request without parameters then should load into " +
             "model expected data")
-        void withoutParameters() throws Exception {
+        void getRequestWithoutParameters() throws Exception {
             List<Faculty> faculties = createTestFaculties();
             List<Department> departments = createTestDepartments();
             List<Teacher> teachers = createTestTeachers(ID1);
@@ -120,8 +123,9 @@ class LessonControllerTest {
     class ShowFilteredLessonTest {
 
         @Test
-        @DisplayName("when GET request with all parameters")
-        void testWithAllParameters() throws Exception {
+        @DisplayName("when GET request with all parameters then should call " +
+            "expected methods in services")
+        void getRequestWithAllParameters() throws Exception {
             int departmentId = 4;
             int facultyId = 2;
             int teacherId = 1;
@@ -140,11 +144,8 @@ class LessonControllerTest {
                 .build();
 
             List<Teacher> teachers = createTestTeachers(ID1);
-            List<TeacherDto> teacherDtos = createTestTeacherDtos(ID1);
             when(teacherServiceMock.getAllByDepartment(departmentId))
                 .thenReturn(teachers);
-            when(teacherDtoMapperMock.teachersToTeacherDtos(teachers))
-                .thenReturn(teacherDtos);
 
             List<Department> departments = createTestDepartments();
             when(departmentServiceMock.getAllByFaculty(facultyId))
@@ -158,8 +159,14 @@ class LessonControllerTest {
             when(lessonDtoMapperMock.lessonsToLessonDtos(testLessons))
                 .thenReturn(testLessonDtos);
 
-            mockMvc.perform(get("/lessons/filter")
-                    .flashAttr("lessonFilter", lessonFilter)
+            mockMvc.perform(get(URI_LESSONS_FILTER)
+                    .param("facultyId", String.valueOf(facultyId))
+                    .param("departmentId", String.valueOf(departmentId))
+                    .param("teacherId", String.valueOf(teacherId))
+                    .param("courseId", String.valueOf(courseId))
+                    .param("roomId", String.valueOf(roomId))
+                    .param("dateFrom", "2021-08-10 08:00")
+                    .param("dateTo", "2021-09-15 23:00")
                     .param("isShowInactiveTeachers", ON)
                     .param("isShowPastLessons", ON))
                 .andDo(print())
@@ -168,157 +175,165 @@ class LessonControllerTest {
                     view().name("all_lessons"),
                     model().attribute("isShowInactiveTeachers", true),
                     model().attribute("isShowPastLessons", true),
-                    model().attribute("teachers", teacherDtos),
                     model().attribute("departments", departments)
                 );
 
             verify(lessonServiceMock, times(1)).getAllWithFilter(lessonFilter);
             verify(teacherServiceMock, times(0)).getAllByFaculty(anyInt());
+            verify(teacherDtoMapperMock, times(1)).teachersToTeacherDtos(teachers);
         }
 
         @Test
-        @DisplayName("Test with facultyId and without departmentId")
-        void testWithFacultyIdAndWithoutDepartmentId() throws Exception {
+        @DisplayName("when GET request with parameter facultyId and without " +
+            "departmentId then should call teacherService.getAllByDepartment")
+        void getRequestWithFacultyIdAndWithoutDepartmentId() throws Exception {
+            int facultyId = 3;
             LessonFilter lessonFilter = LessonFilter.builder()
-                .facultyId(ID1)
+                .facultyId(facultyId)
                 .build();
-            List<Teacher> teachers = Collections.singletonList(new Teacher());
-            List<TeacherDto> teacherDtos = Collections.singletonList(new TeacherDto());
-            when(teacherServiceMock.getAllByFaculty(ID1)).thenReturn(teachers);
-            when(teacherServiceMock.getAll()).thenReturn(null);
-//            TODO
-//            doReturn(teacherDtos).when(teacherServiceMock).convertListTeachersToDtos(teachers);
-//            doReturn(null).when(teacherServiceMock).convertListTeachersToDtos(null);
 
-            mockMvc.perform(post("/lesson/filter")
-                    .flashAttr("lessonFilter", lessonFilter))
+            mockMvc.perform(get(URI_LESSONS_FILTER)
+                    .param("facultyId", String.valueOf(facultyId)))
                 .andDo(print())
-                .andExpect(model().attribute("teachers", teacherDtos));
+                .andExpect(status().isOk());
+
+            verify(lessonServiceMock, times(1)).getAllWithFilter(lessonFilter);
+            verify(teacherServiceMock, times(1)).getAllByFaculty(facultyId);
+        }
+
+        @Test
+        @DisplayName("when GET request without parameters departmentId and facultyId " +
+            "then should call departmentService.getAll and teacherService.getAll")
+        void getRequestWithoutParametersFacultyIdAndDepartmentId() throws Exception {
+            mockMvc.perform(get(URI_LESSONS_FILTER))
+                .andDo(print())
+                .andExpect(status().isOk());
+            verify(departmentServiceMock, times(2)).getAll();
+            verify(teacherServiceMock, times(2)).getAll();
+        }
+
+    }
+
+    @Nested
+    @DisplayName("test 'getLessonWithStudents' method")
+    class GetLessonWithStudentsTest {
+
+        @Test
+        @DisplayName("when GET request with @PathVariable id then should return " +
+            "JSON with lessonDto in body")
+        void whenGetRequestWithPathVariableIdThenShouldReturnJson() throws Exception {
+            int lessonId = 5;
+            Lesson testLesson = createTestLesson(lessonId);
+            LessonDto testLessonDto = createTestLessonDto(lessonId);
+            when(lessonServiceMock.getById(lessonId)).thenReturn(testLesson);
+            when(lessonDtoMapperMock.lessonToLessonDto(testLesson))
+                .thenReturn(testLessonDto);
+            mockMvc.perform(get("/lessons/{id}", lessonId))
+                .andDo(print())
+                .andExpectAll(
+                    status().isOk(),
+                    content().contentType(MediaType.APPLICATION_JSON),
+                    jsonPath("$.id", is(lessonId)),
+                    jsonPath("$.courseId", is(ID1)),
+                    jsonPath("$.courseName", is(NAME_FIRST_COURSE)),
+                    jsonPath("$.teacherId", is(ID1)),
+                    jsonPath("$.teacherFullName", is(FULL_NAME_FIRST_TEACHER)),
+                    jsonPath("$.roomId", is(ID1)),
+                    jsonPath("$.buildingAndRoom", is(BUILDING_AND_NUMBER_FIRST_ROOM)),
+                    jsonPath("$.timeStart", is(TEXT_DATE_START_FIRST_LESSON)),
+                    jsonPath("$.timeEnd", is(TEXT_DATE_END_FIRST_LESSON)),
+                    jsonPath("$.students").isArray(),
+                    jsonPath("$.students", hasSize(2))
+                );
         }
     }
 
     @Nested
-    @DisplayName("test getTeachersByDepartment")
-    class TestGetTeachersByDepartment {
+    @DisplayName("test 'showLessonWithStudents' method")
+    class ShowLessonWithStudentsTest {
 
         @Test
-        @DisplayName("with parameter departmentId = 0")
-        void withParameterDepartmentId0() throws Exception {
-            Teacher teacher1 = new Teacher();
-            teacher1.setId(ID1);
-            Teacher teacher2 = new Teacher();
-            teacher2.setId(ID2);
-            List<Teacher> teachers = Arrays.asList(teacher1, teacher2);
+        @DisplayName("when GET request with @PathVariable id then should return " +
+            "view 'lesson' and call expected services")
+        void whenGetRequestWithPathVariableIdThenShouldReturnViewLesson() throws Exception {
+            int lessonId = 3;
 
-            TeacherDto teacherDto1 = new TeacherDto();
-            teacherDto1.setId(ID1);
-            TeacherDto teacherDto2 = new TeacherDto();
-            teacherDto2.setId(ID2);
-            List<TeacherDto> teacherDtos = Arrays.asList(teacherDto1, teacherDto2);
+            Lesson testLesson = createTestLesson(lessonId);
+            when(lessonServiceMock.getById(lessonId)).thenReturn(testLesson);
 
-            when(teacherServiceMock.getAll()).thenReturn(teachers);
-//            TODO
-//            when(teacherServiceMock.convertListTeachersToDtos(teachers)).thenReturn(teacherDtos);
+            LessonDto testLessonDto = createTestLessonDto(lessonId);
+            when(lessonDtoMapperMock.lessonToLessonDto(testLesson))
+                .thenReturn(testLessonDto);
 
-            mockMvc.perform(get("/lesson/department?departmentId=0"))
+            List<Teacher> testTeachers = createTestTeachers(ID1);
+            when(teacherServiceMock.getFreeTeachersOnLessonTime(DATE_START_FIRST_LESSON,
+                DATE_END_FIRST_LESSON)).thenReturn(testTeachers);
+
+            List<TeacherDto> testTeacherDtos = createTestTeacherDtos(ID1);
+            when(teacherDtoMapperMock.teachersToTeacherDtos(any())).thenReturn(testTeacherDtos);
+
+            List<Room> testRooms = createTestRooms();
+            when(roomServiceMock.getFreeRoomsOnLessonTime(DATE_START_FIRST_LESSON,
+                DATE_END_FIRST_LESSON)).thenReturn(testRooms);
+
+            List<Group> testGroups = createTestGroups();
+            when(groupServiceMock.getFreeGroupsOnLessonTime(DATE_START_FIRST_LESSON,
+                DATE_END_FIRST_LESSON)).thenReturn(testGroups);
+
+            mockMvc.perform(get(URI_LESSONS_ID_STUDENTS, lessonId))
                 .andDo(print())
-                .andExpect(matchAll(
-                    content().contentType(MediaType.APPLICATION_JSON),
+                .andExpectAll(
                     status().isOk(),
-                    jsonPath("$.length()").value(2),
-                    jsonPath("$.[0].id").value(1),
-                    jsonPath("$.[1].id").value(2)
-                ));
-        }
-
-        @Test
-        @DisplayName("with parameter departmentId = 1")
-        void withParameterDepartmentId1() throws Exception {
-            Teacher teacher1 = new Teacher();
-            teacher1.setId(ID1);
-            List<Teacher> teachers = Collections.singletonList(teacher1);
-
-            TeacherDto teacherDto1 = new TeacherDto();
-            teacherDto1.setId(ID1);
-            List<TeacherDto> teacherDtos = Collections.singletonList(teacherDto1);
-
-            when(teacherServiceMock.getAllByDepartment(ID1)).thenReturn(teachers);
-            when(teacherServiceMock.getAll()).thenReturn(null);
-//            TODO
-//            doReturn(teacherDtos).when(teacherServiceMock).convertListTeachersToDtos(teachers);
-//            doReturn(null).when(teacherServiceMock).convertListTeachersToDtos(null);
-
-            mockMvc.perform(get("/lesson/department?departmentId=1"))
-                .andDo(print())
-                .andExpect(matchAll(
-                    content().contentType(MediaType.APPLICATION_JSON),
-                    status().isOk(),
-                    jsonPath("$.length()").value(1),
-                    jsonPath("$.[0].id").value(1)
-                ));
+                    view().name("lesson"),
+                    model().attributeExists("lesson", "teachers", "rooms",
+                        "groups"),
+                    model().attribute("lesson", testLessonDto),
+                    model().attribute("teachers", testTeacherDtos),
+                    model().attribute("groups", testGroups)
+                );
         }
     }
 
     @Nested
-    @DisplayName("test getTeachersByFaculty")
-    class TestGetTeachersByFaculty {
+    @DisplayName("test 'createLesson' method")
+    class CreateLessonTest {
 
         @Test
-        @DisplayName("with parameters facultyId = 0")
-        void withParametersFacultyId0() throws Exception {
-            Teacher teacher1 = new Teacher();
-            teacher1.setId(ID1);
-            Teacher teacher2 = new Teacher();
-            teacher2.setId(ID2);
-            List<Teacher> teachers = Arrays.asList(teacher1, teacher2);
+        @DisplayName("when POST request with all required parameters then should " +
+            "call lessonService.add once and redirect")
+        void whenPostRequestWithParametersThenShouldCallServiceAndRedirect() throws Exception {
+            int courseId = 14;
+            int teacherId = 5;
+            int roomId = 7;
+            LocalDateTime timeStart = LocalDateTime.of(2021, 10, 14, 15, 45);
+            LocalDateTime timeEnd = LocalDateTime.of(2021, 10, 14, 17, 15);
 
-            TeacherDto teacherDto1 = new TeacherDto();
-            teacherDto1.setId(ID1);
-            TeacherDto teacherDto2 = new TeacherDto();
-            teacherDto2.setId(ID2);
-            List<TeacherDto> teacherDtos = Arrays.asList(teacherDto1, teacherDto2);
+            LessonDto lessonDto = LessonDto.builder()
+                .courseId(courseId)
+                .teacherId(teacherId)
+                .roomId(roomId)
+                .timeStart(timeStart)
+                .timeEnd(timeEnd)
+                .build();
 
-            when(teacherServiceMock.getAll()).thenReturn(teachers);
-//            TODO
-//            when(teacherServiceMock.convertListTeachersToDtos(teachers)).thenReturn(teacherDtos);
+            Lesson lesson = createTestLesson(ID1);
 
-            mockMvc.perform(get("/lesson/faculty?facultyId=0"))
+            when(lessonDtoMapperMock.lessonDtoToLesson(lessonDto)).thenReturn(lesson);
+
+            mockMvc.perform(post(URI_LESSONS)
+                    .param("course.id", String.valueOf(courseId))
+                    .param("teacherDto.id", String.valueOf(teacherId))
+                    .param("room.id", String.valueOf(roomId))
+                    .param("timeStart", "2021-10-14 15:45")
+                    .param("timeEnd", "2021-10-14 17:15"))
                 .andDo(print())
-                .andExpect(matchAll(
-                    content().contentType(MediaType.APPLICATION_JSON),
-                    status().isOk(),
-                    jsonPath("$.length()").value(2),
-                    jsonPath("$.[0].id").value(1),
-                    jsonPath("$.[1].id").value(2)
-                ));
-        }
+                .andExpect(status().is3xxRedirection());
 
-        @Test
-        @DisplayName("with parameter facultyId = 1")
-        void withParameterFacultyId1() throws Exception {
-            Teacher teacher1 = new Teacher();
-            teacher1.setId(ID1);
-            List<Teacher> teachers = Collections.singletonList(teacher1);
-
-            TeacherDto teacherDto1 = new TeacherDto();
-            teacherDto1.setId(ID1);
-            List<TeacherDto> teacherDtos = Collections.singletonList(teacherDto1);
-
-            when(teacherServiceMock.getAllByFaculty(ID1)).thenReturn(teachers);
-            when(teacherServiceMock.getAll()).thenReturn(null);
-//            TODO
-//            doReturn(teacherDtos).when(teacherServiceMock).convertListTeachersToDtos(teachers);
-//            doReturn(null).when(teacherServiceMock).convertListTeachersToDtos(null);
-
-            mockMvc.perform(get("/lesson/faculty?facultyId=1"))
-                .andDo(print())
-                .andExpect(matchAll(
-                    content().contentType(MediaType.APPLICATION_JSON),
-                    status().isOk(),
-                    jsonPath("$.length()").value(1),
-                    jsonPath("$.[0].id").value(1)
-                ));
+            verify(lessonDtoMapperMock, times(1))
+                .lessonDtoToLesson(lessonDto);
+            verify(lessonServiceMock, times(1)).add(lesson);
         }
     }
+
 
 }

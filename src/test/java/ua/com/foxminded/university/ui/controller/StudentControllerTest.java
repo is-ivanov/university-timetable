@@ -170,9 +170,9 @@ class StudentControllerTest {
                 .andExpect(matchAll(
                     content().contentType(MediaType.APPLICATION_JSON),
                     status().isOk(),
-                    jsonPath("$.length()").value(2),
-                    jsonPath("$.[0].name").value("group1"),
-                    jsonPath("$.[1].name").value("group2")
+                    jsonPath("$.length()", is(2)),
+                    jsonPath("$.[0].name",is("group1")),
+                    jsonPath("$.[1].name", is("group2"))
                 ));
         }
 
@@ -192,8 +192,8 @@ class StudentControllerTest {
                 .andExpect(matchAll(
                     content().contentType(MediaType.APPLICATION_JSON),
                     status().isOk(),
-                    jsonPath("$.length()").value(1),
-                    jsonPath("$.[0].name").value("group1")
+                    jsonPath("$.length()", is(1)),
+                    jsonPath("$.[0].name", is("group1"))
                 ));
         }
     }
