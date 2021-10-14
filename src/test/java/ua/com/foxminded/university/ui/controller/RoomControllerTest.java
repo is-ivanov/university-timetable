@@ -47,21 +47,21 @@ class RoomControllerTest {
             .build();
     }
 
-    @Test
-    @DisplayName("Test showRooms")
-    void testShowRooms() throws Exception{
-        Room room1 = new Room(ID1, "building1", "123");
-        Room room2 = new Room(ID2, "building1", "234");
-        List<Room> rooms = Arrays.asList(room1, room2);
-
-        when(roomServiceMock.getAll()).thenReturn(rooms);
-
-        mockMvc.perform(get("/room"))
-            .andDo(print())
-            .andExpect(matchAll(
-               status().isOk(),
-               view().name("room"),
-               model().attribute("rooms", rooms)
-            ));
-    }
+//    @Test
+//    @DisplayName("Test showRooms")
+//    void testShowRooms() throws Exception{
+//        Room room1 = new Room(ID1, "building1", "123");
+//        Room room2 = new Room(ID2, "building1", "234");
+//        List<Room> rooms = Arrays.asList(room1, room2);
+//
+//        when(roomServiceMock.getAll()).thenReturn(rooms);
+//
+//        mockMvc.perform(get("/room"))
+//            .andDo(print())
+//            .andExpect(matchAll(
+//               status().isOk(),
+//               view().name("room"),
+//               model().attribute("rooms", rooms)
+//            ));
+//    }
 }

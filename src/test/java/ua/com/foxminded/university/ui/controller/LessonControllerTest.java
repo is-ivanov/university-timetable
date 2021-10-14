@@ -321,9 +321,9 @@ class LessonControllerTest {
             when(lessonDtoMapperMock.lessonDtoToLesson(lessonDto)).thenReturn(lesson);
 
             mockMvc.perform(post(URI_LESSONS)
-                    .param("course.id", String.valueOf(courseId))
-                    .param("teacherDto.id", String.valueOf(teacherId))
-                    .param("room.id", String.valueOf(roomId))
+                    .param("courseId", String.valueOf(courseId))
+                    .param("teacherId", String.valueOf(teacherId))
+                    .param("roomId", String.valueOf(roomId))
                     .param("timeStart", "2021-10-14 15:45")
                     .param("timeEnd", "2021-10-14 17:15"))
                 .andDo(print())
