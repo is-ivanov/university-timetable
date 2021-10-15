@@ -4,6 +4,7 @@ import ua.com.foxminded.university.domain.dto.LessonDto;
 import ua.com.foxminded.university.domain.dto.StudentDto;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.*;
+import ua.com.foxminded.university.domain.filter.LessonFilter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,6 +13,12 @@ import java.util.List;
 
 public class TestObjects {
     public static final int ID1 = 1;
+    public static final int FACULTY_ID1 = 10;
+    public static final int DEPARTMENT_ID1 = 8;
+    public static final int TEACHER_ID1 = 7;
+    public static final int COURSE_ID1 = 45;
+    public static final int ROOM_ID1 = 5;
+    public static final int LESSON_ID1 = 23;
     public static final int ID2 = 2;
     public static final String NAME_FIRST_FACULTY = "IT faculty";
     public static final String NAME_SECOND_FACULTY = "Chemistry faculty";
@@ -41,15 +48,19 @@ public class TestObjects {
     public static final String LAST_NAME_SECOND_TEACHER = "Petrov";
     public static final String NAME_THIRD_STUDENT = "Peter";
     public static final LocalDateTime DATE_START_FIRST_LESSON =
-        LocalDateTime.of(2021, 8, 10, 8, 0);
-    public static final String TEXT_DATE_START_FIRST_LESSON = "2021-08-10 08:00";
+        LocalDateTime.of(2021, 5, 10, 10, 0);
+    public static final String TEXT_DATE_START_FIRST_LESSON = "2021-05-10 10:00";
     public static final LocalDateTime DATE_END_FIRST_LESSON =
-        LocalDateTime.of(2021, 8, 10, 9, 30);
-    public static final String TEXT_DATE_END_FIRST_LESSON = "2021-08-10 09:30";
+        LocalDateTime.of(2021, 5, 10, 11, 30);
+    public static final String TEXT_DATE_END_FIRST_LESSON = "2021-05-10 11:30";
     public static final LocalDateTime DATE_START_SECOND_LESSON =
         LocalDateTime.of(2021, 10, 4, 12, 15);
     public static final LocalDateTime DATE_END_SECOND_LESSON =
         LocalDateTime.of(2021, 10, 4, 13, 45);
+    public static final LocalDateTime DATE_FROM = LocalDateTime.of(2021, 8, 10, 8, 0);
+    public static final String TEXT_DATE_FROM = "2021-08-10 08:00";
+    public static final LocalDateTime DATE_TO = LocalDateTime.of(2021, 9, 15, 23, 0);
+    public static final String TEXT_DATE_TO = "2021-09-15 23:00";
 
     public static Faculty createTestFaculty() {
         return new Faculty(ID1, NAME_FIRST_FACULTY);
@@ -257,14 +268,29 @@ public class TestObjects {
         return new ArrayList<>(Arrays.asList(lesson1, lesson2));
     }
 
+    public static LessonDto createTestLessonDto() {
+        return LessonDto.builder()
+            .id(LESSON_ID1)
+            .courseId(COURSE_ID1)
+            .courseName(NAME_FIRST_COURSE)
+            .teacherId(TEACHER_ID1)
+            .teacherFullName(FULL_NAME_FIRST_TEACHER)
+            .roomId(ROOM_ID1)
+            .buildingAndRoom(BUILDING_AND_NUMBER_FIRST_ROOM)
+            .timeStart(DATE_START_FIRST_LESSON)
+            .timeEnd(DATE_END_FIRST_LESSON)
+            .students(createTestStudentDtos(ID2))
+            .build();
+    }
+
     public static LessonDto createTestLessonDto(int lessonId) {
         return LessonDto.builder()
             .id(lessonId)
-            .courseId(ID1)
+            .courseId(COURSE_ID1)
             .courseName(NAME_FIRST_COURSE)
-            .teacherId(ID1)
+            .teacherId(TEACHER_ID1)
             .teacherFullName(FULL_NAME_FIRST_TEACHER)
-            .roomId(ID1)
+            .roomId(ROOM_ID1)
             .buildingAndRoom(BUILDING_AND_NUMBER_FIRST_ROOM)
             .timeStart(DATE_START_FIRST_LESSON)
             .timeEnd(DATE_END_FIRST_LESSON)
@@ -287,5 +313,17 @@ public class TestObjects {
             .students(createTestStudentDtos(ID2))
             .build();
         return new ArrayList<>(Arrays.asList(lessonDto1, lessonDto2));
+    }
+
+    public static LessonFilter createTestLessonFilter() {
+        return LessonFilter.builder()
+            .facultyId(FACULTY_ID1)
+            .departmentId(DEPARTMENT_ID1)
+            .teacherId(TEACHER_ID1)
+            .courseId(COURSE_ID1)
+            .roomId(ROOM_ID1)
+            .dateFrom(DATE_FROM)
+            .dateTo(DATE_TO)
+            .build();
     }
 }

@@ -85,6 +85,7 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
+    @Transactional
     public void delete(int id) {
         log.info("Start deleting lesson id({})", id);
         log.debug("Deleting all students from lesson id({})", id);
