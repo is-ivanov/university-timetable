@@ -52,10 +52,10 @@ class FacultyControllerTest {
     public static final String TIME_START = "time_start";
     public static final String TIME_END = "time_end";
 
+    private MockMvc mockMvc;
+
     @Captor
     ArgumentCaptor<Faculty> facultyCaptor;
-
-    private MockMvc mockMvc;
 
     @Mock
     private FacultyService facultyServiceMock;
@@ -80,7 +80,8 @@ class FacultyControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(facultyController)
+        mockMvc = MockMvcBuilders
+            .standaloneSetup(facultyController)
             .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
             .build();
     }

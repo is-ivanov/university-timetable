@@ -237,7 +237,7 @@ public class TestObjects {
     }
 
     public static List<Room> createTestRooms() {
-        Room room1 = new Room(ID1, BUILDING_FIRST_ROOM, NUMBER_FIRST_ROOM);
+        Room room1 = createTestRoom();
         Room room2 = new Room(ID2, BUILDING_SECOND_ROOM, NUMBER_SECOND_ROOM);
         return new ArrayList<>(Arrays.asList(room1, room2));
     }
