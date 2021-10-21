@@ -54,9 +54,9 @@ public class RoomController {
         return "room";
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{roomId}")
     @ResponseBody
-    public Room showRoom(@PathVariable("id") int roomId) {
+    public Room showRoom(@PathVariable int roomId) {
         log.debug("Getting room by id({})", roomId);
         Room room = roomService.getById(roomId);
         log.info("Found {}", room);
@@ -86,9 +86,9 @@ public class RoomController {
         return defineRedirect(request);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{roomId}")
     public String updateRoom(@ModelAttribute Room room,
-                             @PathVariable("id") int roomId,
+                             @PathVariable int roomId,
                              HttpServletRequest request) {
         log.debug("Updating room id({})", roomId);
         roomService.update(room);
@@ -96,8 +96,8 @@ public class RoomController {
         return defineRedirect(request);
     }
 
-    @DeleteMapping("/{id}")
-    public String deleteRoom(@PathVariable("id") int roomId,
+    @DeleteMapping("/{roomId}")
+    public String deleteRoom(@PathVariable int roomId,
                              HttpServletRequest request) {
         log.debug("Deleting room with id({})", roomId);
         roomService.delete(roomId);
@@ -105,9 +105,9 @@ public class RoomController {
         return defineRedirect(request);
     }
 
-    @GetMapping("/{id}/timetable")
+    @GetMapping("/{roomId}/timetable")
     @ResponseBody
-    public List<LessonDto> getLessonsForRoom(@PathVariable("id") int roomId,
+    public List<LessonDto> getLessonsForRoom(@PathVariable int roomId,
                                              @RequestParam("start")
                                              @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                                  ZonedDateTime startTime,

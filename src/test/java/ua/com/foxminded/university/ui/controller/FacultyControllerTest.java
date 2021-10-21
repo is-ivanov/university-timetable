@@ -27,7 +27,6 @@ import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
 import ua.com.foxminded.university.ui.PageSequenceCreator;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -51,11 +50,10 @@ class FacultyControllerTest {
     public static final String FACULTY_NAME = "faculty_name";
     public static final String TIME_START = "time_start";
     public static final String TIME_END = "time_end";
-
-    private MockMvc mockMvc;
-
     @Captor
     ArgumentCaptor<Faculty> facultyCaptor;
+
+    private MockMvc mockMvc;
 
     @Mock
     private FacultyService facultyServiceMock;
@@ -235,9 +233,7 @@ class FacultyControllerTest {
             mockMvc.perform(put(URI_FACULTIES_ID, facultyId)
                     .param("name", NAME_FIRST_FACULTY))
                 .andDo(print())
-                .andExpectAll(
-                    status().is3xxRedirection()
-                );
+                .andExpect(status().is3xxRedirection());
 
             verify(facultyServiceMock, times(1)).update(faculty);
         }
@@ -327,16 +323,14 @@ class FacultyControllerTest {
             "groupService.getFreeGroupsByFacultyOnLessonTime once return JSON with groups")
         void getRequestWithParameters() throws Exception {
             int facultyId = 4;
-            LocalDateTime startTime = LocalDateTime.of(2021, 5, 25, 10, 30);
-            LocalDateTime endTime = LocalDateTime.of(2021, 5, 25, 11, 0);
 
             List<Group> testGroups = createTestGroups(facultyId);
 
-            when(groupServiceMock.getFreeGroupsByFacultyOnLessonTime(facultyId, startTime, endTime))
-                .thenReturn(testGroups);
+            when(groupServiceMock.getFreeGroupsByFacultyOnLessonTime(facultyId,
+                DATE_FROM, DATE_TO)).thenReturn(testGroups);
             mockMvc.perform(get(URI_FACULTIES_ID_GROUPS_FREE, facultyId)
-                    .param(TIME_START, "2021-05-25 10:30")
-                    .param(TIME_END, "2021-05-25 11:00"))
+                    .param(TIME_START, TEXT_DATE_FROM)
+                    .param(TIME_END, TEXT_DATE_TO))
                 .andDo(print())
                 .andExpectAll(
                     status().isOk(),
@@ -352,7 +346,7 @@ class FacultyControllerTest {
                     jsonPath("$[1].faculty.name", is(NAME_FIRST_FACULTY))
                 );
             verify(groupServiceMock, times(1))
-                .getFreeGroupsByFacultyOnLessonTime(facultyId, startTime, endTime);
+                .getFreeGroupsByFacultyOnLessonTime(facultyId, DATE_FROM, DATE_TO);
         }
     }
 

@@ -339,7 +339,8 @@ class LessonControllerTest {
     class AddStudentsFromGroupToLessonTest {
 
         @Test
-        @DisplayName("when POST request with parameters groupId and id then should call lessonService.addStudentsFromGroupToLesson and redirect")
+        @DisplayName("when POST request with parameters groupId and id then should " +
+            "call lessonService.addStudentsFromGroupToLesson and redirect")
         void postRequestWithParametersShouldCallLessonServiceAndRedirect() throws Exception {
             int lessonId = 45;
             int groupId = 78;
@@ -359,7 +360,8 @@ class LessonControllerTest {
     class UpdateLessonTest {
 
         @Test
-        @DisplayName("when PUT request with all required parameters then should call lessonService.update and redirect")
+        @DisplayName("when PUT request with all required parameters then should " +
+            "call lessonService.update and redirect")
         void putRequestWithAllParametersShouldCallLessonServiceAndRedirect() throws Exception {
             int lessonId = 45;
             LessonDto testLessonDto = LessonDto.builder()

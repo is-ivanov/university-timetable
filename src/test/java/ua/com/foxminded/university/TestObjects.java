@@ -55,8 +55,10 @@ public class TestObjects {
     public static final String TEXT_DATE_END_FIRST_LESSON = "2021-05-10 11:30";
     public static final LocalDateTime DATE_START_SECOND_LESSON =
         LocalDateTime.of(2021, 10, 4, 12, 15);
+    public static final String TEXT_DATE_START_SECOND_LESSON = "2021-10-04 12:15";
     public static final LocalDateTime DATE_END_SECOND_LESSON =
         LocalDateTime.of(2021, 10, 4, 13, 45);
+    public static final String TEXT_DATE_END_SECOND_LESSON = "2021-10-04 13:45";
     public static final LocalDateTime DATE_FROM = LocalDateTime.of(2021, 8, 10, 8, 0);
     public static final String TEXT_DATE_FROM = "2021-08-10 08:00";
     public static final LocalDateTime DATE_TO = LocalDateTime.of(2021, 9, 15, 23, 0);
@@ -302,11 +304,11 @@ public class TestObjects {
         LessonDto lessonDto1 = createTestLessonDto(ID1);
         LessonDto lessonDto2 = LessonDto.builder()
             .id(ID2)
-            .courseId(ID1)
+            .courseId(COURSE_ID1)
             .courseName(NAME_FIRST_COURSE)
-            .teacherId(ID1)
+            .teacherId(TEACHER_ID1)
             .teacherFullName(FULL_NAME_FIRST_TEACHER)
-            .roomId(ID1)
+            .roomId(ROOM_ID1)
             .buildingAndRoom(BUILDING_AND_NUMBER_FIRST_ROOM)
             .timeStart(DATE_START_SECOND_LESSON)
             .timeEnd(DATE_END_SECOND_LESSON)
