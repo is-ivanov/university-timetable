@@ -5,45 +5,47 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import ua.com.foxminded.university.domain.dto.StudentDto;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Student;
+import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
+import ua.com.foxminded.university.domain.mapper.StudentDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
+import ua.com.foxminded.university.domain.service.interfaces.LessonService;
 import ua.com.foxminded.university.domain.service.interfaces.StudentService;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.ResultMatcher.matchAll;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static ua.com.foxminded.university.TestObjects.*;
+import static ua.com.foxminded.university.ui.controller.GroupControllerTest.ON;
 
 @ExtendWith(MockitoExtension.class)
 class StudentControllerTest {
 
-    private static final int ID1 = 1;
-    private static final int ID2 = 2;
-    public static final String NAME_FIRST_FACULTY = "faculty1";
-    public static final String NAME_SECOND_FACULTY = "faculty2";
-    public static final String NAME_FIRST_GROUP = "group1";
-    public static final String NAME_SECOND_GROUP = "group2";
-    public static final String URL_ALL_PARAMETERS = "/student?facultyId=1&groupId=2&isShowInactiveGroups=on&isShowInactiveStudents=on";
-    public static final String URL_FACULTY_PARAMETER = "/student?facultyId=1";
-    public static final String URL_FACULTY_ID_0 = "/student/faculty?facultyId=0";
-    public static final String URL_FACULTY_ID_1 = "/student/faculty?facultyId=1";
+    public static final String URI_STUDENTS = "/students";
+
+    public static final String IS_SHOW_INACTIVE_GROUPS = "isShowInactiveGroups";
+    public static final String IS_SHOW_INACTIVE_STUDENTS = "isShowInactiveStudents";
+
+    @Captor
+    ArgumentCaptor<StudentDto> studentDtoCaptor;
 
     private MockMvc mockMvc;
 
@@ -56,145 +58,170 @@ class StudentControllerTest {
     @Mock
     private GroupService groupServiceMock;
 
+    @Mock
+    private LessonService lessonServiceMock;
+
+    @Mock
+    private StudentDtoMapper studentDtoMapperMock;
+
+    @Mock
+    private LessonDtoMapper lessonDtoMapperMock;
+
     @InjectMocks
     private StudentController studentController;
 
     @BeforeEach
     void setUp() {
-        InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
-        viewResolver.setPrefix("/WEB-INF/templates/");
-        viewResolver.setSuffix(".html");
-        mockMvc = MockMvcBuilders.standaloneSetup(studentController)
-            .setViewResolvers(viewResolver)
+        mockMvc = MockMvcBuilders
+            .standaloneSetup(studentController)
             .build();
     }
 
-//    @Nested
-//    @DisplayName("test showStudents")
-//    class TestShowStudents {
-//
-//        @Test
-//        @DisplayName("without parameters")
-//        void testWithoutParameters() throws Exception {
-//            Faculty faculty1 = new Faculty(ID1, NAME_FIRST_FACULTY);
-//            Faculty faculty2 = new Faculty(ID2, NAME_SECOND_FACULTY);
-//            List<Faculty> faculties = Arrays.asList(faculty1, faculty2);
-//
-//            Group group1 = new Group(ID1, NAME_FIRST_GROUP, faculty1, true);
-//            Group group2 = new Group(ID2, NAME_SECOND_GROUP, faculty2, true);
-//            List<Group> groups = Arrays.asList(group1, group2);
-//
-//            when(facultyServiceMock.getAllSortedByNameAsc()).thenReturn(faculties);
-//            when(groupServiceMock.getAll()).thenReturn(groups);
-//
-//            mockMvc.perform(get("/student"))
-//                .andDo(print())
-//                .andExpect(matchAll(
-//                    status().isOk(),
-//                    view().name("student"),
-//                    model().attributeDoesNotExist("isShowInactiveGroups",
-//                        "isShowInactiveStudents", "students"),
-//                    model().attribute("faculties", faculties),
-//                    model().attribute("groups", groups),
-//                    model().attribute("facultyIdSelect", is(nullValue())),
-//                    model().attribute("groupIdSelect", is(nullValue()))
-//                ));
-//        }
-//
-//        @Test
-//        @DisplayName("with all parameters")
-//        void testWithAllParameters() throws Exception {
-//            Student student1 = new Student();
-//            student1.setId(ID1);
-//            student1.setFirstName("student1 name");
-//            List<Student> students = Collections.singletonList(student1);
-//            Group group1 = new Group();
-//            group1.setId(ID1);
-//            List<Group> groups = Collections.singletonList(group1);
-//
-//            when(studentServiceMock.getStudentsByGroup(ID2)).thenReturn(students);
-//            when(groupServiceMock.getAllByFacultyId(ID1)).thenReturn(groups);
-//
-//            mockMvc.perform(get(URL_ALL_PARAMETERS))
-//                .andDo(print())
-//                .andExpect(matchAll(
-//                    status().isOk(),
-//                    view().name("student"),
-//                    model().attribute("isShowInactiveGroups", true),
-//                    model().attribute("isShowInactiveStudents", true),
-//                    model().attribute("students", students),
-//                    model().attribute("groups", groups)
-//                ));
-//        }
-//
-//        @Test
-//        @DisplayName("with facultyId and without groupId")
-//        void testWithFacultyIdAndWithoutGroupId() throws Exception {
-//            Student student1 = new Student();
-//            student1.setId(ID1);
-//            student1.setFirstName("student1 name");
-//            List<Student> students = Collections.singletonList(student1);
-//
-//            when(studentServiceMock.getStudentsByFaculty(ID1)).thenReturn(students);
-//
-//            mockMvc.perform(get(URL_FACULTY_PARAMETER))
-//                .andDo(print())
-//                .andExpect(matchAll(
-//                    status().isOk(),
-//                    view().name("student"),
-//                    model().attribute("students", students)
-//                ));
-//        }
-//    }
+    @Nested
+    @DisplayName("test 'showStudents' method")
+    class ShowStudentsTest {
 
-//    @Nested
-//    @DisplayName("test getGroups")
-//    class TestGetGroups {
-//
-//        @Test
-//        @DisplayName("with parameter facultyId = 0")
-//        void withParameterFacultyId0() throws Exception {
-//            Group group1 = new Group();
-//            group1.setId(ID1);
-//            group1.setName("group1");
-//            Group group2 = new Group();
-//            group2.setId(ID2);
-//            group2.setName("group2");
-//            List<Group> groups = Arrays.asList(group1, group2);
-//
-//            when(groupServiceMock.getAll()).thenReturn(groups);
-//
-//            mockMvc.perform(get(URL_FACULTY_ID_0))
-//
-//                .andDo(print())
-//                .andExpect(matchAll(
-//                    content().contentType(MediaType.APPLICATION_JSON),
-//                    status().isOk(),
-//                    jsonPath("$.length()", is(2)),
-//                    jsonPath("$.[0].name",is("group1")),
-//                    jsonPath("$.[1].name", is("group2"))
-//                ));
-//        }
-//
-//        @Test
-//        @DisplayName("with parameter facultyId = 1")
-//        void withParameterFacultyId1() throws Exception {
-//            Group group1 = new Group();
-//            group1.setId(ID1);
-//            group1.setName("group1");
-//            List<Group> groups = Collections.singletonList(group1);
-//
-//            when(groupServiceMock.getAllByFacultyId(ID1)).thenReturn(groups);
-//
-//            mockMvc.perform(get(URL_FACULTY_ID_1))
-//
-//                .andDo(print())
-//                .andExpect(matchAll(
-//                    content().contentType(MediaType.APPLICATION_JSON),
-//                    status().isOk(),
-//                    jsonPath("$.length()", is(1)),
-//                    jsonPath("$.[0].name", is("group1"))
-//                ));
-//        }
-//    }
+        @Test
+        @DisplayName("when GET request without parameters then should call expected " +
+            "services and not load students in attribute of model")
+        void getRequestWithoutParameters() throws Exception {
+            List<Faculty> faculties = createTestFaculties();
+            List<Group> groups = createTestGroups();
+
+            when(facultyServiceMock.getAllSortedByNameAsc()).thenReturn(faculties);
+            when(groupServiceMock.getAll()).thenReturn(groups);
+
+            mockMvc.perform(get(URI_STUDENTS))
+                .andDo(print())
+                .andExpectAll(
+                    status().isOk(),
+                    view().name("student"),
+                    model().attributeDoesNotExist(IS_SHOW_INACTIVE_GROUPS,
+                        IS_SHOW_INACTIVE_STUDENTS, "students"),
+                    model().attribute("faculties", faculties),
+                    model().attribute("groups", groups),
+                    model().attribute("facultyIdSelect", is(nullValue())),
+                    model().attribute("groupIdSelect", is(nullValue()))
+                );
+        }
+
+        @Test
+        @DisplayName("when GET request with all parameters")
+        void testWithAllParameters() throws Exception {
+            int facultyId = 3;
+            int groupId = 5;
+
+            List<Student> testStudents = createTestStudents();
+            List<Group> testGroups = createTestGroups();
+            List<StudentDto> testStudentDtos = createTestStudentDtos(groupId);
+
+            when(studentServiceMock.getStudentsByGroup(groupId)).thenReturn(testStudents);
+            when(groupServiceMock.getAllByFacultyId(facultyId)).thenReturn(testGroups);
+            when(studentDtoMapperMock.studentsToStudentDtos(testStudents))
+                .thenReturn(testStudentDtos);
+
+            mockMvc.perform(get(URI_STUDENTS)
+                    .param("facultyId", String.valueOf(facultyId))
+                    .param("groupId", String.valueOf(groupId))
+                    .param(IS_SHOW_INACTIVE_GROUPS, ON)
+                    .param(IS_SHOW_INACTIVE_STUDENTS, ON))
+                .andDo(print())
+                .andExpectAll(
+                    status().isOk(),
+                    view().name("student"),
+                    model().attribute(IS_SHOW_INACTIVE_GROUPS, true),
+                    model().attribute(IS_SHOW_INACTIVE_STUDENTS, true),
+                    model().attribute("students", testStudentDtos),
+                    model().attribute("groups", testGroups)
+                );
+            verify(studentServiceMock, never()).getStudentsByFaculty(anyInt());
+        }
+
+        @Test
+        @DisplayName("when GET request with facultyId and without groupId")
+        void testWithFacultyIdAndWithoutGroupId() throws Exception {
+            int facultyId = 15;
+
+            List<Student> testStudents = createTestStudents();
+            List<StudentDto> testStudentDtos = createTestStudentDtos(ID1);
+
+            when(studentServiceMock.getStudentsByFaculty(facultyId)).thenReturn(testStudents);
+            when(studentDtoMapperMock.studentsToStudentDtos(testStudents))
+                .thenReturn(testStudentDtos);
+
+            mockMvc.perform(get(URI_STUDENTS)
+                    .param("facultyId", String.valueOf(facultyId)))
+                .andDo(print())
+                .andExpectAll(
+                    status().isOk(),
+                    model().attribute("students", testStudentDtos)
+                );
+            verify(studentServiceMock, never()).getStudentsByGroup(anyInt());
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'createStudent' method")
+    class CreateStudentTest {
+        @Test
+        @DisplayName("when POST request with all required parameters then should " +
+            "call studentService.add once and redirect")
+        void postRequestWithParametersShouldCallStudentServiceAndRedirect() throws Exception {
+            String firstName = NAME_FIRST_STUDENT;
+            String patronymic = PATRONYMIC_FIRST_STUDENT;
+            String lastName = LAST_NAME_FIRST_STUDENT;
+            int groupId = 23;
+
+            mockMvc.perform(post(URI_STUDENTS)
+                    .param("firstName", firstName)
+                    .param("patronymic", patronymic)
+                    .param("lastName", lastName)
+                    .param("active", ON)
+                    .param("groupId", String.valueOf(groupId)))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection());
+
+            verify(studentDtoMapperMock, times(1))
+                .studentDtoToStudent(studentDtoCaptor.capture());
+
+            StudentDto expectedStudentDto = studentDtoCaptor.getValue();
+            assertThat(expectedStudentDto.getFirstName(), is(equalTo(firstName)));
+            assertThat(expectedStudentDto.getPatronymic(), is(equalTo(patronymic)));
+            assertThat(expectedStudentDto.getLastName(), is(equalTo(lastName)));
+            assertThat(expectedStudentDto.isActive(), is(true));
+            assertThat(expectedStudentDto.getGroupId(), is(equalTo(groupId)));
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'getStudent' method")
+    class GetStudentTest {
+        @Test
+        @DisplayName("when GET request with PathVariable id then should return " +
+            "JSON with expected studentDto in body")
+        void getRequestWithPathVariableIdShouldReturnJsonWithStudentDto() throws Exception {
+            Student testStudent = createTestStudent();
+            StudentDto testStudentDto = createTestStudentDto();
+
+            when(studentServiceMock.getById(STUDENT_ID1)).thenReturn(testStudent);
+            when(studentDtoMapperMock.studentToStudentDto(testStudent))
+                .thenReturn(testStudentDto);
+
+            mockMvc.perform(get("/students/{id}", STUDENT_ID1))
+                .andDo(print())
+                .andExpectAll(
+                    status().isOk(),
+                    content().contentType(MediaType.APPLICATION_JSON),
+                    jsonPath("$.id", is(STUDENT_ID1)),
+                    jsonPath("$.firstName", is(NAME_FIRST_STUDENT)),
+                    jsonPath("$.patronymic", is(PATRONYMIC_FIRST_STUDENT)),
+                    jsonPath("$.lastName", is(LAST_NAME_FIRST_STUDENT)),
+                    jsonPath("$.fullName", is(FULL_NAME_FIRST_STUDENT)),
+                    jsonPath("$.active", is(true)),
+                    jsonPath("$.groupId", is(GROUP_ID1)),
+                    jsonPath("$.groupName", is(NAME_FIRST_GROUP))
+                );
+        }
+    }
+
 }

@@ -13,13 +13,23 @@ import java.util.List;
 
 public class TestObjects {
     public static final int ID1 = 1;
-    public static final int FACULTY_ID1 = 10;
-    public static final int DEPARTMENT_ID1 = 8;
-    public static final int TEACHER_ID1 = 7;
-    public static final int COURSE_ID1 = 45;
-    public static final int ROOM_ID1 = 5;
-    public static final int LESSON_ID1 = 23;
     public static final int ID2 = 2;
+    public static final int FACULTY_ID1 = 10;
+    public static final int FACULTY_ID2 = 4;
+    public static final int DEPARTMENT_ID1 = 8;
+    public static final int DEPARTMENT_ID2 = 54;
+    public static final int TEACHER_ID1 = 7;
+    public static final int TEACHER_ID2 = 78;
+    public static final int STUDENT_ID1 = 12;
+    public static final int STUDENT_ID2 = 78;
+    public static final int COURSE_ID1 = 45;
+    public static final int COURSE_ID2 = 13;
+    public static final int ROOM_ID1 = 5;
+    public static final int ROOM_ID2 = 62;
+    public static final int LESSON_ID1 = 23;
+    public static final int LESSON_ID2 = 2;
+    public static final int GROUP_ID1 = 2;
+    public static final int GROUP_ID2 = 14;
     public static final String NAME_FIRST_FACULTY = "IT faculty";
     public static final String NAME_SECOND_FACULTY = "Chemistry faculty";
     public static final String NAME_FIRST_GROUP = "99XT-1";
@@ -36,9 +46,11 @@ public class TestObjects {
     public static final String NAME_FIRST_STUDENT = "Mike";
     public static final String PATRONYMIC_FIRST_STUDENT = "Jr";
     public static final String LAST_NAME_FIRST_STUDENT = "Smith";
+    public static final String FULL_NAME_FIRST_STUDENT = "Smith M.J.";
     public static final String NAME_SECOND_STUDENT = "Alan";
     public static final String PATRONYMIC_SECOND_STUDENT = "III";
     public static final String LAST_NAME_SECOND_STUDENT = "Johnson";
+    public static final String FULL_NAME_SECOND_STUDENT = "Johnson A.I.";
     public static final String NAME_FIRST_TEACHER = "Ivan";
     public static final String PATRONYMIC_FIRST_TEACHER = "Petrovich";
     public static final String LAST_NAME_FIRST_TEACHER = "Ivanov";
@@ -65,7 +77,7 @@ public class TestObjects {
     public static final String TEXT_DATE_TO = "2021-09-15 23:00";
 
     public static Faculty createTestFaculty() {
-        return new Faculty(ID1, NAME_FIRST_FACULTY);
+        return new Faculty(FACULTY_ID1, NAME_FIRST_FACULTY);
     }
 
     public static Faculty createTestFaculty(int facultyId) {
@@ -73,27 +85,27 @@ public class TestObjects {
     }
 
     public static List<Faculty> createTestFaculties() {
-        Faculty faculty1 = new Faculty(ID1, NAME_FIRST_FACULTY);
-        Faculty faculty2 = new Faculty(ID2, NAME_SECOND_FACULTY);
+        Faculty faculty1 = new Faculty(FACULTY_ID1, NAME_FIRST_FACULTY);
+        Faculty faculty2 = new Faculty(FACULTY_ID2, NAME_SECOND_FACULTY);
         return new ArrayList<>(Arrays.asList(faculty1, faculty2));
     }
 
     public static Course createTestCourse() {
-        return new Course(ID1, NAME_FIRST_COURSE);
+        return new Course(COURSE_ID1, NAME_FIRST_COURSE);
     }
 
     public static List<Course> createTestCourses() {
-        Course course1 = new Course(ID1, NAME_FIRST_COURSE);
-        Course course2 = new Course(ID2, NAME_SECOND_COURSE);
+        Course course1 = new Course(COURSE_ID1, NAME_FIRST_COURSE);
+        Course course2 = new Course(COURSE_ID2, NAME_SECOND_COURSE);
         return new ArrayList<>(Arrays.asList(course1, course2));
     }
 
     public static Group createTestGroup() {
-        return new Group(ID1, NAME_FIRST_GROUP, createTestFaculty(), true);
+        return new Group(GROUP_ID1, NAME_FIRST_GROUP, createTestFaculty(), true);
     }
 
     public static Group createTestGroup(int facultyId) {
-        return new Group(ID1, NAME_FIRST_GROUP, createTestFaculty(facultyId), true);
+        return new Group(GROUP_ID1, NAME_FIRST_GROUP, createTestFaculty(facultyId), true);
     }
 
     public static Group createTestGroup(int facultyId, int groupId) {
@@ -102,48 +114,53 @@ public class TestObjects {
 
     public static List<Group> createTestGroups() {
         Faculty faculty = createTestFaculty();
-        Group group1 = new Group(ID1, NAME_FIRST_GROUP, faculty, true);
-        Group group2 = new Group(ID2, NAME_SECOND_GROUP, faculty, true);
+        Group group1 = new Group(GROUP_ID1, NAME_FIRST_GROUP, faculty, true);
+        Group group2 = new Group(GROUP_ID2, NAME_SECOND_GROUP, faculty, true);
         return new ArrayList<>(Arrays.asList(group1, group2));
     }
 
     public static List<Group> createTestGroups(int facultyId) {
         Faculty faculty = createTestFaculty(facultyId);
-        Group group1 = new Group(ID1, NAME_FIRST_GROUP, faculty, true);
-        Group group2 = new Group(ID2, NAME_SECOND_GROUP, faculty, true);
+        Group group1 = new Group(GROUP_ID1, NAME_FIRST_GROUP, faculty, true);
+        Group group2 = new Group(GROUP_ID2, NAME_SECOND_GROUP, faculty, true);
         return new ArrayList<>(Arrays.asList(group1, group2));
     }
 
     public static Department createTestDepartment(int facultyId) {
-        return new Department(ID1, NAME_FIRST_DEPARTMENT, createTestFaculty(facultyId));
+        return new Department(DEPARTMENT_ID1, NAME_FIRST_DEPARTMENT, createTestFaculty(facultyId));
     }
 
     public static List<Department> createTestDepartments() {
         Faculty faculty = createTestFaculty();
-        Department department1 = new Department(ID1, NAME_FIRST_DEPARTMENT, faculty);
-        Department department2 = new Department(ID2, NAME_SECOND_DEPARTMENT, faculty);
+        Department department1 = new Department(DEPARTMENT_ID1, NAME_FIRST_DEPARTMENT, faculty);
+        Department department2 = new Department(DEPARTMENT_ID2, NAME_SECOND_DEPARTMENT, faculty);
         return new ArrayList<>(Arrays.asList(department1, department2));
     }
 
     public static List<Department> createTestDepartments(int facultyId) {
         Faculty faculty = createTestFaculty(facultyId);
-        Department department1 = new Department(ID1, NAME_FIRST_DEPARTMENT, faculty);
-        Department department2 = new Department(ID2, NAME_SECOND_DEPARTMENT, faculty);
+        Department department1 = new Department(DEPARTMENT_ID1, NAME_FIRST_DEPARTMENT, faculty);
+        Department department2 = new Department(DEPARTMENT_ID2, NAME_SECOND_DEPARTMENT, faculty);
         return new ArrayList<>(Arrays.asList(department1, department2));
     }
 
-    public static List<Student> createTestStudents() {
+    public static Student createTestStudent() {
         Group testGroup = createTestGroup();
-        Student student1 = Student.builder()
-            .id(ID1)
+        return Student.builder()
+            .id(STUDENT_ID1)
             .firstName(NAME_FIRST_STUDENT)
             .patronymic(PATRONYMIC_FIRST_STUDENT)
             .lastName(LAST_NAME_FIRST_STUDENT)
             .group(testGroup)
             .active(true)
             .build();
+    }
+
+    public static List<Student> createTestStudents() {
+        Group testGroup = createTestGroup();
+        Student student1 = createTestStudent();
         Student student2 = Student.builder()
-            .id(ID2)
+            .id(STUDENT_ID2)
             .firstName(NAME_SECOND_STUDENT)
             .patronymic(PATRONYMIC_SECOND_STUDENT)
             .lastName(LAST_NAME_SECOND_STUDENT)
@@ -154,21 +171,27 @@ public class TestObjects {
         return new ArrayList<>(Arrays.asList(student1, student2));
     }
 
-    public static List<StudentDto> createTestStudentDtos(int groupId) {
-        StudentDto studentDto1 = StudentDto.builder()
-            .id(ID1)
+    public static StudentDto createTestStudentDto() {
+        return StudentDto.builder()
+            .id(STUDENT_ID1)
             .firstName(NAME_FIRST_STUDENT)
             .patronymic(PATRONYMIC_FIRST_STUDENT)
             .lastName(LAST_NAME_FIRST_STUDENT)
+            .fullName(FULL_NAME_FIRST_STUDENT)
             .active(true)
-            .groupId(groupId)
+            .groupId(GROUP_ID1)
             .groupName(NAME_FIRST_GROUP)
             .build();
+    }
+
+    public static List<StudentDto> createTestStudentDtos(int groupId) {
+        StudentDto studentDto1 = createTestStudentDto();
         StudentDto studentDto2 = StudentDto.builder()
-            .id(ID2)
+            .id(STUDENT_ID2)
             .firstName(NAME_SECOND_STUDENT)
             .patronymic(PATRONYMIC_SECOND_STUDENT)
             .lastName(LAST_NAME_SECOND_STUDENT)
+            .fullName(FULL_NAME_SECOND_STUDENT)
             .active(false)
             .groupId(groupId)
             .groupName(NAME_FIRST_GROUP)

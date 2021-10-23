@@ -33,7 +33,7 @@ public class StudentController {
     private final FacultyService facultyService;
     private final GroupService groupService;
     private final LessonService lessonService;
-    private final StudentDtoMapper studentMapper;
+    private final StudentDtoMapper studentDtoMapper;
     private final LessonDtoMapper lessonDtoMapper;
 
     @GetMapping
@@ -54,12 +54,12 @@ public class StudentController {
         if (groupId != null && groupId > 0) {
             log.debug("Get students by groupId ({})", groupId);
             model.addAttribute("students",
-                studentMapper.studentsToStudentDtos(
+                studentDtoMapper.studentsToStudentDtos(
                     studentService.getStudentsByGroup(groupId)));
         } else if (facultyId != null && facultyId > 0) {
             log.debug("Get students by facultyId ({})", facultyId);
             model.addAttribute("students",
-                studentMapper.studentsToStudentDtos(
+                studentDtoMapper.studentsToStudentDtos(
                     studentService.getStudentsByFaculty(facultyId)));
         }
         if (facultyId != null && facultyId > 0) {
@@ -82,28 +82,28 @@ public class StudentController {
                                 HttpServletRequest request) {
         log.debug("Creating student [{} {} {}]", studentDto.getFirstName(),
             studentDto.getPatronymic(), studentDto.getLastName());
-        studentService.add(studentMapper.studentDtoToStudent(studentDto));
+        studentService.add(studentDtoMapper.studentDtoToStudent(studentDto));
         log.info("Student [{}, {}, {}] is created", studentDto.getFirstName(),
             studentDto.getPatronymic(), studentDto.getLastName());
         return defineRedirect(request);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{studentId}")
     @ResponseBody
-    public StudentDto getStudent(@PathVariable("id") int studentId) {
+    public StudentDto getStudent(@PathVariable int studentId) {
         log.debug("Getting student id({})", studentId);
         Student student = studentService.getById(studentId);
         log.info("Found student [{} {} {}]", student.getFirstName(),
             student.getPatronymic(), student.getLastName());
-        return studentMapper.studentToStudentDto(student);
+        return studentDtoMapper.studentToStudentDto(student);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{studentId}")
     public String updateStudent(@ModelAttribute StudentDto studentDto,
-                                @PathVariable("id") int studentId,
+                                @PathVariable int studentId,
                                 HttpServletRequest request) {
         log.debug("Updating student id({})", studentId);
-        studentService.update(studentMapper.studentDtoToStudent(studentDto));
+        studentService.update(studentDtoMapper.studentDtoToStudent(studentDto));
         log.info("Student id({}) is updated", studentId);
         return defineRedirect(request);
     }

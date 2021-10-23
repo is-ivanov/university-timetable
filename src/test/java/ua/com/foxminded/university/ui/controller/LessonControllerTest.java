@@ -38,6 +38,7 @@ class LessonControllerTest {
     public static final String URI_LESSONS_FILTER = "/lessons/filter";
     public static final String URI_LESSONS_ID_STUDENTS = "/lessons/{lessonId}/students";
     public static final String URI_LESSONS_ID_GROUPS = "/lessons/{lessonId}/groups";
+
     private MockMvc mockMvc;
 
     @Mock

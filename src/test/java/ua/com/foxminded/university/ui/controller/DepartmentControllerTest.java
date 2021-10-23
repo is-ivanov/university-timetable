@@ -34,6 +34,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static ua.com.foxminded.university.TestObjects.createTestFaculties;
 
 @ExtendWith(MockitoExtension.class)
 class DepartmentControllerTest {
@@ -76,12 +77,6 @@ class DepartmentControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(departmentController).build();
     }
 
-    private List<Faculty> createExpectedFaculties() {
-        Faculty faculty1 = new Faculty(ID1, NAME_FIRST_FACULTY);
-        Faculty faculty2 = new Faculty(ID2, NAME_SECOND_FACULTY);
-        return Arrays.asList(faculty1, faculty2);
-    }
-
     @Nested
     @DisplayName("test 'showDepartments' method")
     class ShowDepartments {
@@ -89,7 +84,7 @@ class DepartmentControllerTest {
         @Test
         @DisplayName("when GET request without parameters")
         void getRequestWithoutParameters() throws Exception {
-            List<Faculty> expectedFaculties = createExpectedFaculties();
+            List<Faculty> expectedFaculties = createTestFaculties();
             Department department1 = new Department(ID1, NAME_FIRST_DEPARTMENT,
                 expectedFaculties.get(0));
             Department department2 = new Department(ID2, NAME_SECOND_DEPARTMENT,
@@ -114,7 +109,7 @@ class DepartmentControllerTest {
         @Test
         @DisplayName("when GET request with parameter facultyId")
         void getRequestWithParameterFacultyId() throws Exception {
-            List<Faculty> expectedFaculties = createExpectedFaculties();
+            List<Faculty> expectedFaculties = createTestFaculties();
             Faculty faculty1 = expectedFaculties.get(0);
             Department department1 = new Department(ID1, NAME_FIRST_DEPARTMENT,
                 faculty1);
