@@ -28,9 +28,9 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ua.com.foxminded.university.TestObjects.*;
@@ -40,7 +40,7 @@ import static ua.com.foxminded.university.ui.controller.GroupControllerTest.ON;
 class StudentControllerTest {
 
     public static final String URI_STUDENTS = "/students";
-
+    public static final String URI_STUDENTS_ID = "/students/{id}";
     public static final String IS_SHOW_INACTIVE_GROUPS = "isShowInactiveGroups";
     public static final String IS_SHOW_INACTIVE_STUDENTS = "isShowInactiveStudents";
 
@@ -207,7 +207,7 @@ class StudentControllerTest {
             when(studentDtoMapperMock.studentToStudentDto(testStudent))
                 .thenReturn(testStudentDto);
 
-            mockMvc.perform(get("/students/{id}", STUDENT_ID1))
+            mockMvc.perform(get(URI_STUDENTS_ID, STUDENT_ID1))
                 .andDo(print())
                 .andExpectAll(
                     status().isOk(),
@@ -221,6 +221,36 @@ class StudentControllerTest {
                     jsonPath("$.groupId", is(GROUP_ID1)),
                     jsonPath("$.groupName", is(NAME_FIRST_GROUP))
                 );
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'updateStudent' method")
+    class UpdateStudentTest {
+        @Test
+        @DisplayName("when PUT request with all required parameters then should " +
+            "call studentDtoMapper and redirect")
+        void putRequestWithParametersShouldCallStudentDtoMapper() throws Exception {
+            mockMvc.perform(put(URI_STUDENTS_ID, STUDENT_ID1)
+                    .param("firstName", NAME_FIRST_STUDENT)
+                    .param("patronymic", PATRONYMIC_FIRST_STUDENT)
+                    .param("lastName", LAST_NAME_FIRST_STUDENT)
+                    .param("active", ON)
+                    .param("groupId", String.valueOf(GROUP_ID1)))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection());
+
+            verify(studentDtoMapperMock, times(1))
+                .studentDtoToStudent(studentDtoCaptor.capture());
+
+            StudentDto expectedStudentDto = studentDtoCaptor.getValue();
+
+            assertThat(expectedStudentDto.getId(), is(STUDENT_ID1));
+            assertThat(expectedStudentDto.getFirstName(), is(NAME_FIRST_STUDENT));
+            assertThat(expectedStudentDto.getPatronymic(), is(PATRONYMIC_FIRST_STUDENT));
+            assertThat(expectedStudentDto.getLastName(), is(LAST_NAME_FIRST_STUDENT));
+            assertThat(expectedStudentDto.isActive(), is(true));
+            assertThat(expectedStudentDto.getGroupId(), is(GROUP_ID1));
         }
     }
 

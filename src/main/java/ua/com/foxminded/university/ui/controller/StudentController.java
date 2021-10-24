@@ -88,9 +88,9 @@ public class StudentController {
         return defineRedirect(request);
     }
 
-    @GetMapping("/{studentId}")
+    @GetMapping("/{id}")
     @ResponseBody
-    public StudentDto getStudent(@PathVariable int studentId) {
+    public StudentDto getStudent(@PathVariable("id") int studentId) {
         log.debug("Getting student id({})", studentId);
         Student student = studentService.getById(studentId);
         log.info("Found student [{} {} {}]", student.getFirstName(),
@@ -98,9 +98,9 @@ public class StudentController {
         return studentDtoMapper.studentToStudentDto(student);
     }
 
-    @PutMapping("/{studentId}")
+    @PutMapping("/{id}")
     public String updateStudent(@ModelAttribute StudentDto studentDto,
-                                @PathVariable int studentId,
+                                @PathVariable("id") int studentId,
                                 HttpServletRequest request) {
         log.debug("Updating student id({})", studentId);
         studentService.update(studentDtoMapper.studentDtoToStudent(studentDto));

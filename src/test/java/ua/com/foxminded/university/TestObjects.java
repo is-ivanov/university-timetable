@@ -184,8 +184,21 @@ public class TestObjects {
             .build();
     }
 
+    public static StudentDto createTestStudentDto(int groupId) {
+        return StudentDto.builder()
+            .id(STUDENT_ID1)
+            .firstName(NAME_FIRST_STUDENT)
+            .patronymic(PATRONYMIC_FIRST_STUDENT)
+            .lastName(LAST_NAME_FIRST_STUDENT)
+            .fullName(FULL_NAME_FIRST_STUDENT)
+            .active(true)
+            .groupId(groupId)
+            .groupName(NAME_FIRST_GROUP)
+            .build();
+    }
+
     public static List<StudentDto> createTestStudentDtos(int groupId) {
-        StudentDto studentDto1 = createTestStudentDto();
+        StudentDto studentDto1 = createTestStudentDto(groupId);
         StudentDto studentDto2 = StudentDto.builder()
             .id(STUDENT_ID2)
             .firstName(NAME_SECOND_STUDENT)
@@ -202,7 +215,7 @@ public class TestObjects {
 
     public static Teacher createTestTeacher() {
         return Teacher.builder()
-            .id(ID1)
+            .id(TEACHER_ID1)
             .firstName(NAME_FIRST_TEACHER)
             .patronymic(PATRONYMIC_FIRST_TEACHER)
             .lastName(LAST_NAME_FIRST_TEACHER)
@@ -214,7 +227,7 @@ public class TestObjects {
     public static List<Teacher> createTestTeachers(int facultyId) {
         Department testDepartment = createTestDepartment(facultyId);
         Teacher teacher1 = Teacher.builder()
-            .id(ID1)
+            .id(TEACHER_ID1)
             .firstName(NAME_FIRST_TEACHER)
             .patronymic(PATRONYMIC_FIRST_TEACHER)
             .lastName(LAST_NAME_FIRST_TEACHER)
@@ -222,7 +235,7 @@ public class TestObjects {
             .active(true)
             .build();
         Teacher teacher2 = Teacher.builder()
-            .id(ID2)
+            .id(TEACHER_ID2)
             .firstName(NAME_SECOND_TEACHER)
             .patronymic(PATRONYMIC_SECOND_TEACHER)
             .lastName(LAST_NAME_SECOND_TEACHER)
@@ -236,7 +249,7 @@ public class TestObjects {
     public static List<TeacherDto> createTestTeacherDtos(int facultyId) {
         Department testDepartment = createTestDepartment(facultyId);
         TeacherDto teacherDto1 = TeacherDto.builder()
-            .id(ID1)
+            .id(TEACHER_ID1)
             .firstName(NAME_FIRST_TEACHER)
             .patronymic(PATRONYMIC_FIRST_TEACHER)
             .lastName(LAST_NAME_FIRST_TEACHER)
@@ -245,7 +258,7 @@ public class TestObjects {
             .active(true)
             .build();
         TeacherDto teacherDto2 = TeacherDto.builder()
-            .id(ID2)
+            .id(TEACHER_ID2)
             .firstName(NAME_SECOND_TEACHER)
             .patronymic(PATRONYMIC_SECOND_TEACHER)
             .lastName(LAST_NAME_SECOND_TEACHER)
@@ -258,12 +271,12 @@ public class TestObjects {
     }
 
     public static Room createTestRoom() {
-        return new Room(ID1, BUILDING_FIRST_ROOM, NUMBER_FIRST_ROOM);
+        return new Room(ROOM_ID1, BUILDING_FIRST_ROOM, NUMBER_FIRST_ROOM);
     }
 
     public static List<Room> createTestRooms() {
         Room room1 = createTestRoom();
-        Room room2 = new Room(ID2, BUILDING_SECOND_ROOM, NUMBER_SECOND_ROOM);
+        Room room2 = new Room(ROOM_ID2, BUILDING_SECOND_ROOM, NUMBER_SECOND_ROOM);
         return new ArrayList<>(Arrays.asList(room1, room2));
     }
 
@@ -280,9 +293,9 @@ public class TestObjects {
     }
 
     public static List<Lesson> createTestLessons() {
-        Lesson lesson1 = createTestLesson(ID1);
+        Lesson lesson1 = createTestLesson(LESSON_ID1);
         Lesson lesson2 = Lesson.builder()
-            .id(ID2)
+            .id(LESSON_ID2)
             .course(createTestCourse())
             .teacher(createTestTeacher())
             .room(createTestRoom())
@@ -324,9 +337,9 @@ public class TestObjects {
     }
 
     public static List<LessonDto> createTestLessonDtos() {
-        LessonDto lessonDto1 = createTestLessonDto(ID1);
+        LessonDto lessonDto1 = createTestLessonDto(LESSON_ID1);
         LessonDto lessonDto2 = LessonDto.builder()
-            .id(ID2)
+            .id(LESSON_ID2)
             .courseId(COURSE_ID1)
             .courseName(NAME_FIRST_COURSE)
             .teacherId(TEACHER_ID1)

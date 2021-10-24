@@ -156,7 +156,7 @@ class RoomControllerTest {
         @DisplayName("when GET request with @PathVariable id then should return " +
             "JSON with room in body")
         void getRequestWithPathVariableIdThenShouldReturnJsonRoom() throws Exception {
-            int roomId = ID1;
+            int roomId = ROOM_ID1;
             Room testRoom = createTestRoom();
 
             when(roomServiceMock.getById(roomId)).thenReturn(testRoom);
@@ -193,10 +193,10 @@ class RoomControllerTest {
                     status().isOk(),
                     content().contentType(MediaType.APPLICATION_JSON),
                     jsonPath("$", hasSize(testRooms.size())),
-                    jsonPath("$[0].id", is(ID1)),
+                    jsonPath("$[0].id", is(ROOM_ID1)),
                     jsonPath("$[0].building", is(BUILDING_FIRST_ROOM)),
                     jsonPath("$[0].number", is(NUMBER_FIRST_ROOM)),
-                    jsonPath("$[1].id", is(ID2)),
+                    jsonPath("$[1].id", is(ROOM_ID2)),
                     jsonPath("$[1].building", is(BUILDING_SECOND_ROOM)),
                     jsonPath("$[1].number", is(NUMBER_SECOND_ROOM))
                 );
@@ -283,7 +283,7 @@ class RoomControllerTest {
                     status().isOk(),
                     content().contentType(MediaType.APPLICATION_JSON),
                     jsonPath("$", hasSize(2)),
-                    jsonPath("$[0].id", is(ID1)),
+                    jsonPath("$[0].id", is(LESSON_ID1)),
                     jsonPath("$[0].courseId", is(COURSE_ID1)),
                     jsonPath("$[0].courseName", is(NAME_FIRST_COURSE)),
                     jsonPath("$[0].teacherId", is(TEACHER_ID1)),
@@ -292,7 +292,7 @@ class RoomControllerTest {
                     jsonPath("$[0].buildingAndRoom", is(BUILDING_AND_NUMBER_FIRST_ROOM)),
                     jsonPath("$[0].timeStart", is(TEXT_DATE_START_FIRST_LESSON)),
                     jsonPath("$[0].timeEnd", is(TEXT_DATE_END_FIRST_LESSON)),
-                    jsonPath("$[1].id", is(ID2)),
+                    jsonPath("$[1].id", is(LESSON_ID2)),
                     jsonPath("$[1].courseId", is(COURSE_ID1)),
                     jsonPath("$[1].courseName", is(NAME_FIRST_COURSE)),
                     jsonPath("$[1].teacherId", is(TEACHER_ID1)),

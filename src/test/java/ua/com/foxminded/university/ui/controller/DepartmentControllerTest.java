@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static ua.com.foxminded.university.TestObjects.createTestFaculties;
+import static ua.com.foxminded.university.TestObjects.*;
 
 @ExtendWith(MockitoExtension.class)
 class DepartmentControllerTest {
@@ -109,23 +109,23 @@ class DepartmentControllerTest {
         @Test
         @DisplayName("when GET request with parameter facultyId")
         void getRequestWithParameterFacultyId() throws Exception {
-            List<Faculty> expectedFaculties = createTestFaculties();
-            Faculty faculty1 = expectedFaculties.get(0);
-            Department department1 = new Department(ID1, NAME_FIRST_DEPARTMENT,
-                faculty1);
-            List<Department> departmentsFaculty1 = Collections.singletonList(department1);
+            List<Faculty> testFaculties = createTestFaculties();
+            Faculty faculty1 = testFaculties.get(0);
+            List<Department> departmentsFromFacultyId1 = createTestDepartments(FACULTY_ID1);
 
-            when(facultyServiceMock.getAllSortedByNameAsc()).thenReturn(expectedFaculties);
-            when(departmentServiceMock.getAllByFaculty(ID1)).thenReturn(departmentsFaculty1);
+            when(facultyServiceMock.getAllSortedByNameAsc())
+                .thenReturn(testFaculties);
+            when(departmentServiceMock.getAllByFaculty(FACULTY_ID1))
+                .thenReturn(departmentsFromFacultyId1);
 
             mockMvc.perform(get(URI_DEPARTMENTS)
-                    .param("facultyId", String.valueOf(ID1)))
+                    .param("facultyId", String.valueOf(FACULTY_ID1)))
                 .andDo(print())
                 .andExpectAll(
                     status().isOk(),
                     view().name("department"),
-                    model().attribute("faculties", expectedFaculties),
-                    model().attribute("departments", departmentsFaculty1),
+                    model().attribute("faculties", testFaculties),
+                    model().attribute("departments", departmentsFromFacultyId1),
                     model().attribute("facultySelected", faculty1)
                 );
         }

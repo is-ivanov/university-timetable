@@ -159,7 +159,7 @@ class GroupControllerTest {
         @DisplayName("when GET request with @PathParameter 'id' then should call " +
             "groupService.getById once and return JSON with expected group")
         void getRequestWithParameterId() throws Exception {
-            int groupId = ID1;
+            int groupId = GROUP_ID1;
             Group testGroup = createTestGroup();
 
             when(groupServiceMock.getById(groupId)).thenReturn(testGroup);
@@ -172,7 +172,7 @@ class GroupControllerTest {
                     jsonPath("$.id", is(groupId)),
                     jsonPath("$.name", is(NAME_FIRST_GROUP)),
                     jsonPath("$.active", is(true)),
-                    jsonPath("$.faculty.id", is(ID1)),
+                    jsonPath("$.faculty.id", is(FACULTY_ID1)),
                     jsonPath("$.faculty.name", is(NAME_FIRST_FACULTY))
                 );
             verify(groupServiceMock,times(1)).getById(groupId);
@@ -248,14 +248,14 @@ class GroupControllerTest {
                     status().isOk(),
                     content().contentType(MediaType.APPLICATION_JSON),
                     jsonPath("$", hasSize(testStudentDtos.size())),
-                    jsonPath("$[0].id", is(ID1)),
+                    jsonPath("$[0].id", is(STUDENT_ID1)),
                     jsonPath("$[0].firstName", is(NAME_FIRST_STUDENT)),
                     jsonPath("$[0].patronymic", is(PATRONYMIC_FIRST_STUDENT)),
                     jsonPath("$[0].lastName", is(LAST_NAME_FIRST_STUDENT)),
                     jsonPath("$[0].active", is(true)),
                     jsonPath("$[0].groupId", is(groupId)),
                     jsonPath("$[0].groupName", is(NAME_FIRST_GROUP)),
-                    jsonPath("$[1].id", is(ID2)),
+                    jsonPath("$[1].id", is(STUDENT_ID2)),
                     jsonPath("$[1].firstName", is(NAME_SECOND_STUDENT)),
                     jsonPath("$[1].patronymic", is(PATRONYMIC_SECOND_STUDENT)),
                     jsonPath("$[1].lastName", is(LAST_NAME_SECOND_STUDENT)),
