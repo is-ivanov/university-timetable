@@ -110,7 +110,7 @@ class StudentControllerTest {
 
         @Test
         @DisplayName("when GET request with all parameters")
-        void testWithAllParameters() throws Exception {
+        void getRequestWithAllParameters() throws Exception {
             int facultyId = 3;
             int groupId = 5;
 
