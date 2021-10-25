@@ -73,9 +73,9 @@ public class LessonController {
         return LESSONS;
     }
 
-    @GetMapping("/{lessonId}")
+    @GetMapping("/{id}")
     @ResponseBody
-    public LessonDto getLessonWithStudents(@PathVariable int lessonId) {
+    public LessonDto getLessonWithStudents(@PathVariable("id") int lessonId) {
         log.debug("Getting lesson id({})", lessonId);
         LessonDto lessonDto = lessonDtoMapper.lessonToLessonDto(lessonService.getById(lessonId));
         log.info("Found lesson [teacher {}, course {}, room {}]",
@@ -84,8 +84,8 @@ public class LessonController {
         return lessonDto;
     }
 
-    @GetMapping("/{lessonId}/students")
-    public String showLessonWithStudents(@PathVariable int lessonId,
+    @GetMapping("/{id}/students")
+    public String showLessonWithStudents(@PathVariable("id") int lessonId,
                                          Model model) {
         log.debug("Getting data for lesson.html for lesson id({})", lessonId);
         Lesson lesson = lessonService.getById(lessonId);
@@ -128,8 +128,8 @@ public class LessonController {
         return defineRedirect(request);
     }
 
-    @PostMapping("/{lessonId}/students")
-    public String addStudentToLesson(@PathVariable int lessonId,
+    @PostMapping("/{id}/students")
+    public String addStudentToLesson(@PathVariable("id") int lessonId,
                                      @RequestParam int studentId,
                                      HttpServletRequest request) {
         log.debug("Adding student id({}) to lesson id({})", studentId, lessonId);
@@ -138,8 +138,8 @@ public class LessonController {
         return defineRedirect(request);
     }
 
-    @PostMapping("/{lessonId}/groups")
-    public String addStudentsFromGroupToLesson(@PathVariable int lessonId,
+    @PostMapping("/{id}/groups")
+    public String addStudentsFromGroupToLesson(@PathVariable("id") int lessonId,
                                                @RequestParam int groupId,
                                                HttpServletRequest request) {
         log.debug("Adding all students from group id({}) to lesson id({})",
@@ -150,9 +150,9 @@ public class LessonController {
         return defineRedirect(request);
     }
 
-    @PutMapping("/{lessonId}")
+    @PutMapping("/{id}")
     public String updateLesson(@ModelAttribute LessonDto lessonDto,
-                               @PathVariable int lessonId,
+                               @PathVariable("id") int lessonId,
                                HttpServletRequest request) {
         log.debug("Updating lesson id({})", lessonId);
         lessonDto.setId(lessonId);
@@ -161,8 +161,8 @@ public class LessonController {
         return defineRedirect(request);
     }
 
-    @DeleteMapping("/{lessonId}/students")
-    public String removeStudentFromLesson(@PathVariable int lessonId,
+    @DeleteMapping("/{id}/students")
+    public String removeStudentFromLesson(@PathVariable("id") int lessonId,
                                           @RequestParam int[] studentIds,
                                           HttpServletRequest request) {
         if (studentIds.length == 1) {
@@ -177,8 +177,8 @@ public class LessonController {
         return defineRedirect(request);
     }
 
-    @DeleteMapping("/{lessonId}")
-    public String deleteLesson(@PathVariable int lessonId,
+    @DeleteMapping("/{id}")
+    public String deleteLesson(@PathVariable("id") int lessonId,
                                HttpServletRequest request) {
         log.debug("Deleting lesson id({})", lessonId);
         lessonService.delete(lessonId);

@@ -94,9 +94,9 @@ public class GroupController {
         return defineRedirect(request);
     }
 
-    @GetMapping("/{groupId}/students/free")
+    @GetMapping("/{id}/students/free")
     @ResponseBody
-    public List<StudentDto> getFreeStudentsFromGroup(@PathVariable int groupId,
+    public List<StudentDto> getFreeStudentsFromGroup(@PathVariable("id") int groupId,
                                                      @RequestParam("time_start")
                                                      @DateTimeFormat(pattern = DATE_TIME_PATTERN)
                                                          LocalDateTime startTime,

@@ -95,9 +95,9 @@ public class FacultyController {
         return defineRedirect(request);
     }
 
-    @GetMapping("/{facultyId}/groups")
+    @GetMapping("/{id}/groups")
     @ResponseBody
-    public List<Group> getGroupsByFaculty(@PathVariable int facultyId) {
+    public List<Group> getGroupsByFaculty(@PathVariable("id") int facultyId) {
         if (facultyId == 0) {
             log.debug("Get all groups");
             return groupService.getAll();

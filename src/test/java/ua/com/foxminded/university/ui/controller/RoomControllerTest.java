@@ -43,6 +43,10 @@ class RoomControllerTest {
     public static final String ROOM_NUMBER = "room_number";
     public static final String URI_ROOMS_ROOM_ID_TIMETABLE = "/rooms/{roomId}/timetable";
     public static final String URI_ROOMS_FREE = "/rooms/free";
+    public static final LocalDateTime START_TIME_TIMETABLE = LocalDateTime.of(2021, 9, 27, 0, 0, 0);
+    public static final LocalDateTime END_TIME_TIMETABLE = LocalDateTime.of(2021, 11, 8, 0, 0, 0);
+    public static final String START_TIME_TIMETABLE_ISO = "2021-09-27T00:00:00+03:00";
+    public static final String END_TIME_TIMETABLE_ISO = "2021-11-08T00:00:00+03:00";
 
     @Captor
     ArgumentCaptor<Pageable> pageableCaptor;
@@ -269,15 +273,13 @@ class RoomControllerTest {
             int roomId = 13;
             List<Lesson> testLessons = createTestLessons();
             List<LessonDto> testLessonDtos = createTestLessonDtos();
-            LocalDateTime startTime = LocalDateTime.of(2021, 9, 27, 0, 0, 0);
-            LocalDateTime endTime = LocalDateTime.of(2021, 11, 8, 0, 0, 0);
-            when(lessonServiceMock.getAllForRoomForTimePeriod(roomId, startTime, endTime))
+            when(lessonServiceMock.getAllForRoomForTimePeriod(roomId, START_TIME_TIMETABLE, END_TIME_TIMETABLE))
                 .thenReturn(testLessons);
             when(lessonDtoMapperMock.lessonsToLessonDtos(testLessons))
                 .thenReturn(testLessonDtos);
             mockMvc.perform(get(URI_ROOMS_ROOM_ID_TIMETABLE, roomId)
-                    .param("start", "2021-09-27T00:00:00+03:00")
-                    .param("end", "2021-11-08T00:00:00+03:00"))
+                    .param("start", START_TIME_TIMETABLE_ISO)
+                    .param("end", END_TIME_TIMETABLE_ISO))
                 .andDo(print())
                 .andExpectAll(
                     status().isOk(),

@@ -13,9 +13,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import ua.com.foxminded.university.domain.dto.LessonDto;
 import ua.com.foxminded.university.domain.dto.StudentDto;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
+import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
 import ua.com.foxminded.university.domain.mapper.StudentDtoMapper;
@@ -28,13 +30,13 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ua.com.foxminded.university.TestObjects.*;
 import static ua.com.foxminded.university.ui.controller.GroupControllerTest.ON;
+import static ua.com.foxminded.university.ui.controller.RoomControllerTest.*;
 
 @ExtendWith(MockitoExtension.class)
 class StudentControllerTest {
@@ -43,6 +45,7 @@ class StudentControllerTest {
     public static final String URI_STUDENTS_ID = "/students/{id}";
     public static final String IS_SHOW_INACTIVE_GROUPS = "isShowInactiveGroups";
     public static final String IS_SHOW_INACTIVE_STUDENTS = "isShowInactiveStudents";
+    public static final String URI_STUDENTS_ID_TIMETABLE = "/students/{id}/timetable";
 
     @Captor
     ArgumentCaptor<StudentDto> studentDtoCaptor;
@@ -251,6 +254,67 @@ class StudentControllerTest {
             assertThat(expectedStudentDto.getLastName(), is(LAST_NAME_FIRST_STUDENT));
             assertThat(expectedStudentDto.isActive(), is(true));
             assertThat(expectedStudentDto.getGroupId(), is(GROUP_ID1));
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'deleteStudent' method")
+    class DeleteStudentTest {
+        @Test
+        @DisplayName("when DELETE request with PathVariable id then should call " +
+            "studentService.delete and redirect")
+        void deleteRequestWithStudentIdShouldCallService() throws Exception {
+            int studentId = 45;
+            mockMvc.perform(delete(URI_STUDENTS_ID, studentId))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection());
+            verify(studentServiceMock, times(1)).delete(studentId);
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'getLessonsForStudent' method")
+    class GetLessonsForStudentTest {
+        @Test
+        @DisplayName("when GET request with parameters id, start and end then " +
+            "should return JSON with list lessonDtos in body")
+        void getRequestWithParametersShouldReturnJsonWithListLessonDtos() throws Exception {
+            int studentId = 32;
+            List<Lesson> testLessons = createTestLessons();
+            List<LessonDto> testLessonDtos = createTestLessonDtos();
+
+            when(lessonServiceMock.getAllForStudentForTimePeriod(studentId,
+                START_TIME_TIMETABLE, END_TIME_TIMETABLE))
+                .thenReturn(testLessons);
+            when(lessonDtoMapperMock.lessonsToLessonDtos(testLessons))
+                .thenReturn(testLessonDtos);
+            mockMvc.perform(get(URI_STUDENTS_ID_TIMETABLE, studentId)
+                .param("start", START_TIME_TIMETABLE_ISO)
+                .param("end", END_TIME_TIMETABLE_ISO))
+                .andDo(print())
+                .andExpectAll(
+                    status().isOk(),
+                    content().contentType(MediaType.APPLICATION_JSON),
+                    jsonPath("$", hasSize(2)),
+                    jsonPath("$[0].id", is(LESSON_ID1)),
+                    jsonPath("$[0].courseId", is(COURSE_ID1)),
+                    jsonPath("$[0].courseName", is(NAME_FIRST_COURSE)),
+                    jsonPath("$[0].teacherId", is(TEACHER_ID1)),
+                    jsonPath("$[0].teacherFullName", is(FULL_NAME_FIRST_TEACHER)),
+                    jsonPath("$[0].roomId", is(ROOM_ID1)),
+                    jsonPath("$[0].buildingAndRoom", is(BUILDING_AND_NUMBER_FIRST_ROOM)),
+                    jsonPath("$[0].timeStart", is(TEXT_DATE_START_FIRST_LESSON)),
+                    jsonPath("$[0].timeEnd", is(TEXT_DATE_END_FIRST_LESSON)),
+                    jsonPath("$[1].id", is(LESSON_ID2)),
+                    jsonPath("$[1].courseId", is(COURSE_ID1)),
+                    jsonPath("$[1].courseName", is(NAME_FIRST_COURSE)),
+                    jsonPath("$[1].teacherId", is(TEACHER_ID1)),
+                    jsonPath("$[1].teacherFullName", is(FULL_NAME_FIRST_TEACHER)),
+                    jsonPath("$[1].roomId", is(ROOM_ID1)),
+                    jsonPath("$[1].buildingAndRoom", is(BUILDING_AND_NUMBER_FIRST_ROOM)),
+                    jsonPath("$[1].timeStart", is(TEXT_DATE_START_SECOND_LESSON)),
+                    jsonPath("$[1].timeEnd", is(TEXT_DATE_END_SECOND_LESSON))
+                );
         }
     }
 
