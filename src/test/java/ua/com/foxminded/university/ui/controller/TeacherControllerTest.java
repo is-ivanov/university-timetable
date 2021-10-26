@@ -13,7 +13,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
@@ -25,14 +24,11 @@ import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.LessonService;
 import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.ResultMatcher.matchAll;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -42,10 +38,11 @@ import static ua.com.foxminded.university.ui.controller.GroupControllerTest.ON;
 @ExtendWith(MockitoExtension.class)
 class TeacherControllerTest {
 
+    public static final String URI_TEACHERS = "/teachers";
     public static final String URL_FACULTY_PARAMETER = "/teacher?facultyId=1";
     public static final String URL_FACULTY_ID_0 = "/teacher/faculty?facultyId=0";
     public static final String URL_FACULTY_ID_1 = "/teacher/faculty?facultyId=1";
-    public static final String URI_TEACHERS = "/teachers";
+    public static final String URI_TEACHERS_FREE = "/teachers/free";
 
     @Captor
     ArgumentCaptor<TeacherDto> teacherDtoCaptor;
@@ -109,7 +106,7 @@ class TeacherControllerTest {
 
         @Test
         @DisplayName("when GET request with all parameters")
-        void testWithAllParameters() throws Exception {
+        void getRequestWithAllParameters() throws Exception {
             int facultyId = 15;
             int departmentId = 47;
 
@@ -137,73 +134,71 @@ class TeacherControllerTest {
                     model().attribute("departments", departments)
                 );
         }
-//
-//        @Test
-//        @DisplayName("with facultyId and without departmentId")
-//        void testWithFacultyIdAndWithoutDepartmentId() throws Exception {
-//            Teacher teacher1 = new Teacher();
-//            teacher1.setId(ID1);
-//            teacher1.setFirstName(TEACHER_NAME);
-//            List<Teacher> teachers = Collections.singletonList(teacher1);
-//
-//            when(teacherServiceMock.getAllByFaculty(ID1)).thenReturn(teachers);
-//
-//            mockMvc.perform(get(URL_FACULTY_PARAMETER))
-//                .andDo(print())
-//                .andExpect(matchAll(
-//                    status().isOk(),
-//                    view().name("teacher"),
-//                    model().attribute("teachers", teachers)
-//                ));
-//        }
+
+        @Test
+        @DisplayName("when GET request with parameter facultyId and without departmentId")
+        void getRequestWithFacultyIdAndWithoutDepartmentId() throws Exception {
+            int facultyId = 34;
+
+            List<Teacher> testTeachers = createTestTeachers(facultyId);
+            List<TeacherDto> testTeacherDtos = createTestTeacherDtos(facultyId);
+
+            when(teacherServiceMock.getAllByFaculty(facultyId))
+                .thenReturn(testTeachers);
+            when(teacherMapperMock.teachersToTeacherDtos(testTeachers))
+                .thenReturn(testTeacherDtos);
+
+            mockMvc.perform(get(URI_TEACHERS)
+                    .param("facultyId", String.valueOf(facultyId)))
+                .andDo(print())
+                .andExpectAll(
+                    status().isOk(),
+                    view().name("teacher"),
+                    model().attribute("teachers", testTeacherDtos)
+                );
+            verify(departmentServiceMock, times(1))
+                .getAllByFaculty(facultyId);
+        }
     }
 
-//    @Nested
-//    @DisplayName("test getDepartments")
-//    class TestGetDepartments {
-//
-//        @Test
-//        @DisplayName("with parameter facultyId = 0")
-//        void withParameterFacultyId0() throws Exception {
-//            Department department1 = new Department();
-//            department1.setId(ID1);
-//            department1.setName("department1");
-//            Department department2 = new Department();
-//            department2.setId(ID2);
-//            department2.setName("department2");
-//            List<Department> departments = Arrays.asList(department1, department2);
-//
-//            when(departmentServiceMock.getAll()).thenReturn(departments);
-//
-//            mockMvc.perform(get(URL_FACULTY_ID_0))
-//                .andDo(print())
-//                .andExpect(matchAll(
-//                    content().contentType(MediaType.APPLICATION_JSON),
-//                    status().isOk(),
-//                    jsonPath("$.length()", is(2)),
-//                    jsonPath("$.[0].name", is("department1")),
-//                    jsonPath("$.[1].name", is("department2"))
-//                ));
-//        }
-//
-//        @Test
-//        @DisplayName("with parameter facultyId = 1")
-//        void withParameterFacultyId1() throws Exception {
-//            Department department1 = new Department();
-//            department1.setId(ID1);
-//            department1.setName("department1");
-//            List<Department> departments = Collections.singletonList(department1);
-//
-//            when(departmentServiceMock.getAllByFaculty(ID1)).thenReturn(departments);
-//
-//            mockMvc.perform(get(URL_FACULTY_ID_1))
-//                .andDo(print())
-//                .andExpect(matchAll(
-//                    content().contentType(MediaType.APPLICATION_JSON),
-//                    status().isOk(),
-//                    jsonPath("$.length()",is(1)),
-//                    jsonPath("$.[0].name", is("department1"))
-//                ));
-//        }
-//    }
+    @Nested
+    @DisplayName("test 'getFreeTeachers' method")
+    class GetFreeTeachersTest {
+        @Test
+        @DisplayName("when GET request with parameters time_start and time_end " +
+            "then should return JSON with list teacherDtos in body")
+        void getRequestWithParametersShouldReturnJsonListTeacherDtos() throws Exception {
+            List<Teacher> testTeachers = createTestTeachers(FACULTY_ID1);
+            List<TeacherDto> testTeacherDtos = createTestTeacherDtos(FACULTY_ID1);
+
+            when(teacherServiceMock.getFreeTeachersOnLessonTime(DATE_FROM, DATE_TO))
+                .thenReturn(testTeachers);
+            when(teacherMapperMock.teachersToTeacherDtos(testTeachers))
+                .thenReturn(testTeacherDtos);
+
+            mockMvc.perform(get(URI_TEACHERS_FREE)
+                .param("time_start", TEXT_DATE_FROM)
+                .param("time_end", TEXT_DATE_TO))
+                .andDo(print())
+                .andExpectAll(
+                    status().isOk(),
+                    content().contentType(MediaType.APPLICATION_JSON),
+                    jsonPath("$", hasSize(2)),
+                    jsonPath("$[0].id", is(TEACHER_ID1)),
+                    jsonPath("$[0].firstName", is(NAME_FIRST_TEACHER)),
+                    jsonPath("$[0].patronymic", is(PATRONYMIC_FIRST_TEACHER)),
+                    jsonPath("$[0].lastName", is(LAST_NAME_FIRST_TEACHER)),
+                    jsonPath("$[0].departmentId", is(DEPARTMENT_ID1)),
+                    jsonPath("$[0].departmentName", is(NAME_FIRST_DEPARTMENT)),
+                    jsonPath("$[0].active", is(true)),
+                    jsonPath("$[1].id", is(TEACHER_ID2)),
+                    jsonPath("$[1].firstName", is(NAME_SECOND_TEACHER)),
+                    jsonPath("$[1].patronymic", is(PATRONYMIC_SECOND_TEACHER)),
+                    jsonPath("$[1].lastName", is(LAST_NAME_SECOND_TEACHER)),
+                    jsonPath("$[1].departmentId", is(DEPARTMENT_ID1)),
+                    jsonPath("$[1].departmentName", is(NAME_FIRST_DEPARTMENT)),
+                    jsonPath("$[1].active", is(true))
+                );
+        }
+    }
 }

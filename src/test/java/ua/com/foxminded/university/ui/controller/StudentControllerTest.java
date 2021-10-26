@@ -142,7 +142,7 @@ class StudentControllerTest {
 
         @Test
         @DisplayName("when GET request with facultyId and without groupId")
-        void testWithFacultyIdAndWithoutGroupId() throws Exception {
+        void getRequestWithFacultyIdAndWithoutGroupId() throws Exception {
             int facultyId = 15;
 
             List<Student> testStudents = createTestStudents();
