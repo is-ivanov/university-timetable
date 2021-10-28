@@ -21,7 +21,16 @@ public class AvailableLessonChecker {
         checkLessonTime(checkedLesson, lessons);
     }
 
-    public void checkLessonTime(Lesson checkedLesson, List<Lesson> lessons) {
+    private boolean checkLessonsIsEmpty(List<Lesson> lessons) {
+        log.debug("Checking list lessons is empty");
+        if (lessons.isEmpty()) {
+            log.info("Checking passed");
+            return true;
+        }
+        return false;
+    }
+
+    private void checkLessonTime(Lesson checkedLesson, List<Lesson> lessons) {
         log.debug("Checking the intersection of time lesson id({}) with other lessons",
             checkedLesson.getId());
         LocalDateTime timeStartCheckedLesson = checkedLesson.getTimeStart();
@@ -42,15 +51,6 @@ public class AvailableLessonChecker {
             }
         }
         log.info("Checking passed");
-    }
-
-    private boolean checkLessonsIsEmpty(List<Lesson> lessons){
-        log.debug("Checking list lessons is empty");
-        if (lessons.isEmpty()){
-            log.info("Checking passed");
-            return true;
-        }
-        return false;
     }
 
 }
