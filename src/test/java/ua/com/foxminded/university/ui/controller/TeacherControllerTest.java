@@ -13,9 +13,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import ua.com.foxminded.university.domain.dto.LessonDto;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
+import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Teacher;
 import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
 import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
@@ -26,23 +28,23 @@ import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
 
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ua.com.foxminded.university.TestObjects.*;
 import static ua.com.foxminded.university.ui.controller.GroupControllerTest.ON;
+import static ua.com.foxminded.university.ui.controller.RoomControllerTest.*;
 
 @ExtendWith(MockitoExtension.class)
 class TeacherControllerTest {
 
     public static final String URI_TEACHERS = "/teachers";
-    public static final String URL_FACULTY_PARAMETER = "/teacher?facultyId=1";
-    public static final String URL_FACULTY_ID_0 = "/teacher/faculty?facultyId=0";
-    public static final String URL_FACULTY_ID_1 = "/teacher/faculty?facultyId=1";
     public static final String URI_TEACHERS_FREE = "/teachers/free";
+    public static final String URI_TEACHERS_ID = "/teachers/{id}";
+    public static final String URI_TEACHERS_ID_TIMETABLE = "/teachers/{id}/timetable";
 
     @Captor
     ArgumentCaptor<TeacherDto> teacherDtoCaptor;
@@ -177,8 +179,8 @@ class TeacherControllerTest {
                 .thenReturn(testTeacherDtos);
 
             mockMvc.perform(get(URI_TEACHERS_FREE)
-                .param("time_start", TEXT_DATE_FROM)
-                .param("time_end", TEXT_DATE_TO))
+                    .param("time_start", TEXT_DATE_FROM)
+                    .param("time_end", TEXT_DATE_TO))
                 .andDo(print())
                 .andExpectAll(
                     status().isOk(),
@@ -198,6 +200,152 @@ class TeacherControllerTest {
                     jsonPath("$[1].departmentId", is(DEPARTMENT_ID1)),
                     jsonPath("$[1].departmentName", is(NAME_FIRST_DEPARTMENT)),
                     jsonPath("$[1].active", is(true))
+                );
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'createTeacher' method")
+    class CreateTeacherTest {
+        @Test
+        @DisplayName("when POST request with all required parameters then should " +
+            "call teacherDtoMapper and redirect")
+        void postRequestWithParametersShouldCallTeacherMapperAndRedirect() throws Exception {
+            mockMvc.perform(post(URI_TEACHERS)
+                    .param("firstName", NAME_FIRST_TEACHER)
+                    .param("patronymic", PATRONYMIC_FIRST_TEACHER)
+                    .param("lastName", LAST_NAME_FIRST_TEACHER)
+                    .param("active", ON)
+                    .param("departmentId", String.valueOf(DEPARTMENT_ID1)))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection());
+
+            verify(teacherMapperMock, times(1))
+                .teacherDtoToTeacher(teacherDtoCaptor.capture());
+
+            TeacherDto expectedTeacherDto = teacherDtoCaptor.getValue();
+            assertThat(expectedTeacherDto.getFirstName(), is(NAME_FIRST_TEACHER));
+            assertThat(expectedTeacherDto.getPatronymic(), is(PATRONYMIC_FIRST_TEACHER));
+            assertThat(expectedTeacherDto.getLastName(), is(LAST_NAME_FIRST_TEACHER));
+            assertThat(expectedTeacherDto.isActive(), is(true));
+            assertThat(expectedTeacherDto.getDepartmentId(), is(DEPARTMENT_ID1));
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'getTeacher' method")
+    class GetTeacherTest {
+        @Test
+        @DisplayName("when GET request with PathVariable id then should return JSON with expected teacherDto in body")
+        void getRequestWithIdShouldReturnJsonWithTeacherDto() throws Exception {
+            Teacher testTeacher = createTestTeacher();
+            TeacherDto testTeacherDto = createTestTeacherDto();
+
+            when(teacherServiceMock.getById(TEACHER_ID1)).thenReturn(testTeacher);
+            when(teacherMapperMock.teacherToTeacherDto(testTeacher))
+                .thenReturn(testTeacherDto);
+
+            mockMvc.perform(get(URI_TEACHERS_ID, TEACHER_ID1))
+                .andDo(print())
+                .andExpectAll(
+                    status().isOk(),
+                    content().contentType(MediaType.APPLICATION_JSON),
+                    jsonPath("$.id", is(TEACHER_ID1)),
+                    jsonPath("$.firstName", is(NAME_FIRST_TEACHER)),
+                    jsonPath("$.patronymic", is(PATRONYMIC_FIRST_TEACHER)),
+                    jsonPath("$.lastName", is(LAST_NAME_FIRST_TEACHER)),
+                    jsonPath("$.fullName", is(FULL_NAME_FIRST_TEACHER)),
+                    jsonPath("$.active", is(true)),
+                    jsonPath("$.departmentId", is(DEPARTMENT_ID1)),
+                    jsonPath("$.departmentName", is(NAME_FIRST_DEPARTMENT))
+                );
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'updateTeacher' method")
+    class UpdateTeacherTest {
+        @Test
+        @DisplayName("when PUT request with all required parameters then should " +
+            "call teacherDtoMapper and redirect")
+        void putRequestWithAllParametersShouldCallTeacherMapperAndRedirect() throws Exception {
+            mockMvc.perform(put(URI_TEACHERS_ID, TEACHER_ID1)
+                    .param("firstName", NAME_FIRST_TEACHER)
+                    .param("patronymic", PATRONYMIC_FIRST_TEACHER)
+                    .param("lastName", LAST_NAME_FIRST_TEACHER)
+                    .param("active", ON)
+                    .param("departmentId", String.valueOf(DEPARTMENT_ID1)))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection());
+            verify(teacherMapperMock, times(1))
+                .teacherDtoToTeacher(teacherDtoCaptor.capture());
+
+            TeacherDto expectedTeacherDto = teacherDtoCaptor.getValue();
+            assertThat(expectedTeacherDto.getId(), is(TEACHER_ID1));
+            assertThat(expectedTeacherDto.getFirstName(), is(NAME_FIRST_TEACHER));
+            assertThat(expectedTeacherDto.getPatronymic(), is(PATRONYMIC_FIRST_TEACHER));
+            assertThat(expectedTeacherDto.getLastName(), is(LAST_NAME_FIRST_TEACHER));
+            assertThat(expectedTeacherDto.isActive(), is(true));
+            assertThat(expectedTeacherDto.getDepartmentId(), is(DEPARTMENT_ID1));
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'deleteTeacher' method")
+    class DeleteTeacherTest {
+        @Test
+        @DisplayName("when DELETE request with PathVariable id then should call teacherService.delete and redirect")
+        void deleteRequestWithIdShouldCallTeacherServiceAndRedirect() throws Exception {
+            int teacherId = 23;
+            mockMvc.perform(delete(URI_TEACHERS_ID, teacherId))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection());
+            verify(teacherServiceMock, times(1)).delete(teacherId);
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'getLessonsForTeacher' method")
+    class GetLessonsForTeacherTest {
+        @Test
+        @DisplayName("when GET request with parameters id, start and end then " +
+            "should return JSON with list lessonDtos in body ")
+        void getRequestWithParametersShouldReturnJsonWithListLessonDtos() throws Exception {
+            int teacherId = 46;
+            List<Lesson> testLessons = createTestLessons();
+            List<LessonDto> testLessonDtos = createTestLessonDtos();
+
+            when(lessonServiceMock.getAllForTeacherForTimePeriod(teacherId,
+                START_TIME_TIMETABLE, END_TIME_TIMETABLE))
+                .thenReturn(testLessons);
+            when(lessonMapperMock.lessonsToLessonDtos(testLessons))
+                .thenReturn(testLessonDtos);
+
+            mockMvc.perform(get(URI_TEACHERS_ID_TIMETABLE, teacherId)
+                .param("start", START_TIME_TIMETABLE_ISO)
+                .param("end", END_TIME_TIMETABLE_ISO))
+                .andDo(print())
+                .andExpectAll(
+                    content().contentType(MediaType.APPLICATION_JSON),
+                    jsonPath("$", hasSize(2)),
+                    jsonPath("$[0].id", is(LESSON_ID1)),
+                    jsonPath("$[0].courseId", is(COURSE_ID1)),
+                    jsonPath("$[0].courseName", is(NAME_FIRST_COURSE)),
+                    jsonPath("$[0].teacherId", is(TEACHER_ID1)),
+                    jsonPath("$[0].teacherFullName", is(FULL_NAME_FIRST_TEACHER)),
+                    jsonPath("$[0].roomId", is(ROOM_ID1)),
+                    jsonPath("$[0].buildingAndRoom", is(BUILDING_AND_NUMBER_FIRST_ROOM)),
+                    jsonPath("$[0].timeStart", is(TEXT_DATE_START_FIRST_LESSON)),
+                    jsonPath("$[0].timeEnd", is(TEXT_DATE_END_FIRST_LESSON)),
+                    jsonPath("$[1].id", is(LESSON_ID2)),
+                    jsonPath("$[1].courseId", is(COURSE_ID1)),
+                    jsonPath("$[1].courseName", is(NAME_FIRST_COURSE)),
+                    jsonPath("$[1].teacherId", is(TEACHER_ID1)),
+                    jsonPath("$[1].teacherFullName", is(FULL_NAME_FIRST_TEACHER)),
+                    jsonPath("$[1].roomId", is(ROOM_ID1)),
+                    jsonPath("$[1].buildingAndRoom", is(BUILDING_AND_NUMBER_FIRST_ROOM)),
+                    jsonPath("$[1].timeStart", is(TEXT_DATE_START_SECOND_LESSON)),
+                    jsonPath("$[1].timeEnd", is(TEXT_DATE_END_SECOND_LESSON))
                 );
         }
     }

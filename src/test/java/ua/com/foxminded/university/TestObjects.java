@@ -246,6 +246,19 @@ public class TestObjects {
         return new ArrayList<>(Arrays.asList(teacher1, teacher2));
     }
 
+    public static TeacherDto createTestTeacherDto() {
+        return TeacherDto.builder()
+            .id(TEACHER_ID1)
+            .firstName(NAME_FIRST_TEACHER)
+            .patronymic(PATRONYMIC_FIRST_TEACHER)
+            .lastName(LAST_NAME_FIRST_TEACHER)
+            .fullName(FULL_NAME_FIRST_TEACHER)
+            .departmentId(DEPARTMENT_ID1)
+            .departmentName(NAME_FIRST_DEPARTMENT)
+            .active(true)
+            .build();
+    }
+
     public static List<TeacherDto> createTestTeacherDtos(int facultyId) {
         Department testDepartment = createTestDepartment(facultyId);
         TeacherDto teacherDto1 = TeacherDto.builder()

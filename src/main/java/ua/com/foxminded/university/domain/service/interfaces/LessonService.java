@@ -21,7 +21,7 @@ public interface LessonService extends Service<Lesson> {
                                                LocalDateTime startTime,
                                                LocalDateTime endTime);
 
-    List<Lesson> getAllForTeacherForTimePeriod(int studentId,
+    List<Lesson> getAllForTeacherForTimePeriod(int teacherId,
                                                LocalDateTime startTime,
                                                LocalDateTime endTime);
 

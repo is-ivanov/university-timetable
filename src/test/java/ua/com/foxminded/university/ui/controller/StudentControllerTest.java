@@ -168,8 +168,8 @@ class StudentControllerTest {
     class CreateStudentTest {
         @Test
         @DisplayName("when POST request with all required parameters then should " +
-            "call studentService.add once and redirect")
-        void postRequestWithParametersShouldCallStudentServiceAndRedirect() throws Exception {
+            "call studentDtoMapper once and redirect")
+        void postRequestWithParametersShouldCallStudentMapperAndRedirect() throws Exception {
             String firstName = NAME_FIRST_STUDENT;
             String patronymic = PATRONYMIC_FIRST_STUDENT;
             String lastName = LAST_NAME_FIRST_STUDENT;
@@ -202,7 +202,7 @@ class StudentControllerTest {
         @Test
         @DisplayName("when GET request with PathVariable id then should return " +
             "JSON with expected studentDto in body")
-        void getRequestWithPathVariableIdShouldReturnJsonWithStudentDto() throws Exception {
+        void getRequestWithIdShouldReturnJsonWithStudentDto() throws Exception {
             Student testStudent = createTestStudent();
             StudentDto testStudentDto = createTestStudentDto();
 
