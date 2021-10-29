@@ -39,10 +39,9 @@ public class AvailableLessonChecker {
             if (lesson.getId() != checkedLesson.getId()) {
                 LocalDateTime timeStartLesson = lesson.getTimeStart();
                 LocalDateTime timeEndLesson = lesson.getTimeEnd();
-                if ((timeStartCheckedLesson.isAfter(timeStartLesson)
-                    && timeStartCheckedLesson.isBefore(timeEndLesson))
-                    || (timeEndCheckedLesson.isAfter(timeStartLesson)
-                    && timeEndCheckedLesson.isBefore(timeEndLesson))) {
+                boolean checkTimeStart = timeStartLesson.compareTo(timeEndCheckedLesson) < 1;
+                boolean checkTimeEnd = timeEndLesson.compareTo(timeStartCheckedLesson) > -1;
+                if (checkTimeStart && checkTimeEnd) {
                     log.warn("Time lesson id({}) intersect with time lesson id({})",
                         checkedLesson.getId(), lesson.getId());
                     throw new ServiceException(
