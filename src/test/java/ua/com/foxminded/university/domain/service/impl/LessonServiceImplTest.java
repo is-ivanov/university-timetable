@@ -29,16 +29,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
+import static ua.com.foxminded.university.TestObjects.ID1;
+import static ua.com.foxminded.university.TestObjects.ID2;
 
 @ExtendWith(MockitoExtension.class)
 class LessonServiceImplTest {
 
     private static final String MESSAGE_TEACHER_NOT_AVAILABLE = "Teacher %s is not available";
-    private static final String MESSAGE_ROOM_NOT_AVAILABLE = "Room %s is not available";
     private static final String MESSAGE_STUDENT_NOT_AVAILABLE = "Student id(1) is not available for the lesson id(1)";
     private static final String MESSAGE_FILTER_NOT_SELECT = "Select at least one filter";
-    private static final int ID1 = 1;
-    private static final int ID2 = 2;
     private static final LocalDateTime TIME_START_CHECKED_LESSON = LocalDateTime.of(2021, Month.JANUARY,
         3, 12, 0);
     private static final LocalDateTime TIME_START_BUSY_LESSON = LocalDateTime.of(2021,
@@ -70,15 +69,33 @@ class LessonServiceImplTest {
         assertEquals(expectedLessons, lessonService.getAll());
     }
 
-    @Test
-    @DisplayName("test 'delete' when call delete method then should call " +
-        "lessonDao in Order")
-    void testDelete_CallDaoInOrder() {
-        Lesson testLesson = createTestLesson();
-        InOrder inOrder = inOrder(lessonDaoMock);
-        lessonService.delete(testLesson);
-        inOrder.verify(lessonDaoMock).deleteAllStudentsFromLesson(testLesson.getId());
-        inOrder.verify(lessonDaoMock).delete(testLesson);
+    @Nested
+    @DisplayName("test 'delete lesson' method")
+    class DeleteLessonTest {
+        @Test
+        @DisplayName("when call delete method then should call " +
+            "lessonDao in Order")
+        void whenDeleteLesson_CallDaoInOrder() {
+            Lesson testLesson = createTestLesson();
+            InOrder inOrder = inOrder(lessonDaoMock);
+            lessonService.delete(testLesson);
+            inOrder.verify(lessonDaoMock).deleteAllStudentsFromLesson(testLesson.getId());
+            inOrder.verify(lessonDaoMock).delete(testLesson);
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'delete lessonId' method")
+    class DeleteLessonIdTest {
+        @Test
+        @DisplayName("when call delete method then should call " +
+            "lessonDao in Order")
+        void whenDeleteLesson_CallDaoInOrder() {
+            InOrder inOrder = inOrder(lessonDaoMock);
+            lessonService.delete(ID1);
+            inOrder.verify(lessonDaoMock).deleteAllStudentsFromLesson(ID1);
+            inOrder.verify(lessonDaoMock).delete(ID1);
+        }
     }
 
     private Lesson createTestLesson() {

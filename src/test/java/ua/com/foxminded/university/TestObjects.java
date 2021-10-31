@@ -42,7 +42,7 @@ public class TestObjects {
     public static final String NUMBER_FIRST_ROOM = "1457a";
     public static final String BUILDING_AND_NUMBER_FIRST_ROOM = "building-1 - 1457a";
     public static final String BUILDING_SECOND_ROOM = "building-2";
-    public static final String NUMBER_SECOND_ROOM = "101";
+    public static final String NUMBER_SECOND_ROOM = "812b";
     public static final String NAME_FIRST_STUDENT = "Mike";
     public static final String PATRONYMIC_FIRST_STUDENT = "Jr";
     public static final String LAST_NAME_FIRST_STUDENT = "Smith";
@@ -102,14 +102,6 @@ public class TestObjects {
 
     public static Group createTestGroup() {
         return new Group(GROUP_ID1, NAME_FIRST_GROUP, createTestFaculty(), true);
-    }
-
-    public static Group createTestGroup(int facultyId) {
-        return new Group(GROUP_ID1, NAME_FIRST_GROUP, createTestFaculty(facultyId), true);
-    }
-
-    public static Group createTestGroup(int facultyId, int groupId) {
-        return new Group(groupId, NAME_FIRST_GROUP, createTestFaculty(facultyId), true);
     }
 
     public static List<Group> createTestGroups() {

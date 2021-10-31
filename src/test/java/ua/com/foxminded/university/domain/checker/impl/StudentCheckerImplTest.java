@@ -8,9 +8,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ua.com.foxminded.university.dao.interfaces.LessonDao;
 import ua.com.foxminded.university.domain.entity.Lesson;
-import ua.com.foxminded.university.domain.entity.Room;
+import ua.com.foxminded.university.domain.entity.Student;
+import ua.com.foxminded.university.domain.service.interfaces.LessonService;
 import ua.com.foxminded.university.exception.ServiceException;
 
 import java.util.List;
@@ -18,29 +18,28 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static ua.com.foxminded.university.TestObjects.*;
 
 @ExtendWith(MockitoExtension.class)
-class RoomCheckerImplTest {
+class StudentCheckerImplTest {
 
-    private Room room;
+    private Student student;
     private Lesson lesson;
 
     @Mock
-    private LessonDao lessonDaoMock;
+    private LessonService lessonServiceMock;
 
     @Mock
     private AvailableLessonChecker availableLessonCheckerMock;
 
     @InjectMocks
-    private RoomCheckerImpl roomChecker;
+    private StudentCheckerImpl studentChecker;
 
     @BeforeEach
     void setUp() {
-        room = createTestRoom();
+        student = createTestStudent();
         lesson = createTestLesson(LESSON_ID1);
     }
 
@@ -48,16 +47,14 @@ class RoomCheckerImplTest {
     @DisplayName("test 'check' method")
     class CheckTest {
         @Test
-        @DisplayName("call LessonDao and AvailableLessonChecker with expected parameters")
-        void callLessonDaoAndAvailableLessonCheckerWithExpectedParameters() {
+        @DisplayName("call LessonService and AvailableLessonChecker with expected parameters")
+        void callLessonServiceAndAvailableLessonCheckerWithExpectedParameters() {
             List<Lesson> testLessons = createTestLessons();
-            int roomId = room.getId();
+            when(lessonServiceMock.getLessonsForStudent(student)).thenReturn(testLessons);
 
-            when(lessonDaoMock.getAllForRoom(roomId)).thenReturn(testLessons);
+            studentChecker.check(student, lesson);
 
-            roomChecker.check(room, lesson);
-
-            verify(lessonDaoMock, times(1)).getAllForRoom(roomId);
+            verify(lessonServiceMock, times(1)).getLessonsForStudent(student);
             verify(availableLessonCheckerMock, times(1))
                 .checkAvailableLesson(lesson, testLessons);
         }
@@ -66,15 +63,14 @@ class RoomCheckerImplTest {
         @DisplayName("when availableLessonChecker throw ServiceException then should throw Exception")
         void whenAvailableLessonCheckerThrowServiceExceptionShouldThrowException() {
             List<Lesson> testLessons = createTestLessons();
-            int roomId = room.getId();
 
-            when(lessonDaoMock.getAllForRoom(roomId)).thenReturn(testLessons);
+            when(lessonServiceMock.getLessonsForStudent(student)).thenReturn(testLessons);
             doThrow(ServiceException.class).when(availableLessonCheckerMock)
                 .checkAvailableLesson(lesson, testLessons);
 
             ServiceException e = assertThrows(ServiceException.class,
-                () -> roomChecker.check(room, lesson));
-            String expectedMessage = "Room id(" + roomId + ") is not available";
+                () -> studentChecker.check(student, lesson));
+            String expectedMessage = "Student id(" + student.getId() + ") is not available";
             assertThat(e.getMessage(), is(equalTo(expectedMessage)));
         }
     }

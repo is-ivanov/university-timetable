@@ -26,18 +26,18 @@ import java.util.Optional;
 @PropertySource("classpath:sql_query.properties")
 public class RoomDaoImpl implements RoomDao {
 
-    private static final String QUERY_ADD = "room.add";
-    private static final String QUERY_GET_ALL = "room.getAll";
-    private static final String QUERY_GET_ALL_SORTED_PAGINATED = "room.getAllSortedPaginated";
-    private static final String QUERY_GET_BY_ID = "room.getById";
-    private static final String QUERY_UPDATE = "room.update";
-    private static final String QUERY_DELETE = "room.delete";
-    private static final String QUERY_GET_FREE_ROOMS = "room.getFreeRoomsOnLessonTime";
-    private static final String QUERY_COUNT_ALL = "room.countAll";
-    private static final String MESSAGE_ROOM_NOT_FOUND = "Room id(%d) not found";
-    private static final String MESSAGE_UPDATE_ROOM_NOT_FOUND = "Can't update because room id(%d) not found";
-    private static final String MESSAGE_DELETE_ROOM_NOT_FOUND = "Can't delete because room id(%d) not found";
-    private static final String ROOM_NUMBER = "room_number";
+    public static final String QUERY_ADD = "room.add";
+    public static final String QUERY_GET_ALL = "room.getAll";
+    public static final String QUERY_GET_ALL_SORTED_PAGINATED = "room.getAllSortedPaginated";
+    public static final String QUERY_GET_BY_ID = "room.getById";
+    public static final String QUERY_UPDATE = "room.update";
+    public static final String QUERY_DELETE = "room.delete";
+    public static final String QUERY_GET_FREE_ROOMS = "room.getFreeRoomsOnLessonTime";
+    public static final String QUERY_COUNT_ALL = "room.countAll";
+    public static final String MESSAGE_ROOM_NOT_FOUND = "Room id(%d) not found";
+    public static final String MESSAGE_UPDATE_ROOM_NOT_FOUND = "Can't update because room id(%d) not found";
+    public static final String MESSAGE_DELETE_ROOM_NOT_FOUND = "Can't delete because room id(%d) not found";
+    public static final String ROOM_NUMBER = "room_number";
 
     private final JdbcTemplate jdbcTemplate;
     private final Environment env;
@@ -144,12 +144,12 @@ public class RoomDaoImpl implements RoomDao {
     }
 
     @Override
-    public Page<Room> getAllSortedPaginated(Pageable pageable){
+    public Page<Room> getAllSortedPaginated(Pageable pageable) {
         log.debug("Getting sorted page {} from list of rooms", pageable.getPageNumber());
         Order order;
         if (!pageable.getSort().isEmpty()) {
             order = pageable.getSort().toList().get(0);
-        }else {
+        } else {
             order = Order.by(ROOM_NUMBER);
         }
         String query = String.format(env.getRequiredProperty(QUERY_GET_ALL_SORTED_PAGINATED),
