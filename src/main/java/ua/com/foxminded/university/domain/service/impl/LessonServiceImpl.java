@@ -5,12 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.com.foxminded.university.dao.interfaces.LessonDao;
-import ua.com.foxminded.university.dao.interfaces.StudentDao;
 import ua.com.foxminded.university.domain.entity.Lesson;
+import ua.com.foxminded.university.domain.entity.Room;
 import ua.com.foxminded.university.domain.entity.Student;
+import ua.com.foxminded.university.domain.entity.Teacher;
 import ua.com.foxminded.university.domain.filter.LessonFilter;
-import ua.com.foxminded.university.domain.checker.interfaces.LessonChecker;
-import ua.com.foxminded.university.domain.checker.interfaces.StudentChecker;
 import ua.com.foxminded.university.domain.service.interfaces.LessonService;
 import ua.com.foxminded.university.domain.service.interfaces.StudentService;
 import ua.com.foxminded.university.exception.ServiceException;
@@ -24,21 +23,22 @@ import java.util.List;
 @Service
 public class LessonServiceImpl implements LessonService {
 
-    private static final String FOUND_LESSONS = "Found {} lessons";
-    private static final String MESSAGE_FILTER_NOT_SELECT = "Select at least one filter";
+    public static final String FOUND_LESSONS = "Found {} lessons";
+    public static final String MESSAGE_FILTER_NOT_SELECT = "Select at least one filter";
     public static final String MESSAGE_LESSON_NOT_FOUND = "Lesson id(%d) not found";
+    public static final String MESSAGE_LESSON_OVERLAP = "Lesson id(%d) overlap with lesson id(%d)";
+    public static final String MESSAGE_TEACHER_NOT_AVAILABLE = "Teacher id(%d) is not available";
+    public static final String MESSAGE_STUDENT_NOT_AVAILABLE = "Student id(%d) is not available";
+    public static final String MESSAGE_ROOM_NOT_AVAILABLE = "Room id(%d) is not available";
 
     private final LessonDao lessonDao;
     private final StudentService studentService;
-    private final StudentDao studentDao;
-    private final LessonChecker lessonChecker;
-    private final StudentChecker studentChecker;
 
     @Transactional
     @Override
     public void add(Lesson lesson) throws ServiceException {
         log.debug("Check lesson id({}) before adding", lesson.getId());
-        lessonChecker.check(lesson);
+        checkLesson(lesson);
         log.debug("Adding lesson id({})", lesson.getId());
         lessonDao.add(lesson);
         log.info("Lesson id({}) added successfully", lesson.getId());
@@ -48,7 +48,7 @@ public class LessonServiceImpl implements LessonService {
     @Override
     public void update(Lesson lesson) throws ServiceException {
         log.debug("Check lesson id({}) before updating", lesson.getId());
-        lessonChecker.check(lesson);
+        checkLesson(lesson);
         log.debug("Updating lesson id({})", lesson.getId());
         lessonDao.update(lesson);
         log.info("Lesson id({}) updated successfully", lesson.getId());
@@ -96,22 +96,11 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public void addStudentToLesson(Lesson lesson, Student student) {
-        log.debug("Start adding student id({}) to lesson id({})",
-            student.getId(), lesson.getId());
-        checkAndSaveStudentToLesson(lesson, student);
-    }
-
-    @Override
     @Transactional
     public void addStudentToLesson(int lessonId, int studentId) {
-        log.debug("Getting lesson by lessonId({})", lessonId);
-        Lesson lesson = lessonDao.getById(lessonId)
-            .orElseThrow(() -> new EntityNotFoundException(
-                String.format(MESSAGE_LESSON_NOT_FOUND, lessonId)));
-        Student student = studentDao.getById(studentId)
-            .orElseThrow(() -> new EntityNotFoundException(
-                String.format("Student id(%d) not found", studentId)));
+        log.debug("Getting lessonId({}) and studentId({})", lessonId, studentId);
+        Lesson lesson = getById(lessonId);
+        Student student = studentService.getById(studentId);
         checkAndSaveStudentToLesson(lesson, student);
     }
 
@@ -120,10 +109,7 @@ public class LessonServiceImpl implements LessonService {
     @Transactional
     public void addStudentsFromGroupToLesson(int groupId, int lessonId) {
         log.debug("Getting lesson by lessonId({})", lessonId);
-        Lesson lesson = lessonDao.getById(lessonId)
-            .orElseThrow(() -> new EntityNotFoundException(
-                String.format(MESSAGE_LESSON_NOT_FOUND, lessonId)
-            ));
+        Lesson lesson = getById(lessonId);
         log.debug("Getting active students from group id({})", groupId);
         List<Student> studentsFromGroup =
             studentService.getFreeStudentsFromGroup(groupId,
@@ -212,13 +198,104 @@ public class LessonServiceImpl implements LessonService {
 
     private void checkAndSaveStudentToLesson(Lesson lesson, Student student) {
         if (student.isActive()) {
-            studentChecker.check(student, lesson);
+            checkStudent(student, lesson);
             lessonDao.addStudentToLesson(lesson.getId(), student.getId());
             log.info("Student id({}) added to lesson({}) successfully", student.getId(),
                 lesson.getId());
         } else {
-            log.warn("Student id({}} is inactive)", student.getId());
+            log.warn("Student id({}) is inactive)", student.getId());
             throw new ServiceException(String.format("Student id(%d) is inactive", student.getId()));
+        }
+    }
+
+    private void checkLesson(Lesson lesson) {
+        log.debug("Start checking the lesson id({})", lesson.getId());
+        Teacher teacher = lesson.getTeacher();
+        checkTeacher(teacher, lesson);
+        log.debug("Teacher id({}) is available", teacher.getId());
+        Room room = lesson.getRoom();
+        checkRoom(room, lesson);
+        log.debug("Room id({}) is available", room.getId());
+        log.info("Lesson id({}) checking passed", lesson.getId());
+    }
+
+    private void checkAvailableLesson(Lesson checkedLesson, List<Lesson> lessons) {
+        if (checkLessonsIsEmpty(lessons)) {
+            return;
+        }
+        checkLessonTime(checkedLesson, lessons);
+    }
+
+    private boolean checkLessonsIsEmpty(List<Lesson> lessons) {
+        log.debug("Checking list lessons is empty");
+        if (lessons.isEmpty()) {
+            log.info("Checking passed");
+            return true;
+        }
+        return false;
+    }
+
+    private void checkLessonTime(Lesson checkedLesson, List<Lesson> lessons) {
+        log.debug("Checking the intersection of time lesson id({}) with other lessons",
+            checkedLesson.getId());
+        LocalDateTime timeStartCheckedLesson = checkedLesson.getTimeStart();
+        LocalDateTime timeEndCheckedLesson = checkedLesson.getTimeEnd();
+        for (Lesson lesson : lessons) {
+            if (lesson.getId() != checkedLesson.getId()) {
+                LocalDateTime timeStartLesson = lesson.getTimeStart();
+                LocalDateTime timeEndLesson = lesson.getTimeEnd();
+                boolean checkTimeStart = timeStartLesson.compareTo(timeEndCheckedLesson) < 1;
+                boolean checkTimeEnd = timeEndLesson.compareTo(timeStartCheckedLesson) > -1;
+                if (checkTimeStart && checkTimeEnd) {
+                    log.warn("Time lesson id({}) intersect with time lesson id({})",
+                        checkedLesson.getId(), lesson.getId());
+                    throw new ServiceException(
+                        String.format(MESSAGE_LESSON_OVERLAP, checkedLesson.getId(), lesson.getId()));
+                }
+            }
+        }
+        log.info("Checking passed");
+    }
+
+    private void checkTeacher(Teacher teacher, Lesson lesson) {
+        log.debug("Checking the teacher id({}) for lesson id({})", teacher.getId(),
+            lesson.getId());
+        List<Lesson> lessonsFromThisTeacher = lessonDao.getAllForTeacher(teacher.getId());
+        try {
+            checkAvailableLesson(lesson, lessonsFromThisTeacher);
+        } catch (ServiceException e) {
+            log.warn("Teacher id({}) is not available for the lesson id({})",
+                teacher.getId(), lesson.getId());
+            throw new ServiceException(String.format(MESSAGE_TEACHER_NOT_AVAILABLE,
+                teacher.getId()), e);
+        }
+    }
+
+    private void checkStudent(Student student, Lesson lesson) {
+        log.debug("Checking the student id({}) for lesson id({})",
+            student.getId(), lesson.getId());
+        List<Lesson> lessonsFromThisStudent = getLessonsForStudent(student);
+        try {
+            checkAvailableLesson(lesson, lessonsFromThisStudent);
+        } catch (ServiceException e) {
+            log.warn("Student id({}) is not available for the lesson id({})",
+                student.getId(), lesson.getId());
+            throw new ServiceException(String.format(MESSAGE_STUDENT_NOT_AVAILABLE,
+                student.getId()), e);
+        }
+    }
+
+    private void checkRoom(Room room, Lesson lesson) {
+        log.debug("Checking the room id({}) for lesson id({})", room.getId(),
+            lesson.getId());
+        List<Lesson> lessonsFromThisRoom = lessonDao.getAllForRoom(room.getId());
+        try {
+            checkAvailableLesson(lesson, lessonsFromThisRoom);
+        } catch (ServiceException e) {
+            log.warn("Room id({}) is not available for lesson id({})",
+                room.getId(), lesson.getId());
+            throw new ServiceException(String.format(MESSAGE_ROOM_NOT_AVAILABLE,
+                room.getId()), e);
         }
     }
 

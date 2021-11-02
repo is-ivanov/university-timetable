@@ -9,6 +9,7 @@ import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.domain.service.interfaces.StudentService;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -35,7 +36,8 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public Student getById(int id) {
         log.debug("Getting student by id({})", id);
-        Student student = studentDao.getById(id).orElse(new Student());
+        Student student = studentDao.getById(id).orElseThrow(() -> new EntityNotFoundException(
+            String.format("Student id(%d) not found", id)));
         log.info("Found {}", student);
         return student;
     }
