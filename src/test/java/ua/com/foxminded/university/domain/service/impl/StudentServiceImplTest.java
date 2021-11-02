@@ -13,6 +13,7 @@ import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Student;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +23,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static ua.com.foxminded.university.TestObjects.STUDENT_ID2;
 
 @ExtendWith(MockitoExtension.class)
 class StudentServiceImplTest {
@@ -30,6 +32,7 @@ class StudentServiceImplTest {
     private static final String LAST_NAME = "LastName";
     private static final int ID1 = 1;
     private static final int ID2 = 2;
+    public static final String MESSAGE_STUDENT_NOT_FOUND = "Student id(78) not found";
 
     @Mock
     private StudentDao studentDaoMock;
@@ -46,34 +49,6 @@ class StudentServiceImplTest {
         student.setGroup(group);
         studentService.add(student);
         verify(studentDaoMock).add(student);
-    }
-
-    @Nested
-    @DisplayName("test 'getById' method")
-    class getByIdTest {
-
-        @Test
-        @DisplayName("when Dao return Optional with Student then method " +
-            "should return this Student")
-        void testReturnExpectedStudent() {
-            Student expectedStudent = new Student();
-            expectedStudent.setId(ID1);
-            expectedStudent.setFirstName(FIRST_NAME);
-            expectedStudent.setLastName(LAST_NAME);
-            expectedStudent.setActive(true);
-            expectedStudent.setGroup(new Group());
-            when(studentDaoMock.getById(ID1)).thenReturn(Optional.of(expectedStudent));
-            assertEquals(expectedStudent, studentService.getById(ID1));
-        }
-
-        @Test
-        @DisplayName("when Dao return empty Optional then method should " +
-            "return empty Student")
-        void testReturnEmptyStudent() {
-            Optional<Student> optional = Optional.empty();
-            when(studentDaoMock.getById(anyInt())).thenReturn(optional);
-            assertEquals(new Student(), studentService.getById(anyInt()));
-        }
     }
 
     @Test
@@ -118,6 +93,36 @@ class StudentServiceImplTest {
         Student student = new Student();
         studentService.delete(student);
         verify(studentDaoMock).delete(student);
+    }
+
+    @Nested
+    @DisplayName("test 'getById' method")
+    class getByIdTest {
+
+        @Test
+        @DisplayName("when Dao return Optional with Student then method " +
+            "should return this Student")
+        void testReturnExpectedStudent() {
+            Student expectedStudent = new Student();
+            expectedStudent.setId(ID1);
+            expectedStudent.setFirstName(FIRST_NAME);
+            expectedStudent.setLastName(LAST_NAME);
+            expectedStudent.setActive(true);
+            expectedStudent.setGroup(new Group());
+            when(studentDaoMock.getById(ID1)).thenReturn(Optional.of(expectedStudent));
+            assertEquals(expectedStudent, studentService.getById(ID1));
+        }
+
+        @Test
+        @DisplayName("when Dao return empty Optional then method should " +
+            "return empty Student")
+        void testReturnEmptyStudent() {
+            Optional<Student> optional = Optional.empty();
+            when(studentDaoMock.getById(STUDENT_ID2)).thenReturn(optional);
+            EntityNotFoundException e = assertThrows(EntityNotFoundException.class,
+                () -> studentService.getById(STUDENT_ID2));
+            assertThat(e.getMessage(), is(equalTo(MESSAGE_STUDENT_NOT_FOUND)));
+        }
     }
 
     @Nested
@@ -176,12 +181,12 @@ class StudentServiceImplTest {
         void testCallStudentDaoOnce() {
             Student student = new Student();
             studentService.transferStudentToGroup(student, new Group());
-                verify(studentDaoMock).update(student);
+            verify(studentDaoMock).update(student);
         }
 
         @Test
         @DisplayName("should update student with group from parameter")
-        void testSetStudentGroupEqualsExpectedGroup(){
+        void testSetStudentGroupEqualsExpectedGroup() {
             Group expectedGroup = new Group();
             expectedGroup.setId(1);
             expectedGroup.setName("Test group name");
