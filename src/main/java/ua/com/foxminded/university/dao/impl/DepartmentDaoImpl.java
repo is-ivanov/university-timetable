@@ -1,28 +1,29 @@
 package ua.com.foxminded.university.dao.impl;
 
-import java.util.List;
-import java.util.Optional;
-
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-
 import ua.com.foxminded.university.dao.interfaces.DepartmentDao;
+import ua.com.foxminded.university.dao.mapper.DepartmentMapper;
 import ua.com.foxminded.university.domain.entity.Department;
-import ua.com.foxminded.university.domain.entity.mapper.DepartmentMapper;
-import ua.com.foxminded.university.exception.DAOException;
+import ua.com.foxminded.university.exception.DaoException;
+
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
+@RequiredArgsConstructor
 @Repository
 @PropertySource("classpath:sql_query.properties")
 public class DepartmentDaoImpl implements DepartmentDao {
 
     private static final String QUERY_ADD = "department.add";
     private static final String QUERY_GET_ALL = "department.getAll";
+    private static final String QUERY_GET_ALL_BY_FACULTY = "department.getAllByFacultyId";
     private static final String QUERY_GET_BY_ID = "department.getById";
     private static final String QUERY_UPDATE = "department.update";
     private static final String QUERY_DELETE = "department.delete";
@@ -33,12 +34,6 @@ public class DepartmentDaoImpl implements DepartmentDao {
     private final JdbcTemplate jdbcTemplate;
     private final Environment env;
 
-    @Autowired
-    public DepartmentDaoImpl(JdbcTemplate jdbcTemplate, Environment env) {
-        this.jdbcTemplate = jdbcTemplate;
-        this.env = env;
-    }
-
     @Override
     public void add(Department department) {
         log.debug("Adding {}", department);
@@ -47,7 +42,7 @@ public class DepartmentDaoImpl implements DepartmentDao {
                 department.getName(), department.getFaculty().getId());
         } catch (DataAccessException e) {
             log.error("An error occurred while adding the {}", department, e);
-            throw new DAOException(e.getMessage(), e);
+            throw new DaoException(e.getMessage(), e);
         }
         log.info("{} added successfully", department);
     }
@@ -62,7 +57,7 @@ public class DepartmentDaoImpl implements DepartmentDao {
                 new DepartmentMapper(), id);
         } catch (DataAccessException e) {
             log.error("Department id({}) not found", id, e);
-            throw new DAOException(String.format(MESSAGE_DEPARTMENT_NOT_FOUND,
+            throw new DaoException(String.format(MESSAGE_DEPARTMENT_NOT_FOUND,
                 id), e);
         }
         log.info("Found {}", result);
@@ -88,7 +83,7 @@ public class DepartmentDaoImpl implements DepartmentDao {
             department.getId());
         if (numberUpdatedRows == 0) {
             log.warn("Can't update {}", department);
-            throw new DAOException(String.format(MESSAGE_UPDATE_DEPARTMENT_NOT_FOUND,
+            throw new DaoException(String.format(MESSAGE_UPDATE_DEPARTMENT_NOT_FOUND,
                 department.getId()));
         } else {
             log.info("Update {}", department);
@@ -102,7 +97,7 @@ public class DepartmentDaoImpl implements DepartmentDao {
             env.getRequiredProperty(QUERY_DELETE), department.getId());
         if (numberDeletedRows == 0) {
             log.warn("Can't delete {}", department);
-            throw new DAOException(String
+            throw new DaoException(String
                 .format(MESSAGE_DELETE_DEPARTMENT_NOT_FOUND,
                     department.getId()));
         } else {
@@ -110,4 +105,27 @@ public class DepartmentDaoImpl implements DepartmentDao {
         }
     }
 
+    @Override
+    public void delete(int id) {
+        log.debug("Deleting department id({})", id);
+        int numberDeletedRows = jdbcTemplate.update(
+            env.getRequiredProperty(QUERY_DELETE), id);
+        if (numberDeletedRows == 0) {
+            log.warn("Can't delete department id({})", id);
+            throw new DaoException(String
+                .format(MESSAGE_DELETE_DEPARTMENT_NOT_FOUND, id));
+        } else {
+            log.info("Delete department id({})", id);
+        }
+    }
+
+    @Override
+    public List<Department> getAllByFacultyId(int facultyId) {
+        log.debug("Getting all departments by faculty id({})", facultyId);
+        List<Department> departments =
+            jdbcTemplate.query(env.getRequiredProperty(QUERY_GET_ALL_BY_FACULTY),
+                new DepartmentMapper(), facultyId);
+        log.info("Found {} departments", departments.size());
+        return departments;
+    }
 }

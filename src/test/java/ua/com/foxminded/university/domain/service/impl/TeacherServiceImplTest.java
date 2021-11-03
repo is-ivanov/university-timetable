@@ -1,11 +1,11 @@
 package ua.com.foxminded.university.domain.service.impl;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.foxminded.university.dao.interfaces.TeacherDao;
@@ -13,9 +13,7 @@ import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Teacher;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -31,15 +29,11 @@ class TeacherServiceImplTest {
     public static final int ID1 = 1;
     public static final int ID2 = 2;
 
-    private TeacherServiceImpl teacherService;
-
     @Mock
     private TeacherDao teacherDaoMock;
 
-    @BeforeEach
-    void setUp() {
-        teacherService = new TeacherServiceImpl(teacherDaoMock);
-    }
+    @InjectMocks
+    private TeacherServiceImpl teacherService;
 
     @Test
     @DisplayName("test 'add' when call add method then should call Dao once")
@@ -198,4 +192,38 @@ class TeacherServiceImplTest {
             assertEquals(expectedDepartment, captor.getValue().getDepartment());
         }
     }
+
+    @Test
+    @DisplayName("Test 'getAllByDepartment' when Dao return List teachers " +
+        "then method should return this list")
+    void testGetAllByDepartment() {
+        Faculty faculty = new Faculty();
+        faculty.setId(ID1);
+        Department department = new Department();
+        department.setId(ID1);
+        department.setFaculty(faculty);
+        Teacher teacher1 = new Teacher();
+        teacher1.setId(ID1);
+        teacher1.setFirstName(FIRST_NAME);
+        teacher1.setDepartment(department);
+        List<Teacher> expectedTeachers = new ArrayList<>();
+        expectedTeachers.add(teacher1);
+
+        when(teacherDaoMock.getAllByDepartment(ID1)).thenReturn(expectedTeachers);
+        assertEquals(expectedTeachers, teacherService.getAllByDepartment(ID1));
+    }
+
+    @Test
+    @DisplayName("Test 'getAllByFaculty' when Dao return List teachers then " +
+        "method should return this list")
+    void testGetAllByFaculty() {
+        Teacher teacher = new Teacher();
+        teacher.setId(ID1);
+        teacher.setFirstName(FIRST_NAME);
+        List<Teacher> expectedTeachers = Collections.singletonList(teacher);
+
+        when(teacherDaoMock.getAllByFaculty(ID1)).thenReturn(expectedTeachers);
+        assertEquals(expectedTeachers, teacherService.getAllByFaculty(ID1));
+    }
+
 }

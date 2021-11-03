@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head>
+  <title>Lesson</title>
+
+</head>
+<body>
+<div layout:fragment="content">
+  <div class="container-lg">
+    <h1>Lesson</h1>
+    <!--    Lesson Properties-->
+    <div class="col-8 border">
+      <form id="lesson properties" th:method="put" th:action="${'/lessons/' + lesson.id}">
+        <fieldset id="main_properties" disabled>
+          <input type="hidden" id="lessonId" th:value="${lesson.id}">
+          <legend class="visually-hidden">lesson properties</legend>
+          <div class="p-3">
+            <!-- Select date-->
+            <div class="row mb-3" id="selectDateEditLesson">
+              <!--Date start-->
+              <div class="col">
+                <label for="dateStartPickerLesson" class="form-label">Time start</label>
+                <div class="input-group date"  data-target-input="nearest" id="dateStartPickerLesson">
+                  <input type="text" class="form-control datetimepicker-input"
+                         data-target="#dateStartPickerLesson"
+                         th:value="${#temporals.format(lesson.timeStart, 'yyyy-MM-dd HH:mm')}"
+                         name="timeStart" required disabled/>
+                  <div class="input-group-text" data-target="#dateStartPickerLesson"
+                       data-toggle="datetimepicker">
+                    <i class="bi bi-calendar3"></i>
+                  </div>
+                </div>
+              </div>
+              <!--Date end-->
+              <div class="col">
+                <label for="dateEndPickerLesson" class="form-label">Time end</label>
+                <div class="input-group date" data-target-input="nearest" id="dateEndPickerLesson">
+                  <input type="text" class="form-control datetimepicker-input"
+                         data-target="#dateEndPickerLesson"
+                         th:value="${#temporals.format(lesson.timeEnd, 'yyyy-MM-dd HH:mm')}"
+                         name="timeEnd" required disabled/>
+                  <div class="input-group-text" data-target="#dateEndPickerLesson"
+                       data-toggle="datetimepicker">
+                    <i class="bi bi-calendar3"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Select course-->
+            <div class="mb-3">
+              <label for="selectCourseEditLesson" class="form-label">Course</label>
+              <select name="courseId" id="selectCourseEditLesson"
+                      class="form-select" required>
+                <option value="" disabled selected>Please select course...
+                </option>
+                <option th:each="course : ${courses}"
+                        th:value="${course.id}"
+                        th:utext="${course.name}"
+                        th:selected="${lesson.courseId ne null and course.id eq lesson.courseId}">...
+                </option>
+              </select>
+            </div>
+            <!--Teacher, Room-->
+            <div class="row mb-3">
+              <!-- Select teacher-->
+              <div class="col">
+                <label for="selectTeacherEditLesson" class="form-label">Teacher</label>
+                <select name="teacherId" id="selectTeacherEditLesson"
+                        class="form-select" required>
+                  <option value="" disabled selected>Please select teacher...
+                  </option>
+                  <option th:each="teacherDto : ${teachers}"
+                          th:value="${teacherDto.id}"
+                          th:utext="${teacherDto.fullName}"
+                          th:selected="${lesson.teacherId ne null and teacherDto.id eq lesson.teacherId}">
+                    ...
+                  </option>
+                </select>
+              </div>
+              <!-- Select Room-->
+              <div class="col">
+                <label for="selectRoomEditLesson" class="form-label">Room</label>
+                <select name="roomId" id="selectRoomEditLesson"
+                        class="form-select" required>
+                  <option value="" disabled selected>Please select room...
+                  </option>
+                  <option th:each="room : ${rooms}"
+                          th:value="${room.id}"
+                          th:utext="${room.getBuildingAndRoom()}"
+                          th:selected="${lesson.roomId ne null and room.id eq lesson.roomId}">...
+                  </option>
+                </select>
+              </div>
+            </div>
+            <!--  Submit-->
+            <input type="submit" class="btn btn-primary btn" value="Update">
+          </div>
+        </fieldset>
+
+        <div class="ps-3 pb-2">
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="switchUpdateOn"
+                   onclick="updateOn()">
+            <label class="form-check-label" for="switchUpdateOn">Update on</label>
+          </div>
+        </div>
+      </form>
+    </div>
+    <br>
+
+    <!-- Buttons control table-->
+    <div class="pb-2">
+      <form action="#">
+        <div>
+          <button type="button" class="btn btn-primary" data-bs-type="addStudent"
+                  data-bs-toggle="modal" data-bs-target="#addModal">
+            <i class="bi bi-person-plus-fill"></i> Add Student
+          </button>
+
+          <button type="button" class="btn btn-primary" data-bs-type="addGroup"
+                  data-bs-toggle="modal" data-bs-target="#addModal">
+            <i class="bi bi-folder-plus"></i> Add Group
+          </button>
+
+          <button class="btn btn-danger float-end checkbox__depends"
+                  id="removeSelectedStudents"
+                  data-bs-toggle="modal"
+                  data-bs-target="#removeStudentFromLessonModal"
+                  disabled>
+            <i class="bi-trash"></i> Remove
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!--    Table Students-->
+    <div class="table-responsive-md">
+      <table class="table table-hover table-sortable" id="mainTable">
+        <caption>Students of this lesson</caption>
+        <thead class="bg-success">
+        <tr>
+          <th scope="col" class="col check-box-table-cell">
+            <label>
+              <input class="form-check-input" id="check-all" type="checkbox">
+            </label>
+          </th>
+          <th scope="col" class="col th-sort">Group</th>
+          <th scope="col" class="col th-sort">First Name</th>
+          <th scope="col" class="col th-sort">Patronymic</th>
+          <th scope="col" class="col th-sort">Last Name</th>
+          <th scope="col" class="col th-sort text-center">Status</th>
+          <th scope="col" class="col">Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="align-middle" th:each="studentDto : ${lesson.students}"
+            th:if="${#lists.size(lesson.students) gt 0 and lesson.students.get(0).getId() ne 0}"
+            th:data-bs-id="${studentDto.id}"
+            th:classappend="${studentDto.active} ? 'active' : 'inactive'">
+          <td class="check-box-table-cell">
+            <label>
+              <input class="form-check-input checkbox-table" type="checkbox">
+            </label>
+          </td>
+          <td th:utext="${studentDto.groupName}">99XT-1</td>
+          <td class="first_name" th:utext="${studentDto.firstName}">Ivan</td>
+          <td class="patronymic" th:utext="${studentDto.patronymic}">Ivanovich</td>
+          <td class="last_name" th:utext="${studentDto.lastName}">Ivanov</td>
+          <td th:utext="${studentDto.active} ? 'active' : 'inactive'" class="text-center"
+              th:classappend="${studentDto.active} ? 'active' : 'inactive'">active
+          </td>
+          <td>
+            <div class="col-auto">
+              <a href="#removeStudentFromLessonModal"
+                 class="btn btn-danger btn-sm removeButton"
+                 data-bs-toggle="modal" th:data-bs-id="${studentDto.id}">
+                <i class="bi-trash"></i> Remove
+              </a>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!--  Modal Forms-->
+  <!--  Add Group/Student Modal-->
+  <div id="addModal" class="modal fade" data-bs-backdrop="static" tabindex="-1"
+       aria-labelledby="AddModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form th:attr="data-id=${lesson.id}" method="post" id="formAddModal">
+          <div class="modal-header">
+            <h5 class="modal-title">Add student</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close">
+            </button>
+          </div>
+          <div class="modal-body">
+            <!--Faculty Select-->
+            <div class="mb-3">
+              <label for="selectFacultyAddStudent" class="form-label">Faculty</label>
+              <select name="facultyId" id="selectFacultyAddStudent" class="form-select">
+                <option value="" disabled selected>Please select faculty...</option>
+                <option th:each="faculty : ${faculties}"
+                        th:value="${faculty.id}"
+                        th:utext="${faculty.name}">...
+                </option>
+              </select>
+            </div>
+            <!--Group Select-->
+            <div class="mb-3">
+              <label for="selectGroupAddStudent" class="form-label">Group</label>
+              <select class="form-select" name="groupId" id="selectGroupAddStudent" required>
+                <option value="" disabled selected>Please select group...</option>
+                <option th:each="group : ${groups}"
+                        th:value="${group.id}"
+                        th:utext="${group.name}">...
+                </option>
+              </select>
+            </div>
+            <!--Student Select-->
+            <div class="mb-3" id="studentSelector">
+              <label for="selectStudentAddStudent" class="form-label">Student</label>
+              <select class="form-select" name="studentId" id="selectStudentAddStudent" required>
+                <option value="" disabled selected>Please select group before select student...</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary btn-sm"
+                    data-bs-dismiss="modal">Cancel
+            </button>
+            <input type="submit" class="btn btn-primary btn-sm" id="submit"
+                   value="Add Student">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!--  Remove Student Modal-->
+  <div id="removeStudentFromLessonModal" class="modal fade" data-bs-backdrop="static"
+       tabindex="-1" aria-labelledby="RemoveStudentFromLessonModalLabel"
+       aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form id="formDelete" th:method="delete">
+          <div class="modal-header">
+            <h5 id="removeStudentFromLessonModalLabel" class="modal-title">Remove Lesson</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to remove
+              <span class="fw-bold" id="removedStudent"
+                    style="white-space: pre-line"></span></p>
+            <p class="text-danger">
+              <small>This action cannot be undone.</small>
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary"
+                    data-bs-dismiss="modal">Cancel
+            </button>
+            <input type="hidden" name="studentIds" id="removedStudentId">
+            <input type="submit" class="btn btn-danger" value="Remove">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+        th:src="@{/webjars/jquery/jquery.min.js}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/js/bootstrap.bundle.min.js"
+        th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
+        th:src="@{/webjars/momentjs/moment.js}"></script>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.min.js"
+  th:src="@{/webjars/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+<script src="../resources/js/sort_table.js" th:src="@{/js/sort_table.js}"></script>
+<script src="../resources/js/show_inactive.js" th:src="@{/js/show_inactive.js}"></script>
+<script src="../resources/js/fill_select.js" th:src="@{/js/fill_select.js}"></script>
+
+<script layout:fragment="script">
+
+  function updateOn () {
+    if ($('#switchUpdateOn').is(':checked')) {
+      $('#main_properties').removeAttr('disabled');
+      $('#selectDateEditLesson').find('input').removeAttr('disabled');
+    } else {
+      $('#main_properties').attr('disabled', 'disabled');
+      $('#selectDateEditLesson').find('input').attr('disabled', 'disabled');
+    }
+  }
+
+  // ADD/EDIT MODAL
+  $(function () {
+    $('#addModal').on('show.bs.modal', function (event) {
+      let target = event.relatedTarget;
+      let typeContent = target.dataset.bsType;
+      let form = $('#formAddModal');
+      let modalTitle = $(this).find('.modal-title');
+      let selectorStudent = $(this).find('#studentSelector');
+      let submitButton = $(this).find('#submit');
+      let uri = '/lessons/' + form.attr('data-id');
+      $(this).attr('data-modal-type', typeContent);
+
+      if (typeContent === 'addStudent') {
+        form.attr('action', uri + '/students');
+        modalTitle.text('Add student');
+        selectorStudent.removeClass('d-none');
+        $('#selectStudentAddStudent').attr('required', true);
+        submitButton.val('Add Student');
+      } else if (typeContent === 'addGroup') {
+        form.attr('action', uri + '/groups');
+        modalTitle.text('Add students from group');
+        selectorStudent.addClass('d-none');
+        $('#selectStudentAddStudent').removeAttr('required');
+        submitButton.val('Add Group');
+      }
+    });
+
+    $('#selectFacultyAddStudent').change(function () {
+      let selectGroup = $('#selectGroupAddStudent');
+      let facultyId = $(this).val();
+      let time_start = $('#dateStartPickerLesson').children('input').val();
+      let time_end = $('#dateEndPickerLesson').children('input').val();
+      updateSelectGroupFilteredByFacultyAndDate(time_start, time_end, facultyId, selectGroup);
+    });
+
+    $('#selectGroupAddStudent').change(function () {
+      if ($('#addModal').attr('data-modal-type') === 'addStudent') {
+        let selectStudent = $('#selectStudentAddStudent');
+        let groupId = $(this).val();
+        let time_start = $('#dateStartPickerLesson').children('input').val();
+        let time_end = $('#dateEndPickerLesson').children('input').val();
+        updateSelectStudentsFilteredByGroupAndDate(time_start, time_end, groupId, selectStudent);
+      }
+    });
+
+  });
+
+  $(function () {
+    $('#addModal').on('shown.bs.modal', function () {
+      $('#selectFacultyAddStudent').focus();
+    });
+  });
+
+  // REMOVE MODAL
+  // Remove one student
+  $(function () {
+    $('.removeButton').on('click', function () {
+      let studentId = $(this).attr('data-bs-id');
+      let lessonId = $('#lessonId').val();
+      let row = $(this).parent().parent().parent();
+      let student = getPersonFullNameFromRow(row, 'student');
+      let course = $('#selectCourseEditLesson > option:selected').text();
+      let timeStart = $('#dateStartPickerLesson > input').val();
+      let lesson = student + 'from lesson: ' + course + ' on ' + timeStart;
+      $('#removedStudentId').val(studentId);
+      $('#removedStudent').text(lesson);
+      $('#formDelete').attr('action', '/lessons/' + lessonId + '/students');
+    });
+  });
+
+  // Remove selected students
+  $(function () {
+    $('#removeSelectedStudents').on('click', function () {
+      let selectedRows = $('tr.selected')
+      let lessonId = $('#lessonId').val();
+      let course = $('#selectCourseEditLesson > option:selected').text();
+      let timeStart = $('#dateStartPickerLesson > input').val();
+      let textWarning = 'next students from lesson: ' + course + ' on ' + timeStart + ':';
+      selectedRows.each(function () {
+        textWarning = textWarning + '\n' + getPersonFullNameFromRow(this, 'student');
+      });
+      $('#removedStudent').text(textWarning);
+      let studentIds = [];
+      selectedRows.each(function () {
+        studentIds.push($(this).data('bs-id'));
+      });
+      $('#removedStudentId').val(studentIds);
+      $('#formDelete').attr('action', '/lessons/' + lessonId + '/students');
+
+    });
+  });
+
+  //  DateTimePicker
+  $(function () {
+    let dateStartPickerLesson = $('#dateStartPickerLesson')
+    let dateEndPickerLesson = $('#dateEndPickerLesson');
+
+    dateStartPickerLesson.on('hide.datetimepicker', function (e) {
+      updateEndDatetimepicker(dateEndPickerLesson, e);
+      updateOptionsSelectTeacherAndRoom();
+      dateEndPickerLesson.focus();
+    });
+
+    dateEndPickerLesson.on('hide.datetimepicker', function (e) {
+      updateStartDatetimepicker(dateStartPickerLesson, e);
+      updateOptionsSelectTeacherAndRoom();
+    });
+
+  });
+
+  function updateOptionsSelectTeacherAndRoom () {
+    let time_start = $('#dateStartPickerLesson').children('input').val();
+    let time_end = $('#dateEndPickerLesson').children('input').val();
+    let selectTeacher = $('#selectTeacherEditLesson');
+    let selectRoom = $('#selectRoomEditLesson');
+    updateSelectTeacherFilteredByDate(time_start, time_start, selectTeacher);
+    updateSelectRoomFilteredByDate(time_start, time_end, selectRoom);
+
+  }
+
+
+</script>
+</body>
+</html>

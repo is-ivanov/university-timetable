@@ -1,24 +1,23 @@
 package ua.com.foxminded.university.domain.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ua.com.foxminded.university.dao.interfaces.RoomDao;
 import ua.com.foxminded.university.domain.entity.Room;
 import ua.com.foxminded.university.domain.service.interfaces.RoomService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class RoomServiceImpl implements RoomService {
 
     private final RoomDao roomDao;
-
-    @Autowired
-    public RoomServiceImpl(RoomDao roomDao) {
-        this.roomDao = roomDao;
-    }
 
     @Override
     public void add(Room room) {
@@ -57,4 +56,28 @@ public class RoomServiceImpl implements RoomService {
         log.info("Delete {}", room);
     }
 
+    @Override
+    public void delete(int id) {
+        log.debug("Deleting room id({})", id);
+        roomDao.delete(id);
+        log.info("Delete room id({})", id);
+    }
+
+    @Override
+    public List<Room> getFreeRoomsOnLessonTime(LocalDateTime startTime,
+                                               LocalDateTime endTime) {
+        log.debug("Getting free rooms from {} to {}", startTime, endTime);
+        List<Room> freeRooms = roomDao.getFreeRoomsOnLessonTime(startTime, endTime);
+        log.info("Found {} free rooms", freeRooms.size());
+        return freeRooms;
+    }
+
+    @Override
+    public Page<Room> getAllSortedPaginated(Pageable pageable) {
+        log.debug("Getting sorted page {} from list of rooms", pageable.getPageNumber());
+        Page<Room> pageRooms = roomDao.getAllSortedPaginated(pageable);
+        log.info("Found {} rooms on page {}", pageRooms.getContent().size(),
+            pageRooms.getNumber());
+        return pageRooms;
+    }
 }

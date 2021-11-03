@@ -1,8 +1,10 @@
 package ua.com.foxminded.university.dao.interfaces;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import ua.com.foxminded.university.domain.entity.Lesson;
+import ua.com.foxminded.university.domain.filter.LessonFilter;
 
 public interface LessonDao extends Dao<Lesson> {
 
@@ -16,6 +18,19 @@ public interface LessonDao extends Dao<Lesson> {
 
     List<Lesson> getAllForStudent(int studentId);
 
-    void deleteStudentFromLesson(int lessonId, int studentId);
+    void removeStudentFromLesson(int lessonId, int studentId);
 
+    List<Lesson> getAllWithFilter(LessonFilter filter);
+
+    List<Lesson> getAllForStudentForTimePeriod(int studentId,
+                                               LocalDateTime startTime,
+                                               LocalDateTime endTime);
+
+    List<Lesson> getAllForTeacherForTimePeriod(int studentId,
+                                               LocalDateTime startTime,
+                                               LocalDateTime endTime);
+
+    List<Lesson> getAllForRoomForTimePeriod(int teacherId,
+                                            LocalDateTime startTime,
+                                            LocalDateTime endTime);
 }

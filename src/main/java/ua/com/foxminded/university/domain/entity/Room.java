@@ -13,4 +13,7 @@ public class Room {
     private String building;
     private String number;
 
+    public String getBuildingAndRoom () {
+        return this.building + " - " + this.number;
+    }
 }

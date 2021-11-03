@@ -1,0 +1,144 @@
+.pt-60px {
+  padding-top: 60px;
+}
+
+table.table-sortable thead > tr > th.th-sort {
+  padding-right: 30px;
+}
+
+.table-sortable thead .th-sort {
+  cursor: pointer;
+  position: relative;
+}
+
+table.table-sortable thead .th-sort::before,
+table.table-sortable thead .th-sort::after {
+  position: absolute;
+  bottom: 0.5em;
+  display: block;
+}
+
+.table-sortable .th-sort::before,
+.table-sortable .th-sort-asc::before,
+.table-sortable .th-sort-desc::before {
+  right: 1em;
+  content: "\2191";
+}
+
+.table-sortable .th-sort::after,
+.table-sortable .th-sort-asc::after,
+.table-sortable .th-sort-desc::after {
+  right: 0.5em;
+  content: "\2193";
+}
+
+.table-sortable .th-sort-asc,
+.table-sortable .th-sort-desc {
+  background: rgba(0, 0, 0, 0.1);
+  color: white;
+}
+
+.table-sortable .th-sort-asc::after,
+.table-sortable .th-sort-desc::before {
+  color: initial;
+}
+
+tr.inactive,
+option.inactive {
+  background: lavender;
+  color: red;
+}
+
+td.check-box-table-cell,
+th.check-box-table-cell {
+  text-align: center;
+  width: 41px;
+}
+
+td input[type=checkbox],
+th input[type=checkbox] {
+  margin: 0 auto;
+  vertical-align: middle;
+}
+
+td.active {
+  color: green;
+  text-shadow: -1px -1px #FFF,
+  -2px -2px #FFF,
+  -1px 1px #FFF,
+  -2px 2px #FFF,
+  1px 1px #FFF,
+  2px 2px #FFF,
+  1px -1px #FFF,
+  2px -2px #FFF,
+  -3px -3px 2px #BBB,
+  -3px 3px 2px #BBB,
+  3px 3px 2px #BBB,
+  3px -3px 2px #BBB;
+}
+
+td.inactive {
+  text-shadow: -1px -1px #FFF,
+  -2px -2px #FFF,
+  -1px 1px #FFF,
+  -2px 2px #FFF,
+  1px 1px #FFF,
+  2px 2px #FFF,
+  1px -1px #FFF,
+  2px -2px #FFF,
+  -3px -3px 2px #BBB,
+  -3px 3px 2px #BBB,
+  3px 3px 2px #BBB,
+  3px -3px 2px #BBB;
+}
+
+tr.selected {
+  --bs-table-accent-bg: var(--bs-table-hover-bg);
+}
+
+.nav-link.active{
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+}
+
+#loading {
+  width: 100%;
+  height: 100%;
+  top: 120px;
+  display: block;
+  margin-right: auto;
+  margin-left: auto;
+  opacity: 0.7;
+  z-index: 99;
+  text-align: center;
+}
+
+#loading-image {
+  position: absolute;
+  top: 300px;
+  width: 100px;
+  height: 100px;
+  margin: auto;
+  z-index: 100;
+}
+
+.fc .fc-button-primary {
+  background-color: #198754;
+  border-color: #198754;
+}
+
+.fc .fc-button-primary:not(:disabled):active,
+.fc .fc-button-primary:not(:disabled).fc-button-active {
+  background-color: #146c43;
+  border-color: #13653f;
+}
+
+.fc .fc-button-primary:hover {
+  background-color: #157347;
+  border-color: #146c43;
+}
+
+.fc .fc-button-primary:disabled {
+  background-color: #198754;
+  border-color: #198754;
+}

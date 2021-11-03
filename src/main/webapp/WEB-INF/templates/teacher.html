@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head>
+  <meta charset="UTF-8">
+  <title>Teachers</title>
+</head>
+<body>
+<div layout:fragment="content">
+  <h3> Teachers</h3>
+  <!--  Form -->
+  <form action="#" th:action="@{/teachers}" class="my-2">
+    <!--    Faculty and Department select-->
+    <div class="row mb-3">
+      <!--    Faculty Select-->
+      <div class="col-1 text-end pe-1">
+        <label for="selectFaculty" class="col-form-label">Faculty</label>
+      </div>
+      <div class="col-md ps-1">
+        <select class="form-select" id="selectFaculty" name="facultyId">
+          <option value="0" selected>Please select faculty...</option>
+          <option th:each="faculty : ${faculties}"
+                  th:value="${faculty.id}"
+                  th:utext="${faculty.name}"
+                  th:selected="${faculty.id eq facultyIdSelect}">...
+          </option>
+        </select>
+      </div>
+      <!--    Department Select-->
+      <div class="col-1 text-end pe-1">
+        <label for="selectDepartment" class="col-form-label">Department</label>
+      </div>
+      <div class="col-md ps-1">
+        <select class="form-select" id="selectDepartment" name="departmentId"
+                onchange="switchSubmitEnabled()">
+          <option value="0" selected>Please select department...</option>
+          <option th:each="department : ${departments}"
+                  th:value="${department.id}"
+                  th:utext="${department.name}"
+                  th:selected="${department.id eq departmentIdSelect}">...
+          </option>
+        </select>
+      </div>
+    </div>
+    <!--    Submit button and checkbox show inactive teachers -->
+    <div class="row mt-2 align-items-center">
+      <div class="col-sm">
+        <input class="btn btn-success btn-sm" type="submit" id="submit" value="Show teachers"
+               th:disabled="${facultyIdSelect eq null and departmentIdSelect eq null}">
+      </div>
+      <div class="col-sm-auto form-check form-switch ms-5">
+        <input class="form-check-input" type="checkbox" id="switchShowInactiveTeachersMainTable"
+               onclick="showInactiveTeachersInTable()" name="isShowInactiveTeachers"
+               th:checked="${isShowInactiveTeachers}">
+        <label class="form-check-label" for="switchShowInactiveTeachersMainTable">Show inactive teachers</label>
+      </div>
+    </div>
+  </form>
+
+  <button type="button" class="btn btn-primary mb-2 btn-sm"
+          data-bs-toggle="modal"
+          data-bs-target="#newTeacherModal">
+    <i class="bi bi-plus-circle"></i> New Teacher
+  </button>
+
+  <!--  Main Table-->
+  <div class="table-responsive-md">
+    <table class="table table-hover table-sortable" id="mainTable">
+      <caption>List of teachers</caption>
+      <thead class="bg-success">
+      <tr>
+        <th scope="col" class="col th-sort">id</th>
+        <th scope="col" class="col th-sort">First Name</th>
+        <th scope="col" class="col th-sort">Patronymic</th>
+        <th scope="col" class="col th-sort">Last Name</th>
+        <th scope="col" class="col th-sort">Department</th>
+        <th scope="col" class="col th-sort text-center">Status</th>
+        <th scope="col" class="col">Action</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="teacherDto : ${teachers}" class="align-middle"
+          th:classappend="${teacherDto.active} ? 'active' : (${isShowInactiveTeachers}? 'inactive' : 'inactive d-none')">
+        <td th:utext="${teacherDto.id}">...</td>
+        <td class="first_name" th:utext="${teacherDto.firstName}">...</td>
+        <td class="patronymic" th:utext="${teacherDto.patronymic}">...</td>
+        <td class="last_name" th:utext="${teacherDto.lastName}">...</td>
+        <td th:utext="${teacherDto.departmentName}">...</td>
+        <td th:utext="${teacherDto.active} ? 'active' : 'inactive'" class="text-center"
+            th:classappend="${teacherDto.active} ? 'active' : 'inactive'">active
+        </td>
+        <td class="py-0">
+          <div class="row">
+            <div class="col-auto">
+              <a href="#" th:href="@{/timetable/teachers/{id}(id = ${teacherDto.id})}"
+                 class="btn btn-info btn-sm">
+                <i class="bi-calendar3"></i> Timetable
+              </a>
+            </div>
+            <div class="col-auto">
+              <a href="#editTeacherModal"
+                 class="btn btn-warning btn-sm editButton"
+                 data-bs-toggle="modal" th:data-bs-id="${teacherDto.id}">
+                <i class="bi-pencil-square"></i> Edit
+              </a>
+            </div>
+            <div class="col-auto">
+              <a href="#deleteTeacherModal"
+                 class="btn btn-danger btn-sm deleteButton"
+                 data-bs-toggle="modal" th:data-bs-id="${teacherDto.id}">
+                <i class="bi-trash"></i>Delete
+              </a>
+            </div>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <!--  Main Table End-->
+
+  <!--  Modal Forms-->
+  <!--  Create Modal-->
+  <div id="newTeacherModal" class="modal fade" data-bs-backdrop="static"
+       tabindex="-1" aria-labelledby="NewTeacherModalLabel"
+       aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form action="#" th:action="@{/teachers}" method="post"
+              th:object="${newTeacher}">
+          <div class="modal-header">
+            <h5 class="modal-title" id="newTeacherModalLabel">New Teacher</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="form-floating mb-3">
+              <input type="text" class="form-control" id="newTeacherFirstNameInput"
+                     placeholder="First name"
+                     th:field="*{firstName}" required>
+              <label for="newTeacherFirstNameInput">First Name</label>
+            </div>
+
+            <div class="form-floating mb-3">
+              <input type="text" class="form-control" id="newTeacherPatronymicInput"
+                     placeholder="Patronymic"
+                     th:field="*{patronymic}">
+              <label for="newTeacherPatronymicInput">Patronymic</label>
+            </div>
+
+            <div class="form-floating mb-3">
+              <input type="text" class="form-control" id="newTeacherLastNameInput"
+                     placeholder="Last Name"
+                     th:field="*{lastName}" required>
+              <label for="newTeacherLastNameInput">Last Name</label>
+            </div>
+
+            <div class="col-auto form-check form-switch mb-3">
+              <input class="form-check-input" type="checkbox" id="switchActiveNewTeacher"
+                     th:field="*{active}">
+              <label class="form-check-label" for="switchActiveNewTeacher">Active teacher</label>
+            </div>
+
+            <div class="mb-3">
+              <label for="selectDepartmentNewTeacher" class="form-label">Department</label>
+              <select name="departmentId" id="selectDepartmentNewTeacher"
+                      class="form-select" required>
+                <option value="" disabled selected>Please select department...
+                </option>
+                <option th:each="department : ${departments}"
+                        th:value="${department.id}"
+                        th:utext="${department.name}"
+                        th:selected="${department.id eq departmentIdSelect}">...
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary btn-sm"
+                    data-bs-dismiss="modal">Cancel
+            </button>
+            <input type="submit" class="btn btn-primary btn-sm" value="Create Teacher">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!--Edit Modal -->
+  <div id="editTeacherModal" class="modal fade" data-bs-backdrop="static"
+       tabindex="-1" aria-labelledby="editTeacherModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form id="formEdit" th:method="put">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editTeacherModalLabel">Update Teacher</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="form-floating mb-3">
+              <input type="text" class="form-control" id="editTeacherFirstNameInput"
+                     name="firstName" value="" required>
+              <label for="editTeacherFirstNameInput" class="form-label">First Name</label>
+            </div>
+
+            <div class="form-floating mb-3">
+              <input type="text" class="form-control" id="editTeacherPatronymicInput"
+                     name="patronymic" value="">
+              <label for="editTeacherPatronymicInput" class="form-label">Patronymic</label>
+            </div>
+
+            <div class="form-floating mb-3">
+              <input type="text" class="form-control" id="editTeacherLastNameInput"
+                     name="lastName" value="" required>
+              <label for="editTeacherLastNameInput" class="form-label">Last Name</label>
+            </div>
+
+            <div class="col-auto form-check form-switch mb-3">
+              <input class="form-check-input" type="checkbox" id="switchActiveEditTeacher"
+                     name="active">
+              <label class="form-check-label" for="switchActiveEditTeacher">Active teacher</label>
+            </div>
+
+            <div class="mb-3">
+              <label for="editTeacherDepartmentSelect" class="form-label">Department</label>
+              <select name="departmentId" id="editTeacherDepartmentSelect" class="form-select" required>
+                <option value="" disabled selected>Please select department...
+                </option>
+                <option th:each="department : ${departments}"
+                        th:value="${department.id}"
+                        th:utext="${department.name}"
+                        th:selected="${department.id eq departmentIdSelect}">...
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary"
+                    data-bs-dismiss="modal">Cancel
+            </button>
+            <input type="submit" class="btn btn-primary" value="Update">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!--  Delete Modal-->
+  <div id="deleteTeacherModal" class="modal fade" data-bs-backdrop="static"
+       tabindex="-1" aria-labelledby="DeleteTeacherModalLabel"
+       aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form id="formDelete" th:method="delete">
+          <div class="modal-header">
+            <h5 id="deleteTeacherModalLabel" class="modal-title">Delete Teacher</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to delete
+              <span class="fw-bold" id="deletedTeacher"></span></p>
+            <p class="text-danger">
+              <small>This action cannot be undone.</small>
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary"
+                    data-bs-dismiss="modal">Cancel
+            </button>
+            <input type="submit" class="btn btn-danger" value="Delete">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+<!--Scripts-->
+<script layout:fragment="script">
+
+  function showInactiveTeachersInTable () {
+    const table = $('#mainTable');
+    const check = $('#switchShowInactiveTeachersMainTable');
+    showInactiveTableRow(table, check);
+  }
+
+  let selectFaculty = $('#selectFaculty');
+
+  selectFaculty.change(function () {
+    let facultyId = $(this).val();
+    let select = $('#selectDepartment');
+    updateSelectDepartmentsFilteredByFaculty(facultyId, select);
+    switchSubmitEnabled();
+  });
+
+  function switchSubmitEnabled () {
+    if (selectFaculty.val() > 0 || $('#selectDepartment').val() > 0) {
+      $('#submit').removeAttr('disabled');
+    } else {
+      $('#submit').prop('disabled', true);
+    }
+  }
+
+  // NEW MODAL
+  $(function () {
+    $('#newTeacherModal').on('show.bs.modal', function () {
+      $('#switchActiveNewTeacher').prop('checked', true);
+    });
+  });
+
+  $(function () {
+    $('#newTeacherModal').on('shown.bs.modal', function () {
+      $('#newTeacherFirstNameInput').focus();
+    });
+  });
+
+  // EDIT MODAL
+  $(function () {
+    $('.editButton').on('click', function () {
+      let href = '/teachers/' + $(this).attr('data-bs-id');
+      $('#formEdit').attr('action', href);
+      $.get(href, function (teacher) {
+        $('#editTeacherFirstNameInput').val(teacher.firstName);
+        $('#editTeacherPatronymicInput').val(teacher.patronymic);
+        $('#editTeacherLastNameInput').val(teacher.lastName);
+        let departmentId = teacher.departmentId;
+        $('#switchActiveEditTeacher').prop('checked', teacher.active);
+        $('#editTeacherDepartmentSelect option[value=' + departmentId + ']').prop('selected', true);
+      });
+    });
+  });
+  $(function () {
+    $('#editTeacherModal').on('shown.bs.modal', function () {
+      $('#editTeacherFirstNameInput').focus();
+    });
+  });
+
+  // DELETE MODAL
+  $(function () {
+    $('.deleteButton').on('click', function () {
+      let id = $(this).attr('data-bs-id');
+      let row = $(this).parent().parent().parent().parent();
+      let teacher = getPersonFullNameFromRow(row, 'teacher');
+      $('#deletedTeacher').text(teacher + '?');
+      $('#formDelete').attr('action', '/teachers/' + id);
+    });
+  });
+
+</script>
+</body>
+</html>

@@ -1,7 +1,9 @@
 package ua.com.foxminded.university.domain.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ua.com.foxminded.university.dao.interfaces.FacultyDao;
 import ua.com.foxminded.university.domain.entity.Faculty;
@@ -10,15 +12,11 @@ import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import java.util.List;
 
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class FacultyServiceImpl implements FacultyService {
 
     private final FacultyDao facultyDao;
-
-    @Autowired
-    public FacultyServiceImpl(FacultyDao facultyDao) {
-        this.facultyDao = facultyDao;
-    }
 
     @Override
     public void add(Faculty faculty) {
@@ -56,5 +54,30 @@ public class FacultyServiceImpl implements FacultyService {
         facultyDao.delete(faculty);
         log.info("Delete {}", faculty);
     }
+
+    @Override
+    public void delete(int id) {
+        log.debug("Deleting faculty id({})", id);
+        facultyDao.delete(id);
+        log.info("Delete faculty id({})", id);
+    }
+
+    @Override
+    public List<Faculty> getAllSortedByNameAsc() {
+        log.debug("Getting all faculties sorted by name ascending");
+        List<Faculty> faculties = facultyDao.getAllSortedByNameAsc();
+        log.info("Found {} sorted faculties", faculties.size());
+        return faculties;
+    }
+
+    @Override
+    public Page<Faculty> getAllSortedPaginated(Pageable pageable) {
+        log.debug("Getting sorted page {} from list of faculties", pageable.getPageNumber());
+        Page<Faculty> pageFaculties = facultyDao.getAllSortedPaginated(pageable);
+        log.info("Found {} faculties on page {}", pageFaculties.getContent().size(),
+            pageFaculties.getNumber());
+        return pageFaculties;
+    }
+
 
 }

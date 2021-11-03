@@ -1,20 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration>
-    <property name="HOME_LOG" value="logs/app.log"/>
     <appender name="STDOUT"
               class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{20} - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %blue(%-5level) %magenta(%logger{36}) - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <logger name="ua.com.foxminded.university" level="debug" additivity="false">
+    <logger name="ua.com.foxminded.university" level="info" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="org.springframework" level="info" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <root level="info">
+<!--    <logger name="org.springframework.transaction" level="trace" additivity="false">-->
+<!--        <appender-ref ref="STDOUT"/>-->
+<!--    </logger>-->
+    <logger name="org.thymeleaf" level="info" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <root level="error">
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>

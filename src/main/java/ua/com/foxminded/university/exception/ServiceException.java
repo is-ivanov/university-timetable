@@ -1,11 +1,6 @@
 package ua.com.foxminded.university.exception;
 
-@SuppressWarnings("serial")
 public class ServiceException extends RuntimeException {
-
-    public ServiceException() {
-        super();
-    }
 
     public ServiceException(String message, Throwable cause) {
         super(message, cause);
@@ -15,8 +10,5 @@ public class ServiceException extends RuntimeException {
         super(message);
     }
 
-    public ServiceException(Throwable cause) {
-        super(cause);
-    }
 
 }

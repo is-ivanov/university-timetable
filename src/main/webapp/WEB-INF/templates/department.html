@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head>
+  <meta charset="UTF-8">
+  <title>Departments</title>
+</head>
+<body>
+<div layout:fragment="content">
+  <h3
+    th:utext="${facultySelected ne null} ? 'Departments from ' + ${facultySelected.name} : 'Departments'">
+  </h3>
+  <!--  Form filters-->
+  <form action="#" th:action="@{/departments}" class="my-2">
+    <div class="row align-items-center">
+      <div class="col-1">
+        <label for="selectFaculty" class="col-form-label">Faculty</label>
+      </div>
+      <div class="col">
+        <select class="form-select" id="selectFaculty" name="facultyId">
+          <option value="0">Please select faculty...</option>
+          <option th:each="faculty : ${faculties}"
+                  th:value="${faculty.id}"
+                  th:utext="${faculty.name}"
+                  th:selected="${facultySelected ne null and faculty.id eq facultySelected.id}">
+            ...
+          </option>
+        </select>
+      </div>
+      <div class="col">
+        <input class="btn btn-success btn-sm" type="submit" value="Show departments">
+      </div>
+    </div>
+  </form>
+
+  <button type="button" class="btn btn-primary mb-2 btn-sm"
+          data-bs-toggle="modal"
+          data-bs-target="#newDepartmentModal">
+    <i class="bi bi-plus-circle"></i> New Department
+  </button>
+
+  <!--  Table-->
+  <div class="table-responsive-md">
+    <table class="table table-hover table-sortable" id="mainTable">
+      <caption>List of departments</caption>
+      <thead class="bg-success">
+      <tr>
+        <th scope="col" class="col-1 th-sort">id</th>
+        <th scope="col" class="col th-sort">Department Name</th>
+        <th scope="col" class="col th-sort">Faculty Name</th>
+        <th scope="col" class="col">Action</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="department : ${departments}" class="align-middle">
+        <td th:utext="${department.id}">...</td>
+        <td class="department_name" th:utext="${department.name}">...</td>
+        <td th:utext="${department.faculty.name}">...</td>
+        <td class="py-0">
+          <div class="row">
+            <div class="col-auto">
+              <a href="#editDepartmentModal" class="btn btn-warning btn-sm editButton"
+                 data-bs-toggle="modal" th:data-bs-id="${department.id}">
+                <i class="bi-pencil-square"></i> Edit
+              </a>
+            </div>
+            <div class="col-auto">
+              <a href="#deleteDepartmentModal"
+                 class="btn btn-danger btn-sm deleteButton"
+                 data-bs-toggle="modal" th:data-bs-id="${department.id}">
+                <i class="bi-trash"></i>Delete
+              </a>
+            </div>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!--  Modal Forms-->
+  <!--  Create Modal-->
+  <div id="newDepartmentModal" class="modal fade" data-bs-backdrop="static"
+       tabindex="-1" aria-labelledby="NewDepartmentModalLabel"
+       aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form action="#" th:action="@{/departments}" method="post"
+              th:object="${newDepartment}">
+          <div class="modal-header">
+            <h5 class="modal-title" id="newDepartmentModalLabel">New
+              Department</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="newDepartmentNameInput" class="form-label">Name</label>
+              <input type="text" class="form-control" id="newDepartmentNameInput"
+                     placeholder="Enter new department name"
+                     th:field="*{name}" required>
+            </div>
+            <div class="mb-3">
+              <label for="selectFacultyNewDepartment" class="form-label">Faculty</label>
+              <select name="faculty.id" id="selectFacultyNewDepartment"
+                      class="form-select" required>
+                <option value="" disabled selected>Please select faculty...
+                </option>
+                <option th:each="faculty : ${faculties}"
+                        th:value="${faculty.id}"
+                        th:utext="${faculty.name}"
+                        th:selected="${facultySelected ne null and faculty.id eq facultySelected.id}">...
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary btn-sm"
+                    data-bs-dismiss="modal">Cancel
+            </button>
+            <input type="submit" class="btn btn-primary btn-sm"
+                   value="Create Department">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!--Edit Modal -->
+  <div id="editDepartmentModal" class="modal fade" data-bs-backdrop="static"
+       tabindex="-1" aria-labelledby="editDepartmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form id="formEdit" th:method="put">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editDepartmentModalLabel">Update Department</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="editDepartmentNameInput" class="form-label">Name</label>
+              <input type="text" class="form-control" id="editDepartmentNameInput"
+                     name="name" value="" required>
+            </div>
+            <div class="mb-3">
+              <label for="editDepartmentFacultySelect" class="form-label">Faculty</label>
+              <select name="faculty.id" id="editDepartmentFacultySelect" class="form-select" required>
+                <option value="" disabled selected>Please select faculty...
+                </option>
+                <option th:each="faculty : ${faculties}"
+                        th:value="${faculty.id}"
+                        th:utext="${faculty.name}"
+                        th:selected="${facultySelected ne null and faculty.id eq facultySelected.id}">...
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary btn-sm"
+                    data-bs-dismiss="modal">Cancel
+            </button>
+            <input type="submit" class="btn btn-primary btn-sm" value="Update">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!--  Delete Modal-->
+  <div id="deleteDepartmentModal" class="modal fade" data-bs-backdrop="static"
+       tabindex="-1" aria-labelledby="DeleteDepartmentModalLabel"
+       aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form id="formDelete" th:method="delete">
+          <div class="modal-header">
+            <h5 id="deleteDepartmentModalLabel" class="modal-title">Delete Department</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to delete
+              <span class="fw-bold" id="deletedDepartmentName"></span></p>
+            <p class="text-danger">
+              <small>This action cannot be undone.</small>
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary btn-sm"
+                    data-bs-dismiss="modal">Cancel
+            </button>
+            <input type="submit" class="btn btn-danger btn-sm" value="Delete">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script layout:fragment="script">
+  // NEW MODAL
+  $(function () {
+    $('#newDepartmentModal').on('shown.bs.modal', function () {
+      $('#newDepartmentNameInput').focus();
+    });
+  });
+
+  // EDIT MODAL
+  $(function () {
+    $('.editButton').on('click', function () {
+      let href = '/departments/' + $(this).attr('data-bs-id');
+      $('#formEdit').attr('action', href);
+      $.get(href, function (department) {
+        $('#editDepartmentNameInput').val(department.name);
+        let facultyId = department.faculty.id;
+        $('#editDepartmentFacultySelect option[value=' + facultyId + ']').prop('selected', true);
+      });
+    });
+  });
+  $(function () {
+    $('#editDepartmentModal').on('shown.bs.modal', function () {
+      $('#editDepartmentNameInput').focus();
+    });
+  });
+
+  // DELETE MODAL
+  $(function () {
+    $('.deleteButton').on('click', function () {
+      let id = $(this).attr('data-bs-id');
+      let row = $(this).parent().parent().parent().parent();
+      let name = row.children('.department_name').text();
+      $('#deletedDepartmentName').
+        text('\'' + name + '\'?');
+      $('#formDelete').attr('action', '/departments/' + id);
+    });
+  });
+
+</script>
+</body>
+</html>

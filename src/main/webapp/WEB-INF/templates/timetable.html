@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<head>
+  <title>Timetable</title>
+
+  <script th:src="@{/webjars/fullcalendar/main.js}"></script>
+  <script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+      let typeTimetable = [[${type}]];
+      let url = '/' + [[${type}]] + '/' + [[${object.id}]] + '/timetable';
+      let calendarEl = document.getElementById('calendar');
+      let calendar = new FullCalendar.Calendar(calendarEl, {
+        aspectRatio: 1.5,
+        headerToolbar: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek',
+        },
+        initialView: 'timeGridWeek',
+        navLinks: true,
+        nowIndicator: true,
+
+        firstDay: 1,
+        allDaySlot: false,
+
+        weekNumbers: true,
+        weekNumberCalculation: 'ISO',
+
+        eventTimeFormat: {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        },
+
+        views: {
+          dayGridMonth: {
+            eventDidMount: function (info) {
+              let teacher = info.event.extendedProps.teacher;
+              let room = info.event.extendedProps.buildingAndRoom;
+              let textTooltip = teacher + '<br/>' + room;
+              new bootstrap.Tooltip(info.el, {
+                html: true,
+                title: textTooltip,
+              });
+            },
+          },
+          timeGrid: {
+            eventTimeFormat: {
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false,
+            },
+            eventDidMount: function (info) {
+              let event = info.event;
+              let el = info.el;
+              let lessonDescription;
+              let lessonTooltip;
+              if (typeTimetable === 'rooms') {
+                lessonDescription = event.extendedProps.teacher;
+                lessonTooltip = event.extendedProps.buildingAndRoom;
+              } else {
+                lessonDescription = event.extendedProps.buildingAndRoom;
+                lessonTooltip = event.extendedProps.teacher;
+              }
+              $(el).find('.fc-event-title').append('<br/>' + lessonDescription);
+              new bootstrap.Tooltip(el, {
+                title: lessonTooltip,
+              });
+            },
+            slotMinTime: '07:00:00',
+            slotMaxTime: '22:00:00',
+            expandRows: true,
+          },
+          listWeek: {
+            eventDidMount: function (info) {
+              let event = info.event;
+              let el = info.el;
+              let lessonDescription;
+              if (typeTimetable === 'rooms') {
+                lessonDescription = event.extendedProps.teacher;
+              } else {
+                lessonDescription = event.extendedProps.buildingAndRoom;
+              }
+              $(el).find('.fc-list-event-title > a').append('&nbsp;&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;&nbsp;' + lessonDescription);
+            },
+          },
+        },
+        slotLabelFormat: [
+          {
+            hour12: false,
+            hour: 'numeric',
+            minute: '2-digit',
+          },
+        ],
+        defaultTimedEventDuration: '01:30',
+        eventDisplay: 'block',
+
+        events: function (info, callback) {
+          $.get(
+            url,
+            {
+              start: info.startStr,
+              end: info.endStr,
+            },
+            function (lessons) {
+              let events = [];
+              lessons.forEach(function (lesson) {
+                events.push({
+                  id: lesson.id,
+                  title: lesson.courseName,
+                  start: lesson.timeStart,
+                  end: lesson.timeEnd,
+                  teacher: lesson.teacherFullName,
+                  buildingAndRoom: lesson.buildingAndRoom,
+                });
+              });
+              callback(events);
+            });
+        },
+        loading: function (isLoading) {
+          if (isLoading) {
+            $('#loading').show();
+          } else {
+            $('#loading').hide();
+          }
+        },
+      });
+      calendar.render();
+    });
+
+  </script>
+</head>
+<body>
+<div layout:fragment="content">
+  <h3 th:with="description=${type eq 'rooms'} ? ${object.getBuildingAndRoom()} : ${object.fullName}"
+      th:utext="'Timetable for ' + ${description}"></h3>
+  <div id='calendar'></div>
+  <div id="loading" style="display: none;">
+    <img id="loading-image" src="../resources/img/Spin-1s-200px.svg"
+         th:src="@{/img/Spin-1s-200px.svg}" alt="Loading..."/>
+  </div>
+</div>
+</body>
+</html>

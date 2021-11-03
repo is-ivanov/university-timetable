@@ -1,25 +1,24 @@
 package ua.com.foxminded.university.domain.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.com.foxminded.university.dao.interfaces.StudentDao;
+import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.domain.service.interfaces.StudentService;
 
+import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class StudentServiceImpl implements StudentService {
 
     private final StudentDao studentDao;
-
-    @Autowired
-    public StudentServiceImpl(StudentDao studentDao) {
-        this.studentDao = studentDao;
-    }
 
     @Override
     public void add(Student student) {
@@ -37,7 +36,9 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public Student getById(int id) {
         log.debug("Getting student by id({})", id);
-        Student student = studentDao.getById(id).orElse(new Student());
+        Student student = studentDao.getById(id)
+            .orElseThrow(() -> new EntityNotFoundException(
+                String.format("Student id(%d) not found", id)));
         log.info("Found {}", student);
         return student;
     }
@@ -66,6 +67,13 @@ public class StudentServiceImpl implements StudentService {
             student.getLastName(), student.isActive());
         studentDao.delete(student);
         log.info("Delete student id({})", student.getId());
+    }
+
+    @Override
+    public void delete(int id) {
+        log.debug("Deleting student id({})", id);
+        studentDao.delete(id);
+        log.info("Delete student id({})", id);
     }
 
     @Override
@@ -98,5 +106,52 @@ public class StudentServiceImpl implements StudentService {
         return student;
     }
 
+    @Override
+    public List<Student> getStudentsByGroup(Group group) {
+        log.debug("Getting all students from group ({})", group);
+        List<Student> students = studentDao.getStudentsByGroup(group);
+        log.info("Found {} students from group {}", students.size(), group);
+        return students;
+    }
+
+    @Override
+    public List<Student> getStudentsByGroup(int groupId) {
+        log.debug("Getting all students from group id({})", groupId);
+        Group group = new Group();
+        group.setId(groupId);
+        List<Student> students = studentDao.getStudentsByGroup(group);
+        log.info("Found {} students from group id({})", students.size(), groupId);
+        return students;
+    }
+
+    @Override
+    public List<Student> getStudentsByFaculty(int facultyId) {
+        log.debug("Getting all students from faculty id({})", facultyId);
+        Faculty faculty = new Faculty(facultyId, null);
+        List<Student> students = studentDao.getStudentsByFaculty(faculty);
+        log.info("Found {} student from faculty id({})", students.size(), facultyId);
+        return students;
+    }
+
+    @Override
+    public List<Student> getAllActiveStudents() {
+        log.debug("Getting all active students");
+        List<Student> students = studentDao.getActiveStudents();
+        log.info("Found {} students", students.size());
+        return students;
+    }
+
+    @Override
+    public List<Student> getFreeStudentsFromGroup(int groupId,
+                                                  LocalDateTime startTime,
+                                                  LocalDateTime endTime) {
+        log.debug("Getting active students from group id({}) free from {} to {}",
+            groupId, startTime, endTime);
+        List<Student> freeStudents = studentDao.getFreeStudentsFromGroup(groupId,
+            startTime, endTime);
+        log.info("Found {} free student from group id({})", freeStudents.size(),
+            groupId);
+        return freeStudents;
+    }
 
 }

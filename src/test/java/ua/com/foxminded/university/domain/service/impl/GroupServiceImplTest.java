@@ -220,4 +220,23 @@ class GroupServiceImplTest {
                 .update(any());
         }
     }
+
+    @Test
+    @DisplayName("test 'getAllByFacultyId' when Dao return List groups then " +
+        "method should return this List")
+    void testGetAllByFacultyId_ReturnListGroups() {
+        Faculty faculty = new Faculty();
+        faculty.setId(ID1);
+        Group group1 = new Group();
+        group1.setId(ID1);
+        group1.setFaculty(faculty);
+        Group group2 = new Group();
+        group2.setId(ID2);
+        group2.setFaculty(faculty);
+        List<Group> expectedGroups = new ArrayList<>();
+        expectedGroups.add(group1);
+        expectedGroups.add(group2);
+        when(groupDaoMock.getAllByFacultyId(ID1)).thenReturn(expectedGroups);
+        assertEquals(expectedGroups, groupService.getAllByFacultyId(ID1));
+    }
 }

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+</head>
+<body>
+
+<div th:fragment="pager" class="row" th:with="sortProperty=${page.sort.toList().get(0).property},
+        sortDirection=${#strings.toLowerCase(page.sort.toList().get(0).direction)},
+        sortUrl=(${sortProperty} + ',' + ${sortDirection})">
+  <div class="col-sm-12 col-md-5">
+    <div class="d-inline-block" th:with="previousLast=${page.number*page.size}">Showing
+      <span th:text="${previousLast + 1}">1</span> to
+      <span th:text="${previousLast + page.numberOfElements}">10</span> of
+      <span th:text="${page.totalElements}">57</span> rows
+    </div>
+    <div class="d-inline-block">
+      <div class="dropdown d-inline-block">
+        <button class="btn btn-secondary dropdown-toggle" type="button"
+                id="dropdownPageSize" data-bs-toggle="dropdown" aria-expanded="false"
+                th:text="${page.size}">
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownPageSize">
+          <li><a th:href="@{${url}(size=10, page=${page.number}, sort=${sortUrl})}" class="dropdown-item">10</a></li>
+          <li><a th:href="@{${url}(size=25, page=0, sort=${sortUrl})}" class="dropdown-item">25</a></li>
+          <li><a th:href="@{${url}(size=50, page=0, sort=${sortUrl})}" class="dropdown-item">50</a></li>
+        </ul>
+      </div>
+      rows per page
+    </div>
+  </div>
+  <div class="col-sm-12 col-md-7">
+    <nav aria-label="Page navigation">
+      <ul class="pagination justify-content-end">
+        <li class="page-item"
+            th:classappend="${page.number eq 0 ? 'disabled' : ''}">
+          <a class="page-link"
+             th:href="@{${url}(size=${page.size}, page=${page.number - 1}, sort=${sortUrl})}">Previous
+          </a>
+        </li>
+        <li class="page-item"
+            th:each="onePage : ${pages}"
+            th:classappend="${onePage eq (page.number + 1) ? 'active' : ''}"
+            th:switch="${onePage}">
+          <span class="page-link" th:case="${(page.number + 1)}" th:text="${onePage}"></span>
+          <span class="page-link" th:case="${-1}" disabled>...</span>
+          <a class="page-link" th:case="*"
+             th:href="@{${url}(size=${page.size}, page=${onePage - 1}, sort=${sortUrl})}"
+             th:text="${onePage}">
+          </a>
+        </li>
+
+        <li class="page-item"
+            th:classappend="${(page.number + 1) eq page.totalPages ? 'disabled' : ''}">
+          <a class="page-link"
+             th:href="@{${url}(size=${page.size}, page=${page.number + 1}, sort=${sortUrl})}">Next
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>
+
+</body>
+</html>

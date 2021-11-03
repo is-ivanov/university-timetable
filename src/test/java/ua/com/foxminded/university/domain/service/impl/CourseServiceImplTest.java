@@ -57,7 +57,7 @@ class CourseServiceImplTest {
                     .thenReturn(Optional.of(expectedCourse));
             assertEquals(expectedCourse, courseService.getById(ID1));
         }
-        
+
         @Test
         @DisplayName("when Dao return empty Optional then method should return empty Course")
         void testReturnEmptyCourse() {

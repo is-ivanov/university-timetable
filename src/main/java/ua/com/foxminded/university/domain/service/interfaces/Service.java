@@ -15,4 +15,6 @@ public interface Service<T> {
     void update(T t) throws ServiceException;
 
     void delete(T t);
+
+    void delete(int id);
 }

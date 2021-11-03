@@ -12,18 +12,21 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import ua.com.foxminded.university.domain.entity.*;
-import ua.com.foxminded.university.exception.DAOException;
-import ua.com.foxminded.university.springconfig.TestDbConfig;
+import ua.com.foxminded.university.domain.filter.LessonFilter;
+import ua.com.foxminded.university.exception.DaoException;
+import ua.com.foxminded.university.springconfig.TestRootConfig;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TestDbConfig.class)
+@ContextConfiguration(classes = TestRootConfig.class)
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
     "/schema.sql", "/lesson-test-data.sql"})
 class LessonDaoImplTest {
@@ -111,7 +114,7 @@ class LessonDaoImplTest {
 
         @Test
         @DisplayName("with id=1 should return expected lesson)")
-        void testGetByIdLesson() throws DAOException {
+        void testGetByIdLesson() throws DaoException {
             Faculty faculty = new Faculty();
             faculty.setId(ID1);
             faculty.setName(FACULTY_NAME);
@@ -139,6 +142,7 @@ class LessonDaoImplTest {
             group.setId(ID1);
             group.setName(FIRST_GROUP_NAME);
             group.setFaculty(faculty);
+            group.setActive(ACTIVE);
 
             List<Student> students = new LinkedList<>();
             Student firstStudent = new Student();
@@ -174,8 +178,8 @@ class LessonDaoImplTest {
 
         @Test
         @DisplayName("with id=5 should return DAOException")
-        void testGetByIdLessonException() throws DAOException {
-            DAOException exception = assertThrows(DAOException.class,
+        void testGetByIdLessonException() throws DaoException {
+            DaoException exception = assertThrows(DaoException.class,
                 () -> dao.getById(ID5));
             assertEquals(MESSAGE_EXCEPTION, exception.getMessage());
         }
@@ -202,7 +206,7 @@ class LessonDaoImplTest {
         @Test
         @DisplayName("with lesson id=1 should write new fields and getById(1) " +
             "return this fields")
-        void testUpdateExistingLesson_WriteNewFields() throws DAOException {
+        void testUpdateExistingLesson_WriteNewFields() throws DaoException {
             Faculty faculty = new Faculty(ID1, FACULTY_NAME);
             Department department = new Department(ID1, DEPARTMENT_NAME,
                 faculty);
@@ -224,6 +228,7 @@ class LessonDaoImplTest {
             group.setId(ID1);
             group.setName(FIRST_GROUP_NAME);
             group.setFaculty(faculty);
+            group.setActive(ACTIVE);
 
             List<Student> students = new ArrayList<>();
             Student firstStudent = new Student();
@@ -275,7 +280,7 @@ class LessonDaoImplTest {
             room.setId(ID3);
             lesson.setRoom(room);
             String expectedLog = String.format(MESSAGE_UPDATE_MASK, ID5);
-            Exception ex = assertThrows(DAOException.class,
+            Exception ex = assertThrows(DaoException.class,
                 () -> dao.update(lesson));
             assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
             assertEquals(MESSAGE_UPDATE_EXCEPTION, ex.getMessage());
@@ -308,7 +313,7 @@ class LessonDaoImplTest {
             Lesson lesson = new Lesson();
             lesson.setId(ID5);
             String expectedLog = String.format(MESSAGE_DELETE_MASK, ID5);
-            Exception ex = assertThrows(DAOException.class,
+            Exception ex = assertThrows(DaoException.class,
                 () -> dao.delete(lesson));
             assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
             assertEquals(MESSAGE_DELETE_EXCEPTION, ex.getMessage());
@@ -328,7 +333,6 @@ class LessonDaoImplTest {
             int actualRowsInTable = JdbcTestUtils.countRowsInTable(jdbcTemplate,
                 TABLE_STUDENTS_LESSON);
             assertEquals(expectedRowsInTable, actualRowsInTable);
-
         }
     }
 
@@ -357,7 +361,7 @@ class LessonDaoImplTest {
         void testDeleteStudentFromLesson() {
             int expectedRowsInTable = JdbcTestUtils
                 .countRowsInTable(jdbcTemplate, TABLE_STUDENTS_LESSON) - 1;
-            dao.deleteStudentFromLesson(ID1, ID1);
+            dao.removeStudentFromLesson(ID1, ID1);
             int actualRowsInTable = JdbcTestUtils.countRowsInTable(jdbcTemplate,
                 TABLE_STUDENTS_LESSON);
             assertEquals(expectedRowsInTable, actualRowsInTable);
@@ -418,6 +422,69 @@ class LessonDaoImplTest {
         @DisplayName("when student_id = 5 then should return empty List")
         void testStudentId5_ReturnEmptyListLessons() {
             assertTrue(dao.getAllForStudent(ID5).isEmpty());
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'getAllWithFilter' method")
+    class getAllWithFilterTest {
+
+        @Test
+        @DisplayName("when filter only for faculty should return list lessons" +
+            " size 3")
+        void testFilterOnlyFacultyId1() {
+            LessonFilter filter = new LessonFilter();
+            filter.setFacultyId(ID1);
+            List<Lesson> lessons = dao.getAllWithFilter(filter);
+            assertThat(lessons, hasSize(3));
+        }
+
+        @Test
+        @DisplayName("when filter only for facultyId=2 should return empty list")
+        void testFilterOnlyFacultyId2() {
+            LessonFilter filter = new LessonFilter();
+            filter.setFacultyId(ID2);
+            List<Lesson> lessons = dao.getAllWithFilter(filter);
+            assertThat(lessons, empty());
+        }
+
+        @Test
+        @DisplayName("when filter facultyId and departmentId then filtering " +
+            "should be only for department and with departmentId=1 should " +
+            "return list size 3")
+        void testFilterFacultyAndDepartmentId1() {
+            LessonFilter filter = new LessonFilter();
+            filter.setFacultyId(ID2);
+            filter.setDepartmentId(ID1);
+            List<Lesson> lessons = dao.getAllWithFilter(filter);
+            assertThat(lessons, hasSize(3));
+        }
+
+        @Test
+        @DisplayName("when filter facultyId, departmentId and teacherId then " +
+            "filtering should be only for teacher and with teacherId=1 should" +
+            " return list size 2")
+        void testFilterFacultyDepartmentAndTeacherId1() {
+            LessonFilter filter = new LessonFilter();
+            filter.setFacultyId(ID2);
+            filter.setDepartmentId(ID2);
+            filter.setTeacherId(ID1);
+            List<Lesson> lessons = dao.getAllWithFilter(filter);
+            assertThat(lessons, hasSize(2));
+            assertThat(lessons.get(0).getTeacher().getId(), equalTo(ID1));
+        }
+
+        @Test
+        @DisplayName("when filter dateFrom and dateTo then filtering should " +
+            "return lessons between this dates")
+        void testFilterDateFromAndDateTo() {
+            LessonFilter filter = new LessonFilter();
+            filter.setDateFrom(LocalDateTime.of(2021, 6, 9, 8, 0));
+            filter.setDateTo(LocalDateTime.of(2021, 6, 11, 20, 0));
+            List<Lesson> lessons = dao.getAllWithFilter(filter);
+            assertThat(lessons, hasSize(1));
+            assertThat(lessons.get(0).getTimeStart(),
+                is(equalTo(LocalDateTime.of(2021, 6, 10, 14, 0))));
         }
     }
 }

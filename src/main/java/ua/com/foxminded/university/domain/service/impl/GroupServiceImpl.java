@@ -1,7 +1,7 @@
 package ua.com.foxminded.university.domain.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.com.foxminded.university.dao.interfaces.GroupDao;
 import ua.com.foxminded.university.dao.interfaces.StudentDao;
@@ -9,21 +9,19 @@ import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class GroupServiceImpl implements GroupService {
 
+    public static final String FOUND_GROUPS = "Found {} groups";
+
     private final GroupDao groupDao;
     private final StudentDao studentDao;
-
-    @Autowired
-    public GroupServiceImpl(GroupDao groupDao, StudentDao studentDao) {
-        this.groupDao = groupDao;
-        this.studentDao = studentDao;
-    }
 
     @Override
     public void add(Group group) {
@@ -44,7 +42,7 @@ public class GroupServiceImpl implements GroupService {
     public List<Group> getAll() {
         log.debug("Getting all groups");
         List<Group> groups = groupDao.getAll();
-        log.info("Found {} groups", groups.size());
+        log.info(FOUND_GROUPS, groups.size());
         return groups;
     }
 
@@ -60,6 +58,13 @@ public class GroupServiceImpl implements GroupService {
         log.debug("Deleting {}", group);
         groupDao.delete(group);
         log.info("Delete {}", group);
+    }
+
+    @Override
+    public void delete(int id) {
+        log.debug("Deleting group id({})", id);
+        groupDao.delete(id);
+        log.info("Delete group id({})", id);
     }
 
     @Override
@@ -97,5 +102,40 @@ public class GroupServiceImpl implements GroupService {
         return newGroup;
     }
 
+    @Override
+    public List<Group> getAllByFacultyId(int facultyId) {
+        log.debug("Getting all groups by faculty id({})", facultyId);
+        List<Group> groups = groupDao.getAllByFacultyId(facultyId);
+        log.info(FOUND_GROUPS, groups.size());
+        return groups;
+    }
 
+    @Override
+    public List<Group> getFreeGroupsOnLessonTime(LocalDateTime startTime,
+                                                 LocalDateTime endTime) {
+        log.debug("Getting groups free from {} to {}", startTime, endTime);
+        List<Group> groups = groupDao.getFreeGroupsOnLessonTime(startTime, endTime);
+        log.info(FOUND_GROUPS, groups.size());
+        return groups;
+    }
+
+    @Override
+    public List<Group> getFreeGroupsByFacultyOnLessonTime(int facultyId,
+                                                          LocalDateTime startTime,
+                                                          LocalDateTime endTime) {
+        log.debug("Getting active groups from faculty id({}) free from {} to {}",
+            facultyId, startTime, endTime);
+        List<Group> freeGroups = groupDao
+            .getFreeGroupsByFacultyOnLessonTime(facultyId, startTime, endTime);
+        log.info(FOUND_GROUPS, freeGroups.size());
+        return freeGroups;
+    }
+
+    @Override
+    public List<Group> getActiveGroups() {
+        log.debug("Getting all active groups");
+        List<Group> groups = groupDao.getActiveGroups();
+        log.info(FOUND_GROUPS, groups.size());
+        return groups;
+    }
 }

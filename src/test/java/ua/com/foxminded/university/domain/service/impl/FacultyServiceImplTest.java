@@ -11,6 +11,7 @@ import ua.com.foxminded.university.dao.interfaces.FacultyDao;
 import ua.com.foxminded.university.domain.entity.Faculty;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,8 +22,10 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class FacultyServiceImplTest {
 
-    public static final String FACULTY_NAME = "Faculty name";
+    public static final String FIRST_FACULTY_NAME = "First Faculty";
+    public static final String SECOND_FACULTY_NAME = "Second Faculty";
     public static final int ID1 = 1;
+    public static final int ID2 = 2;
 
     private FacultyServiceImpl facultyService;
 
@@ -52,7 +55,7 @@ class FacultyServiceImplTest {
         void testReturnExpectedFaculty() {
             Faculty expectedFaculty = new Faculty();
             expectedFaculty.setId(ID1);
-            expectedFaculty.setName(FACULTY_NAME);
+            expectedFaculty.setName(FIRST_FACULTY_NAME);
             when(facultyDaoMock.getById(ID1))
                 .thenReturn(Optional.of(expectedFaculty));
             assertEquals(expectedFaculty, facultyService.getById(ID1));
@@ -99,5 +102,18 @@ class FacultyServiceImplTest {
         Faculty faculty = new Faculty();
         facultyService.delete(faculty);
         verify(facultyDaoMock).delete(faculty);
+    }
+
+    @Test
+    @DisplayName("test 'getAllSortedByNameAsc' when Dao return List faculties" +
+        " then method should return this List")
+    void testGetAllSortedAscByName() {
+        Faculty firstFaculty = new Faculty(ID1, FIRST_FACULTY_NAME);
+        Faculty secondFaculty = new Faculty(ID2, SECOND_FACULTY_NAME);
+        LinkedList<Faculty> facultiesFromDao = new LinkedList<>();
+        facultiesFromDao.add(firstFaculty);
+        facultiesFromDao.add(secondFaculty);
+        when(facultyDaoMock.getAllSortedByNameAsc()).thenReturn(facultiesFromDao);
+        assertEquals(facultiesFromDao, facultyService.getAllSortedByNameAsc());
     }
 }
