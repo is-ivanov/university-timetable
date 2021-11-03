@@ -1,7 +1,12 @@
 package ua.com.foxminded.university.dao.mapper;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import ua.com.foxminded.university.domain.entity.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,20 +15,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import ua.com.foxminded.university.domain.entity.Course;
-import ua.com.foxminded.university.domain.entity.Department;
-import ua.com.foxminded.university.domain.entity.Faculty;
-import ua.com.foxminded.university.domain.entity.Lesson;
-import ua.com.foxminded.university.domain.entity.Room;
-import ua.com.foxminded.university.domain.entity.Student;
-import ua.com.foxminded.university.domain.entity.Teacher;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class LessonMapperTest {
@@ -44,7 +37,7 @@ class LessonMapperTest {
     private ResultSet resultSetMock;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         mapper = new LessonMapper();
     }
 
@@ -72,7 +65,7 @@ class LessonMapperTest {
                 .parse(EXPECTED_STRING_TIME_END, formatter);
         expectedLesson.setTimeStart(expectedTimeStart);
         expectedLesson.setTimeEnd(expectedTimeEnd);
-        expectedLesson.setStudents(new ArrayList<Student>());
+        expectedLesson.setStudents(new ArrayList<>());
 
         when(resultSetMock.getInt(TEACHER_ID)).thenReturn(EXPECTED_ID);
         when(resultSetMock.getInt(LESSON_ID)).thenReturn(EXPECTED_ID);

@@ -32,7 +32,7 @@ class RoomMapperTest {
     private ResultSet resultSetMock;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         mapper = new RoomMapper();
     }
 

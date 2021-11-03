@@ -262,50 +262,6 @@ function fillSelectWithoutActive (value, text, select) {
   select.append(option);
 }
 
-// /**
-//  * Fill select 'selectTeacher' with teachers data from the DB
-//  *
-//  * @param {HTMLSelectElement} select The select element for filling data
-//  * @param {Number} valueSelect The value from 'select' with condition
-//  * @param {String} type Type of select (faculty; department)
-//  */
-// function fillSelectTeachers (select, valueSelect, type) {
-//   let uri;
-//   if (type === 'faculty') {
-//     uri = 'lessons/faculties?facultyId=' + valueSelect;
-//   } else if (type === 'department') {
-//     uri = 'lessons/departments?departmentId=' + valueSelect;
-//   }
-//   $.get(uri, function (data) {
-//     $('#selectTeacher').
-//       empty().
-//       append('<option value="0" selected>Please select teacher...</option>');
-//     data.sort(function (a, b) {
-//       const nameA = a.fullName.toLowerCase();
-//       const nameB = b.fullName.toLowerCase();
-//       if (nameA < nameB)
-//         return -1;
-//       if (nameA > nameB)
-//         return 1;
-//       return 0;
-//     });
-//     data.forEach(function (teacher) {
-//       let option;
-//       if (teacher.active === true) {
-//         option = '<option class = \'active\' value = ' + teacher.id + '>' +
-//           teacher.fullName + '</option>';
-//       } else if ($('#switchShowInactiveTeachers').is(':checked')) {
-//         option = '<option class = \'inactive\' value = ' + teacher.id + '>' +
-//           teacher.fullName + ' - inactive' + '</option>';
-//       } else {
-//         option = '<option class = \'inactive d-none\' value = ' + teacher.id +
-//           '>' + teacher.fullName + ' - inactive' + '</option>';
-//       }
-//       $('#selectTeacher').append(option);
-//     });
-//   });
-// }
-
 function sortByName (a, b) {
   const nameA = a.name.toLowerCase();
   const nameB = b.name.toLowerCase();

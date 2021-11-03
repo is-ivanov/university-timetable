@@ -24,12 +24,12 @@ import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -42,7 +42,6 @@ class DepartmentControllerTest {
     public static final int ID1 = 1;
     public static final int ID2 = 2;
     public static final String NAME_FIRST_FACULTY = "Faculty1 name";
-    public static final String NAME_SECOND_FACULTY = "Faculty2 name";
     public static final String NAME_FIRST_DEPARTMENT = "First department";
     public static final String NAME_SECOND_DEPARTMENT = "Second department";
     public static final String URI_DEPARTMENTS = "/departments";

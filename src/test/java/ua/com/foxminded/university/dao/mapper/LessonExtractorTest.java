@@ -37,7 +37,7 @@ class LessonExtractorTest {
     private StudentMapper studentMapper;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         lessonExtractor = new LessonExtractor(lessonMapper, studentMapper);
     }
 

@@ -2,16 +2,6 @@
   padding-top: 60px;
 }
 
-/*th.sort-server a {*/
-/*  color: #212529;*/
-/*  text-decoration: none;*/
-/*}*/
-
-/*th.sort-server.th-sort-asc a,*/
-/*th.sort-server.th-sort-desc a {*/
-/*  color: white;*/
-/*}*/
-
 table.table-sortable thead > tr > th.th-sort {
   padding-right: 30px;
 }

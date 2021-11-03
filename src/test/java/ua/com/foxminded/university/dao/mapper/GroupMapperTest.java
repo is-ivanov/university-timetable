@@ -33,13 +33,13 @@ class GroupMapperTest {
     private ResultSet resultSetMock;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         mapper = new GroupMapper();
     }
 
     @Test
     @DisplayName("test mapRow should return expected Group")
-    void testMapRowShoulReturnExpectedGroup() throws SQLException {
+    void testMapRowShouldReturnExpectedGroup() throws SQLException {
         Faculty expectedFaculty = new Faculty();
         Group expectedGroup = new Group(EXPECTED_ID, EXPECTED_NAME,
                 expectedFaculty, EXPECTED_ACTIVE);

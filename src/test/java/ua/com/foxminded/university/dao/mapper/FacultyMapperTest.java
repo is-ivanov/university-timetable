@@ -30,13 +30,13 @@ class FacultyMapperTest {
     private ResultSet resultSetMock;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         mapper = new FacultyMapper();
     }
 
     @Test
     @DisplayName("test mapRow should return expected Faculty")
-    void testMapRowShoulReturnExpectedFaculty() throws SQLException {
+    void testMapRowShouldReturnExpectedFaculty() throws SQLException {
         Faculty expectedFaculty = new Faculty(EXPECTED_ID, EXPECTED_NAME);
         when(resultSetMock.getInt(ID)).thenReturn(EXPECTED_ID);
         when(resultSetMock.getString(NAME)).thenReturn(EXPECTED_NAME);

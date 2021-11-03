@@ -12,7 +12,6 @@ import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Teacher;
 import ua.com.foxminded.university.springconfig.TestRootConfig;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
