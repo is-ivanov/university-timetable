@@ -7,13 +7,14 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>University Timetable</name>
     <description>Application university timetable</description>
+    <packaging>war</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <java.version>8</java.version>
-        <spring.version>5.3.11</spring.version>
+        <spring.version>5.3.12</spring.version>
         <mockito.version>4.0.0</mockito.version>
         <junit.version>5.8.1</junit.version>
         <slf4j.version>1.7.32</slf4j.version>
