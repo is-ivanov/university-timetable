@@ -8,21 +8,21 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jndi.JndiTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.naming.NamingException;
 import javax.sql.DataSource;
+import java.util.Objects;
 
 @Configuration
 @EnableTransactionManagement
 @PropertySource("classpath:db.properties")
 @ComponentScan({"ua.com.foxminded.university.dao", "ua.com.foxminded.university.domain"})
 public class RootConfig {
-    private static final String DRIVER = "db.driver";
-    private static final String URL = "db.url";
-    private static final String LOGIN = "db.login";
-    private static final String PASSWORD = "db.password";
+
+    private static final String JDBC_URL = "jdbc.url";
 
     Environment env;
 
@@ -32,13 +32,9 @@ public class RootConfig {
     }
 
     @Bean
-    public DataSource dataSource() {
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(env.getRequiredProperty(DRIVER));
-        dataSource.setUrl(env.getRequiredProperty(URL));
-        dataSource.setUsername(env.getRequiredProperty(LOGIN));
-        dataSource.setPassword(env.getRequiredProperty(PASSWORD));
-        return dataSource;
+    public DataSource dataSource() throws NamingException {
+        return (DataSource) new JndiTemplate()
+            .lookup(Objects.requireNonNull(env.getProperty(JDBC_URL)));
     }
 
     @Autowired
@@ -48,7 +44,7 @@ public class RootConfig {
     }
 
     @Bean
-    public PlatformTransactionManager txManager() {
+    public PlatformTransactionManager txManager() throws NamingException {
         return new DataSourceTransactionManager(dataSource());
     }
 }
