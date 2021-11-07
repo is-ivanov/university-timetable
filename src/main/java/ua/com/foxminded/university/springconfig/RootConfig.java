@@ -30,7 +30,6 @@ public class RootConfig {
 
     public static final String JDBC_URL = "jdbc.url";
     public static final String PACKAGE_WITH_ENTITY = "ua.com.foxminded.university.domain.entity";
-    public static final String HIBERNATE_HBM_2_DDL_AUTO = "hibernate.hbm2ddl.auto";
     public static final String HIBERNATE_DIALECT = "hibernate.dialect";
 
     private Environment env;
@@ -79,7 +78,6 @@ public class RootConfig {
 
     private Properties additionalProperties() {
         Properties properties = new Properties();
-        properties.setProperty(HIBERNATE_HBM_2_DDL_AUTO, env.getProperty(HIBERNATE_HBM_2_DDL_AUTO));
         properties.setProperty(HIBERNATE_DIALECT, env.getProperty(HIBERNATE_DIALECT));
 
         return properties;

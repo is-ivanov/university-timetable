@@ -54,19 +54,19 @@
               <a href="#deleteFacultyModal" class="btn btn-danger btn-sm deleteButton"
                  data-bs-toggle="modal" th:data-bs-id="${faculty.id}"
                  th:data-bs-name="${faculty.name}">
-                <i class="bi-trash"></i> Delete
+                <i class="bi bi-trash"></i> Delete
               </a>
             </div>
             <div class="col-auto">
               <a href="#" th:href="${'groups?facultyId=' + faculty.id}"
                  class="btn btn-success btn-sm">
-                <i class="bi-link-45deg"></i> Show groups
+                <i class="bi bi-link-45deg"></i> Show groups
               </a>
             </div>
             <div class="col-auto">
               <a href="#" th:href="${'departments?facultyId=' + faculty.id}"
                  class="btn btn-success btn-sm">
-                <i class="bi-link-45deg"></i> Show departments
+                <i class="bi bi-link-45deg"></i> Show departments
               </a>
             </div>
           </div>
