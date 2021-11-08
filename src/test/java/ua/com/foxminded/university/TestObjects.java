@@ -84,6 +84,10 @@ public class TestObjects {
         return new Faculty(facultyId, NAME_FIRST_FACULTY);
     }
 
+    public static Faculty createTestFacultyWithEmptyId() {
+        return new Faculty(null, NAME_FIRST_FACULTY);
+    }
+
     public static List<Faculty> createTestFaculties() {
         Faculty faculty1 = new Faculty(FACULTY_ID1, NAME_FIRST_FACULTY);
         Faculty faculty2 = new Faculty(FACULTY_ID2, NAME_SECOND_FACULTY);
