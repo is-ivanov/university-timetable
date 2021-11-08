@@ -14,6 +14,7 @@ import java.util.List;
 public class TestObjects {
     public static final int ID1 = 1;
     public static final int ID2 = 2;
+    public static final int ID3 = 3;
     public static final int FACULTY_ID1 = 10;
     public static final int FACULTY_ID2 = 4;
     public static final int DEPARTMENT_ID1 = 8;

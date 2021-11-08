@@ -14,27 +14,30 @@ import ua.com.foxminded.university.dao.interfaces.FacultyDao;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.springconfig.TestHibernateRootConfig;
 
+import java.util.List;
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static ua.com.foxminded.university.TestObjects.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestHibernateRootConfig.class)
-//@Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
-//    scripts = "/faculty-test-hibernate-data.sql")
+@Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+    scripts = "/faculty-test-hibernate-data.sql")
 @Transactional
 class JpaFacultyDaoImplTest {
 
     @Autowired
     private FacultyDao jpaFacultyDaoImpl;
 
-    @BeforeEach
-    void setup() {
-        Faculty faculty1 = new Faculty(NAME_FIRST_FACULTY);
-        Faculty faculty2 = new Faculty(NAME_SECOND_FACULTY);
-
-        jpaFacultyDaoImpl.add(faculty1);
-        jpaFacultyDaoImpl.add(faculty2);
-    }
+//    @BeforeEach
+//    void setup() {
+//        Faculty faculty1 = new Faculty(NAME_FIRST_FACULTY);
+//        Faculty faculty2 = new Faculty(NAME_SECOND_FACULTY);
+//
+//        jpaFacultyDaoImpl.add(faculty1);
+//        jpaFacultyDaoImpl.add(faculty2);
+//    }
 
     @Nested
     @DisplayName("test 'add' method")
@@ -53,43 +56,43 @@ class JpaFacultyDaoImplTest {
         }
     }
 
-//    @Nested
-//    @DisplayName("test 'getById' method")
-//    class GetByIdTest {
-//
-//        @Test
-//        @DisplayName("with id=1 should return faculty (1, 'Foreign Language')")
-//        void testGetByIdFaculty() throws DaoException {
-//            Faculty expectedFaculty = new Faculty();
-//            expectedFaculty.setId(ID1);
-//            expectedFaculty.setName(FIRST_FACULTY_NAME);
-//
-//            Faculty actualFaculty = dao.getById(ID1).orElse(null);
-//            assertEquals(expectedFaculty, actualFaculty);
-//        }
-//
-//        @Test
-//        @DisplayName("with id=3 should return DAOException")
-//        void testGetByIdFacultyException() throws DaoException {
-//            DaoException exception = assertThrows(DaoException.class,
-//                () -> dao.getById(ID3));
-//            assertEquals(MESSAGE_EXCEPTION, exception.getMessage());
-//        }
-//    }
-//
-//    @Nested
-//    @DisplayName("test 'getAll' method")
-//    class GetAllTest {
-//
-//        @Test
-//        @DisplayName("should return List with size = 2")
-//        void testGetAllFaculties() {
-//            int expectedQuantityFaculties = JdbcTestUtils
-//                .countRowsInTable(jdbcTemplate, TABLE_NAME);
-//            int actualQuantityFaculties = dao.getAll().size();
-//            assertEquals(expectedQuantityFaculties, actualQuantityFaculties);
-//        }
-//    }
+    @Nested
+    @DisplayName("test 'getById' method")
+    class GetByIdTest {
+
+        @Test
+        @DisplayName("with id=1 should return faculty (1, 'Foreign Language')")
+        void testGetByIdFaculty() {
+
+            Optional<Faculty> facultyOptional = jpaFacultyDaoImpl.getById(ID1);
+            Faculty actualFaculty = facultyOptional.get();
+            assertThat(actualFaculty.getId()).isEqualTo(ID1);
+            assertThat(actualFaculty.getName()).isEqualTo(NAME_FIRST_FACULTY);
+        }
+
+        @Test
+        @DisplayName("with id=3 should return empty Optional")
+        void testGetByIdFacultyException() {
+            Optional<Faculty> facultyOptional = jpaFacultyDaoImpl.getById(ID3);
+            assertThat(facultyOptional).isEmpty();
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'getAll' method")
+    class GetAllTest {
+
+        @Test
+        @DisplayName("should return List with size = 2")
+        void testGetAllFaculties() {
+            int expectedQuantityFaculties = jpaFacultyDaoImpl.countAll();
+
+            List<Faculty> actualFaculties = jpaFacultyDaoImpl.getAll();
+            assertThat(actualFaculties).hasSize(expectedQuantityFaculties);
+            assertThat(actualFaculties).extracting(Faculty::getName)
+                .contains(NAME_FIRST_FACULTY, NAME_SECOND_FACULTY);
+        }
+    }
 //
 //    @Nested
 //    @DisplayName("test 'update' method")
