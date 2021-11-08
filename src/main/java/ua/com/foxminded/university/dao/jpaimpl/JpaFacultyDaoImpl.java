@@ -1,6 +1,6 @@
 package ua.com.foxminded.university.dao.jpaimpl;
 
-import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +16,7 @@ import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Repository
 public class JpaFacultyDaoImpl implements FacultyDao {
 
@@ -26,37 +27,42 @@ public class JpaFacultyDaoImpl implements FacultyDao {
 
     @Override
     public void add(Faculty faculty) {
-
+        entityManager.persist(faculty);
     }
 
     @Override
     public Optional<Faculty> getById(int id) {
-        return Optional.empty();
+        Faculty faculty = entityManager.find(Faculty.class, id);
+        return Optional.ofNullable(faculty);
     }
 
     @Override
     public List<Faculty> getAll() {
-        return entityManager.createQuery("SELECT f FROM Faculty f", Faculty.class).getResultList();
+        return entityManager.createQuery("SELECT f FROM Faculty f",
+            Faculty.class).getResultList();
     }
 
     @Override
     public void update(Faculty faculty) {
-
+        entityManager.merge(faculty);
     }
 
     @Override
     public void delete(Faculty faculty) {
-
+            entityManager.remove(faculty);
     }
 
     @Override
     public void delete(int id) {
-
+        Faculty faculty = entityManager.find(Faculty.class, id);
+        entityManager.remove(faculty);
     }
 
     @Override
     public List<Faculty> getAllSortedByNameAsc() {
-        return null;
+        return entityManager.createQuery(
+            "SELECT f FROM Faculty f ORDER BY f.name ASC", Faculty.class)
+            .getResultList();
     }
 
     @Override

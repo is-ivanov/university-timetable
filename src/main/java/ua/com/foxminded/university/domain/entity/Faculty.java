@@ -16,12 +16,16 @@ import java.util.Objects;
 public class Faculty {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "faculty_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "faculty_id", nullable = false)
     private Integer id;
 
     @Column(name = "faculty_name", nullable = false)
     private String name;
+
+    public Faculty(String name) {
+        this.name = name;
+    }
 
     @Override
     public boolean equals(Object o) {
