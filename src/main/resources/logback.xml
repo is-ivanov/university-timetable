@@ -15,6 +15,9 @@
     <logger name="org.springframework" level="info" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
+<!--    <logger name="org.springframework.test.context.jdbc" level="debug" additivity="false">-->
+<!--        <appender-ref ref="STDOUT"/>-->
+<!--    </logger>-->
     <logger name="org.hibernate.SQL" level="debug" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>

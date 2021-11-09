@@ -22,7 +22,7 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
-@PropertySource("classpath:db.properties")
+@PropertySource("classpath:test_db.properties")
 @ComponentScan({"ua.com.foxminded.university.dao", "ua.com.foxminded.university.domain"})
 @EnableTransactionManagement
 public class TestHibernateRootConfig {

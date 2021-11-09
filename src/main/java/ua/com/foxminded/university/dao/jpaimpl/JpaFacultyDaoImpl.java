@@ -1,6 +1,5 @@
 package ua.com.foxminded.university.dao.jpaimpl;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +15,6 @@ import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
 
-@Slf4j
 @Repository
 public class JpaFacultyDaoImpl implements FacultyDao {
 
@@ -49,7 +47,7 @@ public class JpaFacultyDaoImpl implements FacultyDao {
 
     @Override
     public void delete(Faculty faculty) {
-            entityManager.remove(faculty);
+        entityManager.remove(faculty);
     }
 
     @Override
@@ -61,7 +59,7 @@ public class JpaFacultyDaoImpl implements FacultyDao {
     @Override
     public List<Faculty> getAllSortedByNameAsc() {
         return entityManager.createQuery(
-            "SELECT f FROM Faculty f ORDER BY f.name ASC", Faculty.class)
+                "SELECT f FROM Faculty f ORDER BY f.name ASC", Faculty.class)
             .getResultList();
     }
 
@@ -76,7 +74,8 @@ public class JpaFacultyDaoImpl implements FacultyDao {
         String queryString = String.format("SELECT f FROM Faculty f ORDER BY %s %s",
             order.getProperty(), order.getDirection().name());
         TypedQuery<Faculty> query = entityManager.createQuery(queryString, Faculty.class);
-        List<Faculty> faculties = query.setFirstResult((int) pageable.getOffset())
+        List<Faculty> faculties = query
+            .setFirstResult((int) pageable.getOffset())
             .setMaxResults(pageable.getPageSize())
             .getResultList();
         return new PageImpl<>(faculties, pageable, countAll());

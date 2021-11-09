@@ -33,6 +33,7 @@ public class TestObjects {
     public static final int GROUP_ID2 = 14;
     public static final String NAME_FIRST_FACULTY = "IT faculty";
     public static final String NAME_SECOND_FACULTY = "Chemistry faculty";
+    public static final String NAME_THIRD_FACULTY = "Faculty name";
     public static final String NAME_FIRST_GROUP = "99XT-1";
     public static final String NAME_SECOND_GROUP = "56FDS";
     public static final String NAME_FIRST_DEPARTMENT = "Java department";

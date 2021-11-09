@@ -39,7 +39,7 @@ public class RootConfig {
         this.env = env;
     }
 
-    @Bean
+    @Bean(destroyMethod = "")
     public DataSource dataSource() throws NamingException {
         return (DataSource) new JndiTemplate()
             .lookup(Objects.requireNonNull(env.getProperty(JDBC_URL)));
