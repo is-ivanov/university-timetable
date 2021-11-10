@@ -16,15 +16,7 @@ import java.util.Objects;
 public class Room {
 
     @Id
-    @SequenceGenerator(
-        name = "room-id-seq",
-        sequenceName = "rooms_id_seq",
-        allocationSize = 1
-    )
-    @GeneratedValue(
-        strategy = GenerationType.SEQUENCE,
-        generator = "room-id-seq"
-    )
+    @GeneratedValue()
     @Column(name = "room_id", nullable = false)
     private Integer id;
 

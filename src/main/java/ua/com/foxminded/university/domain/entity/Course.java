@@ -16,15 +16,7 @@ import java.util.Objects;
 public class Course {
 
     @Id
-    @SequenceGenerator(
-        name = "course-id-seq",
-        sequenceName = "courses_id_seq",
-        allocationSize = 1
-    )
-    @GeneratedValue(
-        strategy = GenerationType.SEQUENCE,
-        generator = "course-id-seq"
-    )
+    @GeneratedValue()
     @Column(name = "course_id", nullable = false)
     private Integer id;
 

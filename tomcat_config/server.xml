@@ -45,7 +45,12 @@
               pathname="conf/tomcat-users.xml" />
     <Resource name="jdbc/postgres" auth="Container"
               type="javax.sql.DataSource" driverClassName="org.postgresql.Driver"
-              url="jdbc:postgresql://db:5432/university"
+              url="jdbc:postgresql://localhost:5432/university"
+              username="postgres" password="1234"
+              maxTotal="20" maxIdle="10" maxWaitMillis="-1"/>
+    <Resource name="jdbc/university_hibernate" auth="Container"
+              type="javax.sql.DataSource" driverClassName="org.postgresql.Driver"
+              url="jdbc:postgresql://localhost:5432/university_hibernate"
               username="postgres" password="1234"
               maxTotal="20" maxIdle="10" maxWaitMillis="-1"/>
   </GlobalNamingResources>

@@ -31,4 +31,8 @@
             name="jdbc/postgres"
             global="jdbc/postgres"
             type="javax.sql.DataSource"/>
+    <ResourceLink
+        name="jdbc/university_hibernate"
+        global="jdbc/university_hibernate"
+        type="javax.sql.DataSource"/>
 </Context>
