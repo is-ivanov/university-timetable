@@ -35,4 +35,13 @@
         name="jdbc/university_hibernate"
         global="jdbc/university_hibernate"
         type="javax.sql.DataSource"/>
+    <Resource name="jdbc/postgres" 
+              auth="Container"
+              type="javax.sql.DataSource" 
+              driverClassName="org.postgresql.Driver"
+              url="jdbc:postgresql://ec2-52-208-229-228.eu-west-1.compute.amazonaws.com:5432/d14qn0vf3t1ur7"
+              username="dtbenvtwxaoanh" 
+              password="ae45969f2935f51312911f857cb45c744779d8559194a5c6ef377ba9a804b487"
+              maxTotal="20" 
+              maxIdle="10"/>
 </Context>
