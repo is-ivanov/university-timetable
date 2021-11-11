@@ -4,10 +4,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.Hibernate;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Getter
@@ -17,6 +14,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @SuperBuilder
 @Entity
+@Table(name = "students")
 public class Student extends Person {
 
     @ManyToOne(optional = false)

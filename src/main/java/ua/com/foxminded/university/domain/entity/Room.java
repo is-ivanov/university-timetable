@@ -19,7 +19,7 @@ import java.util.Objects;
 public class Room {
 
     @Id
-    @GeneratedValue()
+    @GeneratedValue
     @Column(name = "room_id")
     private Integer id;
 

@@ -36,6 +36,7 @@ public class RootConfig {
     public static final String HIBERNATE_HIGHLIGHT_SQL = "hibernate.highlight_sql";
     public static final String HIBERNATE_USE_SQL_COMMENTS = "hibernate.use_sql_comments";
     public static final String HIBERNATE_AUTO_SCHEMA = "hibernate.hbm2ddl.auto";
+    public static final String HIBERNATE_STATISTICS = "hibernate.generate_statistics";
 
     private Environment env;
 
@@ -90,6 +91,7 @@ public class RootConfig {
         properties.setProperty(HIBERNATE_HIGHLIGHT_SQL, env.getProperty(HIBERNATE_HIGHLIGHT_SQL));
         properties.setProperty(HIBERNATE_USE_SQL_COMMENTS, env.getProperty(HIBERNATE_USE_SQL_COMMENTS));
         properties.setProperty(HIBERNATE_AUTO_SCHEMA, env.getProperty(HIBERNATE_AUTO_SCHEMA));
+        properties.setProperty(HIBERNATE_STATISTICS, env.getProperty(HIBERNATE_STATISTICS));
 
         return properties;
     }
