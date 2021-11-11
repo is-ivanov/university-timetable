@@ -12,15 +12,18 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "rooms")
+@Table(name = "rooms", indexes = {
+    @Index(name = "idx_room_building", columnList = "building"),
+    @Index(name = "idx_room_room_number", columnList = "room_number")
+})
 public class Room {
 
     @Id
     @GeneratedValue()
-    @Column(name = "room_id", nullable = false)
+    @Column(name = "room_id")
     private Integer id;
 
-    @Column(nullable = false)
+    @Column(name = "building", nullable = false)
     private String building;
 
     @Column(name = "room_number", nullable = false)

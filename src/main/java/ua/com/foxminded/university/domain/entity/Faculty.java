@@ -12,12 +12,14 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "faculties")
+@Table(name = "faculties", indexes = {
+    @Index(name = "idx_faculty_faculty_name", columnList = "faculty_name")
+})
 public class Faculty {
 
     @Id
-    @GeneratedValue()
-    @Column(name = "faculty_id", nullable = false)
+    @GeneratedValue
+    @Column(name = "faculty_id")
     private Integer id;
 
     @Column(name = "faculty_name", nullable = false)

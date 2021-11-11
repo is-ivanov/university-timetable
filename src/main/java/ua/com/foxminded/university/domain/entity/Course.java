@@ -12,11 +12,13 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "courses")
+@Table(name = "courses", indexes = {
+    @Index(name = "idx_course_course_name", columnList = "course_name")
+})
 public class Course {
 
     @Id
-    @GeneratedValue()
+    @GeneratedValue
     @Column(name = "course_id", nullable = false)
     private Integer id;
 
