@@ -13,7 +13,9 @@ import java.util.Objects;
 @AllArgsConstructor
 @Entity
 @Table(name = "groups", indexes = {
-    @Index(name = "idx_group_group_name", columnList = "group_name")
+    @Index(name = "idx_group_group_name", columnList = "group_name"),
+    @Index(name = "idx_group_group_active", columnList = "group_active"),
+    @Index(name = "idx_group_faculty_id", columnList = "faculty_id")
 })
 public class Group {
 
@@ -22,10 +24,11 @@ public class Group {
     @Column(name = "group_id")
     private Integer id;
 
-    @Column(name = "group_name", nullable = false)
+    @Column(name = "group_name", nullable = false, length = 20)
     private String name;
 
-    @ManyToOne(optional = false)
+    @ToString.Exclude
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "faculty_id", nullable = false)
     private Faculty faculty;
 

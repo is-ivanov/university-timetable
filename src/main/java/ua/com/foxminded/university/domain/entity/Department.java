@@ -13,7 +13,8 @@ import java.util.Objects;
 @AllArgsConstructor
 @Entity
 @Table(name = "departments", indexes = {
-    @Index(name = "idx_department", columnList = "department_name")
+    @Index(name = "idx_department", columnList = "department_name"),
+    @Index(name = "idx_department_faculty_id", columnList = "faculty_id")
 })
 public class Department {
 
@@ -25,7 +26,8 @@ public class Department {
     @Column(name = "department_name", nullable = false)
     private String name;
 
-    @ManyToOne(optional = false)
+    @ToString.Exclude
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "faculty_id", nullable = false)
     private Faculty faculty;
 

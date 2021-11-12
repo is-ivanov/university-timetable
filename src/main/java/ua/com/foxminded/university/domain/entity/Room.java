@@ -23,10 +23,10 @@ public class Room {
     @Column(name = "room_id")
     private Integer id;
 
-    @Column(name = "building", nullable = false)
+    @Column(name = "building", nullable = false, length = 100)
     private String building;
 
-    @Column(name = "room_number", nullable = false)
+    @Column(name = "room_number", nullable = false, length = 20)
     private String number;
 
     public String getBuildingAndRoom () {

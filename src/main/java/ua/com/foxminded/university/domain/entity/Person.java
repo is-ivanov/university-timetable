@@ -23,16 +23,16 @@ public abstract class Person {
     @GeneratedValue
     private Integer id;
 
-    @Column
+    @Column(nullable = false, length = 100)
     private String firstName;
 
-    @Column
+    @Column(length = 100)
     private String patronymic;
 
-    @Column
+    @Column(nullable = false, length = 100)
     private String lastName;
 
-    @Column
+    @Column(nullable = false)
     private boolean active;
 
     public String getFullName() {

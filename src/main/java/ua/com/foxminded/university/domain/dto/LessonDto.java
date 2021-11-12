@@ -19,7 +19,7 @@ import static ua.com.foxminded.university.ui.Util.DATE_TIME_PATTERN;
 public class LessonDto {
 
 
-    private Integer id;
+    private int id;
     private int courseId;
     private String courseName;
     private int teacherId;

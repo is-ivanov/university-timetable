@@ -15,7 +15,13 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "lessons")
+@Table(name = "lessons", indexes = {
+    @Index(name = "idx_lesson_course_id", columnList = "course_id"),
+    @Index(name = "idx_lesson_teacher_id", columnList = "teacher_id"),
+    @Index(name = "idx_lesson_room_id", columnList = "room_id"),
+    @Index(name = "idx_lesson_time_start", columnList = "time_start"),
+    @Index(name = "idx_lesson_time_end", columnList = "time_end")
+})
 public class Lesson {
 
     @Id
@@ -46,6 +52,7 @@ public class Lesson {
         joinColumns = @JoinColumn(name = "lesson_id"),
         inverseJoinColumns = @JoinColumn(name = "student_id")
     )
+    @ToString.Exclude
     private List<Student> students;
 
     @Override
