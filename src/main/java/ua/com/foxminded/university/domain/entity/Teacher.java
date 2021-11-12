@@ -4,10 +4,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.Hibernate;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Getter
@@ -20,8 +17,9 @@ import java.util.Objects;
 @Table(name = "teachers")
 public class Teacher extends Person {
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id", nullable = false)
+    @ToString.Exclude
     private Department department;
 
     @Override

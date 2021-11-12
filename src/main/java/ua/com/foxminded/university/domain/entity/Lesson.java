@@ -47,7 +47,10 @@ public class Lesson {
     @Column(name = "time_end")
     private LocalDateTime timeEnd;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {
+        CascadeType.PERSIST,
+        CascadeType.MERGE
+    })
     @JoinTable(name = "students_lessons",
         joinColumns = @JoinColumn(name = "lesson_id"),
         inverseJoinColumns = @JoinColumn(name = "student_id")

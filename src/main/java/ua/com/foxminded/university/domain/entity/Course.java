@@ -13,7 +13,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @Entity
 @Table(name = "courses", indexes = {
-    @Index(name = "idx_course_course_name", columnList = "course_name")
+    @Index(name = "idx_course_course_name", columnList = "course_name", unique = true)
 })
 public class Course {
 
@@ -22,7 +22,7 @@ public class Course {
     @Column(name = "course_id", nullable = false)
     private Integer id;
 
-    @Column(name = "course_name", nullable = false)
+    @Column(name = "course_name", nullable = false, unique = true)
     private String name;
 
     public Course(String name) {

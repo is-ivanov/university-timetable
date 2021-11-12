@@ -14,11 +14,14 @@ import java.util.Objects;
 @AllArgsConstructor
 @SuperBuilder
 @Entity
-@Table(name = "students")
+@Table(name = "students", indexes = {
+    @Index(name = "idx_student_active", columnList = "active")
+})
 public class Student extends Person {
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "group_id", nullable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "group_id")
+    @ToString.Exclude
     private Group group;
 
     @Override

@@ -13,7 +13,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @Entity
 @Table(name = "groups", indexes = {
-    @Index(name = "idx_group_group_name", columnList = "group_name"),
+    @Index(name = "idx_group_group_name", columnList = "group_name", unique = true),
     @Index(name = "idx_group_group_active", columnList = "group_active"),
     @Index(name = "idx_group_faculty_id", columnList = "faculty_id")
 })
@@ -24,7 +24,7 @@ public class Group {
     @Column(name = "group_id")
     private Integer id;
 
-    @Column(name = "group_name", nullable = false, length = 20)
+    @Column(name = "group_name", nullable = false, unique = true, length = 15)
     private String name;
 
     @ToString.Exclude
