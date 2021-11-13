@@ -1,23 +1,20 @@
 package ua.com.foxminded.university.dao.mapper;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Student;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class LessonExtractorTest {
@@ -46,7 +43,7 @@ class LessonExtractorTest {
     void testNumberCallsLessonMapperStudentMapper() throws SQLException {
         when(resultSetMock.next()).thenReturn(true).thenReturn(false);
         Lesson lesson = new Lesson();
-        List<Student> students = new ArrayList<>();
+        Set<Student> students = new HashSet<>();
         lesson.setStudents(students);
         when(lessonMapper.mapRow(resultSetMock, ROW_NUM)).thenReturn(lesson);
         Student student = new Student();
@@ -66,7 +63,7 @@ class LessonExtractorTest {
         when(resultSetMock.getInt(ID)).thenReturn(1).thenReturn(1);
         Lesson lesson = new Lesson();
         lesson.setId(1);
-        List<Student> students = new ArrayList<>();
+        Set<Student> students = new HashSet<>();
         lesson.setStudents(students);
         when(lessonMapper.mapRow(resultSetMock, ROW_NUM)).thenReturn(lesson);
         Student student = new Student();

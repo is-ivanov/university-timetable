@@ -5,8 +5,9 @@ import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -56,7 +57,7 @@ public class Lesson {
         inverseJoinColumns = @JoinColumn(name = "student_id")
     )
     @ToString.Exclude
-    private List<Student> students;
+    private Set<Student> students = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {

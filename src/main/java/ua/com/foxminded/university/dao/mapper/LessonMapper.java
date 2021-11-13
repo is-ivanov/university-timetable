@@ -1,20 +1,13 @@
 package ua.com.foxminded.university.dao.mapper;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
+import ua.com.foxminded.university.domain.entity.*;
 
-import ua.com.foxminded.university.domain.entity.Course;
-import ua.com.foxminded.university.domain.entity.Department;
-import ua.com.foxminded.university.domain.entity.Faculty;
-import ua.com.foxminded.university.domain.entity.Lesson;
-import ua.com.foxminded.university.domain.entity.Room;
-import ua.com.foxminded.university.domain.entity.Student;
-import ua.com.foxminded.university.domain.entity.Teacher;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.Set;
 
 @Component
 public class LessonMapper implements RowMapper<Lesson> {
@@ -46,7 +39,7 @@ public class LessonMapper implements RowMapper<Lesson> {
         lesson.setRoom(createRoom(rs));
         lesson.setTimeStart(rs.getTimestamp(TIME_START).toLocalDateTime());
         lesson.setTimeEnd(rs.getTimestamp(TIME_END).toLocalDateTime());
-        List<Student> students = new ArrayList<>();
+        Set<Student> students = new HashSet<>();
         lesson.setStudents(students);
         return lesson;
     }

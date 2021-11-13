@@ -17,9 +17,7 @@ import ua.com.foxminded.university.exception.DaoException;
 import ua.com.foxminded.university.springconfig.TestRootConfig;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -144,7 +142,7 @@ class LessonDaoImplTest {
             group.setFaculty(faculty);
             group.setActive(ACTIVE);
 
-            List<Student> students = new LinkedList<>();
+            Set<Student> students = new LinkedHashSet<>();
             Student firstStudent = new Student();
             firstStudent.setId(ID1);
             firstStudent.setFirstName(FIRST_STUDENT_FIRST_NAME);
@@ -230,7 +228,7 @@ class LessonDaoImplTest {
             group.setFaculty(faculty);
             group.setActive(ACTIVE);
 
-            List<Student> students = new ArrayList<>();
+            Set<Student> students = new HashSet<>();
             Student firstStudent = new Student();
             firstStudent.setId(ID1);
             firstStudent.setFirstName(FIRST_STUDENT_FIRST_NAME);

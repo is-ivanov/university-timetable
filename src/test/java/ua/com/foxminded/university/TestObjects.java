@@ -9,6 +9,7 @@ import ua.com.foxminded.university.domain.filter.LessonFilter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 public class TestObjects {
@@ -299,7 +300,7 @@ public class TestObjects {
             .room(createTestRoom())
             .timeStart(DATE_START_FIRST_LESSON)
             .timeEnd(DATE_END_FIRST_LESSON)
-            .students(createTestStudents())
+            .students(new HashSet<>(createTestStudents()))
             .build();
     }
 
@@ -312,7 +313,7 @@ public class TestObjects {
             .room(createTestRoom())
             .timeStart(DATE_START_SECOND_LESSON)
             .timeEnd(DATE_END_SECOND_LESSON)
-            .students(createTestStudents())
+            .students(new HashSet<>(createTestStudents()))
             .build();
         return new ArrayList<>(Arrays.asList(lesson1, lesson2));
     }
@@ -328,7 +329,7 @@ public class TestObjects {
             .buildingAndRoom(BUILDING_AND_NUMBER_FIRST_ROOM)
             .timeStart(DATE_START_FIRST_LESSON)
             .timeEnd(DATE_END_FIRST_LESSON)
-            .students(createTestStudentDtos(ID2))
+            .students(new HashSet<>(createTestStudentDtos(ID2)))
             .build();
     }
 
@@ -343,7 +344,7 @@ public class TestObjects {
             .buildingAndRoom(BUILDING_AND_NUMBER_FIRST_ROOM)
             .timeStart(DATE_START_FIRST_LESSON)
             .timeEnd(DATE_END_FIRST_LESSON)
-            .students(createTestStudentDtos(ID2))
+            .students(new HashSet<>(createTestStudentDtos(ID2)))
             .build();
     }
 
@@ -359,7 +360,7 @@ public class TestObjects {
             .buildingAndRoom(BUILDING_AND_NUMBER_FIRST_ROOM)
             .timeStart(DATE_START_SECOND_LESSON)
             .timeEnd(DATE_END_SECOND_LESSON)
-            .students(createTestStudentDtos(ID2))
+            .students(new HashSet<>(createTestStudentDtos(ID2)))
             .build();
         return new ArrayList<>(Arrays.asList(lessonDto1, lessonDto2));
     }

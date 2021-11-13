@@ -8,7 +8,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import static ua.com.foxminded.university.ui.Util.DATE_TIME_PATTERN;
 
@@ -26,7 +27,7 @@ public class LessonDto {
     private String teacherFullName;
     private int roomId;
     private String buildingAndRoom;
-    private List<StudentDto> students;
+    private Set<StudentDto> students = new HashSet<>();
 
     @DateTimeFormat(pattern = DATE_TIME_PATTERN)
     @JsonFormat(pattern = DATE_TIME_PATTERN)

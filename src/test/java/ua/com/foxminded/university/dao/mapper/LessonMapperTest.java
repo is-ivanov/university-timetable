@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -65,7 +65,7 @@ class LessonMapperTest {
                 .parse(EXPECTED_STRING_TIME_END, formatter);
         expectedLesson.setTimeStart(expectedTimeStart);
         expectedLesson.setTimeEnd(expectedTimeEnd);
-        expectedLesson.setStudents(new ArrayList<>());
+        expectedLesson.setStudents(new HashSet<>());
 
         when(resultSetMock.getInt(TEACHER_ID)).thenReturn(EXPECTED_ID);
         when(resultSetMock.getInt(LESSON_ID)).thenReturn(EXPECTED_ID);

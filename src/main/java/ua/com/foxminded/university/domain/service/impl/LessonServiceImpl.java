@@ -241,7 +241,7 @@ public class LessonServiceImpl implements LessonService {
         LocalDateTime timeStartCheckedLesson = checkedLesson.getTimeStart();
         LocalDateTime timeEndCheckedLesson = checkedLesson.getTimeEnd();
         for (Lesson lesson : lessons) {
-            if (lesson.getId() != checkedLesson.getId()) {
+            if (!lesson.getId().equals(checkedLesson.getId())) {
                 LocalDateTime timeStartLesson = lesson.getTimeStart();
                 LocalDateTime timeEndLesson = lesson.getTimeEnd();
                 boolean checkTimeStart = timeStartLesson.compareTo(timeEndCheckedLesson) < 1;
