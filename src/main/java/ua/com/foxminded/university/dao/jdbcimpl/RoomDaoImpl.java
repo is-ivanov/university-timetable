@@ -1,4 +1,4 @@
-package ua.com.foxminded.university.dao.impl;
+package ua.com.foxminded.university.dao.jdbcimpl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package ua.com.foxminded.university.dao.impl;
+package ua.com.foxminded.university.dao.jdbcimpl;
 
 import nl.altindag.log.LogCaptor;
 import org.junit.jupiter.api.DisplayName;
