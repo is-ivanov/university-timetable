@@ -30,6 +30,10 @@ public class TestHibernateRootConfig {
     public static final String HIBERNATE_DIALECT = "hibernate.dialect";
     public static final String HIBERNATE_HBM_DDL_AUTO = "hibernate.hbm2ddl.auto";
     public static final String PACKAGE_WITH_ENTITY = "ua.com.foxminded.university.domain.entity";
+    public static final String HIBERNATE_FORMAT_SQL = "hibernate.format_sql";
+    public static final String HIBERNATE_HIGHLIGHT_SQL = "hibernate.highlight_sql";
+    public static final String HIBERNATE_USE_SQL_COMMENTS = "hibernate.use_sql_comments";
+    public static final String HIBERNATE_STATISTICS = "hibernate.generate_statistics";
 
     private Environment env;
 
@@ -79,6 +83,10 @@ public class TestHibernateRootConfig {
         Properties properties = new Properties();
         properties.setProperty(HIBERNATE_DIALECT, env.getProperty(HIBERNATE_DIALECT));
         properties.setProperty(HIBERNATE_HBM_DDL_AUTO, env.getProperty(HIBERNATE_HBM_DDL_AUTO));
+        properties.setProperty(HIBERNATE_FORMAT_SQL, env.getProperty(HIBERNATE_FORMAT_SQL));
+        properties.setProperty(HIBERNATE_HIGHLIGHT_SQL, env.getProperty(HIBERNATE_HIGHLIGHT_SQL));
+        properties.setProperty(HIBERNATE_USE_SQL_COMMENTS, env.getProperty(HIBERNATE_USE_SQL_COMMENTS));
+        properties.setProperty(HIBERNATE_STATISTICS, env.getProperty(HIBERNATE_STATISTICS));
 
         return properties;
     }
