@@ -7,25 +7,29 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
-@PropertySource("classpath:test_db.properties")
+@PropertySource("classpath:hibernate_test_db.properties")
 @ComponentScan({"ua.com.foxminded.university.dao.jpaimpl"})
 @EnableTransactionManagement
+@Testcontainers
 public class TestHibernateRootConfig {
+    private static final String DRIVER = "db.driver";
+    private static final String URL = "db.url";
+    private static final String LOGIN = "db.login";
+    private static final String PASSWORD = "db.password";
 
     public static final String HIBERNATE_DIALECT = "hibernate.dialect";
     public static final String HIBERNATE_HBM_DDL_AUTO = "hibernate.hbm2ddl.auto";
@@ -44,8 +48,13 @@ public class TestHibernateRootConfig {
 
     @Bean
     public DataSource dataSource() {
-        return new EmbeddedDatabaseBuilder()
-            .setType(EmbeddedDatabaseType.H2).build();
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName(env.getRequiredProperty(DRIVER));
+        dataSource.setUrl(env.getRequiredProperty(URL));
+        dataSource.setUsername(env.getRequiredProperty(LOGIN));
+        dataSource.setPassword(env.getRequiredProperty(PASSWORD));
+        return dataSource;
+
     }
 
     @Bean
@@ -62,10 +71,10 @@ public class TestHibernateRootConfig {
         return em;
     }
 
-    @Bean
-    public JdbcTemplate jdbcTemplate(DataSource dataSource) {
-        return new JdbcTemplate(dataSource);
-    }
+//    @Bean
+//    public JdbcTemplate jdbcTemplate(DataSource dataSource) {
+//        return new JdbcTemplate(dataSource);
+//    }
 
     @Bean
     public PlatformTransactionManager transactionManager(EntityManagerFactory emf) {
