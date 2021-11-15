@@ -70,6 +70,7 @@ public class JpaGroupDaoImpl implements GroupDao {
         return query.getResultList();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<Group> getFreeGroupsOnLessonTime(LocalDateTime startTime,
                                                  LocalDateTime endTime) {
@@ -80,6 +81,7 @@ public class JpaGroupDaoImpl implements GroupDao {
             .getResultList();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<Group> getFreeGroupsByFacultyOnLessonTime(int facultyId,
                                                           LocalDateTime startTime,
