@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import ua.com.foxminded.university.dao.interfaces.FacultyDao;
 import ua.com.foxminded.university.domain.entity.Faculty;
+import ua.com.foxminded.university.exception.DaoException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -18,6 +19,7 @@ import java.util.Optional;
 @Repository
 public class JpaFacultyDaoImpl implements FacultyDao {
 
+    public static final String MESSAGE_DELETE_FACULTY_NOT_FOUND = "Can't delete because faculty id(%d) not found";
     public static final String FACULTY_NAME = "faculty_name";
 
     @PersistenceContext
@@ -52,9 +54,20 @@ public class JpaFacultyDaoImpl implements FacultyDao {
 
     @Override
     public void delete(int id) {
-        Faculty faculty = entityManager.find(Faculty.class, id);
-        entityManager.remove(faculty);
+        int rowsDeleted = entityManager.createQuery("DELETE FROM Faculty f WHERE f.id = :id")
+            .setParameter("id", id)
+            .executeUpdate();
+        if (rowsDeleted == 0) {
+            throw new DaoException(String.format(MESSAGE_DELETE_FACULTY_NOT_FOUND,
+                id));
+        }
     }
+
+//    public void delete(int id) {
+//        Faculty faculty = entityManager.find(Faculty.class, id);
+//        entityManager.remove(faculty);
+//    }
+
 
     @Override
     public List<Faculty> getAllSortedByNameAsc() {

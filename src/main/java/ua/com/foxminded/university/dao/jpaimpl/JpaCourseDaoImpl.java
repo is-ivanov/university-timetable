@@ -52,8 +52,9 @@ public class JpaCourseDaoImpl implements CourseDao {
 
     @Override
     public void delete(int id) {
-        Course course = entityManager.find(Course.class, id);
-        entityManager.remove(course);
+        entityManager.createQuery("DELETE FROM Course c WHERE c.id = :id")
+            .setParameter("id", id)
+            .executeUpdate();
     }
 
     @Override

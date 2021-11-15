@@ -45,14 +45,16 @@ public class JpaDepartmentDaoImpl implements DepartmentDao {
 
     @Override
     public void delete(int id) {
-        Department department = entityManager.find(Department.class, id);
-        entityManager.remove(department);
+        entityManager.createQuery("DELETE FROM Department d WHERE d.id = :id")
+            .setParameter("id", id)
+            .executeUpdate();
     }
 
     @Override
     public List<Department> getAllByFacultyId(int facultyId) {
-        TypedQuery<Department> query = entityManager
-            .createQuery("SELECT d FROM Department d, Faculty f WHERE f.id = :facultyId", Department.class);
+        TypedQuery<Department> query = entityManager.createQuery(
+                "SELECT d FROM Department d WHERE d.faculty.id = :facultyId",
+                Department.class);
         query.setParameter("facultyId", facultyId);
          return query.getResultList();
     }
