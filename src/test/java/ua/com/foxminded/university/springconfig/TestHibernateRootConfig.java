@@ -23,7 +23,7 @@ import java.util.Properties;
 
 @Configuration
 @PropertySource("classpath:test_db.properties")
-@ComponentScan({"ua.com.foxminded.university.dao", "ua.com.foxminded.university.domain"})
+@ComponentScan({"ua.com.foxminded.university.dao.jpaimpl"})
 @EnableTransactionManagement
 public class TestHibernateRootConfig {
 
