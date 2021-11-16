@@ -73,6 +73,7 @@ public class JpaFacultyDaoImpl implements FacultyDao {
     @Override
     public void delete(Faculty faculty) {
         entityManager.remove(faculty);
+        log.info("Delete {}", faculty);
     }
 
     @Override
@@ -82,20 +83,27 @@ public class JpaFacultyDaoImpl implements FacultyDao {
             .setParameter("id", id)
             .executeUpdate();
         if (rowsDeleted == 0) {
+            log.warn("Can't delete faculty id({})", id);
             throw new DaoException(
                 String.format(MESSAGE_DELETE_FACULTY_NOT_FOUND, id));
+        } else {
+            log.info("Delete faculty id({})", id);
         }
     }
 
     @Override
     public List<Faculty> getAllSortedByNameAsc() {
-        return entityManager.createQuery(
+        log.debug("Getting all faculties sorted by name ascending");
+        List<Faculty> faculties = entityManager.createQuery(
                 env.getProperty(QUERY_GET_ALL_SORTED_NAME_ASC), Faculty.class)
             .getResultList();
+        log.info("Found {} sorted faculties", faculties.size());
+        return faculties;
     }
 
     @Override
     public Page<Faculty> getAllSortedPaginated(Pageable pageable) {
+        log.debug("Getting sorted page {} from list of faculties", pageable.getPageNumber());
         Sort.Order order;
         if (!pageable.getSort().isEmpty()) {
             order = pageable.getSort().toList().get(0);
@@ -109,11 +117,13 @@ public class JpaFacultyDaoImpl implements FacultyDao {
             .setFirstResult((int) pageable.getOffset())
             .setMaxResults(pageable.getPageSize())
             .getResultList();
+        log.info("Found {} faculties", faculties.size());
         return new PageImpl<>(faculties, pageable, countAll());
     }
 
     @Override
     public int countAll() {
+        log.debug("Count all faculties in database");
         Query query = entityManager.createQuery(env.getProperty(QUERY_COUNT_ALL));
         return ((Long) query.getSingleResult()).intValue();
     }
