@@ -14,7 +14,6 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -24,11 +23,10 @@ import java.util.Properties;
 @PropertySource("classpath:hibernate_test_db.properties")
 @ComponentScan({"ua.com.foxminded.university.dao.jpaimpl"})
 @EnableTransactionManagement
-@Testcontainers
 public class TestHibernateRootConfig {
     private static final String DRIVER = "db.driver";
     private static final String URL = "db.url";
-    private static final String LOGIN = "db.login";
+    private static final String USERNAME = "db.username";
     private static final String PASSWORD = "db.password";
 
     public static final String HIBERNATE_DIALECT = "hibernate.dialect";
@@ -51,7 +49,7 @@ public class TestHibernateRootConfig {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(env.getRequiredProperty(DRIVER));
         dataSource.setUrl(env.getRequiredProperty(URL));
-        dataSource.setUsername(env.getRequiredProperty(LOGIN));
+        dataSource.setUsername(env.getRequiredProperty(USERNAME));
         dataSource.setPassword(env.getRequiredProperty(PASSWORD));
         return dataSource;
 
@@ -70,11 +68,6 @@ public class TestHibernateRootConfig {
 
         return em;
     }
-
-//    @Bean
-//    public JdbcTemplate jdbcTemplate(DataSource dataSource) {
-//        return new JdbcTemplate(dataSource);
-//    }
 
     @Bean
     public PlatformTransactionManager transactionManager(EntityManagerFactory emf) {

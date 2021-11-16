@@ -1,22 +1,18 @@
 package ua.com.foxminded.university.dao.jpaimpl;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import org.springframework.transaction.annotation.Transactional;
 import ua.com.foxminded.university.dao.interfaces.FacultyDao;
 import ua.com.foxminded.university.domain.entity.Faculty;
-import ua.com.foxminded.university.springconfig.TestHibernateRootConfig;
+import ua.com.foxminded.university.exception.DaoException;
+import ua.com.foxminded.university.springconfig.IntegrationTestBase;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,23 +21,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static ua.com.foxminded.university.TestObjects.*;
 
-@SpringJUnitConfig(TestHibernateRootConfig.class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@Transactional
-class JpaFacultyDaoImplTest {
+class JpaFacultyDaoImplTest extends IntegrationTestBase {
+
+    public static final String MESSAGE_DELETE_FACULTY_NOT_FOUND = "Can't delete because faculty id(3) not found";
 
     @Autowired
     @Qualifier("jpaFacultyDaoImpl")
     private FacultyDao dao;
-
-    @BeforeEach
-    void setUp() {
-        Faculty faculty1 = new Faculty(NAME_FIRST_FACULTY);
-        Faculty faculty2 = new Faculty(NAME_SECOND_FACULTY);
-
-        dao.add(faculty1);
-        dao.add(faculty2);
-    }
 
     @Nested
     @DisplayName("test 'add' method")
@@ -168,8 +154,8 @@ class JpaFacultyDaoImplTest {
                 "expected message")
             void testDeleteNonExistingFaculty_ExceptionWriteLogWarn() {
                 assertThatThrownBy(() -> dao.delete(ID3))
-                    .isInstanceOf(InvalidDataAccessApiUsageException.class)
-                    .hasMessageContaining("create delete event with null entity");
+                    .isInstanceOf(DaoException.class)
+                    .hasMessageContaining(MESSAGE_DELETE_FACULTY_NOT_FOUND);
             }
         }
     }

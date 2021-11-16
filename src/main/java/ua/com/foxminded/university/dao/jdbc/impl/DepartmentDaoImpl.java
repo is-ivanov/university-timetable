@@ -18,7 +18,7 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 @Repository
-@PropertySource("classpath:sql_query.properties")
+@PropertySource("classpath:queries/sql_query.properties")
 public class DepartmentDaoImpl implements DepartmentDao {
 
     private static final String QUERY_ADD = "department.add";

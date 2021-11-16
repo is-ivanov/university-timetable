@@ -21,7 +21,7 @@ import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
-@PropertySource("classpath:sql_query.properties")
+@PropertySource("classpath:queries/sql_query.properties")
 @Repository
 public class CourseDaoImpl implements CourseDao {
 

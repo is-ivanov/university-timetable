@@ -1,5 +1,9 @@
 package ua.com.foxminded.university.dao.jpaimpl;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -16,35 +20,54 @@ import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Repository
+@RequiredArgsConstructor
+@PropertySource("/queries/jpql_query.properties")
 public class JpaFacultyDaoImpl implements FacultyDao {
 
-    public static final String MESSAGE_DELETE_FACULTY_NOT_FOUND = "Can't delete because faculty id(%d) not found";
     public static final String FACULTY_NAME = "faculty_name";
+    public static final String MESSAGE_DELETE_FACULTY_NOT_FOUND = "Can't delete because faculty id(%d) not found";
+
+    private static final String QUERY_GET_ALL = "Faculty.getAll";
+    private static final String QUERY_GET_ALL_SORTED_PAGINATED = "Faculty.getAllSortedPaginated";
+    private static final String QUERY_GET_ALL_SORTED_NAME_ASC = "Faculty.getAllSortedByNameAsc";
+    private static final String QUERY_DELETE_BY_ID = "Faculty.deleteById";
+    private static final String QUERY_COUNT_ALL = "Faculty.countAll";
 
     @PersistenceContext
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
+
+    private final Environment env;
 
     @Override
     public void add(Faculty faculty) {
+        log.debug("Saving {}", faculty);
         entityManager.persist(faculty);
+        log.info("{} saved successfully", faculty);
     }
 
     @Override
     public Optional<Faculty> getById(int id) {
-        Faculty faculty = entityManager.find(Faculty.class, id);
-        return Optional.ofNullable(faculty);
+        log.debug("Getting faculty by id({})", id);
+        Faculty result = entityManager.find(Faculty.class, id);
+        log.info("Found {}", result);
+        return Optional.ofNullable(result);
     }
 
     @Override
     public List<Faculty> getAll() {
-        return entityManager.createQuery("SELECT f FROM Faculty f",
+        log.debug("Getting all faculties");
+        List<Faculty> faculties = entityManager.createQuery(env.getProperty(QUERY_GET_ALL),
             Faculty.class).getResultList();
+        log.info("Found {} faculties", faculties.size());
+        return faculties;
     }
 
     @Override
     public void update(Faculty faculty) {
         entityManager.merge(faculty);
+        log.info("Update {}", faculty);
     }
 
     @Override
@@ -54,25 +77,20 @@ public class JpaFacultyDaoImpl implements FacultyDao {
 
     @Override
     public void delete(int id) {
-        int rowsDeleted = entityManager.createQuery("DELETE FROM Faculty f WHERE f.id = :id")
+        int rowsDeleted = entityManager.createQuery(
+                env.getProperty(QUERY_DELETE_BY_ID))
             .setParameter("id", id)
             .executeUpdate();
         if (rowsDeleted == 0) {
-            throw new DaoException(String.format(MESSAGE_DELETE_FACULTY_NOT_FOUND,
-                id));
+            throw new DaoException(
+                String.format(MESSAGE_DELETE_FACULTY_NOT_FOUND, id));
         }
     }
-
-//    public void delete(int id) {
-//        Faculty faculty = entityManager.find(Faculty.class, id);
-//        entityManager.remove(faculty);
-//    }
-
 
     @Override
     public List<Faculty> getAllSortedByNameAsc() {
         return entityManager.createQuery(
-                "SELECT f FROM Faculty f ORDER BY f.name ASC", Faculty.class)
+                env.getProperty(QUERY_GET_ALL_SORTED_NAME_ASC), Faculty.class)
             .getResultList();
     }
 
@@ -84,7 +102,7 @@ public class JpaFacultyDaoImpl implements FacultyDao {
         } else {
             order = Sort.Order.by(FACULTY_NAME);
         }
-        String queryString = String.format("SELECT f FROM Faculty f ORDER BY %s %s",
+        String queryString = String.format(env.getRequiredProperty(QUERY_GET_ALL_SORTED_PAGINATED),
             order.getProperty(), order.getDirection().name());
         TypedQuery<Faculty> query = entityManager.createQuery(queryString, Faculty.class);
         List<Faculty> faculties = query
@@ -96,7 +114,7 @@ public class JpaFacultyDaoImpl implements FacultyDao {
 
     @Override
     public int countAll() {
-        Query query = entityManager.createQuery("SELECT count(f.id) FROM Faculty f");
+        Query query = entityManager.createQuery(env.getProperty(QUERY_COUNT_ALL));
         return ((Long) query.getSingleResult()).intValue();
     }
 }

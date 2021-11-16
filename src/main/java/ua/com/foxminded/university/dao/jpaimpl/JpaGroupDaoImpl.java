@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-@PropertySource("classpath:jpql_query.properties")
+@PropertySource("classpath:queries/jpql_query.properties")
 public class JpaGroupDaoImpl implements GroupDao {
 
     private static final String QUERY_GET_FREE_GROUPS = "group.getFreeGroupsOnLessonTime";
