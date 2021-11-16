@@ -25,9 +25,9 @@ import java.util.Properties;
 @EnableTransactionManagement
 public class TestHibernateRootConfig {
     private static final String DRIVER = "db.driver";
-    private static final String URL = "db.url";
-    private static final String USERNAME = "db.username";
-    private static final String PASSWORD = "db.password";
+//    private static final String URL = "db.url";
+//    private static final String USERNAME = "db.username";
+//    private static final String PASSWORD = "db.password";
 
     public static final String HIBERNATE_DIALECT = "hibernate.dialect";
     public static final String HIBERNATE_HBM_DDL_AUTO = "hibernate.hbm2ddl.auto";
@@ -48,9 +48,9 @@ public class TestHibernateRootConfig {
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(env.getRequiredProperty(DRIVER));
-        dataSource.setUrl(env.getRequiredProperty(URL));
-        dataSource.setUsername(env.getRequiredProperty(USERNAME));
-        dataSource.setPassword(env.getRequiredProperty(PASSWORD));
+        dataSource.setUrl(System.getProperty("DB_URL"));
+        dataSource.setUsername(System.getProperty("DB_USERNAME"));
+        dataSource.setPassword(System.getProperty("DB_PASSWORD"));
         return dataSource;
 
     }

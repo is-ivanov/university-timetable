@@ -36,7 +36,7 @@ public class JpaFacultyDaoImpl implements FacultyDao {
     private static final String QUERY_COUNT_ALL = "Faculty.countAll";
 
     @PersistenceContext
-    private final EntityManager entityManager;
+    private EntityManager entityManager;
 
     private final Environment env;
 
