@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestRootConfig.class)
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
-    "/schema.sql", "/department-test-data.sql"})
+    "/schema.sql", "/sql/jdbc/department-test-data.sql"})
 class DepartmentDaoImplTest {
 
     private static final String TABLE_NAME = "departments";

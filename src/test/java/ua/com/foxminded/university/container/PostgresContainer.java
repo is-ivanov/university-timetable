@@ -2,7 +2,7 @@ package ua.com.foxminded.university.container;
 
 import org.testcontainers.containers.PostgreSQLContainer;
 
-public class PostgresContainer extends PostgreSQLContainer<PostgresContainer>{
+public class PostgresContainer extends PostgreSQLContainer<PostgresContainer> {
 
     private static final String IMAGE = "postgres:13.1-alpine";
     private static PostgresContainer container;

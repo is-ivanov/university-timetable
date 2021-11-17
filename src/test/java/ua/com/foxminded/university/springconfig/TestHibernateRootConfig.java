@@ -25,9 +25,6 @@ import java.util.Properties;
 @EnableTransactionManagement
 public class TestHibernateRootConfig {
     private static final String DRIVER = "db.driver";
-//    private static final String URL = "db.url";
-//    private static final String USERNAME = "db.username";
-//    private static final String PASSWORD = "db.password";
 
     public static final String HIBERNATE_DIALECT = "hibernate.dialect";
     public static final String HIBERNATE_HBM_DDL_AUTO = "hibernate.hbm2ddl.auto";

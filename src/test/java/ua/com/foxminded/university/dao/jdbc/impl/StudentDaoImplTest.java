@@ -27,7 +27,7 @@ import static ua.com.foxminded.university.TestObjects.*;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestRootConfig.class)
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
-    "/schema.sql", "/student-test-data.sql"})
+    "/schema.sql", "/sql/jdbc/student-test-data.sql"})
 class StudentDaoImplTest {
 
     private static final String TABLE_NAME = "students";

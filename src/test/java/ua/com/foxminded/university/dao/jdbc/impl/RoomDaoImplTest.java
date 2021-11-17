@@ -31,7 +31,7 @@ import static ua.com.foxminded.university.TestObjects.*;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestRootConfig.class)
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
-    "/schema.sql", "/room-test-data.sql"})
+    "/schema.sql", "/sql/jdbc/room-test-data.sql"})
 class RoomDaoImplTest {
 
     private static final String TABLE_NAME = "rooms";

@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ContextConfiguration(classes = TestRootConfig.class)
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
     "/schema.sql",
-    "/course-test-data.sql"})
+        "/sql/jdbc/course-test-data.sql"})
 class CourseDaoImplTest {
 
     private static final String TABLE_NAME = "courses";
