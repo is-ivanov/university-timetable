@@ -92,18 +92,16 @@ class JpaCourseDaoImplTest extends IntegrationTestBase {
             assertThat(actualName).isEqualTo(TEST_COURSE_NAME);
         }
 
-//        @Test
-//        @DisplayName("with course id=4 should write new log.warn and throw " +
-//            "new DAOException")
-//        void testUpdateNonExistingCourse_ExceptionAndWriteLogWarn() {
-//            LogCaptor logCaptor = LogCaptor.forClass(CourseDaoImpl.class);
-//            Course course = new Course(ID4, TEST_COURSE_NAME);
-//            String expectedLog = String.format(MESSAGE_UPDATE_MASK, course);
-//            Exception ex = assertThrows(DaoException.class,
-//                () -> dao.update(course));
-//            assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
-//            assertEquals(MESSAGE_UPDATE_EXCEPTION, ex.getMessage());
-//        }
+        @Test
+        @DisplayName("with course id=4 should write new course")
+        void testUpdateNonExistingCourse_CreateNewCourse() {
+            Course course = new Course(4, TEST_COURSE_NAME);
+            dao.update(course);
+
+            Course actualCourse = dao.getById(4).get();
+            assertThat(dao.getAll()).hasSize(4);
+            assertThat(actualCourse).isEqualTo(course);
+        }
     }
 //
 //    @Nested

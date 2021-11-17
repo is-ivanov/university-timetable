@@ -106,7 +106,7 @@ class JpaFacultyDaoImplTest extends IntegrationTestBase {
 
         @Test
         @DisplayName("with faculty id=3 should write new faculty")
-        void testUpdateNonExistingFaculty_ExceptionWriteLogWarn() {
+        void testUpdateNonExistingFaculty_CreateNewFaculty() {
             Faculty faculty = new Faculty(ID3, NAME_THIRD_FACULTY);
 
             dao.update(faculty);
