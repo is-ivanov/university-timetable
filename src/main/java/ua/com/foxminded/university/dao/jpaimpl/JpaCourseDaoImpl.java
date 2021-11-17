@@ -90,12 +90,14 @@ public class JpaCourseDaoImpl implements CourseDao {
 
     @Override
     public int countAll() {
+        log.debug("Count all courses in database");
         Query query = entityManager.createQuery(env.getProperty(QUERY_COUNT_ALL));
         return ((Long) query.getSingleResult()).intValue();
     }
 
     @Override
     public Page<Course> getAllSortedPaginated(Pageable pageable) {
+        log.debug("Getting sorted page {} from list of courses", pageable.getPageNumber());
         Sort.Order order;
         if (!pageable.getSort().isEmpty()) {
             order = pageable.getSort().toList().get(0);
@@ -109,6 +111,7 @@ public class JpaCourseDaoImpl implements CourseDao {
             .setFirstResult((int) pageable.getOffset())
             .setMaxResults(pageable.getPageSize())
             .getResultList();
+        log.info("Found {} courses", courses.size());
         return new PageImpl<>(courses, pageable, countAll());
     }
 }
