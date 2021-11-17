@@ -22,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static ua.com.foxminded.university.TestObjects.*;
 
+@SuppressWarnings("OptionalGetWithoutIsPresent")
 @Sql("/sql/hibernate/faculty-test-data.sql")
 class JpaFacultyDaoImplTest extends IntegrationTestBase {
 

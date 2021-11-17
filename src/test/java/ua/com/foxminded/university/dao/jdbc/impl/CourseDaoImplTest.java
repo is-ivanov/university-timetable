@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class CourseDaoImplTest {
 
     private static final String TABLE_NAME = "courses";
-    private static final String TEST_COURSE_NAME = "testName";
+    public static final String TEST_COURSE_NAME = "testName";
     private static final int ID1 = 1;
     private static final int ID2 = 2;
     private static final int ID3 = 3;
