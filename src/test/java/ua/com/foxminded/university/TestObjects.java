@@ -89,10 +89,6 @@ public class TestObjects {
         return new Faculty(facultyId, NAME_FIRST_FACULTY);
     }
 
-    public static Faculty createTestFacultyWithEmptyId() {
-        return new Faculty(null, NAME_FIRST_FACULTY);
-    }
-
     public static List<Faculty> createTestFaculties() {
         Faculty faculty1 = new Faculty(FACULTY_ID1, NAME_FIRST_FACULTY);
         Faculty faculty2 = new Faculty(FACULTY_ID2, NAME_SECOND_FACULTY);
@@ -318,21 +314,6 @@ public class TestObjects {
             .students(new HashSet<>(createTestStudents()))
             .build();
         return new ArrayList<>(Arrays.asList(lesson1, lesson2));
-    }
-
-    public static LessonDto createTestLessonDto() {
-        return LessonDto.builder()
-            .id(LESSON_ID1)
-            .courseId(COURSE_ID1)
-            .courseName(NAME_FIRST_COURSE)
-            .teacherId(TEACHER_ID1)
-            .teacherFullName(FULL_NAME_FIRST_TEACHER)
-            .roomId(ROOM_ID1)
-            .buildingAndRoom(BUILDING_AND_NUMBER_FIRST_ROOM)
-            .timeStart(DATE_START_FIRST_LESSON)
-            .timeEnd(DATE_END_FIRST_LESSON)
-            .students(new HashSet<>(createTestStudentDtos(ID2)))
-            .build();
     }
 
     public static LessonDto createTestLessonDto(int lessonId) {

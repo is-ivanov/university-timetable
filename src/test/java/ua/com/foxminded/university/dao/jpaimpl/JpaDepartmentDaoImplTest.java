@@ -5,41 +5,41 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.context.jdbc.Sql;
 import ua.com.foxminded.university.dao.interfaces.DepartmentDao;
 import ua.com.foxminded.university.dao.interfaces.FacultyDao;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
-import ua.com.foxminded.university.springconfig.TestHibernateRootConfig;
+import ua.com.foxminded.university.springconfig.IntegrationTestBase;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static ua.com.foxminded.university.TestObjects.*;
 
-@SpringJUnitConfig(TestHibernateRootConfig.class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@Transactional
-class JpaDepartmentDaoImplTest {
+@SuppressWarnings("OptionalGetWithoutIsPresent")
+@Sql("/sql/hibernate/department-test-data.sql")
+class JpaDepartmentDaoImplTest extends IntegrationTestBase {
 
     @Autowired
-    private DepartmentDao jpaDepartmentDaoImpl;
+    @Qualifier("jpaDepartmentDaoImpl")
+    private DepartmentDao dao;
 
-    @Autowired
-    private FacultyDao jpaFacultyDaoImpl;
+//    @Autowired
+//    @Qualifier("jpaFacultyDaoImpl")
+//    private FacultyDao facultyDao;
 
-    @BeforeEach
-    void setUp() {
-        Faculty faculty1 = new Faculty(NAME_FIRST_FACULTY);
-        jpaFacultyDaoImpl.add(faculty1);
-        Department department1 = new Department(NAME_FIRST_DEPARTMENT, faculty1);
-        Department department2 = new Department(NAME_SECOND_DEPARTMENT, faculty1);
-
-        jpaDepartmentDaoImpl.add(department1);
-        jpaDepartmentDaoImpl.add(department2);
-    }
+//    @BeforeEach
+//    void setUp() {
+//        Faculty faculty1 = new Faculty(NAME_FIRST_FACULTY);
+//        facultyDao.add(faculty1);
+//        Department department1 = new Department(NAME_FIRST_DEPARTMENT, faculty1);
+//        Department department2 = new Department(NAME_SECOND_DEPARTMENT, faculty1);
+//
+//        dao.add(department1);
+//        dao.add(department2);
+//    }
 
     @Nested
     @DisplayName("test 'add' method")
@@ -51,13 +51,12 @@ class JpaDepartmentDaoImplTest {
             Faculty faculty = new Faculty(ID1, NAME_FIRST_FACULTY);
             Department department = new Department(NAME_THIRD_DEPARTMENT, faculty);
 
-            jpaDepartmentDaoImpl.add(department);
+            dao.add(department);
 
-            Optional<Department> departmentOptional = jpaDepartmentDaoImpl.getById(4);
+            Optional<Department> departmentOptional = dao.getById(3);
             Department actualDepartment = departmentOptional.get();
 
             assertThat(actualDepartment).isEqualTo(department);
-
         }
     }
 
