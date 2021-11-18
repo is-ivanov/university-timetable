@@ -1,7 +1,5 @@
 package ua.com.foxminded.university.dao.jpaimpl;
 
-import org.assertj.core.api.ListAssert;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -9,20 +7,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.jdbc.Sql;
 import ua.com.foxminded.university.dao.interfaces.DepartmentDao;
-import ua.com.foxminded.university.dao.interfaces.FacultyDao;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
+import ua.com.foxminded.university.exception.DaoException;
 import ua.com.foxminded.university.springconfig.IntegrationTestBase;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static ua.com.foxminded.university.TestObjects.*;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 @Sql("/sql/hibernate/department-test-data.sql")
 class JpaDepartmentDaoImplTest extends IntegrationTestBase {
+
+    private static final String MESSAGE_DELETE_EXCEPTION = "Can't delete because " +
+        "department id(3) not found";
 
     @Autowired
     @Qualifier("jpaDepartmentDaoImpl")
@@ -89,115 +91,97 @@ class JpaDepartmentDaoImplTest extends IntegrationTestBase {
         @Test
         @DisplayName("with department id=1 should write new fields and " +
             "getById(1) return expected department")
-        void testUpdateExistingDepartment_WriteNewDepartmentFields() throws DaoException {
-            Faculty expectedFaculty = new Faculty(ID1, FIRST_FACULTY_NAME);
+        void testUpdateExistingDepartment_WriteNewDepartmentFields() {
+            Faculty expectedFaculty = new Faculty(ID1, NAME_FIRST_FACULTY);
             Department expectedDepartment = new Department(ID1,
-                TEST_DEPARTMENT_NAME, expectedFaculty);
+                NAME_THIRD_DEPARTMENT, expectedFaculty);
+
             dao.update(expectedDepartment);
-            Department actualDepartment = dao.getById(ID1).orElse(new Department());
-            assertEquals(expectedDepartment, actualDepartment);
+
+            Department actualDepartment = dao.getById(ID1).get();
+            assertThat(actualDepartment).isEqualTo(expectedDepartment);
         }
 
-//        @Test
-//        @DisplayName("with department id=3 should write new log.warn and throw " +
-//            "new DAOException")
-//        void testUpdateNonExistingDepartment_ExceptionAndWriteLogWarn() {
-//            LogCaptor logCaptor = LogCaptor.forClass(DepartmentDaoImpl.class);
-//            Department department = new Department(ID3, TEST_DEPARTMENT_NAME,
-//                new Faculty());
-//            String expectedLog = String.format(MESSAGE_UPDATE_MASK, department);
-//            Exception ex = assertThrows(DaoException.class,
-//                () -> dao.update(department));
-//            assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
-//            assertEquals(MESSAGE_UPDATE_EXCEPTION, ex.getMessage());
-//        }
+        @Test
+        @DisplayName("with department id=3 should write new department")
+        void testUpdateNonExistingDepartment_CreateNewDepartment() {
+            Faculty expectedFaculty = new Faculty(ID1, NAME_FIRST_FACULTY);
+            Department expectedDepartment = new Department(ID3,
+                NAME_THIRD_DEPARTMENT, expectedFaculty);
+
+            dao.update(expectedDepartment);
+
+            Department actualDepartment = dao.getById(ID3).get();
+            assertThat(actualDepartment).isEqualTo(expectedDepartment);
+        }
     }
-//
-//    @Nested
-//    @DisplayName("test 'delete' method")
-//    class DeleteTest {
-//
-//        @Nested
-//        @DisplayName("delete(department) method")
-//        class DeleteDepartmentTest {
-//
-//            @Test
-//            @DisplayName("with department id=1 should delete one record and " +
-//                "number records table should equals 1")
-//            void testDeleteExistingDepartment_ReduceNumberRowsInTable() {
-//                int expectedQuantityDepartment = JdbcTestUtils
-//                    .countRowsInTable(jdbcTemplate, TABLE_NAME) - 1;
-//                Department department = new Department();
-//                department.setId(ID1);
-//                dao.delete(department);
-//                int actualQuantityDepartments = JdbcTestUtils
-//                    .countRowsInTable(jdbcTemplate, TABLE_NAME);
-//                assertEquals(expectedQuantityDepartment, actualQuantityDepartments);
-//            }
-//
-//            @Test
-//            @DisplayName("with department id=3 should write new log.warn and throw " +
-//                "new DAOException")
-//            void testDeleteNonExistingDepartment_ExceptionWriteLogWarn() {
-//                LogCaptor logCaptor = LogCaptor.forClass(DepartmentDaoImpl.class);
-//                Department department = new Department(ID3, TEST_DEPARTMENT_NAME,
-//                    new Faculty());
-//                String expectedLog = String.format(MESSAGE_DELETE_MASK, department);
-//                Exception ex = assertThrows(DaoException.class,
-//                    () -> dao.delete(department));
-//                assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
-//                assertEquals(MESSAGE_DELETE_EXCEPTION, ex.getMessage());
-//            }
-//        }
-//
-//        @Nested
-//        @DisplayName("delete(departmentId) method")
-//        class DeleteDepartmentIdTest {
-//
-//            @Test
-//            @DisplayName("with department id=1 should delete one record and " +
-//                "number records table should equals 1")
-//            void testDeleteExistingDepartmentId1_ReduceNumberRowsInTable() {
-//                int expectedQuantityDepartment = JdbcTestUtils
-//                    .countRowsInTable(jdbcTemplate, TABLE_NAME) - 1;
-//                dao.delete(ID1);
-//                int actualQuantityDepartments = JdbcTestUtils
-//                    .countRowsInTable(jdbcTemplate, TABLE_NAME);
-//                assertEquals(expectedQuantityDepartment, actualQuantityDepartments);
-//            }
-//
-//            @Test
-//            @DisplayName("with department id=3 should write new log.warn and throw " +
-//                "new DAOException")
-//            void testDeleteNonExistingDepartment_ExceptionWriteLogWarn() {
-//                LogCaptor logCaptor = LogCaptor.forClass(DepartmentDaoImpl.class);
-//                String expectedLog = String.format(MESSAGE_DELETE_ID_MASK, ID3);
-//                Exception ex = assertThrows(DaoException.class,
-//                    () -> dao.delete(ID3));
-//                assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
-//                assertEquals(MESSAGE_DELETE_EXCEPTION, ex.getMessage());
-//            }
-//        }
-//    }
-//
-//    @Nested
-//    @DisplayName("test 'getAllByFacultyId' method")
-//    class GetAllByFacultyIdTest {
-//
-//        @Test
-//        @DisplayName("with faculty id=1 should return List with size = 2")
-//        void testGetAllDepartmentsByFacultyId1() {
-//            int expectedQuantityDepartments = 2;
-//            int actualQuantityDepartments =
-//                dao.getAllByFacultyId(ID1).size();
-//            assertEquals(expectedQuantityDepartments,
-//                actualQuantityDepartments);
-//        }
-//
-//        @Test
-//        @DisplayName("with faculty id=3 should return empty List")
-//        void testGetAllDepartmentsByFacultyId3() {
-//            assertTrue(dao.getAllByFacultyId(ID3).isEmpty());
-//        }
-//    }
+
+    @Nested
+    @DisplayName("test 'delete' method")
+    class DeleteTest {
+
+        @Nested
+        @DisplayName("delete(department) method")
+        class DeleteDepartmentTest {
+
+            @Test
+            @DisplayName("with department id=1 should delete one record and " +
+                "number records table should equals 1")
+            void testDeleteExistingDepartment_ReduceNumberRowsInTable() {
+
+                Department departmentForDeleting = dao.getById(ID1).get();
+                dao.delete(departmentForDeleting);
+                List<Department> departments = dao.getAll();
+                assertThat(departments).hasSize(1);
+                assertThat(departments).extracting(Department::getName)
+                        .doesNotContain(NAME_FIRST_DEPARTMENT);
+            }
+
+        }
+
+        @Nested
+        @DisplayName("delete(departmentId) method")
+        class DeleteDepartmentIdTest {
+
+            @Test
+            @DisplayName("with department id=1 should delete one record and " +
+                "number records table should equals 1")
+            void testDeleteExistingDepartmentId1_ReduceNumberRowsInTable() {
+                dao.delete(ID1);
+                List<Department> departments = dao.getAll();
+                assertThat(departments).hasSize(1);
+                assertThat(departments).extracting(Department::getName)
+                    .doesNotContain(NAME_FIRST_DEPARTMENT);
+            }
+
+            @Test
+            @DisplayName("with department id=3 should write new log.warn and throw " +
+                "new DAOException")
+            void testDeleteNonExistingDepartment_ExceptionWriteLogWarn() {
+               assertThatThrownBy(() -> dao.delete(ID3))
+                   .isInstanceOf(DaoException.class)
+                   .hasMessageContaining(MESSAGE_DELETE_EXCEPTION);
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'getAllByFacultyId' method")
+    class GetAllByFacultyIdTest {
+
+        @Test
+        @DisplayName("with faculty id=1 should return List with size = 2")
+        void testGetAllDepartmentsByFacultyId1() {
+            int expectedQuantityDepartments = 2;
+            List<Department> departmentsFromFaculty1 = dao.getAllByFacultyId(ID1);
+            assertThat(departmentsFromFaculty1).hasSize(expectedQuantityDepartments);
+
+        }
+
+        @Test
+        @DisplayName("with faculty id=3 should return empty List")
+        void testGetAllDepartmentsByFacultyId3() {
+            assertThat(dao.getAllByFacultyId(ID3)).isEmpty();
+        }
+    }
 }
