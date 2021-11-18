@@ -1,5 +1,6 @@
 package ua.com.foxminded.university.dao.jpaimpl;
 
+import org.assertj.core.api.ListAssert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -13,6 +14,7 @@ import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.springconfig.IntegrationTestBase;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,21 +27,6 @@ class JpaDepartmentDaoImplTest extends IntegrationTestBase {
     @Autowired
     @Qualifier("jpaDepartmentDaoImpl")
     private DepartmentDao dao;
-
-//    @Autowired
-//    @Qualifier("jpaFacultyDaoImpl")
-//    private FacultyDao facultyDao;
-
-//    @BeforeEach
-//    void setUp() {
-//        Faculty faculty1 = new Faculty(NAME_FIRST_FACULTY);
-//        facultyDao.add(faculty1);
-//        Department department1 = new Department(NAME_FIRST_DEPARTMENT, faculty1);
-//        Department department2 = new Department(NAME_SECOND_DEPARTMENT, faculty1);
-//
-//        dao.add(department1);
-//        dao.add(department2);
-//    }
 
     @Nested
     @DisplayName("test 'add' method")
@@ -60,64 +47,57 @@ class JpaDepartmentDaoImplTest extends IntegrationTestBase {
         }
     }
 
-//    @Nested
-//    @DisplayName("test 'getById' method")
-//    class GetByIdTest {
-//
-//        @Test
-//        @DisplayName("with id=1 should return expected department)")
-//        void testGetByIdDepartment() throws DaoException {
-//            Faculty expectedFaculty = new Faculty();
-//            expectedFaculty.setId(ID1);
-//            expectedFaculty.setName(FIRST_FACULTY_NAME);
-//
-//            Department expectedDepartment = new Department(ID1,
-//                FIRST_DEPARTMENT_NAME, expectedFaculty);
-//
-//            Department actualDepartment = dao.getById(ID1).orElse(null);
-//            assertEquals(expectedDepartment, actualDepartment);
-//        }
-//
-//        @Test
-//        @DisplayName("with id=3 should return DAOException")
-//        void testGetByIdDepartmentException() throws DaoException {
-//            DaoException exception = assertThrows(DaoException.class,
-//                () -> dao.getById(ID3));
-//            assertEquals(MESSAGE_EXCEPTION, exception.getMessage());
-//        }
-//    }
-//
-//    @Nested
-//    @DisplayName("test 'getAll' method")
-//    class GetAllTest {
-//
-//        @Test
-//        @DisplayName("should return List with size = 2")
-//        void testGetAllDepartments() {
-//            int expectedQuantityDepartments = JdbcTestUtils
-//                .countRowsInTable(jdbcTemplate, TABLE_NAME);
-//            int actualQuantityDepartments = dao.getAll().size();
-//            assertEquals(expectedQuantityDepartments,
-//                actualQuantityDepartments);
-//        }
-//    }
-//
-//    @Nested
-//    @DisplayName("test 'update' method")
-//    class UpdateTest {
-//
-//        @Test
-//        @DisplayName("with department id=1 should write new fields and " +
-//            "getById(1) return expected department")
-//        void testUpdateExistingDepartment_WriteNewDepartmentFields() throws DaoException {
-//            Faculty expectedFaculty = new Faculty(ID1, FIRST_FACULTY_NAME);
-//            Department expectedDepartment = new Department(ID1,
-//                TEST_DEPARTMENT_NAME, expectedFaculty);
-//            dao.update(expectedDepartment);
-//            Department actualDepartment = dao.getById(ID1).orElse(new Department());
-//            assertEquals(expectedDepartment, actualDepartment);
-//        }
-//
+    @Nested
+    @DisplayName("test 'getById' method")
+    class GetByIdTest {
+
+        @Test
+        @DisplayName("with id=1 should return expected department)")
+        void testGetByIdDepartment() {
+
+            Department actualDepartment = dao.getById(ID1).get();
+            assertThat(actualDepartment.getId()).isEqualTo(ID1);
+            assertThat(actualDepartment.getName()).isEqualTo(NAME_FIRST_DEPARTMENT);
+        }
+
+        @Test
+        @DisplayName("with id=3 should return empty Optional")
+        void testGetByIdDepartmentException() {
+            Optional<Department> departmentOptional = dao.getById(ID3);
+            assertThat(departmentOptional).isEmpty();
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'getAll' method")
+    class GetAllTest {
+
+        @Test
+        @DisplayName("should return List with size = 2")
+        void testGetAllDepartments() {
+            List<Department> departments = dao.getAll();
+            assertThat(departments).hasSize(2);
+            assertThat(departments).extracting(Department::getName)
+                .contains(NAME_FIRST_DEPARTMENT, NAME_SECOND_DEPARTMENT);
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'update' method")
+    class UpdateTest {
+
+        @Test
+        @DisplayName("with department id=1 should write new fields and " +
+            "getById(1) return expected department")
+        void testUpdateExistingDepartment_WriteNewDepartmentFields() throws DaoException {
+            Faculty expectedFaculty = new Faculty(ID1, FIRST_FACULTY_NAME);
+            Department expectedDepartment = new Department(ID1,
+                TEST_DEPARTMENT_NAME, expectedFaculty);
+            dao.update(expectedDepartment);
+            Department actualDepartment = dao.getById(ID1).orElse(new Department());
+            assertEquals(expectedDepartment, actualDepartment);
+        }
+
 //        @Test
 //        @DisplayName("with department id=3 should write new log.warn and throw " +
 //            "new DAOException")
@@ -131,7 +111,7 @@ class JpaDepartmentDaoImplTest extends IntegrationTestBase {
 //            assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
 //            assertEquals(MESSAGE_UPDATE_EXCEPTION, ex.getMessage());
 //        }
-//    }
+    }
 //
 //    @Nested
 //    @DisplayName("test 'delete' method")
