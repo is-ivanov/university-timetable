@@ -30,15 +30,18 @@ public class Lesson {
     @Column(name = "lesson_id")
     private Integer id;
 
-    @ManyToOne(optional = false)
+    @ToString.Exclude
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;
 
-    @ManyToOne(optional = false)
+    @ToString.Exclude
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "teacher_id", nullable = false)
     private Teacher teacher;
 
-    @ManyToOne(optional = false)
+    @ToString.Exclude
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;
 
@@ -48,7 +51,7 @@ public class Lesson {
     @Column(name = "time_end")
     private LocalDateTime timeEnd;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {
+    @ManyToMany(cascade = {
         CascadeType.PERSIST,
         CascadeType.MERGE
     })

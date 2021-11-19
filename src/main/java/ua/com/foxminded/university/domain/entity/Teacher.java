@@ -9,7 +9,7 @@ import java.util.Objects;
 
 @Getter
 @Setter
-@ToString(callSuper = true)
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder

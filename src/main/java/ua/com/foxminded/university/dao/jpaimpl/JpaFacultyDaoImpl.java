@@ -23,7 +23,7 @@ import java.util.Optional;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-@PropertySource("/queries/jpql_query.properties")
+@PropertySource("classpath:queries/jpql_query.properties")
 public class JpaFacultyDaoImpl implements FacultyDao {
 
     public static final String FACULTY_NAME = "faculty_name";

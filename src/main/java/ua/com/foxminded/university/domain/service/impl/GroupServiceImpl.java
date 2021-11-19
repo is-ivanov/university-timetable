@@ -2,6 +2,7 @@ package ua.com.foxminded.university.domain.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ua.com.foxminded.university.dao.interfaces.GroupDao;
 import ua.com.foxminded.university.dao.interfaces.StudentDao;
@@ -20,6 +21,7 @@ public class GroupServiceImpl implements GroupService {
 
     public static final String FOUND_GROUPS = "Found {} groups";
 
+    @Qualifier("jpaGroupDaoImpl")
     private final GroupDao groupDao;
     private final StudentDao studentDao;
 

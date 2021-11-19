@@ -18,7 +18,7 @@ import java.util.Optional;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-@PropertySource("/queries/jpql_query.properties")
+@PropertySource("classpath:queries/jpql_query.properties")
 public class JpaDepartmentDaoImpl implements DepartmentDao {
 
     private static final String QUERY_GET_ALL = "Department.getAll";
@@ -51,7 +51,7 @@ public class JpaDepartmentDaoImpl implements DepartmentDao {
         log.debug("Getting all departments");
         List<Department> departments = entityManager
             .createQuery(env.getProperty(QUERY_GET_ALL),
-            Department.class).getResultList();
+                Department.class).getResultList();
         log.info("Found {} departments", departments.size());
         return departments;
     }
@@ -70,7 +70,8 @@ public class JpaDepartmentDaoImpl implements DepartmentDao {
 
     @Override
     public void delete(int id) {
-        int rowsDeleted = entityManager.createQuery(env.getProperty(QUERY_DELETE_BY_ID))
+        int rowsDeleted = entityManager
+            .createQuery(env.getProperty(QUERY_DELETE_BY_ID))
             .setParameter("id", id)
             .executeUpdate();
         if (rowsDeleted == 0) {

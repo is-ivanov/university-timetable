@@ -6,6 +6,7 @@ import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -24,6 +25,10 @@ public class Student extends Person {
     @ToString.Exclude
     private Group group;
 
+    @ToString.Exclude
+    @ManyToMany(mappedBy = "students")
+    private Set<Lesson> lessons;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -37,4 +42,5 @@ public class Student extends Person {
     public int hashCode() {
         return getClass().hashCode();
     }
+
 }

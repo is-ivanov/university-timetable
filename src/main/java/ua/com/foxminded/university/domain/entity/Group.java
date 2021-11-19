@@ -35,6 +35,12 @@ public class Group {
     @Column(name = "group_active", nullable = false)
     private boolean active;
 
+    public Group(String name, Faculty faculty, boolean active) {
+        this.name = name;
+        this.faculty = faculty;
+        this.active = active;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

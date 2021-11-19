@@ -23,7 +23,7 @@ import java.util.Optional;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-@PropertySource("/queries/jpql_query.properties")
+@PropertySource("classpath:queries/jpql_query.properties")
 public class JpaCourseDaoImpl implements CourseDao {
 
     private static final String COURSE_NAME = "course_name";

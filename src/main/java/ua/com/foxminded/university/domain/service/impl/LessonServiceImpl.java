@@ -2,6 +2,7 @@ package ua.com.foxminded.university.domain.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.com.foxminded.university.dao.interfaces.LessonDao;
@@ -31,6 +32,7 @@ public class LessonServiceImpl implements LessonService {
     public static final String MESSAGE_STUDENT_NOT_AVAILABLE = "Student id(%d) is not available";
     public static final String MESSAGE_ROOM_NOT_AVAILABLE = "Room id(%d) is not available";
 
+    @Qualifier("jpaLessonDaoImpl")
     private final LessonDao lessonDao;
     private final StudentService studentService;
 
