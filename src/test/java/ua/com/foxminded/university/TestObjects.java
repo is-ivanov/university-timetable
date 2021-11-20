@@ -37,6 +37,7 @@ public class TestObjects {
     public static final String NAME_THIRD_FACULTY = "Faculty name";
     public static final String NAME_FIRST_GROUP = "99XT-1";
     public static final String NAME_SECOND_GROUP = "56FDS";
+    public static final String NAME_THIRD_GROUP = "21Ger-1";
     public static final String NAME_FIRST_DEPARTMENT = "Java department";
     public static final String NAME_SECOND_DEPARTMENT = "C# department";
     public static final String NAME_THIRD_DEPARTMENT = "JavaScript department";
