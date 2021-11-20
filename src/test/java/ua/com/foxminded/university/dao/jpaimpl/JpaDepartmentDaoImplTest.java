@@ -64,7 +64,7 @@ class JpaDepartmentDaoImplTest extends IntegrationTestBase {
 
         @Test
         @DisplayName("with id=3 should return empty Optional")
-        void testGetByIdDepartmentException() {
+        void testGetByIdDepartmentEmptyOptional() {
             Optional<Department> departmentOptional = dao.getById(ID3);
             assertThat(departmentOptional).isEmpty();
         }
