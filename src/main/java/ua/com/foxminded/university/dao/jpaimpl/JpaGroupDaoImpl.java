@@ -105,8 +105,8 @@ public class JpaGroupDaoImpl implements GroupDao {
         log.debug("Getting groups free from {} to {}", startTime, endTime);
         List<Group> groups = entityManager.createQuery(
                 env.getProperty(QUERY_GET_FREE_GROUPS), Group.class)
-            .setParameter("startTime", startTime)
-            .setParameter("endTime", endTime)
+            .setParameter("time_start", startTime)
+            .setParameter("time_end", endTime)
             .getResultList();
         log.info(LOG_FOUND_GROUPS, groups.size());
         return groups;
@@ -121,8 +121,8 @@ public class JpaGroupDaoImpl implements GroupDao {
         List<Group> freeGroups = entityManager.createQuery(
                 env.getProperty(QUERY_GET_FREE_GROUPS_BY_FACULTY), Group.class)
             .setParameter("facultyId", facultyId)
-            .setParameter("start_time", startTime)
-            .setParameter("end_time", endTime)
+            .setParameter("time_start", startTime)
+            .setParameter("time_end", endTime)
             .getResultList();
         log.info(LOG_FOUND_GROUPS, freeGroups.size());
         return freeGroups;
