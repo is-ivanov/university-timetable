@@ -5,9 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ua.com.foxminded.university.domain.dto.DepartmentDto;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
+import ua.com.foxminded.university.domain.mapper.DepartmentDtoMapper;
 import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
@@ -28,6 +30,7 @@ public class DepartmentController {
     private final FacultyService facultyService;
     private final TeacherService teacherService;
     private final TeacherDtoMapper teacherDtoMapper;
+    private final DepartmentDtoMapper departmentDtoMapper;
 
     @GetMapping
     public String showDepartments(@RequestParam(required = false) Integer facultyId,
@@ -36,17 +39,17 @@ public class DepartmentController {
         List<Faculty> allFaculties = facultyService.getAllSortedByNameAsc();
         model.addAttribute("faculties", allFaculties);
         Faculty facultySelected = null;
-        List<Department> departments;
+        List<DepartmentDto> departments;
         if (facultyId != null && facultyId > 0) {
             log.debug("get departments by facultyId ({})", facultyId);
-            departments = departmentService.getAllByFaculty(facultyId);
+            departments = departmentService.getAllDtosByFaculty(facultyId);
             log.debug("get selected faculty");
             facultySelected = allFaculties.stream()
                 .filter(faculty -> faculty.getId() == facultyId)
                 .findFirst().orElse(null);
         } else {
             log.debug("get all departments");
-            departments = departmentService.getAll();
+            departments = departmentService.getAllDtos();
         }
         log.debug("adding departments and selected faculty into model");
         model.addAttribute("departments", departments);
@@ -67,9 +70,9 @@ public class DepartmentController {
 
     @GetMapping("/{id}")
     @ResponseBody
-    public Department getDepartment(@PathVariable("id") int departmentId) {
+    public DepartmentDto getDepartment(@PathVariable("id") int departmentId) {
         log.debug("Getting department id({})", departmentId);
-        Department department = departmentService.getById(departmentId);
+        DepartmentDto department = departmentService.getDtoById(departmentId);
         log.info("Found {}", department);
         return department;
     }

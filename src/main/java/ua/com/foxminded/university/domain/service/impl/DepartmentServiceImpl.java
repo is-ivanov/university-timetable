@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.com.foxminded.university.dao.interfaces.DepartmentDao;
+import ua.com.foxminded.university.domain.dto.DepartmentDto;
 import ua.com.foxminded.university.domain.entity.Department;
+import ua.com.foxminded.university.domain.mapper.DepartmentDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 
 import java.util.List;
@@ -19,6 +21,8 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Qualifier("jpaDepartmentDaoImpl")
     private final DepartmentDao departmentDao;
+
+    private final DepartmentDtoMapper departmentDtoMapper;
 
     @Override
     public void add(Department department) {
@@ -42,6 +46,14 @@ public class DepartmentServiceImpl implements DepartmentService {
         List<Department> departments = departmentDao.getAll();
         log.info("Found {} departments", departments.size());
         return departments;
+    }
+
+    @Override
+    public List<DepartmentDto> getAllDtos() {
+        log.debug("Getting all departments");
+        List<Department> departments = departmentDao.getAll();
+        log.info("Found {} departments", departments.size());
+         return departmentDtoMapper.toDepartmentDtos(departments);
     }
 
     @Override
@@ -71,5 +83,22 @@ public class DepartmentServiceImpl implements DepartmentService {
         List<Department> departments = departmentDao.getAllByFacultyId(facultyId);
         log.info("Found {} departments", departments.size());
         return departments;
+    }
+
+    @Override
+    public List<DepartmentDto> getAllDtosByFaculty(int facultyId) {
+        log.debug("Getting all departments from faculty id({})", facultyId);
+        List<Department> departments = departmentDao.getAllByFacultyId(facultyId);
+        log.info("Found {} departments", departments.size());
+        return departmentDtoMapper.toDepartmentDtos(departments);
+    }
+
+    @Override
+    public DepartmentDto getDtoById(int id) {
+        log.debug("Getting department by id({})", id);
+        Department department = departmentDao.getById(id)
+            .orElse(new Department());
+        log.info("Found {}", department);
+        return departmentDtoMapper.toDepartmentDto(department);
     }
 }

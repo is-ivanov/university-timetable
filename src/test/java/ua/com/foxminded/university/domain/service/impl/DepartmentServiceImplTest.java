@@ -1,10 +1,10 @@
 package ua.com.foxminded.university.domain.service.impl;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.foxminded.university.dao.interfaces.DepartmentDao;
@@ -25,15 +25,16 @@ class DepartmentServiceImplTest {
     public static final String DEPARTMENT_NAME = "Department name";
     public static final int ID1 = 1;
 
-    private DepartmentServiceImpl departmentService;
-
     @Mock
     private DepartmentDao departmentDaoMock;
 
-    @BeforeEach
-    void setUp() {
-        departmentService = new DepartmentServiceImpl(departmentDaoMock);
-    }
+    @InjectMocks
+    private DepartmentServiceImpl departmentService;
+
+//    @BeforeEach
+//    void setUp() {
+//        departmentService = new DepartmentServiceImpl(departmentDaoMock);
+//    }
 
     @Test
     @DisplayName("test 'add' when call add method then should call Dao once")
