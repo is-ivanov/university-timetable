@@ -22,6 +22,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class LessonServiceImpl implements LessonService {
 
     public static final String FOUND_LESSONS = "Found {} lessons";
