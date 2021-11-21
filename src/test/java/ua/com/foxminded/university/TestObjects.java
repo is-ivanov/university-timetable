@@ -1,5 +1,6 @@
 package ua.com.foxminded.university;
 
+import ua.com.foxminded.university.domain.dto.DepartmentDto;
 import ua.com.foxminded.university.domain.dto.LessonDto;
 import ua.com.foxminded.university.domain.dto.StudentDto;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
@@ -126,6 +127,11 @@ public class TestObjects {
 
     public static Department createTestDepartment(int facultyId) {
         return new Department(DEPARTMENT_ID1, NAME_FIRST_DEPARTMENT, createTestFaculty(facultyId));
+    }
+
+    public static DepartmentDto createTestDepartmentDto() {
+        return new DepartmentDto(DEPARTMENT_ID1, NAME_FIRST_DEPARTMENT,
+            FACULTY_ID1, NAME_FIRST_FACULTY);
     }
 
     public static List<Department> createTestDepartments() {
