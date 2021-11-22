@@ -1,9 +1,6 @@
 package ua.com.foxminded.university;
 
-import ua.com.foxminded.university.domain.dto.DepartmentDto;
-import ua.com.foxminded.university.domain.dto.LessonDto;
-import ua.com.foxminded.university.domain.dto.StudentDto;
-import ua.com.foxminded.university.domain.dto.TeacherDto;
+import ua.com.foxminded.university.domain.dto.*;
 import ua.com.foxminded.university.domain.entity.*;
 import ua.com.foxminded.university.domain.filter.LessonFilter;
 
@@ -109,6 +106,11 @@ public class TestObjects {
 
     public static Group createTestGroup() {
         return new Group(GROUP_ID1, NAME_FIRST_GROUP, createTestFaculty(), true);
+    }
+
+    public static GroupDto createTestGroupDto() {
+        return new GroupDto(GROUP_ID1, NAME_FIRST_GROUP,true,
+            FACULTY_ID1, NAME_FIRST_FACULTY);
     }
 
     public static List<Group> createTestGroups() {

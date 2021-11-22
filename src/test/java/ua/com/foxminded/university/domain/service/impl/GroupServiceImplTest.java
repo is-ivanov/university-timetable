@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.foxminded.university.dao.interfaces.GroupDao;
@@ -30,6 +31,7 @@ class GroupServiceImplTest {
     public static final int ID1 = 1;
     public static final int ID2 = 2;
 
+    @InjectMocks
     private GroupServiceImpl groupService;
 
     @Mock
@@ -37,10 +39,11 @@ class GroupServiceImplTest {
     @Mock
     private StudentDao studentDaoMock;
 
-    @BeforeEach
-    void setUp() {
-        groupService = new GroupServiceImpl(groupDaoMock, studentDaoMock);
-    }
+
+//    @BeforeEach
+//    void setUp() {
+//        groupService = new GroupServiceImpl(groupDaoMock, studentDaoMock);
+//    }
 
     @Test
     @DisplayName("test 'add' when call add method then should call Dao once")

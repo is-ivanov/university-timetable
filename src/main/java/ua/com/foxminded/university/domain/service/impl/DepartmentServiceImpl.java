@@ -35,9 +35,15 @@ public class DepartmentServiceImpl implements DepartmentService {
     public Department getById(int id) {
         log.debug("Getting department by id({})", id);
         Department department = departmentDao.getById(id)
-                .orElse(new Department());
+            .orElse(new Department());
         log.info("Found {}", department);
         return department;
+    }
+
+    @Override
+    public DepartmentDto getDtoById(int id) {
+        Department department = getById(id);
+        return departmentDtoMapper.toDepartmentDto(department);
     }
 
     @Override
@@ -50,10 +56,8 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public List<DepartmentDto> getAllDtos() {
-        log.debug("Getting all departments");
-        List<Department> departments = departmentDao.getAll();
-        log.info("Found {} departments", departments.size());
-         return departmentDtoMapper.toDepartmentDtos(departments);
+        List<Department> departments = getAll();
+        return departmentDtoMapper.toDepartmentDtos(departments);
     }
 
     @Override
@@ -87,18 +91,8 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public List<DepartmentDto> getAllDtosByFaculty(int facultyId) {
-        log.debug("Getting all departments from faculty id({})", facultyId);
-        List<Department> departments = departmentDao.getAllByFacultyId(facultyId);
-        log.info("Found {} departments", departments.size());
+        List<Department> departments = getAllByFaculty(facultyId);
         return departmentDtoMapper.toDepartmentDtos(departments);
     }
 
-    @Override
-    public DepartmentDto getDtoById(int id) {
-        log.debug("Getting department by id({})", id);
-        Department department = departmentDao.getById(id)
-            .orElse(new Department());
-        log.info("Found {}", department);
-        return departmentDtoMapper.toDepartmentDto(department);
-    }
 }

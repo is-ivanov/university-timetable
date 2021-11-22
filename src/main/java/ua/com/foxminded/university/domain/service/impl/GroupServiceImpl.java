@@ -7,8 +7,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.com.foxminded.university.dao.interfaces.GroupDao;
 import ua.com.foxminded.university.dao.interfaces.StudentDao;
+import ua.com.foxminded.university.domain.dto.GroupDto;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
+import ua.com.foxminded.university.domain.mapper.GroupDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 
 import java.time.LocalDateTime;
@@ -25,7 +27,9 @@ public class GroupServiceImpl implements GroupService {
 
     @Qualifier("jpaGroupDaoImpl")
     private final GroupDao groupDao;
+
     private final StudentDao studentDao;
+    private final GroupDtoMapper groupDtoMapper;
 
     @Override
     public void add(Group group) {
@@ -43,11 +47,23 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    public GroupDto getDtoById(int groupId) {
+        Group group = getById(groupId);
+        return groupDtoMapper.toGroupDto(group);
+    }
+
+    @Override
     public List<Group> getAll() {
         log.debug("Getting all groups");
         List<Group> groups = groupDao.getAll();
         log.info(FOUND_GROUPS, groups.size());
         return groups;
+    }
+
+    @Override
+    public List<GroupDto> getAllDtos() {
+        List<Group> groups = getAll();
+        return groupDtoMapper.toGroupDtos(groups);
     }
 
     @Override
@@ -112,6 +128,12 @@ public class GroupServiceImpl implements GroupService {
         List<Group> groups = groupDao.getAllByFacultyId(facultyId);
         log.info(FOUND_GROUPS, groups.size());
         return groups;
+    }
+
+    @Override
+    public List<GroupDto> getAllDtosByFacultyId(int facultyId) {
+        List<Group> groups = getAllByFacultyId(facultyId);
+        return groupDtoMapper.toGroupDtos(groups);
     }
 
     @Override

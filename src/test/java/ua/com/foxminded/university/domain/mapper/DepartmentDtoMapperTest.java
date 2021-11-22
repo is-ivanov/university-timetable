@@ -27,7 +27,7 @@ class DepartmentDtoMapperTest {
         @Test
         @DisplayName("when department with full fields then should return " +
             "DepartmentDto with full fields")
-        void whenConvertDepartmentWithFullFields_ReturnDepartmentDtoWithFullFields() {
+        void whenDepartmentWithFullFields_ReturnDepartmentDtoWithFullFields() {
             int facultyId = 2;
             Department department = createTestDepartment(facultyId);
 
