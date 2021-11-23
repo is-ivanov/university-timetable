@@ -169,9 +169,9 @@ class JpaGroupDaoImplTest extends IntegrationTestBase {
             }
 
             @Test
-            @DisplayName("with group id=4 should write new log.warn with " +
+            @DisplayName("with group id=4 should throw DaoException with " +
                 "expected message")
-            void testDeleteNonExistingGroup_ExceptionWriteLogWarn() {
+            void testDeleteNonExistingGroup_ThrowDaoException() {
                 assertThatThrownBy(() -> dao.delete(4))
                     .isInstanceOf(DaoException.class)
                     .hasMessageContaining(MESSAGE_DELETE_GROUP_NOT_FOUND);

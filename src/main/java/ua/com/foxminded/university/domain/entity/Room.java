@@ -29,6 +29,11 @@ public class Room {
     @Column(name = "room_number", nullable = false, length = 20)
     private String number;
 
+    public Room(String building, String number) {
+        this.building = building;
+        this.number = number;
+    }
+
     public String getBuildingAndRoom () {
         return this.building + " - " + this.number;
     }
