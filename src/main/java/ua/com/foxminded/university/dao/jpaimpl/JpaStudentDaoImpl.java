@@ -25,16 +25,12 @@ import java.util.Optional;
 public class JpaStudentDaoImpl implements StudentDao {
 
     private static final String QUERY_GET_ALL = "Student.getAll";
-    private static final String QUERY_GET_ALL_ACTIVE = "student.getAllActive";
-    private static final String QUERY_GET_BY_ID = "student.getById";
-    private static final String QUERY_UPDATE = "student.update";
+    private static final String QUERY_GET_ALL_ACTIVE = "Student.getAllActive";
     private static final String QUERY_DELETE_BY_ID = "Student.deleteById";
     private static final String QUERY_GET_ALL_BY_LESSON = "Student.getStudentsByLesson";
-    private static final String QUERY_GET_ALL_BY_GROUP = "student.getStudentsByGroup";
+    private static final String QUERY_GET_ALL_BY_GROUP = "Student.getStudentsByGroup";
     private static final String QUERY_GET_ALL_BY_FACULTY = "Student.getStudentsByFaculty";
-    private static final String QUERY_GET_FREE_STUDENTS_BY_GROUP = "student.getFreeStudentsFromGroupOnLessonTime";
-    private static final String MESSAGE_STUDENT_NOT_FOUND = "Student id(%d) not found";
-    private static final String MESSAGE_UPDATE_STUDENT_NOT_FOUND = "Can't update because student id(%d) not found";
+    private static final String QUERY_GET_FREE_STUDENTS_BY_GROUP = "Student.getFreeStudentsFromGroupOnLessonTime";
     private static final String MESSAGE_DELETE_STUDENT_NOT_FOUND = "Can't delete because student id(%d) not found";
 
     private final Environment env;
@@ -65,20 +61,24 @@ public class JpaStudentDaoImpl implements StudentDao {
 
     @Override
     public List<Student> getAll() {
+        log.debug("Getting all students");
         List<Student> students = entityManager
             .createQuery(env.getProperty(QUERY_GET_ALL), Student.class)
             .getResultList();
+        log.info("Found {} students", students.size());
         return students;
     }
 
     @Override
     public void update(Student student) {
         entityManager.merge(student);
+        log.info("Update {}", student);
     }
 
     @Override
     public void delete(Student student) {
         entityManager.remove(student);
+        log.info("Delete {}", student);
     }
 
     @Override
@@ -98,30 +98,62 @@ public class JpaStudentDaoImpl implements StudentDao {
 
     @Override
     public List<Student> getStudentsByLesson(Lesson lesson) {
+        log.debug("Getting students by lesson id({})", lesson.getId());
         List<Student> students = entityManager.createQuery(
                 env.getProperty(QUERY_GET_ALL_BY_LESSON), Student.class)
             .setParameter("lessonId", lesson.getId())
             .getResultList();
+        log.info("Found {} students from lesson id({})", students.size(),
+            lesson.getId());
         return students;
     }
 
     @Override
     public List<Student> getStudentsByGroup(Group group) {
-        return null;
+        log.debug("Getting students by group id({})", group.getId());
+        List<Student> students = entityManager.createQuery(
+                env.getProperty(QUERY_GET_ALL_BY_GROUP), Student.class)
+            .setParameter("groupId", group.getId())
+            .getResultList();
+        log.info("Found {} students from group id({})", students.size(),
+            group.getId());
+        return students;
     }
 
     @Override
     public List<Student> getStudentsByFaculty(Faculty faculty) {
-        return null;
+        List<Student> students = entityManager.createQuery(
+                env.getProperty(QUERY_GET_ALL_BY_FACULTY), Student.class)
+            .setParameter("facultyId", faculty.getId())
+            .getResultList();
+        log.info("Found {} students from ({})", students.size(), faculty);
+        return students;
     }
 
     @Override
     public List<Student> getActiveStudents() {
-        return null;
+        log.debug("Getting all active students");
+        List<Student> students = entityManager.createQuery(
+                env.getProperty(QUERY_GET_ALL_ACTIVE), Student.class)
+            .getResultList();
+        log.info("Found {} students", students.size());
+        return students;
     }
 
     @Override
-    public List<Student> getFreeStudentsFromGroup(int groupId, LocalDateTime startTime, LocalDateTime endTime) {
-        return null;
+    public List<Student> getFreeStudentsFromGroup(int groupId,
+                                                  LocalDateTime startTime,
+                                                  LocalDateTime endTime) {
+        log.debug("Getting active students from group id({}) free from {} to {}",
+            groupId, startTime, endTime);
+        List<Student> freeStudents = entityManager.createQuery(
+                env.getProperty(QUERY_GET_FREE_STUDENTS_BY_GROUP), Student.class)
+            .setParameter("groupId", groupId)
+            .setParameter("time_start", startTime)
+            .setParameter("time_end", endTime)
+            .getResultList();
+        log.info("Found {} free student from group id({})",
+            freeStudents.size(), groupId);
+        return freeStudents;
     }
 }
