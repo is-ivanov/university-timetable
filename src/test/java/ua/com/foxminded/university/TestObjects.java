@@ -47,6 +47,8 @@ public class TestObjects {
     public static final String BUILDING_AND_NUMBER_FIRST_ROOM = "building-1 - 1457a";
     public static final String BUILDING_SECOND_ROOM = "building-2";
     public static final String NUMBER_SECOND_ROOM = "812b";
+    public static final String BUILDING_THIRD_ROOM = "building-2";
+    public static final String NUMBER_THIRD_ROOM = "145";
     public static final String NAME_FIRST_STUDENT = "Mike";
     public static final String PATRONYMIC_FIRST_STUDENT = "Jr";
     public static final String LAST_NAME_FIRST_STUDENT = "Smith";

@@ -5,6 +5,10 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.jdbc.JdbcTestUtils;
@@ -18,7 +22,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static ua.com.foxminded.university.TestObjects.*;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
@@ -115,7 +118,6 @@ class JpaRoomDaoImplTest extends IntegrationTestBase {
             Room expectedRoom = new Room(4, TEST_BUILDING,
                 TEST_ROOM_NUMBER);
             dao.update(expectedRoom);
-            List<Room> all = dao.getAll();
             Room actualRoom = dao.getById(4).get();
             assertThat(actualRoom).isEqualTo(expectedRoom);
         }
@@ -133,9 +135,10 @@ class JpaRoomDaoImplTest extends IntegrationTestBase {
                 .countRowsInTable(jdbcTemplate, TABLE_NAME) - 1;
             Room room = dao.getById(ID1).get();
             dao.delete(room);
-            int actualQuantityRooms = JdbcTestUtils
-                .countRowsInTable(jdbcTemplate, TABLE_NAME);
-            assertThat(actualQuantityRooms).isEqualTo(expectedQuantityRooms);
+            List<Room> rooms = dao.getAll();
+            assertThat(rooms).hasSize(expectedQuantityRooms);
+                assertThat(rooms).extracting(Room::getNumber)
+                    .doesNotContain(NUMBER_FIRST_ROOM);
         }
     }
 
@@ -164,65 +167,65 @@ class JpaRoomDaoImplTest extends IntegrationTestBase {
                 .hasMessageContaining(MESSAGE_DELETE_EXCEPTION);
         }
     }
-//
-//    @Nested
-//    @DisplayName("test 'countAll' method")
-//    class CountAllTest {
-//        @Test
-//        @DisplayName("should return expected ")
-//        void shouldReturn3() {
-//            int expectedQuantityRooms = JdbcTestUtils
-//                .countRowsInTable(jdbcTemplate, TABLE_NAME);
-//            assertThat(dao.countAll(), is(equalTo(expectedQuantityRooms)));
-//        }
-//    }
-//
-//    @Nested
-//    @DisplayName("test 'getAllSortedPaginated' method")
-//    class GetAllSortedPaginatedTest {
-//        long totalRooms = 3L;
-//
-//        @Test
-//        @DisplayName("when size 1 and first page without sorted then should return " +
-//            "page with one room sorted by room number")
-//        void whenSize1AndFirstPageThenReturnFirstOneRoom() {
-//            int pageNumber = 0;
-//            int pageSize = 1;
-//            Pageable pageable = PageRequest.of(pageNumber, pageSize);
-//            Page<Room> page = dao.getAllSortedPaginated(pageable);
-//
-//            Room actualRoom = page.getContent().get(0);
-//            assertThat(page.getTotalElements(), is(equalTo(totalRooms)));
-//            assertThat(page.getSize(), is(equalTo(pageSize)));
-//            assertThat(actualRoom.getId(), is(equalTo(3)));
-//            assertThat(actualRoom.getBuilding(), is(equalTo(BUILDING_THIRD_ROOM)));
-//            assertThat(actualRoom.getNumber(), is(equalTo("145")));
-//        }
-//
-//        @Test
-//        @DisplayName("when pageable with page size = 2 sort by ID then should " +
-//            "return sorted by ID page with 2 rooms")
-//        void whenPageableWithSortByIdThenReturnSortedByIdPage() {
-//            int pageNumber = 0;
-//            int pageSize = 2;
-//
-//            Sort sort = Sort.by(Sort.Direction.ASC, "room_id");
-//            Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
-//
-//            Page<Room> page = dao.getAllSortedPaginated(pageable);
-//            assertThat(page.getTotalElements(), is(equalTo(totalRooms)));
-//            assertThat(page.getSize(), is(equalTo(pageSize)));
-//            assertThat(page.getNumber(), is(equalTo(pageNumber)));
-//            assertThat(page.getTotalPages(), is(equalTo(2)));
-//            List<Room> rooms = page.getContent();
-//            Room firstRoom = rooms.get(0);
-//            Room secondRoom = rooms.get(1);
-//            assertThat(firstRoom.getId(), is(equalTo(ID1)));
-//            assertThat(firstRoom.getBuilding(), is(equalTo(BUILDING_FIRST_ROOM)));
-//            assertThat(firstRoom.getNumber(), is(equalTo(NUMBER_FIRST_ROOM)));
-//            assertThat(secondRoom.getId(), is(equalTo(ID2)));
-//            assertThat(secondRoom.getBuilding(), is(equalTo(BUILDING_FIRST_ROOM)));
-//            assertThat(secondRoom.getNumber(), is(equalTo(NUMBER_SECOND_ROOM)));
-//        }
-//    }
+
+    @Nested
+    @DisplayName("test 'countAll' method")
+    class CountAllTest {
+        @Test
+        @DisplayName("should return expected value")
+        void shouldReturn3() {
+            int expectedQuantityRooms = JdbcTestUtils
+                .countRowsInTable(jdbcTemplate, TABLE_NAME);
+            assertThat(dao.countAll()).isEqualTo(expectedQuantityRooms);
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'getAllSortedPaginated' method")
+    class GetAllSortedPaginatedTest {
+        long totalRooms = 3L;
+
+        @Test
+        @DisplayName("when size 1 and first page without sorted then should return " +
+            "page with one room sorted by room number")
+        void whenSize1AndFirstPageThenReturnFirstOneRoom() {
+            int pageNumber = 0;
+            int pageSize = 1;
+            Pageable pageable = PageRequest.of(pageNumber, pageSize);
+            Page<Room> page = dao.getAllSortedPaginated(pageable);
+
+            Room actualRoom = page.getContent().get(0);
+            assertThat(page.getTotalElements()).isEqualTo(totalRooms);
+            assertThat(page.getSize()).isEqualTo(pageSize);
+            assertThat(actualRoom.getId()).isEqualTo(ID3);
+            assertThat(actualRoom.getBuilding()).isEqualTo(BUILDING_THIRD_ROOM);
+            assertThat(actualRoom.getNumber()).isEqualTo(NUMBER_THIRD_ROOM);
+        }
+
+        @Test
+        @DisplayName("when pageable with page size = 2 sort by ID then should " +
+            "return sorted by ID page with 2 rooms")
+        void whenPageableWithSortByIdThenReturnSortedByIdPage() {
+            int pageNumber = 0;
+            int pageSize = 2;
+
+            Sort sort = Sort.by(Sort.Direction.ASC, "room_id");
+            Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+
+            Page<Room> page = dao.getAllSortedPaginated(pageable);
+            assertThat(page.getTotalElements()).isEqualTo(totalRooms);
+            assertThat(page.getSize()).isEqualTo(pageSize);
+            assertThat(page.getNumber()).isEqualTo(pageNumber);
+            assertThat(page.getTotalPages()).isEqualTo(2);
+            List<Room> rooms = page.getContent();
+            Room firstRoom = rooms.get(0);
+            Room secondRoom = rooms.get(1);
+            assertThat(firstRoom.getId()).isEqualTo(ID1);
+            assertThat(firstRoom.getBuilding()).isEqualTo(BUILDING_FIRST_ROOM);
+            assertThat(firstRoom.getNumber()).isEqualTo(NUMBER_FIRST_ROOM);
+            assertThat(secondRoom.getId()).isEqualTo(ID2);
+            assertThat(secondRoom.getBuilding()).isEqualTo(BUILDING_SECOND_ROOM);
+            assertThat(secondRoom.getNumber()).isEqualTo(NUMBER_SECOND_ROOM);
+        }
+    }
 }

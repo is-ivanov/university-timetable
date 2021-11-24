@@ -2,6 +2,7 @@ package ua.com.foxminded.university.domain.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import java.util.List;
 @Transactional
 public class RoomServiceImpl implements RoomService {
 
+    @Qualifier("jpaRoomDaoImpl")
     private final RoomDao roomDao;
 
     @Override
