@@ -13,16 +13,16 @@ VALUES (3, '21Ger-1', FALSE, 1);
 INSERT INTO departments (department_id, department_name, faculty_id)
 VALUES (1, 'Java department', 1);
 
-INSERT INTO teachers (id, firstname, patronymic, lastname, department_id, active)
+INSERT INTO teachers (id, first_name, patronymic, last_name, department_id, active)
 VALUES (1, 'Ivan', 'Petrovich', 'Ivanov', 1, TRUE);
 
-INSERT INTO students (id, firstname, patronymic, lastname, active, group_id)
+INSERT INTO students (id, first_name, patronymic, last_name, active, group_id)
 VALUES (1, 'Mike', 'Jr', 'Smith', TRUE, 1);
-INSERT INTO students (id, firstname, patronymic, lastname, active, group_id)
+INSERT INTO students (id, first_name, patronymic, last_name, active, group_id)
 VALUES (2, 'Alan', 'III', 'Johnson', TRUE, 1);
-INSERT INTO students (id, firstname, patronymic, lastname, active, group_id)
+INSERT INTO students (id, first_name, patronymic, last_name, active, group_id)
 VALUES (3, 'Alex', 'Petrovich', 'Grade', TRUE, 2);
-INSERT INTO students (id, firstname, patronymic, lastname, active, group_id)
+INSERT INTO students (id, first_name, patronymic, last_name, active, group_id)
 VALUES (4, 'Tatyana', 'Leonidovna', 'Sergeeva', TRUE, 2);
 
 INSERT INTO rooms (room_id, building, room_number)

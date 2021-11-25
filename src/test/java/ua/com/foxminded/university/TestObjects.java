@@ -22,6 +22,7 @@ public class TestObjects {
     public static final int TEACHER_ID2 = 78;
     public static final int STUDENT_ID1 = 12;
     public static final int STUDENT_ID2 = 78;
+    public static final int STUDENT_ID3 = 3;
     public static final int COURSE_ID1 = 45;
     public static final int COURSE_ID2 = 13;
     public static final int ROOM_ID1 = 5;
@@ -57,6 +58,9 @@ public class TestObjects {
     public static final String PATRONYMIC_SECOND_STUDENT = "III";
     public static final String LAST_NAME_SECOND_STUDENT = "Johnson";
     public static final String FULL_NAME_SECOND_STUDENT = "Johnson A.I.";
+    public static final String NAME_THIRD_STUDENT = "Peter";
+    public static final String PATRONYMIC_THIRD_STUDENT = "Dre";
+    public static final String LAST_NAME_THIRD_STUDENT = "Daddy";
     public static final String NAME_FIRST_TEACHER = "Ivan";
     public static final String PATRONYMIC_FIRST_TEACHER = "Petrovich";
     public static final String LAST_NAME_FIRST_TEACHER = "Ivanov";
@@ -64,7 +68,6 @@ public class TestObjects {
     public static final String NAME_SECOND_TEACHER = "Oleg";
     public static final String PATRONYMIC_SECOND_TEACHER = "Ivanovich";
     public static final String LAST_NAME_SECOND_TEACHER = "Petrov";
-    public static final String NAME_THIRD_STUDENT = "Peter";
     public static final LocalDateTime DATE_START_FIRST_LESSON =
         LocalDateTime.of(2021, 5, 10, 10, 0);
     public static final String TEXT_DATE_START_FIRST_LESSON = "2021-05-10 10:00";
@@ -84,6 +87,10 @@ public class TestObjects {
 
     public static Faculty createTestFaculty() {
         return new Faculty(FACULTY_ID1, NAME_FIRST_FACULTY);
+    }
+
+    public static Faculty createTestSecondFaculty() {
+        return new Faculty(FACULTY_ID2, NAME_SECOND_FACULTY);
     }
 
     public static Faculty createTestFaculty(int facultyId) {
@@ -108,6 +115,11 @@ public class TestObjects {
 
     public static Group createTestGroup() {
         return new Group(GROUP_ID1, NAME_FIRST_GROUP, createTestFaculty(), true);
+    }
+
+    public static Group createTestSecondGroup() {
+        return new Group(GROUP_ID2, NAME_SECOND_GROUP, createTestSecondFaculty(),
+            true);
     }
 
     public static GroupDto createTestGroupDto() {

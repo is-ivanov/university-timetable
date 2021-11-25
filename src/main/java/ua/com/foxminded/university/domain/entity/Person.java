@@ -23,13 +23,13 @@ public abstract class Person {
     @GeneratedValue
     private Integer id;
 
-    @Column(nullable = false, length = 100)
+    @Column(name = "first_name", nullable = false, length = 100)
     private String firstName;
 
-    @Column(length = 100)
+    @Column(name = "patronymic", length = 100)
     private String patronymic;
 
-    @Column(nullable = false, length = 100)
+    @Column(name = "last_name", nullable = false, length = 100)
     private String lastName;
 
     @Column(nullable = false)
