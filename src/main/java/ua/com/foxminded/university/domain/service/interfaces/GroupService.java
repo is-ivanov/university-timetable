@@ -1,11 +1,11 @@
 package ua.com.foxminded.university.domain.service.interfaces;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 import ua.com.foxminded.university.domain.dto.GroupDto;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 public interface GroupService extends Service<Group> {
 

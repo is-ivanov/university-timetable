@@ -28,6 +28,7 @@ public class GroupServiceImpl implements GroupService {
     @Qualifier("jpaGroupDaoImpl")
     private final GroupDao groupDao;
 
+    @Qualifier("jpaStudentDaoImpl")
     private final StudentDao studentDao;
     private final GroupDtoMapper groupDtoMapper;
 

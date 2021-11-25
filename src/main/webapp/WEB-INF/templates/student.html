@@ -67,6 +67,7 @@
   </form>
 
   <button type="button" class="btn btn-primary mb-2 btn-sm"
+          th:if="${students ne null}"
           data-bs-toggle="modal"
           data-bs-target="#newStudentModal">
     <i class="bi bi-plus-circle"></i> New Student

@@ -9,6 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ua.com.foxminded.university.domain.dto.GroupDto;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
@@ -97,13 +98,13 @@ public class FacultyController {
 
     @GetMapping("/{id}/groups")
     @ResponseBody
-    public List<Group> getGroupsByFaculty(@PathVariable("id") int facultyId) {
+    public List<GroupDto> getGroupsByFaculty(@PathVariable("id") int facultyId) {
         if (facultyId == 0) {
             log.debug("Get all groups");
-            return groupService.getAll();
+            return groupService.getAllDtos();
         } else {
             log.debug("Getting groups by faculty id({})", facultyId);
-            return groupService.getAllByFacultyId(facultyId);
+            return groupService.getAllDtosByFacultyId(facultyId);
         }
     }
 
