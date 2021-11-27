@@ -20,6 +20,7 @@ public class TestObjects {
     public static final int DEPARTMENT_ID2 = 54;
     public static final int TEACHER_ID1 = 7;
     public static final int TEACHER_ID2 = 78;
+    public static final int TEACHER_ID3 = 12;
     public static final int STUDENT_ID1 = 12;
     public static final int STUDENT_ID2 = 78;
     public static final int STUDENT_ID3 = 3;
@@ -68,6 +69,9 @@ public class TestObjects {
     public static final String NAME_SECOND_TEACHER = "Oleg";
     public static final String PATRONYMIC_SECOND_TEACHER = "Ivanovich";
     public static final String LAST_NAME_SECOND_TEACHER = "Petrov";
+    public static final String NAME_THIRD_TEACHER = "John";
+    public static final String PATRONYMIC_THIRD_TEACHER = "Jr";
+    public static final String LAST_NAME_THIRD_TEACHER = "Thompson";
     public static final LocalDateTime DATE_START_FIRST_LESSON =
         LocalDateTime.of(2021, 5, 10, 10, 0);
     public static final String TEXT_DATE_START_FIRST_LESSON = "2021-05-10 10:00";

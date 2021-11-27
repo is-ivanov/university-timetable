@@ -72,7 +72,7 @@ public class StudentController {
         log.debug("adding selected faculty and group into model");
         model.addAttribute("facultyIdSelect", facultyId);
         model.addAttribute("groupIdSelect", groupId);
-        model.addAttribute("newStudent", new StudentDto());
+        model.addAttribute("newStudent", new Student());
         log.info("The required data is loaded into the model");
         return "student";
     }

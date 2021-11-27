@@ -7,6 +7,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Repository;
 import ua.com.foxminded.university.dao.interfaces.TeacherDao;
 import ua.com.foxminded.university.domain.entity.Teacher;
+import ua.com.foxminded.university.exception.DaoException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -20,16 +21,11 @@ import java.util.Optional;
 @PropertySource("classpath:queries/jpql_query.properties")
 public class JpaTeacherDaoImpl implements TeacherDao {
 
-    private static final String QUERY_ADD = "teacher.add";
-    private static final String QUERY_GET_ALL = "teacher.getAll";
-    private static final String QUERY_GET_BY_ID = "teacher.getById";
-    private static final String QUERY_UPDATE = "teacher.update";
-    private static final String QUERY_DELETE = "teacher.delete";
-    private static final String QUERY_GET_FREE_TEACHERS = "teacher.getFreeTeachersOnLessonTime";
-    private static final String QUERY_GET_ALL_BY_DEPARTMENT = "teacher.getTeachersByDepartment";
-    private static final String QUERY_GET_ALL_BY_FACULTY = "teacher.getTeachersByFaculty";
-    private static final String MESSAGE_TEACHER_NOT_FOUND = "Teacher id(%d) not found";
-    private static final String MESSAGE_UPDATE_TEACHER_NOT_FOUND = "Can't update because teacher id(%d) not found";
+    private static final String QUERY_GET_ALL = "Teacher.getAll";
+    private static final String QUERY_DELETE_BY_ID = "Teacher.deleteById";
+    private static final String QUERY_GET_FREE_TEACHERS = "Teacher.getFreeTeachersOnLessonTime";
+    private static final String QUERY_GET_ALL_BY_DEPARTMENT = "Teacher.getTeachersByDepartment";
+    private static final String QUERY_GET_ALL_BY_FACULTY = "Teacher.getTeachersByFaculty";
     private static final String MESSAGE_DELETE_TEACHER_NOT_FOUND = "Can't delete because teacher id(%d) not found";
 
     private final Environment env;
@@ -39,50 +35,93 @@ public class JpaTeacherDaoImpl implements TeacherDao {
 
     @Override
     public void add(Teacher teacher) {
+        log.debug("Saving {}", teacher);
         entityManager.persist(teacher);
+        log.info("{} saved successfully", teacher);
     }
 
     @Override
     public Optional<Teacher> getById(int id) {
+        log.debug("Getting teacher by id({})", id);
         Teacher teacher = entityManager.find(Teacher.class, id);
+        log.info("Found {}", teacher);
         return Optional.ofNullable(teacher);
     }
 
     @Override
     public List<Teacher> getAll() {
+        log.debug("Getting all teachers");
         List<Teacher> teachers = entityManager.createQuery(
-            env.getProperty(QUERY_GET_ALL), Teacher.class)
+                env.getProperty(QUERY_GET_ALL), Teacher.class)
             .getResultList();
+        log.info("Found {} teachers", teachers.size());
         return teachers;
     }
 
     @Override
     public void update(Teacher teacher) {
-
+        entityManager.merge(teacher);
+        log.info("Update {}", teacher);
     }
 
     @Override
     public void delete(Teacher teacher) {
-
+        entityManager.remove(teacher);
+        log.info("Delete {}", teacher);
     }
 
     @Override
     public void delete(int id) {
-
+        int rowsDeleted = entityManager
+            .createQuery(env.getProperty(QUERY_DELETE_BY_ID))
+            .setParameter("id", id)
+            .executeUpdate();
+        if (rowsDeleted == 0) {
+            log.warn("Can't delete teacher id({})", id);
+            throw new DaoException(String
+                .format(MESSAGE_DELETE_TEACHER_NOT_FOUND, id));
+        } else {
+            log.info("Delete teacher id({})", id);
+        }
     }
 
     @Override
     public List<Teacher> getAllByDepartment(int departmentId) {
-        return null;
+        log.debug("Getting all teachers by department id({})", departmentId);
+        List<Teacher> teachers = entityManager.createQuery(
+                env.getProperty(QUERY_GET_ALL_BY_DEPARTMENT),
+                Teacher.class)
+            .setParameter("departmentId", departmentId)
+            .getResultList();
+        log.info("Found {} teachers from department id({})", teachers.size(),
+            departmentId);
+        return teachers;
     }
 
     @Override
     public List<Teacher> getAllByFaculty(int facultyId) {
-        return null;
+        log.debug("Getting all teachers by faculty id({})", facultyId);
+        List<Teacher> teachers = entityManager.createQuery(
+                env.getProperty(QUERY_GET_ALL_BY_FACULTY),
+                Teacher.class)
+            .setParameter("facultyId", facultyId)
+            .getResultList();
+        log.info("Found {} teachers from faculty id({})", teachers.size(),
+            facultyId);
+        return teachers;
     }
 
     @Override
-    public List<Teacher> getFreeTeachersOnLessonTime(LocalDateTime startTime, LocalDateTime endTime) {
-        return null;
+    public List<Teacher> getFreeTeachersOnLessonTime(LocalDateTime startTime,
+                                                     LocalDateTime endTime) {
+        log.debug("Getting active teachers free from {} to {}", startTime, endTime);
+        List<Teacher> freeTeachers = entityManager.createQuery(
+                env.getProperty(QUERY_GET_FREE_TEACHERS),
+                Teacher.class)
+            .setParameter("time_start", startTime)
+            .setParameter("time_end", endTime)
+            .getResultList();
+        log.info("Found {} active free teachers", freeTeachers.size());
+        return freeTeachers;
     }
 }

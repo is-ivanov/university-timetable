@@ -70,7 +70,7 @@ public class TeacherController {
         log.debug("adding selected faculty and department into model");
         model.addAttribute("facultyIdSelect", facultyId);
         model.addAttribute("departmentIdSelect", departmentId);
-        model.addAttribute("newTeacher", new TeacherDto());
+        model.addAttribute("newTeacher", new Teacher());
         log.info("The required data is loaded into the model");
         return "teacher";
     }
