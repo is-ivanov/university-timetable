@@ -51,16 +51,22 @@ public class Lesson {
     @Column(name = "time_end")
     private LocalDateTime timeEnd;
 
-    @ManyToMany(cascade = {
-        CascadeType.PERSIST,
-        CascadeType.MERGE
-    })
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "students_lessons",
         joinColumns = @JoinColumn(name = "lesson_id"),
-        inverseJoinColumns = @JoinColumn(name = "student_id")
-    )
+        inverseJoinColumns = @JoinColumn(name = "student_id"))
     @ToString.Exclude
     private Set<Student> students = new HashSet<>();
+
+    public void addStudent(Student student) {
+        this.students.add(student);
+        student.getLessons().add(this);
+    }
+
+    public void removeStudent(Student student) {
+        this.students.remove(student);
+        student.getLessons().remove(this);
+    }
 
     @Override
     public boolean equals(Object o) {

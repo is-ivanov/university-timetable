@@ -31,7 +31,6 @@ class JpaStudentDaoImplTest extends IntegrationTestBase {
     private static final String TEST_STUDENT_PATRONYMIC = "Student patronymic";
 
     @Autowired
-    @Qualifier("jpaStudentDaoImpl")
     private StudentDao dao;
 
     @Autowired
@@ -159,8 +158,8 @@ class JpaStudentDaoImplTest extends IntegrationTestBase {
         @DisplayName("with student_id1 should delete one record and number " +
             "records table should equals 1")
         void testDeleteExistingStudent_ReduceNumberRowsInTable() {
-            int expectedRows = JdbcTestUtils.countRowsInTable(
-                jdbcTemplate, TABLE_NAME) - 1;
+            int expectedRows = JdbcTestUtils
+                .countRowsInTable(jdbcTemplate, TABLE_NAME) - 1;
             Student student = dao.getById(STUDENT_ID1).get();
 
             dao.delete(student);

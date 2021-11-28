@@ -5,6 +5,7 @@ import lombok.experimental.SuperBuilder;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -27,7 +28,17 @@ public class Student extends Person {
 
     @ToString.Exclude
     @ManyToMany(mappedBy = "students")
-    private Set<Lesson> lessons;
+    private Set<Lesson> lessons = new HashSet<>();
+
+    public void addLesson(Lesson lesson) {
+        this.lessons.add(lesson);
+        lesson.getStudents().add(this);
+    }
+
+    public void removeLesson(Lesson lesson) {
+        this.lessons.remove(lesson);
+        lesson.getStudents().remove(this);
+    }
 
     @Override
     public boolean equals(Object o) {

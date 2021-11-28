@@ -30,6 +30,7 @@ public class TestObjects {
     public static final int ROOM_ID2 = 62;
     public static final int LESSON_ID1 = 23;
     public static final int LESSON_ID2 = 2;
+    public static final int LESSON_ID3 = 75;
     public static final int GROUP_ID1 = 2;
     public static final int GROUP_ID2 = 14;
     public static final String NAME_FIRST_FACULTY = "IT faculty";
@@ -315,6 +316,17 @@ public class TestObjects {
         Room room1 = createTestRoom();
         Room room2 = new Room(ROOM_ID2, BUILDING_SECOND_ROOM, NUMBER_SECOND_ROOM);
         return new ArrayList<>(Arrays.asList(room1, room2));
+    }
+
+    public static Lesson createTestLesson() {
+        return Lesson.builder()
+            .course(createTestCourse())
+            .teacher(createTestTeacher())
+            .room(createTestRoom())
+            .timeStart(DATE_START_FIRST_LESSON)
+            .timeEnd(DATE_END_FIRST_LESSON)
+            .students(new HashSet<>(createTestStudents()))
+            .build();
     }
 
     public static Lesson createTestLesson(int lessonId) {
