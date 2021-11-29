@@ -244,7 +244,7 @@ public class TestObjects {
             .firstName(NAME_FIRST_TEACHER)
             .patronymic(PATRONYMIC_FIRST_TEACHER)
             .lastName(LAST_NAME_FIRST_TEACHER)
-            .department(createTestDepartment(ID1))
+            .department(createTestDepartment(FACULTY_ID1))
             .active(true)
             .build();
     }

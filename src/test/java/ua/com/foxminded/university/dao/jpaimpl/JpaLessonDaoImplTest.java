@@ -55,8 +55,8 @@ class JpaLessonDaoImplTest extends IntegrationTestBase {
         @Test
         @DisplayName("add test lesson should CountRowsTable must be one more than it was")
         void testAddLesson() {
-            Course course = createTestCourse();
-            Teacher teachers = createTestTeacher();
+//            Course course = createTestCourse();
+//            Teacher teachers = createTestTeacher();
             Lesson lesson = createTestLesson();
             int expectedRowsInTable = JdbcTestUtils
                 .countRowsInTable(jdbcTemplate, TABLE_LESSONS) + 1;
