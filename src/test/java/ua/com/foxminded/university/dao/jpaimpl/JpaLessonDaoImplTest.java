@@ -7,16 +7,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.jdbc.JdbcTestUtils;
+import ua.com.foxminded.university.dao.interfaces.CourseDao;
 import ua.com.foxminded.university.dao.interfaces.LessonDao;
+import ua.com.foxminded.university.dao.interfaces.RoomDao;
+import ua.com.foxminded.university.dao.interfaces.TeacherDao;
 import ua.com.foxminded.university.domain.entity.Course;
 import ua.com.foxminded.university.domain.entity.Lesson;
+import ua.com.foxminded.university.domain.entity.Room;
 import ua.com.foxminded.university.domain.entity.Teacher;
 import ua.com.foxminded.university.springconfig.IntegrationTestBase;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static ua.com.foxminded.university.TestObjects.*;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
@@ -46,6 +50,15 @@ class JpaLessonDaoImplTest extends IntegrationTestBase {
     private LessonDao dao;
 
     @Autowired
+    private TeacherDao teacherDao;
+
+    @Autowired
+    private CourseDao courseDao;
+
+    @Autowired
+    private RoomDao roomDao;
+
+    @Autowired
     private JdbcTemplate jdbcTemplate;
 
     @Nested
@@ -55,8 +68,6 @@ class JpaLessonDaoImplTest extends IntegrationTestBase {
         @Test
         @DisplayName("add test lesson should CountRowsTable must be one more than it was")
         void testAddLesson() {
-//            Course course = createTestCourse();
-//            Teacher teachers = createTestTeacher();
             Lesson lesson = createTestLesson();
             int expectedRowsInTable = JdbcTestUtils
                 .countRowsInTable(jdbcTemplate, TABLE_LESSONS) + 1;
@@ -65,207 +76,127 @@ class JpaLessonDaoImplTest extends IntegrationTestBase {
 
             List<Lesson> lessons = dao.getAll();
             assertThat(lessons).hasSize(expectedRowsInTable);
+            Lesson savedLesson = dao.getById(101).get();
+            assertThat(savedLesson.getCourse()).isEqualTo(lesson.getCourse());
+            assertThat(savedLesson.getRoom()).isEqualTo(lesson.getRoom());
+            assertThat(savedLesson.getTeacher()).isEqualTo(lesson.getTeacher());
+            assertThat(savedLesson.getTimeStart()).isEqualTo(lesson.getTimeStart());
+            assertThat(savedLesson.getTimeEnd()).isEqualTo(lesson.getTimeEnd());
+
         }
     }
 
-//    @Nested
-//    @DisplayName("test 'getById' method")
-//    class getByIdTest {
-//
-//
-//        @Test
-//        @DisplayName("with id=1 should return expected lesson)")
-//        void testGetByIdLesson() throws DaoException {
-//            Faculty faculty = new Faculty();
-//            faculty.setId(ID1);
-//            faculty.setName(FACULTY_NAME);
-//
-//            Department department = new Department(ID1,
-//                DEPARTMENT_NAME,
-//                faculty);
-//
-//            Teacher teacher = new Teacher();
-//            teacher.setId(ID1);
-//            teacher.setFirstName(FIRST_TEACHER_FIRST_NAME);
-//            teacher.setLastName(FIRST_TEACHER_LAST_NAME);
-//            teacher.setPatronymic(FIRST_TEACHER_PATRONYMIC);
-//            teacher.setActive(ACTIVE);
-//            teacher.setDepartment(department);
-//
-//            Course course = new Course(ID1, COURSE_NAME);
-//            Room room = new Room(ID1, BUILDING, ROOM_NUMBER);
-//
-//            LocalDateTime timeStart = LocalDateTime.of(YEAR, MONTH, DAY, HOUR,
-//                MINUTE, SECOND);
-//            LocalDateTime timeEnd = timeStart.plusHours(1).plusMinutes(30);
-//
-//            Group group = new Group();
-//            group.setId(ID1);
-//            group.setName(FIRST_GROUP_NAME);
-//            group.setFaculty(faculty);
-//            group.setActive(ACTIVE);
-//
-//            List<Student> students = new LinkedList<>();
-//            Student firstStudent = new Student();
-//            firstStudent.setId(ID1);
-//            firstStudent.setFirstName(FIRST_STUDENT_FIRST_NAME);
-//            firstStudent.setLastName(FIRST_STUDENT_LAST_NAME);
-//            firstStudent.setPatronymic(FIRST_STUDENT_PATRONYMIC);
-//            firstStudent.setActive(ACTIVE);
-//            firstStudent.setGroup(group);
-//            students.add(firstStudent);
-//            Student secondStudent = new Student();
-//            secondStudent.setId(ID2);
-//            secondStudent.setFirstName(SECOND_STUDENT_FIRST_NAME);
-//            secondStudent.setLastName(SECOND_STUDENT_LAST_NAME);
-//            secondStudent.setPatronymic(SECOND_STUDENT_PATRONYMIC);
-//            secondStudent.setActive(ACTIVE);
-//            secondStudent.setGroup(group);
-//            students.add(secondStudent);
-//
-//            Lesson expectedLesson = Lesson.builder()
-//                .id(ID1)
-//                .teacher(teacher)
-//                .course(course)
-//                .room(room)
-//                .students(students)
-//                .timeStart(timeStart)
-//                .timeEnd(timeEnd)
-//                .build();
-//
-//            Lesson actualLesson = dao.getById(ID1).orElse(null);
-//            assertEquals(expectedLesson, actualLesson);
-//        }
-//
-//        @Test
-//        @DisplayName("with id=5 should return DAOException")
-//        void testGetByIdLessonException() throws DaoException {
-//            DaoException exception = assertThrows(DaoException.class,
-//                () -> dao.getById(ID5));
-//            assertEquals(MESSAGE_EXCEPTION, exception.getMessage());
-//        }
-//    }
-//
-//    @Nested
-//    @DisplayName("test 'getAll' method")
-//    class getAllTest {
-//
-//        @Test
-//        @DisplayName("should return List with size = 3")
-//        void testGetAllLessons() {
-//            int expectedQuantityLessons = JdbcTestUtils
-//                .countRowsInTable(jdbcTemplate, TABLE_LESSONS);
-//            int actualQuantityLessons = dao.getAll().size();
-//            assertEquals(expectedQuantityLessons, actualQuantityLessons);
-//        }
-//    }
-//
-//    @Nested
-//    @DisplayName("test 'update' method")
-//    class updateTest {
-//
-//        @Test
-//        @DisplayName("with lesson id=1 should write new fields and getById(1) " +
-//            "return this fields")
-//        void testUpdateExistingLesson_WriteNewFields() throws DaoException {
-//            Faculty faculty = new Faculty(ID1, FACULTY_NAME);
-//            Department department = new Department(ID1, DEPARTMENT_NAME,
-//                faculty);
-//            Teacher teacher = new Teacher();
-//            teacher.setId(ID2);
-//            teacher.setFirstName(SECOND_TEACHER_FIRST_NAME);
-//            teacher.setLastName(SECOND_TEACHER_LAST_NAME);
-//            teacher.setPatronymic(SECOND_TEACHER_PATRONYMIC);
-//            teacher.setActive(ACTIVE);
-//            teacher.setDepartment(department);
-//
-//            Course course = new Course(ID1, COURSE_NAME);
-//            Room room = new Room(ID1, BUILDING, ROOM_NUMBER);
-//            LocalDateTime timeStart = LocalDateTime.of(YEAR, MONTH + 1, DAY - 1,
-//                HOUR - 2, MINUTE, SECOND);
-//            LocalDateTime timeEnd = timeStart.plusHours(2);
-//
-//            Group group = new Group();
-//            group.setId(ID1);
-//            group.setName(FIRST_GROUP_NAME);
-//            group.setFaculty(faculty);
-//            group.setActive(ACTIVE);
-//
-//            List<Student> students = new ArrayList<>();
-//            Student firstStudent = new Student();
-//            firstStudent.setId(ID1);
-//            firstStudent.setFirstName(FIRST_STUDENT_FIRST_NAME);
-//            firstStudent.setLastName(FIRST_STUDENT_LAST_NAME);
-//            firstStudent.setPatronymic(FIRST_STUDENT_PATRONYMIC);
-//            firstStudent.setActive(ACTIVE);
-//            firstStudent.setGroup(group);
-//            students.add(firstStudent);
-//            Student secondStudent = new Student();
-//            secondStudent.setId(ID2);
-//            secondStudent.setFirstName(SECOND_STUDENT_FIRST_NAME);
-//            secondStudent.setLastName(SECOND_STUDENT_LAST_NAME);
-//            secondStudent.setPatronymic(SECOND_STUDENT_PATRONYMIC);
-//            secondStudent.setActive(ACTIVE);
-//            secondStudent.setGroup(group);
-//            students.add(secondStudent);
-//
-//            Lesson expectedLesson = Lesson.builder()
-//                .id(ID1)
-//                .teacher(teacher)
-//                .students(students)
-//                .course(course)
-//                .room(room)
-//                .timeStart(timeStart)
-//                .timeEnd(timeEnd)
-//                .build();
-//            dao.update(expectedLesson);
-//
-//            Lesson actualLesson = dao.getById(ID1).orElse(null);
-//            assertEquals(expectedLesson, actualLesson);
-//        }
-//
-//        @Test
-//        @DisplayName("with lesson id=5 should write new log.warn with " +
-//            "expected message")
-//        void testUpdateNonExistingLesson_ExceptionWriteLogWarn() {
-//            LogCaptor logCaptor = LogCaptor.forClass(LessonDaoImpl.class);
-//            Lesson lesson = new Lesson();
-//            lesson.setId(ID5);
-//            Teacher teacher = new Teacher();
-//            teacher.setId(ID1);
-//            lesson.setTeacher(teacher);
-//            Course course = new Course();
-//            course.setId(ID2);
-//            lesson.setCourse(course);
-//            Room room = new Room();
-//            room.setId(ID3);
-//            lesson.setRoom(room);
-//            String expectedLog = String.format(MESSAGE_UPDATE_MASK, ID5);
-//            Exception ex = assertThrows(DaoException.class,
-//                () -> dao.update(lesson));
-//            assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
-//            assertEquals(MESSAGE_UPDATE_EXCEPTION, ex.getMessage());
-//
-//        }
-//    }
-//
-//    @Nested
-//    @DisplayName("test 'delete' method")
-//    class deleteTest {
-//
-//        @Test
-//        @DisplayName("delete lesson id=3 should delete one record and number records table should equals 2")
-//        void testDeleteLesson() {
-//            int expectedQuantityLessons = JdbcTestUtils
-//                .countRowsInTable(jdbcTemplate, TABLE_LESSONS) - 1;
-//            Lesson lesson = new Lesson();
-//            lesson.setId(ID3);
-//            dao.delete(lesson);
-//            int actualQuantityLessons = JdbcTestUtils
-//                .countRowsInTable(jdbcTemplate, TABLE_LESSONS);
-//            assertEquals(expectedQuantityLessons, actualQuantityLessons);
-//        }
-//
+    @Nested
+    @DisplayName("test 'getById' method")
+    class getByIdTest {
+
+        @Test
+        @DisplayName("with id=1 should return expected lesson)")
+        void testGetByIdLesson() {
+            Lesson actualLesson = dao.getById(LESSON_ID1).get();
+
+            assertThat(actualLesson.getTimeStart()).isEqualTo(DATE_START_FIRST_LESSON);
+            assertThat(actualLesson.getTimeEnd()).isEqualTo(DATE_END_FIRST_LESSON);
+
+            Teacher actualTeacher = actualLesson.getTeacher();
+            assertThat(actualTeacher.getId()).isEqualTo(TEACHER_ID1);
+            assertThat(actualTeacher.getFullName()).isEqualTo(FULL_NAME_FIRST_TEACHER);
+
+            Room actualRoom = actualLesson.getRoom();
+            assertThat(actualRoom.getId()).isEqualTo(ROOM_ID1);
+            assertThat(actualRoom.getBuildingAndRoom())
+                .isEqualTo(BUILDING_AND_NUMBER_FIRST_ROOM);
+
+            Course actualCourse = actualLesson.getCourse();
+            assertThat(actualCourse.getId()).isEqualTo(COURSE_ID1);
+            assertThat(actualCourse.getName()).isEqualTo(NAME_FIRST_COURSE);
+
+        }
+
+        @Test
+        @DisplayName("with id=5 should return empty Optional")
+        void testGetByIdLesson_EmptyOptional() {
+            Optional<Lesson> lessonOptional = dao.getById(5);
+            assertThat(lessonOptional).isEmpty();
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'getAll' method")
+    class getAllTest {
+
+        @Test
+        @DisplayName("should return List with size = 3")
+        void testGetAllLessons() {
+            int expectedQuantityLessons = JdbcTestUtils
+                .countRowsInTable(jdbcTemplate, TABLE_LESSONS);
+            List<Lesson> lessons = dao.getAll();
+            assertThat(lessons).hasSize(expectedQuantityLessons);
+            assertThat(lessons).extracting(Lesson::getId)
+                .containsOnly(LESSON_ID1, LESSON_ID2, LESSON_ID3);
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'update' method")
+    class updateTest {
+
+        @Test
+        @DisplayName("with lesson id=1 should write new fields and getById(1) " +
+            "return this fields")
+        void testUpdateExistingLesson_WriteNewFields() {
+            Lesson lessonForChange = dao.getById(LESSON_ID1).get();
+
+            Teacher newTeacher = teacherDao.getById(TEACHER_ID2).get();
+            Course newCourse = courseDao.getById(COURSE_ID2).get();
+            Room newRoom = roomDao.getById(ROOM_ID2).get();
+
+            lessonForChange.setCourse(newCourse);
+            lessonForChange.setRoom(newRoom);
+            lessonForChange.setTeacher(newTeacher);
+
+            dao.update(lessonForChange);
+
+            Lesson actualLesson = dao.getById(LESSON_ID1).get();
+
+            assertThat(actualLesson.getCourse()).isEqualTo(newCourse);
+            assertThat(actualLesson.getRoom()).isEqualTo(newRoom);
+            assertThat(actualLesson.getTeacher()).isEqualTo(newTeacher);
+        }
+
+        @Test
+        @DisplayName("with lesson id=5 should write new lesson with id from sequence")
+        void testUpdateNonExistingLesson_CreateNewLesson() {
+            Lesson expectedLesson = createTestLesson(5);
+
+            dao.update(expectedLesson);
+
+            Lesson actualLesson = dao.getById(101).get();
+            assertThat(actualLesson.getCourse()).isEqualTo(expectedLesson.getCourse());
+            assertThat(actualLesson.getRoom()).isEqualTo(expectedLesson.getRoom());
+            assertThat(actualLesson.getTeacher()).isEqualTo(expectedLesson.getTeacher());
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'delete' method")
+    class deleteTest {
+
+        @Test
+        @DisplayName("delete lesson_id3 should delete one record and number " +
+            "records table should equals 2")
+        void testDeleteLesson() {
+            int expectedQuantityLessons = JdbcTestUtils
+                .countRowsInTable(jdbcTemplate, TABLE_LESSONS) - 1;
+            Lesson lesson = dao.getById(LESSON_ID3).get();
+
+            dao.delete(lesson);
+
+            List<Lesson> actualLessons = dao.getAll();
+            assertThat(actualLessons).hasSize(expectedQuantityLessons);
+            assertThat(actualLessons)
+        }
+
 //        @Test
 //        @DisplayName("with lesson id=5 should write new log.warn with " +
 //            "expected message")
@@ -279,7 +210,7 @@ class JpaLessonDaoImplTest extends IntegrationTestBase {
 //            assertEquals(expectedLog, logCaptor.getWarnLogs().get(0));
 //            assertEquals(MESSAGE_DELETE_EXCEPTION, ex.getMessage());
 //        }
-//    }
+    }
 //
 //    @Nested
 //    @DisplayName("test 'addStudentToLesson' method")

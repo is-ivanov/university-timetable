@@ -51,12 +51,21 @@ public class Lesson {
     @Column(name = "time_end")
     private LocalDateTime timeEnd;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany()
     @JoinTable(name = "students_lessons",
         joinColumns = @JoinColumn(name = "lesson_id"),
         inverseJoinColumns = @JoinColumn(name = "student_id"))
     @ToString.Exclude
     private Set<Student> students = new HashSet<>();
+
+    public Lesson(Course course, Teacher teacher, Room room,
+                  LocalDateTime timeStart, LocalDateTime timeEnd) {
+        this.course = course;
+        this.teacher = teacher;
+        this.room = room;
+        this.timeStart = timeStart;
+        this.timeEnd = timeEnd;
+    }
 
     public void addStudent(Student student) {
         this.students.add(student);

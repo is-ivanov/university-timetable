@@ -20,7 +20,7 @@ import static ua.com.foxminded.university.ui.Util.DATE_TIME_PATTERN;
 public class LessonDto {
 
 
-    private int id;
+    private Integer id;
     private int courseId;
     private String courseName;
     private int teacherId;
@@ -37,4 +37,12 @@ public class LessonDto {
     @JsonFormat(pattern = DATE_TIME_PATTERN)
     private LocalDateTime timeEnd;
 
+    public LessonDto(int courseId, int teacherId, int roomId,
+                     LocalDateTime timeStart, LocalDateTime timeEnd) {
+        this.courseId = courseId;
+        this.teacherId = teacherId;
+        this.roomId = roomId;
+        this.timeStart = timeStart;
+        this.timeEnd = timeEnd;
+    }
 }

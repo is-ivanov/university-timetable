@@ -55,20 +55,25 @@ VALUES (42, 'Tatyana', 'Sergeeva', 'Leonidovna', TRUE, 14);
 INSERT INTO courses (course_id, course_name)
 VALUES (45, 'Java');
 
+INSERT INTO courses (course_id, course_name)
+VALUES (13, 'English');
 
 -- Rooms
 INSERT INTO rooms (room_id, building, room_number)
 VALUES (5, 'building-1', '1457a');
 
+INSERT INTO rooms (room_id, building, room_number)
+VALUES (62, 'building-2', '812b');
+
 
 -- Lessons
 INSERT INTO lessons (lesson_id, teacher_id, course_id, room_id, time_start,
                      time_end)
-VALUES (23, 7, 45, 5, '2021-06-12 14:00:00', '2021-06-12 15:30:00');
+VALUES (23, 7, 45, 5, '2021-05-10 10:00:00', '2021-05-10 11:30:00');
 
 INSERT INTO lessons (lesson_id, teacher_id, course_id, room_id, time_start,
                      time_end)
-VALUES (2, 7, 45, 5, '2021-06-10 14:00:00', '2021-06-10 15:30:00');
+VALUES (2, 7, 45, 5, '2021-10-04 12:15:00', '2021-10-04 13:45:00');
 
 INSERT INTO lessons (lesson_id, teacher_id, course_id, room_id, time_start,
                      time_end)

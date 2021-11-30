@@ -80,7 +80,7 @@ class JpaStudentDaoImplTest extends IntegrationTestBase {
 
         @Test
         @DisplayName("with id=4 should return empty Optional")
-        void testGetByIdStudentException() {
+        void testGetByIdStudent_EmptyOptional() {
             Optional<Student> studentOptional = dao.getById(4);
             assertThat(studentOptional).isEmpty();
         }
