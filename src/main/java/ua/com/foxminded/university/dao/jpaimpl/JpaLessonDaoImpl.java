@@ -6,7 +6,8 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Repository;
 import ua.com.foxminded.university.dao.interfaces.LessonDao;
-import ua.com.foxminded.university.domain.entity.*;
+import ua.com.foxminded.university.domain.entity.Lesson;
+import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.domain.filter.LessonFilter;
 import ua.com.foxminded.university.exception.DaoException;
 
@@ -51,17 +52,17 @@ public class JpaLessonDaoImpl implements LessonDao {
     private static final String MESSAGE_STUDENT_NOT_FOUND_IN_LESSON =
         "Can't delete because student id(%d) not found in lesson id(%d)";
     private static final String FOUND_LESSONS = "Found {} lessons";
-    private static final String WHERE = " WHERE l.lesson_id > 0 ";
-    private static final String TEACHER_FILTER = " AND l.teacher_id = ";
-    private static final String DEPARTMENT_FILTER = " AND t.department_id = ";
-    private static final String FACULTY_FILTER = " AND d.faculty_id = ";
-    private static final String COURSE_FILTER = " AND l.course_id = ";
-    private static final String ROOM_FILTER = " AND l.room_id = ";
-    private static final String TIME_BETWEEN_FILTER = " AND l.time_start BETWEEN '";
+    private static final String WHERE = " WHERE l.id > 0 ";
+    private static final String TEACHER_FILTER = " AND l.teacher.id = ";
+    private static final String DEPARTMENT_FILTER = " AND l.teacher.department.id = ";
+    private static final String FACULTY_FILTER = " AND l.teacher.department.faculty.id = ";
+    private static final String COURSE_FILTER = " AND l.course.id = ";
+    private static final String ROOM_FILTER = " AND l.room.id = ";
+    private static final String TIME_BETWEEN_FILTER = " AND l.timeStart BETWEEN '";
     private static final String AND = "' AND '";
     private static final String CLOSING_QUOTATION_MARK = "' ";
-    private static final String TIME_AFTER_FILTER = " AND l.time_start >= '";
-    private static final String TIME_BEFORE_FILTER = " AND l.time_start <= '";
+    private static final String TIME_AFTER_FILTER = " AND l.timeStart >= '";
+    private static final String TIME_BEFORE_FILTER = " AND l.timeStart <= '";
 
 
     private final Environment env;
@@ -120,15 +121,10 @@ public class JpaLessonDaoImpl implements LessonDao {
 
     @Override
     public void deleteAllStudentsFromLesson(int lessonId) {
-        // First variant
         Query query = entityManager.createNativeQuery(
             env.getProperty(QUERY_DELETE_ALL_STUDENTS_FROM_LESSON));
         query.setParameter("id", lessonId);
-        int rowsDeleted = query.executeUpdate();
-
-//        //Second variant
-//        Lesson lesson = entityManager.find(Lesson.class, lessonId);
-//        lesson.getStudents().clear();
+        query.executeUpdate();
     }
 
     @Override
@@ -167,7 +163,14 @@ public class JpaLessonDaoImpl implements LessonDao {
 
     @Override
     public List<Lesson> getAllWithFilter(LessonFilter filter) {
-        return null;
+        log.debug("Getting all lessons with ({})", filter);
+
+        String query = createQuery(filter);
+        List<Lesson> lessons = entityManager.createQuery(query, Lesson.class)
+            .getResultList();
+        log.info(FOUND_LESSONS, lessons.size());
+        return lessons;
+
     }
 
     @Override
@@ -190,4 +193,69 @@ public class JpaLessonDaoImpl implements LessonDao {
                                                    LocalDateTime endTime) {
         return null;
     }
+
+    private String createQuery(LessonFilter filter) {
+        log.debug("create jpql query with filters");
+        StringBuilder query = new StringBuilder(env.getRequiredProperty(QUERY_GET_ALL));
+        query.append(WHERE);
+        addTeacherDepartmentFacultyFilter(query, filter.getTeacherId(),
+            filter.getDepartmentId(), filter.getFacultyId());
+        addCourseFilter(query, filter.getCourseId());
+        addRoomFilter(query, filter.getRoomId());
+        addDateFilter(query, filter.getDateFrom(), filter.getDateTo());
+        log.debug("query = {}", query);
+        return query.toString();
+    }
+
+    private void addTeacherDepartmentFacultyFilter(StringBuilder query,
+                                                   Integer teacherId,
+                                                   Integer departmentId,
+                                                   Integer facultyId) {
+        log.debug("check filter by teacher, department and faculty");
+        if (teacherId != null && teacherId > 0) {
+            log.debug("add filter by teacherId({})", teacherId);
+            query.append(TEACHER_FILTER).append(teacherId);
+        } else if (departmentId != null && departmentId > 0) {
+            log.debug("add filter by departmentId({})", departmentId);
+            query.append(DEPARTMENT_FILTER).append(departmentId);
+        } else if (facultyId != null && facultyId > 0) {
+            log.debug("add filter by facultyId({})", facultyId);
+            query.append(FACULTY_FILTER).append(facultyId);
+        }
+    }
+
+    private void addCourseFilter(StringBuilder query, Integer courseId) {
+        log.debug("check filter by course");
+        if (courseId != null && courseId > 0) {
+            log.debug("add filter by courseId({})", courseId);
+            query.append(COURSE_FILTER).append(courseId);
+        }
+    }
+
+    private void addRoomFilter(StringBuilder query, Integer roomId) {
+        log.debug("check filter by room");
+        if (roomId != null && roomId > 0) {
+            log.debug("add filter by roomId({})", roomId);
+            query.append(ROOM_FILTER).append(roomId);
+        }
+    }
+
+    private void addDateFilter(StringBuilder query, LocalDateTime dateFrom,
+                               LocalDateTime dateTo) {
+        log.debug("check filter by date");
+        if (dateFrom != null && dateTo != null) {
+            log.debug("add filter between {} and {}", dateFrom, dateTo);
+            query.append(TIME_BETWEEN_FILTER).append(dateFrom)
+                .append(AND).append(dateTo).append(CLOSING_QUOTATION_MARK);
+        } else if (dateFrom != null) {
+            log.debug("add filter time_start >= {}", dateFrom);
+            query.append(TIME_AFTER_FILTER).append(dateFrom)
+                .append(CLOSING_QUOTATION_MARK);
+        } else if (dateTo != null) {
+            log.debug("add filter time_start <= {}", dateTo);
+            query.append(TIME_BEFORE_FILTER).append(dateTo)
+                .append(CLOSING_QUOTATION_MARK);
+        }
+    }
+
 }
