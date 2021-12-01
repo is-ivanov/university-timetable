@@ -4,7 +4,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.jdbc.JdbcTestUtils;
@@ -38,7 +37,7 @@ class JpaStudentDaoImplTest extends IntegrationTestBase {
 
     @Nested
     @DisplayName("test 'add' method")
-    class addTest {
+    class AddTest {
 
         @Test
         @DisplayName("add test student should CountRowsTable = 4")
@@ -66,7 +65,7 @@ class JpaStudentDaoImplTest extends IntegrationTestBase {
 
     @Nested
     @DisplayName("test 'getById' method")
-    class getByIdTest {
+    class GetByIdTest {
 
         @Test
         @DisplayName("with student_id1 should return expected student)")
@@ -88,7 +87,7 @@ class JpaStudentDaoImplTest extends IntegrationTestBase {
 
     @Nested
     @DisplayName("test 'getAll' method")
-    class getAllTest {
+    class GetAllTest {
 
         @Test
         @DisplayName("should return List with size = 3")
@@ -104,7 +103,7 @@ class JpaStudentDaoImplTest extends IntegrationTestBase {
 
     @Nested
     @DisplayName("test 'update' method")
-    class updateTest {
+    class UpdateTest {
 
         @Test
         @DisplayName("with student id=1 should write new fields and " +
@@ -152,7 +151,7 @@ class JpaStudentDaoImplTest extends IntegrationTestBase {
 
     @Nested
     @DisplayName("test 'delete' method")
-    class deleteTest {
+    class DeleteTest {
 
         @Test
         @DisplayName("with student_id1 should delete one record and number " +
@@ -174,7 +173,7 @@ class JpaStudentDaoImplTest extends IntegrationTestBase {
 
     @Nested
     @DisplayName("test 'getStudentsByLesson' method")
-    class getStudentsByLessonTest {
+    class GetStudentsByLessonTest {
 
         @Test
         @DisplayName("when lesson_id1 then should return List with size = 1")
@@ -195,7 +194,7 @@ class JpaStudentDaoImplTest extends IntegrationTestBase {
 
     @Nested
     @DisplayName("test 'getStudentsByGroup' method")
-    class getStudentsByGroupTest {
+    class GetStudentsByGroupTest {
 
         @Test
         @DisplayName("when group_id1 then should return List with size = 2")
@@ -214,7 +213,7 @@ class JpaStudentDaoImplTest extends IntegrationTestBase {
 
     @Nested
     @DisplayName("test 'getStudentsByFaculty' method")
-    class getStudentsByFacultyTest {
+    class GetStudentsByFacultyTest {
 
         @Test
         @DisplayName("when facultyId1 then should return 2 expected students")

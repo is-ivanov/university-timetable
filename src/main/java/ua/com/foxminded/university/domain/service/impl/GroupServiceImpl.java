@@ -25,10 +25,7 @@ public class GroupServiceImpl implements GroupService {
 
     public static final String FOUND_GROUPS = "Found {} groups";
 
-    @Qualifier("jpaGroupDaoImpl")
     private final GroupDao groupDao;
-
-    @Qualifier("jpaStudentDaoImpl")
     private final StudentDao studentDao;
     private final GroupDtoMapper groupDtoMapper;
 

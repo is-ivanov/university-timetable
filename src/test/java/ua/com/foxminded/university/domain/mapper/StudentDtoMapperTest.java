@@ -1,16 +1,12 @@
 package ua.com.foxminded.university.domain.mapper;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ua.com.foxminded.university.domain.dto.StudentDto;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Student;
-import ua.com.foxminded.university.springconfig.TestRootConfig;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,8 +14,6 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TestRootConfig.class)
 class StudentDtoMapperTest {
 
     private static final String FIRST_NAME = "First name";
@@ -30,12 +24,73 @@ class StudentDtoMapperTest {
     private static final int ID2 = 2;
     private static final String GROUP_NAME = "Group name";
 
-    @Autowired
     private StudentDtoMapper mapper;
+
+    @BeforeEach
+    void setup() {
+        mapper = new StudentDtoMapperImpl();
+    }
+
+    @Test
+    void testConvertListStudentsToStudentDtos() {
+        Student student = new Student();
+        student.setId(ID1);
+        student.setFirstName(FIRST_NAME);
+        student.setPatronymic(PATRONYMIC);
+        student.setLastName(LAST_NAME);
+        student.setActive(true);
+        Group group = new Group();
+        group.setId(ID2);
+        group.setName(GROUP_NAME);
+        student.setGroup(group);
+
+        List<Student> students = Collections.singletonList(student);
+        List<StudentDto> studentDtos = mapper.studentsToStudentDtos(students);
+
+        StudentDto studentDto = studentDtos.get(0);
+
+        assertThat(studentDtos, hasSize(1));
+        assertThat(studentDto.getId(), is(equalTo(ID1)));
+        assertThat(studentDto.getFirstName(), is(equalTo(FIRST_NAME)));
+        assertThat(studentDto.getPatronymic(), is(equalTo(PATRONYMIC)));
+        assertThat(studentDto.getLastName(), is(equalTo(LAST_NAME)));
+        assertThat(studentDto.isActive(), is(true));
+        assertThat(studentDto.getFullName(), is(equalTo(FULL_NAME)));
+        assertThat(studentDto.getGroupId(), is(equalTo(ID2)));
+        assertThat(studentDto.getGroupName(), is(equalTo(GROUP_NAME)));
+    }
+
+    @Test
+    void testConvertListStudentDtosToStudents() {
+        StudentDto studentDto = StudentDto.builder()
+            .id(ID1)
+            .firstName(FIRST_NAME)
+            .patronymic(PATRONYMIC)
+            .lastName(LAST_NAME)
+            .active(true)
+            .fullName(FULL_NAME)
+            .groupId(ID2)
+            .groupName(GROUP_NAME)
+            .build();
+
+        List<StudentDto> studentDtos = Collections.singletonList(studentDto);
+        List<Student> students = mapper.studentDtosToStudents(studentDtos);
+
+        Student student = students.get(0);
+        assertThat(students, hasSize(1));
+        assertThat(student.getId(), is(equalTo(ID1)));
+        assertThat(student.getFirstName(), is(equalTo(FIRST_NAME)));
+        assertThat(student.getPatronymic(), is(equalTo(PATRONYMIC)));
+        assertThat(student.getLastName(), is(equalTo(LAST_NAME)));
+        assertThat(student.isActive(), is(equalTo(true)));
+        assertThat(student.getFullName(), is(equalTo(FULL_NAME)));
+        assertThat(student.getGroup().getId(), is(equalTo(ID2)));
+        assertThat(student.getGroup().getName(), is(equalTo(GROUP_NAME)));
+    }
 
     @Nested
     @DisplayName("When we convert student to studentDto")
-    class studentToStudentDtoTest {
+    class StudentToStudentDtoTest {
 
         @Test
         @DisplayName("if student with full properties then should return " +
@@ -109,62 +164,5 @@ class StudentDtoMapperTest {
             assertThat(student.getGroup().getId(), is(equalTo(ID2)));
             assertThat(student.getGroup().getName(), is(equalTo(GROUP_NAME)));
         }
-    }
-
-    @Test
-    void testConvertListStudentsToStudentDtos() {
-        Student student = new Student();
-        student.setId(ID1);
-        student.setFirstName(FIRST_NAME);
-        student.setPatronymic(PATRONYMIC);
-        student.setLastName(LAST_NAME);
-        student.setActive(true);
-        Group group = new Group();
-        group.setId(ID2);
-        group.setName(GROUP_NAME);
-        student.setGroup(group);
-
-        List<Student> students = Collections.singletonList(student);
-        List<StudentDto> studentDtos = mapper.studentsToStudentDtos(students);
-
-        StudentDto studentDto = studentDtos.get(0);
-
-        assertThat(studentDtos, hasSize(1));
-        assertThat(studentDto.getId(), is(equalTo(ID1)));
-        assertThat(studentDto.getFirstName(), is(equalTo(FIRST_NAME)));
-        assertThat(studentDto.getPatronymic(), is(equalTo(PATRONYMIC)));
-        assertThat(studentDto.getLastName(), is(equalTo(LAST_NAME)));
-        assertThat(studentDto.isActive(), is(true));
-        assertThat(studentDto.getFullName(), is(equalTo(FULL_NAME)));
-        assertThat(studentDto.getGroupId(), is(equalTo(ID2)));
-        assertThat(studentDto.getGroupName(), is(equalTo(GROUP_NAME)));
-    }
-
-    @Test
-    void testConvertListStudentDtosToStudents() {
-        StudentDto studentDto = StudentDto.builder()
-            .id(ID1)
-            .firstName(FIRST_NAME)
-            .patronymic(PATRONYMIC)
-            .lastName(LAST_NAME)
-            .active(true)
-            .fullName(FULL_NAME)
-            .groupId(ID2)
-            .groupName(GROUP_NAME)
-            .build();
-
-        List<StudentDto> studentDtos = Collections.singletonList(studentDto);
-        List<Student> students = mapper.studentDtosToStudents(studentDtos);
-
-        Student student = students.get(0);
-        assertThat(students, hasSize(1));
-        assertThat(student.getId(), is(equalTo(ID1)));
-        assertThat(student.getFirstName(), is(equalTo(FIRST_NAME)));
-        assertThat(student.getPatronymic(), is(equalTo(PATRONYMIC)));
-        assertThat(student.getLastName(), is(equalTo(LAST_NAME)));
-        assertThat(student.isActive(), is(equalTo(true)));
-        assertThat(student.getFullName(), is(equalTo(FULL_NAME)));
-        assertThat(student.getGroup().getId(), is(equalTo(ID2)));
-        assertThat(student.getGroup().getName(), is(equalTo(GROUP_NAME)));
     }
 }

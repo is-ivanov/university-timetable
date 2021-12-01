@@ -33,7 +33,6 @@ public class LessonServiceImpl implements LessonService {
     public static final String MESSAGE_STUDENT_NOT_AVAILABLE = "Student id(%d) is not available";
     public static final String MESSAGE_ROOM_NOT_AVAILABLE = "Room id(%d) is not available";
 
-    @Qualifier("jpaLessonDaoImpl")
     private final LessonDao lessonDao;
     private final StudentService studentService;
 

@@ -22,7 +22,7 @@ import java.util.Properties;
 
 @Configuration
 @PropertySource("classpath:hibernate_test_db.properties")
-@ComponentScan({"ua.com.foxminded.university.dao.jpaimpl"})
+@ComponentScan({"ua.com.foxminded.university.dao"})
 @EnableTransactionManagement
 public class TestHibernateRootConfig {
     private static final String DRIVER = "db.driver";

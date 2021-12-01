@@ -24,33 +24,21 @@ import java.util.Optional;
 @PropertySource("classpath:queries/jpql_query.properties")
 public class JpaLessonDaoImpl implements LessonDao {
 
-    private static final String QUERY_ADD = "lesson.add";
     private static final String QUERY_GET_ALL = "Lesson.getAll";
-    private static final String QUERY_GET_BY_ID = "lesson.getById";
-    private static final String QUERY_UPDATE = "lesson.update";
     private static final String QUERY_DELETE_BY_ID = "Lesson.deleteById";
-    private static final String QUERY_ADD_STUDENT_TO_LESSON =
-        "Lesson.addStudentToLesson";
     private static final String QUERY_DELETE_ALL_STUDENTS_FROM_LESSON =
         "Lesson.deleteAllStudentsFromLesson";
-    private static final String QUERY_DELETE_STUDENT_FROM_LESSON =
-        "lesson.deleteStudentFromLesson";
     private static final String QUERY_GET_ALL_FOR_TEACHER = "Lesson.getAllForTeacher";
     private static final String QUERY_GET_ALL_FOR_ROOM = "Lesson.getAllForRoom";
     private static final String QUERY_GET_ALL_FOR_STUDENT = "Lesson.getAllForStudent";
     private static final String QUERY_GET_ALL_FOR_STUDENT_FOR_TIME_PERIOD =
-        "lesson.getAllForStudentForTimePeriod";
+        "Lesson.getAllForStudentForTimePeriod";
     private static final String QUERY_GET_ALL_FOR_TEACHER_FOR_TIME_PERIOD =
-        "lesson.getAllForTeacherForTimePeriod";
+        "Lesson.getAllForTeacherForTimePeriod";
     private static final String QUERY_GET_ALL_FOR_ROOM_FOR_TIME_PERIOD =
-        "lesson.getAllForRoomForTimePeriod";
-    private static final String MESSAGE_LESSON_NOT_FOUND = "Lesson id(%d) not found";
-    private static final String MESSAGE_UPDATE_LESSON_NOT_FOUND =
-        "Can't update because lesson id(%d) not found";
+        "Lesson.getAllForRoomForTimePeriod";
     private static final String MESSAGE_DELETE_LESSON_NOT_FOUND =
         "Can't delete because lesson id(%d) not found";
-    private static final String MESSAGE_STUDENT_NOT_FOUND_IN_LESSON =
-        "Can't delete because student id(%d) not found in lesson id(%d)";
     private static final String FOUND_LESSONS = "Found {} lessons";
     private static final String WHERE = " WHERE l.id > 0 ";
     private static final String TEACHER_FILTER = " AND l.teacher.id = ";
@@ -72,33 +60,51 @@ public class JpaLessonDaoImpl implements LessonDao {
 
     @Override
     public void add(Lesson lesson) {
+        log.debug("Saving lesson with course id({}), teacher id({}), room id({}) " +
+                "time_start({}), time_end({})", lesson.getCourse().getId(),
+            lesson.getTeacher().getId(), lesson.getRoom().getId(),
+            lesson.getTimeStart(), lesson.getTimeEnd());
         entityManager.persist(lesson);
+        log.info("Lesson with course id({}), teacher id({}), room id({}) " +
+                "time_start({}), time_end({}) saved successfully", lesson.getCourse().getId(),
+            lesson.getTeacher().getId(), lesson.getRoom().getId(),
+            lesson.getTimeStart(), lesson.getTimeEnd());
     }
 
     @Override
     public Optional<Lesson> getById(int id) {
+        log.debug("Getting lesson by id({})", id);
         Lesson lesson = entityManager.find(Lesson.class, id);
+        log.info("Found lesson {}", lesson);
         return Optional.ofNullable(lesson);
     }
 
     @Override
     public List<Lesson> getAll() {
-        return entityManager.createQuery(env.getProperty(QUERY_GET_ALL),
+        log.debug("Getting all lessons");
+        List<Lesson> lessons = entityManager.createQuery(env.getProperty(QUERY_GET_ALL),
             Lesson.class).getResultList();
+        log.info(FOUND_LESSONS, lessons.size());
+        return lessons;
     }
 
     @Override
     public void update(Lesson lesson) {
+        log.debug("Updating lesson id({})", lesson.getId());
         entityManager.merge(lesson);
+        log.info("Lesson id({}) updated successfully", lesson.getId());
     }
 
     @Override
     public void delete(Lesson lesson) {
+        log.debug("Deleting lesson id({})", lesson.getId());
         entityManager.remove(lesson);
+        log.info("Delete lesson id({})", lesson.getId());
     }
 
     @Override
     public void delete(int id) {
+        log.debug("Deleting lesson id({})", id);
         int rowsDeleted = entityManager
             .createQuery(env.getProperty(QUERY_DELETE_BY_ID))
             .setParameter("id", id)
@@ -114,57 +120,71 @@ public class JpaLessonDaoImpl implements LessonDao {
 
     @Override
     public void addStudentToLesson(int lessonId, int studentId) {
+        log.debug("Adding student id({}) to lesson id({})", studentId, lessonId);
         Lesson lesson = entityManager.find(Lesson.class, lessonId);
         Student student = entityManager.find(Student.class, studentId);
         lesson.addStudent(student);
+        log.info("Student id({}) added to lesson({}) successfully", studentId,
+            lessonId);
     }
 
     @Override
     public void deleteAllStudentsFromLesson(int lessonId) {
+        log.debug("Deleting all students from lesson id({})", lessonId);
         Query query = entityManager.createNativeQuery(
             env.getProperty(QUERY_DELETE_ALL_STUDENTS_FROM_LESSON));
         query.setParameter("id", lessonId);
-        query.executeUpdate();
+        int numberDeletedRows = query.executeUpdate();
+        log.info("Delete {} students from lesson id({})", numberDeletedRows,
+            lessonId);
     }
 
     @Override
     public List<Lesson> getAllForTeacher(int teacherId) {
+        log.debug("Getting all lessons for teacher id({})", teacherId);
         List<Lesson> lessons = entityManager.createQuery(
-            env.getProperty(QUERY_GET_ALL_FOR_TEACHER), Lesson.class)
+                env.getProperty(QUERY_GET_ALL_FOR_TEACHER), Lesson.class)
             .setParameter("teacherId", teacherId)
             .getResultList();
+        log.info(FOUND_LESSONS, lessons.size());
         return lessons;
     }
 
     @Override
     public List<Lesson> getAllForRoom(int roomId) {
+        log.debug("Getting all lessons for room id({})", roomId);
         List<Lesson> lessons = entityManager.createQuery(
-            env.getProperty(QUERY_GET_ALL_FOR_ROOM), Lesson.class)
+                env.getProperty(QUERY_GET_ALL_FOR_ROOM), Lesson.class)
             .setParameter("roomId", roomId)
             .getResultList();
+        log.info(FOUND_LESSONS, lessons.size());
         return lessons;
     }
 
     @Override
     public List<Lesson> getAllForStudent(int studentId) {
+        log.debug("Getting all lessons for student id({})", studentId);
         List<Lesson> lessons = entityManager.createQuery(
                 env.getProperty(QUERY_GET_ALL_FOR_STUDENT), Lesson.class)
             .setParameter("studentId", studentId)
             .getResultList();
+        log.info(FOUND_LESSONS, lessons.size());
         return lessons;
     }
 
     @Override
     public void removeStudentFromLesson(int lessonId, int studentId) {
+        log.debug("Removing student id({}) from lesson id({})", studentId, lessonId);
         Lesson lesson = entityManager.find(Lesson.class, lessonId);
         Student student = entityManager.find(Student.class, studentId);
         lesson.removeStudent(student);
+        log.info("Student id({}) successfully removed from lesson id({})",
+            studentId, lessonId);
     }
 
     @Override
     public List<Lesson> getAllWithFilter(LessonFilter filter) {
         log.debug("Getting all lessons with ({})", filter);
-
         String query = createQuery(filter);
         List<Lesson> lessons = entityManager.createQuery(query, Lesson.class)
             .getResultList();
@@ -177,21 +197,51 @@ public class JpaLessonDaoImpl implements LessonDao {
     public List<Lesson> getAllForStudentForTimePeriod(int studentId,
                                                       LocalDateTime startTime,
                                                       LocalDateTime endTime) {
-        return null;
+        log.debug("Getting lessons for student id({}) from {} to {}", studentId,
+            startTime, endTime);
+        List<Lesson> lessons = entityManager.createQuery(
+                env.getProperty(QUERY_GET_ALL_FOR_STUDENT_FOR_TIME_PERIOD),
+                Lesson.class)
+            .setParameter("studentId", studentId)
+            .setParameter("timeStart", startTime)
+            .setParameter("timeEnd", endTime)
+            .getResultList();
+        log.info(FOUND_LESSONS, lessons.size());
+        return lessons;
     }
 
     @Override
-    public List<Lesson> getAllForTeacherForTimePeriod(int studentId,
+    public List<Lesson> getAllForTeacherForTimePeriod(int teacherId,
                                                       LocalDateTime startTime,
                                                       LocalDateTime endTime) {
-        return null;
+        log.debug("Getting lessons for teacher id({}) from {} to {}", teacherId,
+            startTime, endTime);
+        List<Lesson> lessons = entityManager.createQuery(
+                env.getProperty(QUERY_GET_ALL_FOR_TEACHER_FOR_TIME_PERIOD),
+                Lesson.class)
+            .setParameter("teacherId", teacherId)
+            .setParameter("timeStart", startTime)
+            .setParameter("timeEnd", endTime)
+            .getResultList();
+        log.info(FOUND_LESSONS, lessons.size());
+        return lessons;
     }
 
     @Override
-    public List<Lesson> getAllForRoomForTimePeriod(int teacherId,
+    public List<Lesson> getAllForRoomForTimePeriod(int roomId,
                                                    LocalDateTime startTime,
                                                    LocalDateTime endTime) {
-        return null;
+        log.debug("Getting lessons for room id({}) from {} to {}", roomId,
+            startTime, endTime);
+        List<Lesson> lessons = entityManager.createQuery(
+                env.getProperty(QUERY_GET_ALL_FOR_ROOM_FOR_TIME_PERIOD),
+                Lesson.class)
+            .setParameter("roomId", roomId)
+            .setParameter("timeStart", startTime)
+            .setParameter("timeEnd", endTime)
+            .getResultList();
+        log.info(FOUND_LESSONS, lessons.size());
+        return lessons;
     }
 
     private String createQuery(LessonFilter filter) {
