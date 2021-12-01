@@ -3,9 +3,6 @@ package ua.com.foxminded.university.domain.dto;
 import lombok.Builder;
 import lombok.Value;
 
-import java.util.HashSet;
-import java.util.Set;
-
 @Value
 @Builder
 public class StudentDto {
@@ -18,5 +15,4 @@ public class StudentDto {
     String fullName;
     int groupId;
     String groupName;
-    Set<LessonDto> lessons = new HashSet<>();
 }

@@ -6,13 +6,14 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import ua.com.foxminded.university.domain.dto.StudentDto;
 import ua.com.foxminded.university.domain.entity.Group;
+import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Student;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static ua.com.foxminded.university.TestObjects.*;
 
 class StudentDtoMapperTest {
 
@@ -100,16 +101,22 @@ class StudentDtoMapperTest {
             group.setId(ID2);
             group.setName(GROUP_NAME);
             Student student = Student.builder()
-                .id(ID1)
+                .id(STUDENT_ID1)
                 .firstName(FIRST_NAME)
                 .patronymic(PATRONYMIC)
                 .lastName(LAST_NAME)
                 .active(true)
                 .group(group)
                 .build();
+
+            Lesson lesson1 = createTestLesson(LESSON_ID1);
+            Lesson lesson2 = createTestLesson(LESSON_ID2);
+            Set<Lesson> lessons = new HashSet<>(Arrays.asList(lesson1, lesson2));
+            student.setLessons(lessons);
+
             StudentDto studentDto = mapper.studentToStudentDto(student);
 
-            assertThat(studentDto.getId(), is(equalTo(ID1)));
+            assertThat(studentDto.getId(), is(equalTo(STUDENT_ID1)));
             assertThat(studentDto.getFirstName(), is(equalTo(FIRST_NAME)));
             assertThat(studentDto.getPatronymic(), is(equalTo(PATRONYMIC)));
             assertThat(studentDto.getLastName(), is(equalTo(LAST_NAME)));

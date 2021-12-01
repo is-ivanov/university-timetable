@@ -31,10 +31,6 @@ class DepartmentServiceImplTest {
     @InjectMocks
     private DepartmentServiceImpl departmentService;
 
-//    @BeforeEach
-//    void setUp() {
-//        departmentService = new DepartmentServiceImpl(departmentDaoMock);
-//    }
 
     @Test
     @DisplayName("test 'add' when call add method then should call Dao once")
@@ -46,7 +42,7 @@ class DepartmentServiceImplTest {
 
     @Nested
     @DisplayName("test 'getById' method")
-    class getByIdTest {
+    class GetByIdTest {
 
         @Test
         @DisplayName("when Dao return Optional with Department then method " +

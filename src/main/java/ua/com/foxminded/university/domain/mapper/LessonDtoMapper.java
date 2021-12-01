@@ -21,7 +21,7 @@ public interface LessonDtoMapper {
     LessonDto lessonToLessonDto(Lesson lesson);
 
     @InheritInverseConfiguration(name = "lessonToLessonDto")
-    @Mapping(target = "students", ignore = true)
+//    @Mapping(target = "students", ignore = true)
     Lesson lessonDtoToLesson(LessonDto lessonDto);
 
     List<LessonDto> lessonsToLessonDtos(List<Lesson> lessons);
