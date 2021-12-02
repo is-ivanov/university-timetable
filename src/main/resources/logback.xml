@@ -26,9 +26,9 @@
     <logger name="org.hibernate.SQL" level="debug" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="org.hibernate.type.descriptor.sql" level="trace" additivity="false">
-        <appender-ref ref="STDOUT"/>
-    </logger>
+<!--    <logger name="org.hibernate.type.descriptor.sql" level="trace" additivity="false">-->
+<!--        <appender-ref ref="STDOUT"/>-->
+<!--    </logger>-->
     <logger name="org.hibernate.hql.internal.ast" level="info" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>

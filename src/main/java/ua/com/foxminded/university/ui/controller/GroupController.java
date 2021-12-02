@@ -45,10 +45,10 @@ public class GroupController {
         List<GroupDto> groups;
         if (facultyId != null && facultyId > 0) {
             log.debug("get groups by facultyId ({})", facultyId);
-            groups = groupService.getAllDtosByFacultyId(facultyId);
+            groups = groupService.getAllByFacultyId(facultyId);
         } else {
             log.debug("get all groups");
-            groups = groupService.getAllDtos();
+            groups = groupService.getAll();
         }
         log.debug("adding groups and selected faculty into model");
         model.addAttribute("groups", groups);
@@ -71,7 +71,7 @@ public class GroupController {
     @ResponseBody
     public GroupDto getGroup(@PathVariable("id") int groupId) {
         log.debug("Getting group id({})", groupId);
-        GroupDto group = groupService.getDtoById(groupId);
+        GroupDto group = groupService.getById(groupId);
         log.info("Found {}", group);
         return group;
     }
@@ -106,8 +106,8 @@ public class GroupController {
                                                          LocalDateTime endTime) {
         log.debug("Getting active students from group id({}) free from {} to {}",
             groupId, startTime, endTime);
-        List<StudentDto> freeStudentsFromGroup = studentDtoMapper.studentsToStudentDtos(
-            studentService.getFreeStudentsFromGroup(groupId, startTime, endTime));
+        List<StudentDto> freeStudentsFromGroup =
+            studentService.getFreeStudentsFromGroup(groupId, startTime, endTime);
         log.info("Found {} students", freeStudentsFromGroup.size());
         return freeStudentsFromGroup;
     }

@@ -9,9 +9,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.foxminded.university.dao.interfaces.LessonDao;
+import ua.com.foxminded.university.domain.dto.StudentDto;
 import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Room;
-import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.domain.entity.Teacher;
 import ua.com.foxminded.university.domain.filter.LessonFilter;
 import ua.com.foxminded.university.domain.service.interfaces.StudentService;
@@ -338,7 +338,7 @@ class LessonServiceImplTest {
         @DisplayName("when the check is passed then method call studentChecker once")
         void testChecksTrue_CallDaoOnce() throws ServiceException {
             Lesson testLesson = createTestLesson(LESSON_ID1);
-            Student student = Student.builder()
+            StudentDto student = StudentDto.builder()
                 .id(STUDENT_ID2)
                 .active(true)
                 .build();
@@ -356,7 +356,7 @@ class LessonServiceImplTest {
         @DisplayName("when added inactive student then should throw Exception")
         void whenAddedInactiveStudent_ThrowException() {
             Lesson testLesson = createTestLesson(LESSON_ID1);
-            Student student = Student.builder()
+            StudentDto student = StudentDto.builder()
                 .id(STUDENT_ID2)
                 .active(false)
                 .build();
@@ -375,7 +375,7 @@ class LessonServiceImplTest {
             "this lesson then should throw ServiceException")
         void whenAddedStudentHasAnotherLessonAtSameTime_ThrowException() {
             Lesson testLesson = createTestLesson(LESSON_ID1);
-            Student studentAdding = Student.builder()
+            StudentDto studentAdding = StudentDto.builder()
                 .id(STUDENT_ID2)
                 .active(true)
                 .build();

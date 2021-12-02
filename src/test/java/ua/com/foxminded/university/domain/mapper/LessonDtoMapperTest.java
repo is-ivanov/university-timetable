@@ -12,9 +12,11 @@ import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.springconfig.TestMapperConfig;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 import static ua.com.foxminded.university.TestObjects.*;
 
 @SpringJUnitConfig(TestMapperConfig.class)
@@ -51,7 +53,7 @@ class LessonDtoMapperTest {
         void testExpectedLessonDto() {
             Lesson lesson = createTestLesson();
 
-            LessonDto lessonDto = mapper.lessonToLessonDto(lesson);
+            LessonDto lessonDto = mapper.toLessonDto(lesson);
 
             assertThat(lessonDto.getId()).isEqualTo(lesson.getId());
             assertThat(lessonDto.getCourseId()).isEqualTo(lesson.getCourse().getId());
@@ -82,7 +84,7 @@ class LessonDtoMapperTest {
 
             LessonDto lessonDto = createTestLessonDto(LESSON_ID1);
 
-            Lesson lesson = mapper.lessonDtoToLesson(lessonDto);
+            Lesson lesson = mapper.toLesson(lessonDto);
 
             assertThat(lesson.getId()).isEqualTo(lessonDto.getId());
             assertThat(lesson.getCourse().getId()).isEqualTo(lessonDto.getCourseId());
@@ -96,6 +98,22 @@ class LessonDtoMapperTest {
             assertThat(students).hasSize(2);
             assertThat(students).extracting(Student::getFirstName)
                 .containsOnly(NAME_FIRST_STUDENT, NAME_SECOND_STUDENT);
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'toLessonDtos' method")
+    class ToLessonDtosTest {
+        @Test
+        @DisplayName("if list lesson has size 2 then should return list with size 2")
+        void ifListLessonHasSize2_ReturnListWithSize2() {
+            List<Lesson> lessons = createTestLessons();
+
+            List<LessonDto> lessonDtos = mapper.toLessonDtos(lessons);
+
+            assertThat(lessonDtos).hasSize(2);
+            assertThat(lessonDtos).extracting(LessonDto::getId)
+                .containsOnly(LESSON_ID1, LESSON_ID2);
         }
     }
 

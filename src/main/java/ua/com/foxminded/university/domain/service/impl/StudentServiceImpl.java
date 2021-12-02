@@ -5,9 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.com.foxminded.university.dao.interfaces.StudentDao;
+import ua.com.foxminded.university.domain.dto.StudentDto;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Student;
+import ua.com.foxminded.university.domain.mapper.StudentDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.StudentService;
 
 import javax.persistence.EntityNotFoundException;
@@ -21,6 +23,7 @@ import java.util.List;
 public class StudentServiceImpl implements StudentService {
 
     private final StudentDao studentDao;
+    private final StudentDtoMapper studentDtoMapper;
 
     @Override
     public void add(Student student) {
@@ -36,21 +39,22 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Student getById(int id) {
+    public StudentDto getById(int id) {
         log.debug("Getting student by id({})", id);
         Student student = studentDao.getById(id)
             .orElseThrow(() -> new EntityNotFoundException(
                 String.format("Student id(%d) not found", id)));
         log.info("Found {}", student);
-        return student;
+        return studentDtoMapper.toStudentDto(student);
     }
 
     @Override
-    public List<Student> getAll() {
+    public List<StudentDto> getAll() {
         log.debug("Getting all students");
         List<Student> students = studentDao.getAll();
         log.info("Found {} students", students.size());
-        return students;
+        return studentDtoMapper.toStudentDtos(students);
+
     }
 
     @Override
@@ -109,30 +113,30 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<Student> getStudentsByGroup(Group group) {
+    public List<StudentDto> getStudentsByGroup(Group group) {
         log.debug("Getting all students from group ({})", group);
         List<Student> students = studentDao.getStudentsByGroup(group);
         log.info("Found {} students from group {}", students.size(), group);
-        return students;
+        return studentDtoMapper.toStudentDtos(students);
     }
 
     @Override
-    public List<Student> getStudentsByGroup(int groupId) {
+    public List<StudentDto> getStudentsByGroup(int groupId) {
         log.debug("Getting all students from group id({})", groupId);
         Group group = new Group();
         group.setId(groupId);
         List<Student> students = studentDao.getStudentsByGroup(group);
         log.info("Found {} students from group id({})", students.size(), groupId);
-        return students;
+        return studentDtoMapper.toStudentDtos(students);
     }
 
     @Override
-    public List<Student> getStudentsByFaculty(int facultyId) {
+    public List<StudentDto> getStudentsByFaculty(int facultyId) {
         log.debug("Getting all students from faculty id({})", facultyId);
         Faculty faculty = new Faculty(facultyId, null);
         List<Student> students = studentDao.getStudentsByFaculty(faculty);
         log.info("Found {} student from faculty id({})", students.size(), facultyId);
-        return students;
+        return studentDtoMapper.toStudentDtos(students);
     }
 
     @Override
@@ -144,7 +148,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<Student> getFreeStudentsFromGroup(int groupId,
+    public List<StudentDto> getFreeStudentsFromGroup(int groupId,
                                                   LocalDateTime startTime,
                                                   LocalDateTime endTime) {
         log.debug("Getting active students from group id({}) free from {} to {}",
@@ -153,7 +157,7 @@ public class StudentServiceImpl implements StudentService {
             startTime, endTime);
         log.info("Found {} free student from group id({})", freeStudents.size(),
             groupId);
-        return freeStudents;
+        return studentDtoMapper.toStudentDtos(freeStudents);
     }
 
 }

@@ -9,7 +9,6 @@ import ua.com.foxminded.university.domain.dto.DepartmentDto;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
-import ua.com.foxminded.university.domain.mapper.DepartmentDtoMapper;
 import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
@@ -30,7 +29,6 @@ public class DepartmentController {
     private final FacultyService facultyService;
     private final TeacherService teacherService;
     private final TeacherDtoMapper teacherDtoMapper;
-    private final DepartmentDtoMapper departmentDtoMapper;
 
     @GetMapping
     public String showDepartments(@RequestParam(required = false) Integer facultyId,
@@ -42,14 +40,14 @@ public class DepartmentController {
         List<DepartmentDto> departments;
         if (facultyId != null && facultyId > 0) {
             log.debug("get departments by facultyId ({})", facultyId);
-            departments = departmentService.getAllDtosByFaculty(facultyId);
+            departments = departmentService.getAllByFaculty(facultyId);
             log.debug("get selected faculty");
             facultySelected = allFaculties.stream()
-                .filter(faculty -> faculty.getId() == facultyId)
+                .filter(faculty -> faculty.getId().equals(facultyId))
                 .findFirst().orElse(null);
         } else {
             log.debug("get all departments");
-            departments = departmentService.getAllDtos();
+            departments = departmentService.getAll();
         }
         log.debug("adding departments and selected faculty into model");
         model.addAttribute("departments", departments);
@@ -72,7 +70,7 @@ public class DepartmentController {
     @ResponseBody
     public DepartmentDto getDepartment(@PathVariable("id") int departmentId) {
         log.debug("Getting department id({})", departmentId);
-        DepartmentDto department = departmentService.getDtoById(departmentId);
+        DepartmentDto department = departmentService.getById(departmentId);
         log.info("Found {}", department);
         return department;
     }
@@ -100,8 +98,7 @@ public class DepartmentController {
     @ResponseBody
     public List<TeacherDto> getTeachersByDepartment(@PathVariable("id") int departmentId) {
         log.debug("Getting teacherDtos by department id({})", departmentId);
-        List<TeacherDto> teachers = teacherDtoMapper
-            .teachersToTeacherDtos(teacherService.getAllByDepartment(departmentId));
+        List<TeacherDto> teachers = teacherService.getAllByDepartment(departmentId);
         log.info("Found {} teachers", teachers.size());
         return teachers;
     }

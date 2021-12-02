@@ -1,12 +1,13 @@
 package ua.com.foxminded.university.domain.service.interfaces;
 
+import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Teacher;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface TeacherService extends Service<Teacher> {
+public interface TeacherService extends Service<Teacher, TeacherDto> {
 
     void deactivateTeacher(Teacher teacher);
 
@@ -14,10 +15,10 @@ public interface TeacherService extends Service<Teacher> {
 
     Teacher transferTeacherToDepartment(Teacher teacher, Department department);
 
-    List<Teacher> getAllByDepartment(int departmentId);
+    List<TeacherDto> getAllByDepartment(int departmentId);
 
-    List<Teacher> getAllByFaculty(int facultyId);
+    List<TeacherDto> getAllByFaculty(int facultyId);
 
-    List<Teacher> getFreeTeachersOnLessonTime(LocalDateTime startTime,
+    List<TeacherDto> getFreeTeachersOnLessonTime(LocalDateTime startTime,
                                               LocalDateTime endTime);
 }

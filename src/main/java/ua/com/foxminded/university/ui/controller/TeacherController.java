@@ -52,13 +52,11 @@ public class TeacherController {
         if (departmentId != null && departmentId > 0) {
             log.debug("Get teachers by departmentId ({})", departmentId);
             model.addAttribute("teachers",
-                teacherMapper.teachersToTeacherDtos(
-                    teacherService.getAllByDepartment(departmentId)));
+                    teacherService.getAllByDepartment(departmentId));
         } else if (facultyId != null && facultyId > 0) {
             log.debug("Get teachers by facultyId ({})", facultyId);
             model.addAttribute("teachers",
-                teacherMapper.teachersToTeacherDtos(
-                    teacherService.getAllByFaculty(facultyId)));
+                    teacherService.getAllByFaculty(facultyId));
         }
         if (facultyId != null && facultyId > 0) {
             log.debug("Get departments for selector by facultyId ({})", facultyId);
@@ -84,10 +82,10 @@ public class TeacherController {
                                             @DateTimeFormat(pattern = DATE_TIME_PATTERN)
                                                 LocalDateTime endTime) {
         log.debug("Getting teachers free from {} to {}", startTime, endTime);
-        List<Teacher> freeTeachers =
+        List<TeacherDto> freeTeachers =
             teacherService.getFreeTeachersOnLessonTime(startTime, endTime);
         log.info("Found {} active free teachers", freeTeachers.size());
-        return teacherMapper.teachersToTeacherDtos(freeTeachers);
+        return freeTeachers;
     }
 
     @PostMapping
@@ -95,7 +93,7 @@ public class TeacherController {
                                 HttpServletRequest request) {
         log.debug("Creating teacher [{} {} {}]", teacherDto.getFirstName(),
             teacherDto.getPatronymic(), teacherDto.getLastName());
-        teacherService.add(teacherMapper.teacherDtoToTeacher(teacherDto));
+        teacherService.add(teacherMapper.toTeacher(teacherDto));
         log.info("Teacher [{}, {}, {}] is created", teacherDto.getFirstName(),
             teacherDto.getPatronymic(), teacherDto.getLastName());
         return defineRedirect(request);
@@ -105,10 +103,10 @@ public class TeacherController {
     @ResponseBody
     public TeacherDto getTeacher(@PathVariable("id") int teacherId) {
         log.debug("Getting teacher id({})", teacherId);
-        Teacher teacher = teacherService.getById(teacherId);
+        TeacherDto teacher = teacherService.getById(teacherId);
         log.info("Found teacher [{} {} {}]", teacher.getFirstName(),
             teacher.getPatronymic(), teacher.getLastName());
-        return teacherMapper.teacherToTeacherDto(teacher);
+        return teacher;
     }
 
     @PutMapping("/{id}")
@@ -116,7 +114,7 @@ public class TeacherController {
                                 @PathVariable("id") int teacherId,
                                 HttpServletRequest request) {
         log.debug("Updating teacher id({})", teacherId);
-        teacherService.update(teacherMapper.teacherDtoToTeacher(teacherDto));
+        teacherService.update(teacherMapper.toTeacher(teacherDto));
         log.info("Teacher id({}) is updated", teacherId);
         return defineRedirect(request);
     }
@@ -141,12 +139,11 @@ public class TeacherController {
                                                     ZonedDateTime endTime) {
         log.debug("Getting lessons for teacher id({}) from {} to {}", teacherId,
             startTime, endTime);
-        List<Lesson> lessonsForTeacher = lessonService
+        List<LessonDto> lessonsForTeacher = lessonService
             .getAllForTeacherForTimePeriod(teacherId,
                 startTime.toLocalDateTime(), endTime.toLocalDateTime());
-        List<LessonDto> lessonDtos = lessonDtoMapper.lessonsToLessonDtos(lessonsForTeacher);
-        log.info("Found {} lessons", lessonDtos.size());
-        return lessonDtos;
+        log.info("Found {} lessons", lessonsForTeacher.size());
+        return lessonsForTeacher;
     }
 
 }

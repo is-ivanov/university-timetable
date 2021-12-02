@@ -9,9 +9,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ua.com.foxminded.university.domain.dto.DepartmentDto;
 import ua.com.foxminded.university.domain.dto.GroupDto;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
-import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
@@ -101,16 +101,16 @@ public class FacultyController {
     public List<GroupDto> getGroupsByFaculty(@PathVariable("id") int facultyId) {
         if (facultyId == 0) {
             log.debug("Get all groups");
-            return groupService.getAllDtos();
+            return groupService.getAll();
         } else {
             log.debug("Getting groups by faculty id({})", facultyId);
-            return groupService.getAllDtosByFacultyId(facultyId);
+            return groupService.getAllByFacultyId(facultyId);
         }
     }
 
     @GetMapping("/{id}/groups/free")
     @ResponseBody
-    public List<Group> getFreeGroupsByFaculty(@PathVariable("id") int facultyId,
+    public List<GroupDto> getFreeGroupsByFaculty(@PathVariable("id") int facultyId,
                                               @RequestParam("time_start")
                                               @DateTimeFormat(pattern = DATE_TIME_PATTERN)
                                                   LocalDateTime startTime,
@@ -119,7 +119,7 @@ public class FacultyController {
                                                   LocalDateTime endTime) {
         log.debug("Getting active groups by faculty id({}) free from {} to {}",
             facultyId, startTime, endTime);
-        List<Group> freeGroups = groupService
+        List<GroupDto> freeGroups = groupService
             .getFreeGroupsByFacultyOnLessonTime(facultyId, startTime, endTime);
         log.info("Found {} groups", freeGroups.size());
         return freeGroups;
@@ -127,7 +127,7 @@ public class FacultyController {
 
     @GetMapping("/{id}/departments")
     @ResponseBody
-    public List<Department> getDepartmentsByFaculty(@PathVariable("id") int facultyId) {
+    public List<DepartmentDto> getDepartmentsByFaculty(@PathVariable("id") int facultyId) {
         if (facultyId == 0) {
             log.debug("Getting all departments");
             return departmentService.getAll();
@@ -141,8 +141,7 @@ public class FacultyController {
     @ResponseBody
     public List<TeacherDto> getTeachersByFaculty(@PathVariable("id") int facultyId) {
         log.debug("Getting teacherDtos by faculty id({})", facultyId);
-        List<TeacherDto> teachers = teacherDtoMapper
-            .teachersToTeacherDtos(teacherService.getAllByFaculty(facultyId));
+        List<TeacherDto> teachers = teacherService.getAllByFaculty(facultyId);
         log.info("Found {} teachers", teachers.size());
         return teachers;
     }

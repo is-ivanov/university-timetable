@@ -5,8 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.com.foxminded.university.dao.interfaces.TeacherDao;
+import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Teacher;
+import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
 
 import java.time.LocalDateTime;
@@ -19,6 +21,7 @@ import java.util.List;
 public class TeacherServiceImpl implements TeacherService {
 
     private final TeacherDao teacherDao;
+    private final TeacherDtoMapper teacherDtoMapper;
 
     @Override
     public void add(Teacher teacher) {
@@ -34,19 +37,19 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public Teacher getById(int id) {
+    public TeacherDto getById(int id) {
         log.debug("Getting teacher by id({})", id);
         Teacher teacher = teacherDao.getById(id).orElse(new Teacher());
         log.info("Found {}", teacher);
-        return teacher;
+        return teacherDtoMapper.toTeacherDto(teacher);
     }
 
     @Override
-    public List<Teacher> getAll() {
+    public List<TeacherDto> getAll() {
         log.debug("Getting all teachers");
         List<Teacher> teachers = teacherDao.getAll();
         log.info("Found {} teachers", teachers.size());
-        return teachers;
+        return teacherDtoMapper.toTeacherDtos(teachers);
     }
 
     @Override
@@ -105,29 +108,29 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public List<Teacher> getAllByDepartment(int departmentId) {
+    public List<TeacherDto> getAllByDepartment(int departmentId) {
         log.debug("Getting all teachers from department id({})", departmentId);
         List<Teacher> teachers = teacherDao.getAllByDepartment(departmentId);
         log.info("Found {} teachers from department id({})", teachers.size(), departmentId);
-        return teachers;
+        return teacherDtoMapper.toTeacherDtos(teachers);
     }
 
     @Override
-    public List<Teacher> getAllByFaculty(int facultyId) {
+    public List<TeacherDto> getAllByFaculty(int facultyId) {
         log.debug("Getting all teachers from faculty id({})", facultyId);
         List<Teacher> teachers = teacherDao.getAllByFaculty(facultyId);
         log.info("Found {} teachers from faculty id({})", teachers.size(), facultyId);
-        return teachers;
+        return teacherDtoMapper.toTeacherDtos(teachers);
     }
 
     @Override
-    public List<Teacher> getFreeTeachersOnLessonTime(LocalDateTime startTime,
+    public List<TeacherDto> getFreeTeachersOnLessonTime(LocalDateTime startTime,
                                                      LocalDateTime endTime) {
         log.debug("Getting active teachers free from {} to {}", startTime, endTime);
         List<Teacher> freeTeachers =
             teacherDao.getFreeTeachersOnLessonTime(startTime, endTime);
         log.info("Found {} active free teachers", freeTeachers.size());
-        return freeTeachers;
+        return teacherDtoMapper.toTeacherDtos(freeTeachers);
     }
 
 }

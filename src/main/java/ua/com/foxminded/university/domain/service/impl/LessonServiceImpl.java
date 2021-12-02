@@ -2,21 +2,24 @@ package ua.com.foxminded.university.domain.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.com.foxminded.university.dao.interfaces.LessonDao;
+import ua.com.foxminded.university.dao.interfaces.StudentDao;
+import ua.com.foxminded.university.domain.dto.LessonDto;
 import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Room;
 import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.domain.entity.Teacher;
 import ua.com.foxminded.university.domain.filter.LessonFilter;
+import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.LessonService;
 import ua.com.foxminded.university.domain.service.interfaces.StudentService;
 import ua.com.foxminded.university.exception.ServiceException;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -35,8 +38,9 @@ public class LessonServiceImpl implements LessonService {
 
     private final LessonDao lessonDao;
     private final StudentService studentService;
+    private final LessonDtoMapper lessonDtoMapper;
+    private final StudentDao studentDao;
 
-    @Transactional
     @Override
     public void add(Lesson lesson) throws ServiceException {
         log.debug("Check lesson id({}) before adding", lesson.getId());
@@ -46,7 +50,6 @@ public class LessonServiceImpl implements LessonService {
         log.info("Lesson id({}) added successfully", lesson.getId());
     }
 
-    @Transactional
     @Override
     public void update(Lesson lesson) throws ServiceException {
         log.debug("Check lesson id({}) before updating", lesson.getId());
@@ -57,23 +60,21 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public Lesson getById(int id) {
+    public LessonDto getById(int id) {
         log.debug("Getting lesson by id({})", id);
-        Lesson lesson = lessonDao.getById(id)
-            .orElseThrow(() -> new EntityNotFoundException(
-                String.format(MESSAGE_LESSON_NOT_FOUND, id)));
+        Lesson lesson = getLessonById(id);
         log.info("Found lesson [teacher {}, course {}, room {}]",
             lesson.getTeacher().getFullName(), lesson.getCourse().getName(),
             lesson.getRoom().getNumber());
-        return lesson;
+        return lessonDtoMapper.toLessonDto(lesson);
     }
 
     @Override
-    public List<Lesson> getAll() {
+    public List<LessonDto> getAll() {
         log.debug("Getting all lessons");
         List<Lesson> lessons = lessonDao.getAll();
         log.info(FOUND_LESSONS, lessons.size());
-        return lessons;
+        return lessonDtoMapper.toLessonDtos(lessons);
     }
 
     @Override
@@ -87,7 +88,6 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    @Transactional
     public void delete(int id) {
         log.info("Start deleting lesson id({})", id);
         log.debug("Deleting all students from lesson id({})", id);
@@ -98,23 +98,23 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    @Transactional
     public void addStudentToLesson(int lessonId, int studentId) {
         log.debug("Getting lessonId({}) and studentId({})", lessonId, studentId);
-        Lesson lesson = getById(lessonId);
-        Student student = studentService.getById(studentId);
+        Lesson lesson = getLessonById(lessonId);
+        Student student = studentDao.getById(studentId)
+            .orElseThrow(() -> new EntityNotFoundException(
+                String.format("Student id(%d) not found", studentId)));
         checkAndSaveStudentToLesson(lesson, student);
     }
 
 
     @Override
-    @Transactional
     public void addStudentsFromGroupToLesson(int groupId, int lessonId) {
         log.debug("Getting lesson by lessonId({})", lessonId);
-        Lesson lesson = getById(lessonId);
+        Lesson lesson = getLessonById(lessonId);
         log.debug("Getting active students from group id({})", groupId);
         List<Student> studentsFromGroup =
-            studentService.getFreeStudentsFromGroup(groupId,
+            studentDao.getFreeStudentsFromGroup(groupId,
                 lesson.getTimeStart(), lesson.getTimeEnd());
         for (Student student : studentsFromGroup) {
             checkAndSaveStudentToLesson(lesson, student);
@@ -123,14 +123,15 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public List<Lesson> getAllWithFilter(LessonFilter filter) {
+    public List<LessonDto> getAllWithFilter(LessonFilter filter) {
         log.debug("Getting all lessons with ({})", filter);
         log.debug("Checking filter conditions");
         if (filter.getFacultyId() != null || filter.getDepartmentId() != null ||
             filter.getTeacherId() != null || filter.getCourseId() != null ||
             filter.getRoomId() != null || filter.getDateFrom() != null ||
             filter.getDateTo() != null) {
-            return lessonDao.getAllWithFilter(filter);
+            List<Lesson> filteredLessons = lessonDao.getAllWithFilter(filter);
+            return lessonDtoMapper.toLessonDtos(filteredLessons);
         } else {
             log.warn("Filter is empty");
             throw new ServiceException(MESSAGE_FILTER_NOT_SELECT);
@@ -138,7 +139,7 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public List<Lesson> getAllForStudentForTimePeriod(int studentId,
+    public List<LessonDto> getAllForStudentForTimePeriod(int studentId,
                                                       LocalDateTime startTime,
                                                       LocalDateTime endTime) {
         log.debug("Getting lessons for student id({}) from {} to {})", studentId,
@@ -146,11 +147,11 @@ public class LessonServiceImpl implements LessonService {
         List<Lesson> lessonsForStudent = lessonDao
             .getAllForStudentForTimePeriod(studentId, startTime, endTime);
         log.info(FOUND_LESSONS, lessonsForStudent.size());
-        return lessonsForStudent;
+        return lessonDtoMapper.toLessonDtos(lessonsForStudent);
     }
 
     @Override
-    public List<Lesson> getAllForTeacherForTimePeriod(int teacherId,
+    public List<LessonDto> getAllForTeacherForTimePeriod(int teacherId,
                                                       LocalDateTime startTime,
                                                       LocalDateTime endTime) {
         log.debug("Getting lessons for teacher id({}) from {} to {})", teacherId,
@@ -158,11 +159,11 @@ public class LessonServiceImpl implements LessonService {
         List<Lesson> lessonsForTeacher = lessonDao
             .getAllForTeacherForTimePeriod(teacherId, startTime, endTime);
         log.info(FOUND_LESSONS, lessonsForTeacher.size());
-        return lessonsForTeacher;
+        return lessonDtoMapper.toLessonDtos(lessonsForTeacher);
     }
 
     @Override
-    public List<Lesson> getAllForRoomForTimePeriod(int roomId,
+    public List<LessonDto> getAllForRoomForTimePeriod(int roomId,
                                                    LocalDateTime startTime,
                                                    LocalDateTime endTime) {
         log.debug("Getting lessons for room id({}) from {} to {})", roomId,
@@ -170,7 +171,7 @@ public class LessonServiceImpl implements LessonService {
         List<Lesson> lessonsForRoom = lessonDao
             .getAllForRoomForTimePeriod(roomId, startTime, endTime);
         log.info(FOUND_LESSONS, lessonsForRoom.size());
-        return lessonsForRoom;
+        return lessonDtoMapper.toLessonDtos(lessonsForRoom);
     }
 
     @Override
@@ -182,7 +183,6 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    @Transactional
     public void removeStudentsFromLesson(int lessonId, int[] studentIds) {
         log.debug("Removing students id({}) from lesson id({})", studentIds, lessonId);
         for (int studentId : studentIds) {
@@ -276,7 +276,7 @@ public class LessonServiceImpl implements LessonService {
     private void checkStudent(Student student, Lesson lesson) {
         log.debug("Checking the student id({}) for lesson id({})",
             student.getId(), lesson.getId());
-        List<Lesson> lessonsFromThisStudent = getLessonsForStudent(student);
+        List<Lesson> lessonsFromThisStudent = new ArrayList<>(student.getLessons());
         try {
             checkAvailableLesson(lesson, lessonsFromThisStudent);
         } catch (ServiceException e) {
@@ -299,6 +299,12 @@ public class LessonServiceImpl implements LessonService {
             throw new ServiceException(String.format(MESSAGE_ROOM_NOT_AVAILABLE,
                 room.getId()), e);
         }
+    }
+
+    private Lesson getLessonById(int id) {
+        return lessonDao.getById(id)
+            .orElseThrow(() -> new EntityNotFoundException(
+                String.format(MESSAGE_LESSON_NOT_FOUND, id)));
     }
 
 }

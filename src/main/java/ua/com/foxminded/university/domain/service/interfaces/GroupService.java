@@ -7,25 +7,25 @@ import ua.com.foxminded.university.domain.entity.Group;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface GroupService extends Service<Group> {
+public interface GroupService extends Service<Group, GroupDto> {
 
-    List<GroupDto> getAllDtos();
+//    List<GroupDto> getAllDtos();
 
-    GroupDto getDtoById(int groupId);
+//    GroupDto getDtoById(int groupId);
 
     void deactivateGroup(Group group);
 
     Group joinGroups(List<Group> groups, String nameNewGroup,
                      Faculty facultyNewGroup);
 
-    List<Group> getAllByFacultyId(int facultyId);
+    List<GroupDto> getAllByFacultyId(int facultyId);
 
-    List<GroupDto> getAllDtosByFacultyId(int facultyId);
+//    List<GroupDto> getAllDtosByFacultyId(int facultyId);
 
-    List<Group> getFreeGroupsOnLessonTime(LocalDateTime startTime,
+    List<GroupDto> getFreeGroupsOnLessonTime(LocalDateTime startTime,
                                           LocalDateTime endTime);
 
-    List<Group> getFreeGroupsByFacultyOnLessonTime(int facultyId,
+    List<GroupDto> getFreeGroupsByFacultyOnLessonTime(int facultyId,
                                                    LocalDateTime startTime,
                                                    LocalDateTime endTime);
 

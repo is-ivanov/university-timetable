@@ -4,13 +4,13 @@ import java.util.List;
 
 import ua.com.foxminded.university.exception.ServiceException;
 
-public interface Service<T> {
+public interface Service<T, T1> {
 
     void add(T t) throws ServiceException;
 
-    T getById(int id) throws ServiceException;
+    T1 getById(int id) throws ServiceException;
 
-    List<T> getAll();
+    List<T1> getAll();
 
     void update(T t) throws ServiceException;
 

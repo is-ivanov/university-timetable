@@ -9,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.foxminded.university.dao.interfaces.StudentDao;
+import ua.com.foxminded.university.domain.dto.StudentDto;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Student;
@@ -217,7 +218,7 @@ class StudentServiceImplTest {
             group.setId(ID1);
 
             when(studentDaoMock.getStudentsByGroup(group)).thenReturn(expectedStudents);
-            List<Student> actualStudents = studentService.getStudentsByGroup(group);
+            List<StudentDto> actualStudents = studentService.getStudentsByGroup(group);
             assertThat(actualStudents, equalTo(expectedStudents));
         }
 
@@ -235,7 +236,7 @@ class StudentServiceImplTest {
             group.setId(ID1);
 
             when(studentDaoMock.getStudentsByGroup(group)).thenReturn(expectedStudents);
-            List<Student> actualStudents =
+            List<StudentDto> actualStudents =
                 studentService.getStudentsByGroup(ID1);
             assertThat(actualStudents, is(equalTo(expectedStudents)));
         }
@@ -258,7 +259,7 @@ class StudentServiceImplTest {
 
             when(studentDaoMock.getStudentsByFaculty(new Faculty(ID1, null)))
                 .thenReturn(expectedStudents);
-            List<Student> actualStudents = studentService.getStudentsByFaculty(ID1);
+            List<StudentDto> actualStudents = studentService.getStudentsByFaculty(ID1);
             assertThat(actualStudents, is(equalTo(expectedStudents)));
         }
     }

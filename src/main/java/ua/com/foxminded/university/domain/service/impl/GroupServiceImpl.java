@@ -37,32 +37,32 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public Group getById(int id) {
+    public GroupDto getById(int id) {
         log.debug("Getting group by id({})", id);
         Group group = groupDao.getById(id).orElse(new Group());
         log.info("Found {}", group);
-        return group;
-    }
-
-    @Override
-    public GroupDto getDtoById(int groupId) {
-        Group group = getById(groupId);
         return groupDtoMapper.toGroupDto(group);
     }
 
+//    @Override
+//    public GroupDto getDtoById(int groupId) {
+//        Group group = getById(groupId);
+//        return groupDtoMapper.toGroupDto(group);
+//    }
+
     @Override
-    public List<Group> getAll() {
+    public List<GroupDto> getAll() {
         log.debug("Getting all groups");
         List<Group> groups = groupDao.getAll();
         log.info(FOUND_GROUPS, groups.size());
-        return groups;
-    }
-
-    @Override
-    public List<GroupDto> getAllDtos() {
-        List<Group> groups = getAll();
         return groupDtoMapper.toGroupDtos(groups);
     }
+
+//    @Override
+//    public List<GroupDto> getAllDtos() {
+//        List<Group> groups = getAll();
+//        return groupDtoMapper.toGroupDtos(groups);
+//    }
 
     @Override
     public void update(Group group) {
@@ -121,30 +121,30 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public List<Group> getAllByFacultyId(int facultyId) {
+    public List<GroupDto> getAllByFacultyId(int facultyId) {
         log.debug("Getting all groups by faculty id({})", facultyId);
         List<Group> groups = groupDao.getAllByFacultyId(facultyId);
         log.info(FOUND_GROUPS, groups.size());
-        return groups;
-    }
-
-    @Override
-    public List<GroupDto> getAllDtosByFacultyId(int facultyId) {
-        List<Group> groups = getAllByFacultyId(facultyId);
         return groupDtoMapper.toGroupDtos(groups);
     }
 
+//    @Override
+//    public List<GroupDto> getAllDtosByFacultyId(int facultyId) {
+//        List<Group> groups = getAllByFacultyId(facultyId);
+//        return groupDtoMapper.toGroupDtos(groups);
+//    }
+
     @Override
-    public List<Group> getFreeGroupsOnLessonTime(LocalDateTime startTime,
+    public List<GroupDto> getFreeGroupsOnLessonTime(LocalDateTime startTime,
                                                  LocalDateTime endTime) {
         log.debug("Getting groups free from {} to {}", startTime, endTime);
         List<Group> groups = groupDao.getFreeGroupsOnLessonTime(startTime, endTime);
         log.info(FOUND_GROUPS, groups.size());
-        return groups;
+        return groupDtoMapper.toGroupDtos(groups);
     }
 
     @Override
-    public List<Group> getFreeGroupsByFacultyOnLessonTime(int facultyId,
+    public List<GroupDto> getFreeGroupsByFacultyOnLessonTime(int facultyId,
                                                           LocalDateTime startTime,
                                                           LocalDateTime endTime) {
         log.debug("Getting active groups from faculty id({}) free from {} to {}",
@@ -152,7 +152,7 @@ public class GroupServiceImpl implements GroupService {
         List<Group> freeGroups = groupDao
             .getFreeGroupsByFacultyOnLessonTime(facultyId, startTime, endTime);
         log.info(FOUND_GROUPS, freeGroups.size());
-        return freeGroups;
+        return groupDtoMapper.toGroupDtos(freeGroups);
     }
 
     @Override

@@ -51,7 +51,7 @@ class TeacherDtoMapperTest {
                 .department(department)
                 .build();
 
-            TeacherDto teacherDto = mapper.teacherToTeacherDto(teacher);
+            TeacherDto teacherDto = mapper.toTeacherDto(teacher);
 
             assertThat(teacherDto.getId(), is(equalTo(ID1)));
             assertThat(teacherDto.getFirstName(), is(equalTo(FIRST_NAME)));
@@ -71,7 +71,7 @@ class TeacherDtoMapperTest {
             Teacher teacher = new Teacher();
             teacher.setActive(false);
 
-            TeacherDto teacherDto = mapper.teacherToTeacherDto(teacher);
+            TeacherDto teacherDto = mapper.toTeacherDto(teacher);
 
             assertThat(teacherDto.isActive(), is(false));
             assertThat(teacherDto.getDepartmentName(), nullValue());
@@ -104,7 +104,7 @@ class TeacherDtoMapperTest {
                 .build();
             List<Teacher> teachers = Arrays.asList(teacher1, teacher2);
 
-            List<TeacherDto> teacherDtos = mapper.teachersToTeacherDtos(teachers);
+            List<TeacherDto> teacherDtos = mapper.toTeacherDtos(teachers);
             assertThat(teacherDtos.get(0).getId(), is(equalTo(ID1)));
             assertThat(teacherDtos.get(0).isActive(), is(true));
             assertThat(teacherDtos.get(1).isActive(), is(false));
@@ -132,7 +132,7 @@ class TeacherDtoMapperTest {
                 .departmentName(DEPARTMENT_NAME)
                 .build();
 
-            Teacher teacher = mapper.teacherDtoToTeacher(teacherDto);
+            Teacher teacher = mapper.toTeacher(teacherDto);
 
             assertThat(teacher.getId(), is(equalTo(ID1)));
             assertThat(teacher.getFirstName(), is(equalTo(FIRST_NAME)));

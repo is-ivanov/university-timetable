@@ -5,12 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ua.com.foxminded.university.domain.dto.DepartmentDto;
 import ua.com.foxminded.university.domain.dto.LessonDto;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
-import ua.com.foxminded.university.domain.entity.*;
+import ua.com.foxminded.university.domain.entity.Course;
+import ua.com.foxminded.university.domain.entity.Faculty;
+import ua.com.foxminded.university.domain.entity.Room;
 import ua.com.foxminded.university.domain.filter.LessonFilter;
 import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
-import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,7 +38,6 @@ public class LessonController {
     private final RoomService roomService;
     private final GroupService groupService;
     private final LessonDtoMapper lessonDtoMapper;
-    private final TeacherDtoMapper teacherDtoMapper;
 
     @GetMapping
     public String showLessons(Model model) {
@@ -59,15 +60,13 @@ public class LessonController {
         }
         Integer departmentId = lessonFilter.getDepartmentId();
         Integer facultyId = lessonFilter.getFacultyId();
-        List<Teacher> teachers = getTeachersByFacultyOrDepartment(departmentId, facultyId);
-        model.addAttribute("teachers",
-            teacherDtoMapper.teachersToTeacherDtos(teachers));
+        List<TeacherDto> teachers = getTeachersByFacultyOrDepartment(departmentId, facultyId);
+        model.addAttribute("teachers", teachers);
         model.addAttribute("departments", getDepartmentsByFaculty(facultyId));
 
         log.debug("Get filtered lessons");
         model.addAttribute("lessons",
-            lessonDtoMapper.lessonsToLessonDtos(
-                lessonService.getAllWithFilter(lessonFilter)));
+                lessonService.getAllWithFilter(lessonFilter));
         model.addAttribute("newLesson", new LessonDto());
         log.info("The required data is loaded into the model");
         return LESSONS;
@@ -77,7 +76,7 @@ public class LessonController {
     @ResponseBody
     public LessonDto getLessonWithStudents(@PathVariable("id") int lessonId) {
         log.debug("Getting lesson id({})", lessonId);
-        LessonDto lessonDto = lessonDtoMapper.lessonToLessonDto(lessonService.getById(lessonId));
+        LessonDto lessonDto = lessonService.getById(lessonId);
         log.info("Found lesson [teacher {}, course {}, room {}]",
             lessonDto.getTeacherFullName(), lessonDto.getCourseName(),
             lessonDto.getBuildingAndRoom());
@@ -88,21 +87,22 @@ public class LessonController {
     public String showLessonWithStudents(@PathVariable("id") int lessonId,
                                          Model model) {
         log.debug("Getting data for lesson.html for lesson id({})", lessonId);
-        Lesson lesson = lessonService.getById(lessonId);
-        LessonDto lessonDto = lessonDtoMapper.lessonToLessonDto(lesson);
-        model.addAttribute("lesson", lessonDto);
+        LessonDto lesson = lessonService.getById(lessonId);
+//        LessonDto lessonDto = lessonDtoMapper.toLessonDto(lesson);
+        model.addAttribute("lesson", lesson);
 
         LocalDateTime timeStart = lesson.getTimeStart();
         LocalDateTime timeEnd = lesson.getTimeEnd();
-        Teacher teacher = lesson.getTeacher();
-        Room room = lesson.getRoom();
+        int teacherId = lesson.getTeacherId();
+        TeacherDto teacher = teacherService.getById(teacherId);
+        int roomId = lesson.getRoomId();
+        Room room = roomService.getById(roomId);
 
         log.debug("Loading free teachers in model");
-        List<Teacher> freeTeachers = teacherService
+        List<TeacherDto> freeTeachers = teacherService
             .getFreeTeachersOnLessonTime(timeStart, timeEnd);
         freeTeachers.add(teacher);
-        model.addAttribute("teachers",
-            teacherDtoMapper.teachersToTeacherDtos(freeTeachers));
+        model.addAttribute("teachers", freeTeachers);
 
         log.debug("Loading free rooms in model");
         List<Room> freeRooms = roomService
@@ -123,7 +123,7 @@ public class LessonController {
     public String createLesson(@ModelAttribute LessonDto lessonDto,
                                HttpServletRequest request) {
         log.debug("Creating lesson {}", lessonDto);
-        lessonService.add(lessonDtoMapper.lessonDtoToLesson(lessonDto));
+        lessonService.add(lessonDtoMapper.toLesson(lessonDto));
         log.info("Lesson {} is created", lessonDto);
         return defineRedirect(request);
     }
@@ -156,7 +156,7 @@ public class LessonController {
                                HttpServletRequest request) {
         log.debug("Updating lesson id({})", lessonId);
         lessonDto.setId(lessonId);
-        lessonService.update(lessonDtoMapper.lessonDtoToLesson(lessonDto));
+        lessonService.update(lessonDtoMapper.toLesson(lessonDto));
         log.info("Lesson id({}) updated successfully", lessonId);
         return defineRedirect(request);
     }
@@ -193,7 +193,7 @@ public class LessonController {
     }
 
     @ModelAttribute("departments")
-    public List<Department> getDepartments() {
+    public List<DepartmentDto> getDepartments() {
         log.debug("Loading list departments for selector");
         return departmentService.getAll();
     }
@@ -201,7 +201,7 @@ public class LessonController {
     @ModelAttribute("teachers")
     public List<TeacherDto> getTeachers() {
         log.debug("Loading list teachers for selector");
-        return teacherDtoMapper.teachersToTeacherDtos(teacherService.getAll());
+        return teacherService.getAll();
     }
 
     @ModelAttribute("courses")
@@ -216,7 +216,7 @@ public class LessonController {
         return roomService.getAll();
     }
 
-    private List<Department> getDepartmentsByFaculty(Integer facultyId) {
+    private List<DepartmentDto> getDepartmentsByFaculty(Integer facultyId) {
         if (facultyId != null && facultyId > 0) {
             log.debug("Get departments for selector by facultyId ({})", facultyId);
             return departmentService.getAllByFaculty(facultyId);
@@ -226,8 +226,8 @@ public class LessonController {
         }
     }
 
-    private List<Teacher> getTeachersByFacultyOrDepartment(Integer departmentId, Integer facultyId) {
-        List<Teacher> teachers;
+    private List<TeacherDto> getTeachersByFacultyOrDepartment(Integer departmentId, Integer facultyId) {
+        List<TeacherDto> teachers;
         if (departmentId != null && departmentId > 0) {
             log.debug("Get teachers for selector by departmentId ({})",
                 departmentId);

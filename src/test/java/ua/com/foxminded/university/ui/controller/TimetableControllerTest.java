@@ -13,8 +13,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ua.com.foxminded.university.domain.dto.StudentDto;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.Room;
-import ua.com.foxminded.university.domain.entity.Student;
-import ua.com.foxminded.university.domain.entity.Teacher;
 import ua.com.foxminded.university.domain.mapper.StudentDtoMapper;
 import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.RoomService;
@@ -71,12 +69,12 @@ class TimetableControllerTest {
         void getRequestWithPathVariableIdShouldCallServicesAndReturnTemplate() throws Exception {
             int studentId = 23;
 
-            Student testStudent = createTestStudent();
+//            Student testStudent = createTestStudent();
             StudentDto testStudentDto = createTestStudentDto();
 
-            when(studentServiceMock.getById(studentId)).thenReturn(testStudent);
-            when(studentMapperMock.studentToStudentDto(testStudent))
-                .thenReturn(testStudentDto);
+            when(studentServiceMock.getById(studentId)).thenReturn(testStudentDto);
+//            when(studentMapperMock.toStudentDto(testStudent))
+//                .thenReturn(testStudentDto);
 
             mockMvc.perform(get(URI_TIMETABLE_STUDENT, studentId))
                 .andDo(print())
@@ -98,12 +96,12 @@ class TimetableControllerTest {
         void getRequestWithPathVariableIdShouldCallServicesAndReturnTemplate() throws Exception {
             int teacherId = 89;
 
-            Teacher testTeacher = createTestTeacher();
+//            Teacher testTeacher = createTestTeacher();
             TeacherDto testTeacherDto = createTestTeacherDto();
 
-            when(teacherServiceMock.getById(teacherId)).thenReturn(testTeacher);
-            when(teacherMapperMock.teacherToTeacherDto(testTeacher))
-                .thenReturn(testTeacherDto);
+            when(teacherServiceMock.getById(teacherId)).thenReturn(testTeacherDto);
+//            when(teacherMapperMock.toTeacherDto(testTeacher))
+//                .thenReturn(testTeacherDto);
 
             mockMvc.perform(get(URI_TIMETABLE_TEACHER, teacherId))
                 .andDo(print())

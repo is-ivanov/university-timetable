@@ -29,33 +29,33 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public Department getById(int id) {
+    public DepartmentDto getById(int id) {
         log.debug("Getting department by id({})", id);
         Department department = departmentDao.getById(id)
             .orElse(new Department());
         log.info("Found {}", department);
-        return department;
-    }
-
-    @Override
-    public DepartmentDto getDtoById(int id) {
-        Department department = getById(id);
         return departmentDtoMapper.toDepartmentDto(department);
     }
 
+//    @Override
+//    public DepartmentDto getDtoById(int id) {
+//        Department department = getById(id);
+//        return departmentDtoMapper.toDepartmentDto(department);
+//    }
+
     @Override
-    public List<Department> getAll() {
+    public List<DepartmentDto> getAll() {
         log.debug("Getting all departments");
         List<Department> departments = departmentDao.getAll();
         log.info("Found {} departments", departments.size());
-        return departments;
-    }
-
-    @Override
-    public List<DepartmentDto> getAllDtos() {
-        List<Department> departments = getAll();
         return departmentDtoMapper.toDepartmentDtos(departments);
     }
+
+//    @Override
+//    public List<DepartmentDto> getAllDtos() {
+//        List<Department> departments = getAll();
+//        return departmentDtoMapper.toDepartmentDtos(departments);
+//    }
 
     @Override
     public void update(Department department) {
@@ -79,17 +79,17 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public List<Department> getAllByFaculty(int facultyId) {
+    public List<DepartmentDto> getAllByFaculty(int facultyId) {
         log.debug("Getting all departments from faculty id({})", facultyId);
         List<Department> departments = departmentDao.getAllByFacultyId(facultyId);
         log.info("Found {} departments", departments.size());
-        return departments;
-    }
-
-    @Override
-    public List<DepartmentDto> getAllDtosByFaculty(int facultyId) {
-        List<Department> departments = getAllByFaculty(facultyId);
         return departmentDtoMapper.toDepartmentDtos(departments);
     }
+
+//    @Override
+//    public List<DepartmentDto> getAllDtosByFaculty(int facultyId) {
+//        List<Department> departments = getAllByFaculty(facultyId);
+//        return departmentDtoMapper.toDepartmentDtos(departments);
+//    }
 
 }

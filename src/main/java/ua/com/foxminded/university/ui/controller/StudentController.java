@@ -34,7 +34,6 @@ public class StudentController {
     private final GroupService groupService;
     private final LessonService lessonService;
     private final StudentDtoMapper studentDtoMapper;
-    private final LessonDtoMapper lessonDtoMapper;
 
     @GetMapping
     public String showStudents(@RequestParam(required = false) Integer facultyId,
@@ -54,13 +53,11 @@ public class StudentController {
         if (groupId != null && groupId > 0) {
             log.debug("Get students by groupId ({})", groupId);
             model.addAttribute("students",
-                studentDtoMapper.studentsToStudentDtos(
-                    studentService.getStudentsByGroup(groupId)));
+                    studentService.getStudentsByGroup(groupId));
         } else if (facultyId != null && facultyId > 0) {
             log.debug("Get students by facultyId ({})", facultyId);
             model.addAttribute("students",
-                studentDtoMapper.studentsToStudentDtos(
-                    studentService.getStudentsByFaculty(facultyId)));
+                    studentService.getStudentsByFaculty(facultyId));
         }
         if (facultyId != null && facultyId > 0) {
             log.debug("Get groups for selector by facultyId ({})", facultyId);
@@ -82,7 +79,7 @@ public class StudentController {
                                 HttpServletRequest request) {
         log.debug("Creating student [{} {} {}]", studentDto.getFirstName(),
             studentDto.getPatronymic(), studentDto.getLastName());
-        studentService.add(studentDtoMapper.studentDtoToStudent(studentDto));
+        studentService.add(studentDtoMapper.toStudent(studentDto));
         log.info("Student [{}, {}, {}] is created", studentDto.getFirstName(),
             studentDto.getPatronymic(), studentDto.getLastName());
         return defineRedirect(request);
@@ -92,10 +89,10 @@ public class StudentController {
     @ResponseBody
     public StudentDto getStudent(@PathVariable("id") int studentId) {
         log.debug("Getting student id({})", studentId);
-        Student student = studentService.getById(studentId);
+        StudentDto student = studentService.getById(studentId);
         log.info("Found student [{} {} {}]", student.getFirstName(),
             student.getPatronymic(), student.getLastName());
-        return studentDtoMapper.studentToStudentDto(student);
+        return student;
     }
 
     @PutMapping("/{id}")
@@ -103,7 +100,7 @@ public class StudentController {
                                 @PathVariable("id") int studentId,
                                 HttpServletRequest request) {
         log.debug("Updating student id({})", studentId);
-        studentService.update(studentDtoMapper.studentDtoToStudent(studentDto));
+        studentService.update(studentDtoMapper.toStudent(studentDto));
         log.info("Student id({}) is updated", studentId);
         return defineRedirect(request);
     }
@@ -128,12 +125,11 @@ public class StudentController {
                                                     ZonedDateTime endTime) {
         log.debug("Getting lessons for student id({}) from {} to {}", studentId,
             startTime, endTime);
-        List<Lesson> lessonsForStudent = lessonService
+        List<LessonDto> lessonsForStudent = lessonService
             .getAllForStudentForTimePeriod(studentId,
                 startTime.toLocalDateTime(), endTime.toLocalDateTime());
-        List<LessonDto> lessonDtos = lessonDtoMapper.lessonsToLessonDtos(lessonsForStudent);
-        log.info("Found {} lessons", lessonDtos.size());
-        return lessonDtos;
+        log.info("Found {} lessons", lessonsForStudent.size());
+        return lessonsForStudent;
     }
 
 }

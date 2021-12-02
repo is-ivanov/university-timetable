@@ -128,7 +128,7 @@ public class TestObjects {
     }
 
     public static GroupDto createTestGroupDto() {
-        return new GroupDto(GROUP_ID1, NAME_FIRST_GROUP,true,
+        return new GroupDto(GROUP_ID1, NAME_FIRST_GROUP, true,
             FACULTY_ID1, NAME_FIRST_FACULTY);
     }
 
@@ -143,6 +143,14 @@ public class TestObjects {
         Faculty faculty = createTestFaculty(facultyId);
         Group group1 = new Group(GROUP_ID1, NAME_FIRST_GROUP, faculty, true);
         Group group2 = new Group(GROUP_ID2, NAME_SECOND_GROUP, faculty, true);
+        return new ArrayList<>(Arrays.asList(group1, group2));
+    }
+
+    public static List<GroupDto> createTestGroupDtos(int facultyId) {
+        GroupDto group1 = new GroupDto(GROUP_ID1, NAME_FIRST_GROUP, true,
+            facultyId,NAME_FIRST_FACULTY);
+        GroupDto group2 = new GroupDto(GROUP_ID2, NAME_SECOND_GROUP,true,
+            facultyId, NAME_FIRST_FACULTY);
         return new ArrayList<>(Arrays.asList(group1, group2));
     }
 
@@ -166,6 +174,14 @@ public class TestObjects {
         Faculty faculty = createTestFaculty(facultyId);
         Department department1 = new Department(DEPARTMENT_ID1, NAME_FIRST_DEPARTMENT, faculty);
         Department department2 = new Department(DEPARTMENT_ID2, NAME_SECOND_DEPARTMENT, faculty);
+        return new ArrayList<>(Arrays.asList(department1, department2));
+    }
+
+    public static List<DepartmentDto> createTestDepartmentDtos() {
+        DepartmentDto department1 = new DepartmentDto(DEPARTMENT_ID1,
+            NAME_FIRST_DEPARTMENT, FACULTY_ID1, NAME_FIRST_FACULTY);
+        DepartmentDto department2 = new DepartmentDto(DEPARTMENT_ID2,
+            NAME_SECOND_DEPARTMENT, FACULTY_ID1, NAME_FIRST_FACULTY);
         return new ArrayList<>(Arrays.asList(department1, department2));
     }
 

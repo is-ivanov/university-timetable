@@ -271,12 +271,13 @@ class RoomControllerTest {
             "return JSON with list lessonDtos in body")
         void getRequestWithParametersShouldReturnJsonWithListLessonDtos() throws Exception {
             int roomId = 13;
-            List<Lesson> testLessons = createTestLessons();
+//            List<Lesson> testLessons = createTestLessons();
             List<LessonDto> testLessonDtos = createTestLessonDtos();
-            when(lessonServiceMock.getAllForRoomForTimePeriod(roomId, START_TIME_TIMETABLE, END_TIME_TIMETABLE))
-                .thenReturn(testLessons);
-            when(lessonDtoMapperMock.lessonsToLessonDtos(testLessons))
+            when(lessonServiceMock.getAllForRoomForTimePeriod(roomId,
+                START_TIME_TIMETABLE, END_TIME_TIMETABLE))
                 .thenReturn(testLessonDtos);
+//            when(lessonDtoMapperMock.toLessonDtos(testLessons))
+//                .thenReturn(testLessonDtos);
             mockMvc.perform(get(URI_ROOMS_ROOM_ID_TIMETABLE, roomId)
                     .param("start", START_TIME_TIMETABLE_ISO)
                     .param("end", END_TIME_TIMETABLE_ISO))

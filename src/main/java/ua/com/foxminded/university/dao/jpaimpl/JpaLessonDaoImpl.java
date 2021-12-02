@@ -41,11 +41,11 @@ public class JpaLessonDaoImpl implements LessonDao {
         "Can't delete because lesson id(%d) not found";
     private static final String FOUND_LESSONS = "Found {} lessons";
     private static final String WHERE = " WHERE l.id > 0 ";
-    private static final String TEACHER_FILTER = " AND l.teacher.id = ";
-    private static final String DEPARTMENT_FILTER = " AND l.teacher.department.id = ";
-    private static final String FACULTY_FILTER = " AND l.teacher.department.faculty.id = ";
-    private static final String COURSE_FILTER = " AND l.course.id = ";
-    private static final String ROOM_FILTER = " AND l.room.id = ";
+    private static final String TEACHER_FILTER = " AND t.id = ";
+    private static final String DEPARTMENT_FILTER = " AND t.department.id = ";
+    private static final String FACULTY_FILTER = " AND t.department.faculty.id = ";
+    private static final String COURSE_FILTER = " AND c.id = ";
+    private static final String ROOM_FILTER = " AND r.id = ";
     private static final String TIME_BETWEEN_FILTER = " AND l.timeStart BETWEEN '";
     private static final String AND = "' AND '";
     private static final String CLOSING_QUOTATION_MARK = "' ";

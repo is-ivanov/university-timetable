@@ -13,12 +13,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import ua.com.foxminded.university.domain.dto.DepartmentDto;
 import ua.com.foxminded.university.domain.dto.LessonDto;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
-import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Lesson;
-import ua.com.foxminded.university.domain.entity.Teacher;
 import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
 import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
@@ -87,7 +86,7 @@ class TeacherControllerTest {
             "services and not load teachers in attribute of model")
         void getRequestWithoutParameters() throws Exception {
             List<Faculty> faculties = createTestFaculties();
-            List<Department> departments = createTestDepartments();
+            List<DepartmentDto> departments = createTestDepartmentDtos();
 
             when(facultyServiceMock.getAllSortedByNameAsc()).thenReturn(faculties);
             when(departmentServiceMock.getAll()).thenReturn(departments);
@@ -112,14 +111,14 @@ class TeacherControllerTest {
             int facultyId = 15;
             int departmentId = 47;
 
-            List<Teacher> testTeachers = createTestTeachers(facultyId);
-            List<Department> departments = createTestDepartments(facultyId);
+//            List<Teacher> testTeachers = createTestTeachers(facultyId);
+            List<DepartmentDto> departments = createTestDepartmentDtos();
             List<TeacherDto> testTeacherDtos = createTestTeacherDtos(facultyId);
 
             when(teacherServiceMock.getAllByDepartment(departmentId))
-                .thenReturn(testTeachers);
-            when(teacherMapperMock.teachersToTeacherDtos(testTeachers))
                 .thenReturn(testTeacherDtos);
+//            when(teacherMapperMock.toTeacherDtos(testTeachers))
+//                .thenReturn(testTeacherDtos);
             when(departmentServiceMock.getAllByFaculty(facultyId))
                 .thenReturn(departments);
 
@@ -142,13 +141,13 @@ class TeacherControllerTest {
         void getRequestWithFacultyIdAndWithoutDepartmentId() throws Exception {
             int facultyId = 34;
 
-            List<Teacher> testTeachers = createTestTeachers(facultyId);
+//            List<Teacher> testTeachers = createTestTeachers(facultyId);
             List<TeacherDto> testTeacherDtos = createTestTeacherDtos(facultyId);
 
             when(teacherServiceMock.getAllByFaculty(facultyId))
-                .thenReturn(testTeachers);
-            when(teacherMapperMock.teachersToTeacherDtos(testTeachers))
                 .thenReturn(testTeacherDtos);
+//            when(teacherMapperMock.toTeacherDtos(testTeachers))
+//                .thenReturn(testTeacherDtos);
 
             mockMvc.perform(get(URI_TEACHERS)
                     .param("facultyId", String.valueOf(facultyId)))
@@ -170,13 +169,13 @@ class TeacherControllerTest {
         @DisplayName("when GET request with parameters time_start and time_end " +
             "then should return JSON with list teacherDtos in body")
         void getRequestWithParametersShouldReturnJsonListTeacherDtos() throws Exception {
-            List<Teacher> testTeachers = createTestTeachers(FACULTY_ID1);
+//            List<Teacher> testTeachers = createTestTeachers(FACULTY_ID1);
             List<TeacherDto> testTeacherDtos = createTestTeacherDtos(FACULTY_ID1);
 
             when(teacherServiceMock.getFreeTeachersOnLessonTime(DATE_FROM, DATE_TO))
-                .thenReturn(testTeachers);
-            when(teacherMapperMock.teachersToTeacherDtos(testTeachers))
                 .thenReturn(testTeacherDtos);
+//            when(teacherMapperMock.toTeacherDtos(testTeachers))
+//                .thenReturn(testTeacherDtos);
 
             mockMvc.perform(get(URI_TEACHERS_FREE)
                     .param("time_start", TEXT_DATE_FROM)
@@ -221,7 +220,7 @@ class TeacherControllerTest {
                 .andExpect(status().is3xxRedirection());
 
             verify(teacherMapperMock, times(1))
-                .teacherDtoToTeacher(teacherDtoCaptor.capture());
+                .toTeacher(teacherDtoCaptor.capture());
 
             TeacherDto expectedTeacherDto = teacherDtoCaptor.getValue();
             assertThat(expectedTeacherDto.getFirstName(), is(NAME_FIRST_TEACHER));
@@ -238,12 +237,12 @@ class TeacherControllerTest {
         @Test
         @DisplayName("when GET request with PathVariable id then should return JSON with expected teacherDto in body")
         void getRequestWithIdShouldReturnJsonWithTeacherDto() throws Exception {
-            Teacher testTeacher = createTestTeacher();
+//            Teacher testTeacher = createTestTeacher();
             TeacherDto testTeacherDto = createTestTeacherDto();
 
-            when(teacherServiceMock.getById(TEACHER_ID1)).thenReturn(testTeacher);
-            when(teacherMapperMock.teacherToTeacherDto(testTeacher))
-                .thenReturn(testTeacherDto);
+            when(teacherServiceMock.getById(TEACHER_ID1)).thenReturn(testTeacherDto);
+//            when(teacherMapperMock.toTeacherDto(testTeacher))
+//                .thenReturn(testTeacherDto);
 
             mockMvc.perform(get(URI_TEACHERS_ID, TEACHER_ID1))
                 .andDo(print())
@@ -278,7 +277,7 @@ class TeacherControllerTest {
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
             verify(teacherMapperMock, times(1))
-                .teacherDtoToTeacher(teacherDtoCaptor.capture());
+                .toTeacher(teacherDtoCaptor.capture());
 
             TeacherDto expectedTeacherDto = teacherDtoCaptor.getValue();
             assertThat(expectedTeacherDto.getId(), is(TEACHER_ID1));
@@ -312,14 +311,14 @@ class TeacherControllerTest {
             "should return JSON with list lessonDtos in body ")
         void getRequestWithParametersShouldReturnJsonWithListLessonDtos() throws Exception {
             int teacherId = 46;
-            List<Lesson> testLessons = createTestLessons();
+//            List<Lesson> testLessons = createTestLessons();
             List<LessonDto> testLessonDtos = createTestLessonDtos();
 
             when(lessonServiceMock.getAllForTeacherForTimePeriod(teacherId,
                 START_TIME_TIMETABLE, END_TIME_TIMETABLE))
-                .thenReturn(testLessons);
-            when(lessonMapperMock.lessonsToLessonDtos(testLessons))
                 .thenReturn(testLessonDtos);
+//            when(lessonMapperMock.toLessonDtos(testLessons))
+//                .thenReturn(testLessonDtos);
 
             mockMvc.perform(get(URI_TEACHERS_ID_TIMETABLE, teacherId)
                 .param("start", START_TIME_TIMETABLE_ISO)

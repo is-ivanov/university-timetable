@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ua.com.foxminded.university.domain.dto.StudentDto;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
-import ua.com.foxminded.university.domain.mapper.StudentDtoMapper;
-import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.RoomService;
 import ua.com.foxminded.university.domain.service.interfaces.StudentService;
 import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
@@ -27,14 +25,11 @@ public class TimetableController {
     private final StudentService studentService;
     private final TeacherService teacherService;
     private final RoomService roomService;
-    private final StudentDtoMapper studentDtoMapper;
-    private final TeacherDtoMapper teacherDtoMapper;
 
     @GetMapping("/students/{id}")
     public String showStudentTimetable(@PathVariable("id") int studentId,
                                        Model model) {
-        StudentDto studentDto = studentDtoMapper
-            .studentToStudentDto(studentService.getById(studentId));
+        StudentDto studentDto = studentService.getById(studentId);
         model.addAttribute(OBJECT, studentDto);
         addTypeInModel(model, "students");
         return TIMETABLE_TEMPLATE;
@@ -43,8 +38,7 @@ public class TimetableController {
     @GetMapping("/teachers/{id}")
     public String showTeacherTimetable(@PathVariable("id") int teacherId,
                                        Model model) {
-        TeacherDto teacherDto = teacherDtoMapper
-            .teacherToTeacherDto(teacherService.getById(teacherId));
+        TeacherDto teacherDto = teacherService.getById(teacherId);
         model.addAttribute(OBJECT, teacherDto);
         addTypeInModel(model, "teachers");
         return TIMETABLE_TEMPLATE;

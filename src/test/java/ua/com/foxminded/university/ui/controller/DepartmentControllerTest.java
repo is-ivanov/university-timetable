@@ -13,10 +13,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import ua.com.foxminded.university.domain.dto.DepartmentDto;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
-import ua.com.foxminded.university.domain.entity.Teacher;
 import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
@@ -78,17 +78,19 @@ class DepartmentControllerTest {
 
     @Nested
     @DisplayName("test 'showDepartments' method")
-    class ShowDepartments {
+    class ShowDepartmentsTest {
 
         @Test
         @DisplayName("when GET request without parameters")
         void getRequestWithoutParameters() throws Exception {
             List<Faculty> expectedFaculties = createTestFaculties();
-            Department department1 = new Department(ID1, NAME_FIRST_DEPARTMENT,
-                expectedFaculties.get(0));
-            Department department2 = new Department(ID2, NAME_SECOND_DEPARTMENT,
-                expectedFaculties.get(1));
-            List<Department> allDepartments = Arrays.asList(department1,
+            Faculty faculty1 = expectedFaculties.get(0);
+            Faculty faculty2 = expectedFaculties.get(1);
+            DepartmentDto department1 = new DepartmentDto(ID1, NAME_FIRST_DEPARTMENT,
+                faculty1.getId(), faculty1.getName());
+            DepartmentDto department2 = new DepartmentDto(ID2, NAME_SECOND_DEPARTMENT,
+                faculty2.getId(), faculty2.getName());
+            List<DepartmentDto> allDepartments = Arrays.asList(department1,
                 department2);
 
             when(facultyServiceMock.getAllSortedByNameAsc()).thenReturn(expectedFaculties);
@@ -110,7 +112,7 @@ class DepartmentControllerTest {
         void getRequestWithParameterFacultyId() throws Exception {
             List<Faculty> testFaculties = createTestFaculties();
             Faculty faculty1 = testFaculties.get(0);
-            List<Department> departmentsFromFacultyId1 = createTestDepartments(FACULTY_ID1);
+            List<DepartmentDto> departmentsFromFacultyId1 = createTestDepartmentDtos();
 
             when(facultyServiceMock.getAllSortedByNameAsc())
                 .thenReturn(testFaculties);
@@ -165,8 +167,8 @@ class DepartmentControllerTest {
         void getRequestWithIdParameter() throws Exception {
             int departmentId = anyInt();
             Faculty faculty = new Faculty(ID1, NAME_FIRST_FACULTY);
-            Department expectedDepartment = new Department(departmentId,
-                NAME_FIRST_DEPARTMENT, faculty);
+            DepartmentDto expectedDepartment = new DepartmentDto(departmentId,
+                NAME_FIRST_DEPARTMENT, faculty.getId(), faculty.getName());
 
             when(departmentServiceMock.getById(departmentId)).thenReturn(expectedDepartment);
 
@@ -232,7 +234,7 @@ class DepartmentControllerTest {
         void GetTeachersByDepartment() throws Exception {
             int departmentId = anyInt();
 
-            List<Teacher> teachers = new ArrayList<>();
+            List<TeacherDto> teachers = new ArrayList<>();
             TeacherDto teacher1 = TeacherDto.builder()
                 .id(ID1)
                 .firstName(FIRST_NAME_FIRST_STUDENT)
@@ -250,7 +252,7 @@ class DepartmentControllerTest {
             List<TeacherDto> teacherDtos = Arrays.asList(teacher1, teacher2);
 
             when(teacherServiceMock.getAllByDepartment(departmentId)).thenReturn(teachers);
-            when(teacherDtoMapperMock.teachersToTeacherDtos(anyList())).thenReturn(teacherDtos);
+            when(teacherDtoMapperMock.toTeacherDtos(anyList())).thenReturn(teacherDtos);
 
             mockMvc.perform(get("/departments/{id}/teachers", departmentId))
                 .andDo(print())

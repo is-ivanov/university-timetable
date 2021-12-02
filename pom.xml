@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ua.com.foxminded.javaspring</groupId>
     <artifactId>university</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2</version>
     <name>University Timetable</name>
     <description>Application university timetable</description>
     <packaging>war</packaging>
@@ -47,6 +47,7 @@
                 <artifactId>junit-bom</artifactId>
                 <version>5.8.2</version>
                 <type>pom</type>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -221,7 +222,6 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>5.8.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>

@@ -116,11 +116,10 @@ public class RoomController {
                                                  ZonedDateTime endTime) {
         log.debug("Getting lessons for room id({}) from {} to {}", roomId,
             startTime, endTime);
-        List<Lesson> lessonsForTeacher = lessonService
+        List<LessonDto> lessonsForTeacher = lessonService
             .getAllForRoomForTimePeriod(roomId,
                 startTime.toLocalDateTime(), endTime.toLocalDateTime());
-        List<LessonDto> lessonDtos = lessonDtoMapper.lessonsToLessonDtos(lessonsForTeacher);
-        log.info("Found {} lessons", lessonDtos.size());
-        return lessonDtos;
+        log.info("Found {} lessons", lessonsForTeacher.size());
+        return lessonsForTeacher;
     }
 }
