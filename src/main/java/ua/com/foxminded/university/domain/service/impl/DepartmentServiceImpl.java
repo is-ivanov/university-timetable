@@ -10,6 +10,7 @@ import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.mapper.DepartmentDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Slf4j
@@ -17,6 +18,9 @@ import java.util.List;
 @Service
 @Transactional
 public class DepartmentServiceImpl implements DepartmentService {
+
+    public static final String MESSAGE_DEPARTMENT_NOT_FOUND =
+        "Department id(%d) not found";
 
     private final DepartmentDao departmentDao;
     private final DepartmentDtoMapper departmentDtoMapper;
@@ -32,16 +36,12 @@ public class DepartmentServiceImpl implements DepartmentService {
     public DepartmentDto getById(int id) {
         log.debug("Getting department by id({})", id);
         Department department = departmentDao.getById(id)
-            .orElse(new Department());
+            .orElseThrow(() -> new EntityNotFoundException(
+                String.format(MESSAGE_DEPARTMENT_NOT_FOUND, id)));
         log.info("Found {}", department);
         return departmentDtoMapper.toDepartmentDto(department);
     }
 
-//    @Override
-//    public DepartmentDto getDtoById(int id) {
-//        Department department = getById(id);
-//        return departmentDtoMapper.toDepartmentDto(department);
-//    }
 
     @Override
     public List<DepartmentDto> getAll() {
@@ -51,11 +51,6 @@ public class DepartmentServiceImpl implements DepartmentService {
         return departmentDtoMapper.toDepartmentDtos(departments);
     }
 
-//    @Override
-//    public List<DepartmentDto> getAllDtos() {
-//        List<Department> departments = getAll();
-//        return departmentDtoMapper.toDepartmentDtos(departments);
-//    }
 
     @Override
     public void update(Department department) {
@@ -85,11 +80,5 @@ public class DepartmentServiceImpl implements DepartmentService {
         log.info("Found {} departments", departments.size());
         return departmentDtoMapper.toDepartmentDtos(departments);
     }
-
-//    @Override
-//    public List<DepartmentDto> getAllDtosByFaculty(int facultyId) {
-//        List<Department> departments = getAllByFaculty(facultyId);
-//        return departmentDtoMapper.toDepartmentDtos(departments);
-//    }
 
 }

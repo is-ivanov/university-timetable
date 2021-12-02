@@ -10,10 +10,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.foxminded.university.dao.interfaces.CourseDao;
 import ua.com.foxminded.university.domain.entity.Course;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -59,11 +61,15 @@ class CourseServiceImplTest {
         }
 
         @Test
-        @DisplayName("when Dao return empty Optional then method should return empty Course")
+        @DisplayName("when Dao return empty Optional then method should throw " +
+            "new EntityNotFoundException")
         void testReturnEmptyCourse() {
-            Optional<Course> optional = Optional.empty();
-            when(courseDaoMock.getById(ID1)).thenReturn(optional);
-            assertEquals(new Course(), courseService.getById(ID1));
+            when(courseDaoMock.getById(ID1)).thenReturn(Optional.empty());
+            assertThatThrownBy(() -> {
+                courseService.getById(ID1);
+            })
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessageContaining("Course id(1) not found");
         }
     }
 

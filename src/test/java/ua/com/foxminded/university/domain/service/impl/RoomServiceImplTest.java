@@ -10,12 +10,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.foxminded.university.dao.interfaces.RoomDao;
 import ua.com.foxminded.university.domain.entity.Room;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class RoomServiceImplTest {
@@ -64,9 +67,12 @@ class RoomServiceImplTest {
         @DisplayName("when Dao return empty Optional then method should " +
             "return empty Room")
         void testReturnEmptyRoom() {
-            Optional<Room> optional = Optional.empty();
-            when(roomDaoMock.getById(anyInt())).thenReturn(optional);
-            assertEquals(new Room(), roomService.getById(anyInt()));
+            when(roomDaoMock.getById(ID1)).thenReturn(Optional.empty());
+            assertThatThrownBy(() -> {
+                roomService.getById(ID1);
+            })
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessageContaining("Room id(1) not found");
         }
     }
 

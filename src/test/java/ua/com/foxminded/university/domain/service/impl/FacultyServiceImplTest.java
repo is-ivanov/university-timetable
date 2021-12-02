@@ -10,11 +10,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.foxminded.university.dao.interfaces.FacultyDao;
 import ua.com.foxminded.university.domain.entity.Faculty;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -47,7 +49,7 @@ class FacultyServiceImplTest {
 
     @Nested
     @DisplayName("test 'getById' method")
-    class getByIdTest {
+    class GetByIdTest {
 
         @Test
         @DisplayName("when Dao return Optional with Faculty then method " +
@@ -62,12 +64,15 @@ class FacultyServiceImplTest {
         }
 
         @Test
-        @DisplayName("when Dao return empty Optional then method should return" +
-            " empty Faculty")
+        @DisplayName("when Dao return empty Optional then method should throw" +
+            " new EntityNotFoundException")
         void testReturnEmptyFaculty() {
-            Optional<Faculty> optional = Optional.empty();
-            when(facultyDaoMock.getById(ID1)).thenReturn(optional);
-            assertEquals(new Faculty(), facultyService.getById(ID1));
+            when(facultyDaoMock.getById(ID1)).thenReturn(Optional.empty());
+            assertThatThrownBy(() -> {
+                facultyService.getById(ID1);
+            })
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessageContaining("Faculty id(1) not found");
         }
     }
 

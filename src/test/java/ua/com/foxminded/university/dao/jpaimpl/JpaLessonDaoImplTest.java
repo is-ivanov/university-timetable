@@ -231,7 +231,7 @@ class JpaLessonDaoImplTest extends IntegrationTestBase {
             dao.removeStudentFromLesson(LESSON_ID1, STUDENT_ID1);
 
             Lesson lessonAfter = dao.getById(LESSON_ID1).get();
-            Set<Student> studentsAfter = lessonBefore.getStudents();
+            Set<Student> studentsAfter = lessonAfter.getStudents();
 
             assertThat(studentsAfter).hasSize(expectedNumberStudents);
             assertThat(studentsAfter).extracting(Student::getId)

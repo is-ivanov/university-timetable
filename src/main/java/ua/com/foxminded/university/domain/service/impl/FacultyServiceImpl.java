@@ -10,6 +10,7 @@ import ua.com.foxminded.university.dao.interfaces.FacultyDao;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Slf4j
@@ -17,6 +18,8 @@ import java.util.List;
 @Service
 @Transactional
 public class FacultyServiceImpl implements FacultyService {
+
+    private static final String MESSAGE_FACULTY_NOT_FOUND = "Faculty id(%d) not found";
 
     private final FacultyDao facultyDao;
 
@@ -30,7 +33,9 @@ public class FacultyServiceImpl implements FacultyService {
     @Override
     public Faculty getById(int id) {
         log.debug("Getting faculty by id({})", id);
-        Faculty faculty = facultyDao.getById(id).orElse(new Faculty());
+        Faculty faculty = facultyDao.getById(id)
+            .orElseThrow(() -> new EntityNotFoundException(
+                String.format(MESSAGE_FACULTY_NOT_FOUND, id)));
         log.info("Found {}", faculty);
         return faculty;
     }

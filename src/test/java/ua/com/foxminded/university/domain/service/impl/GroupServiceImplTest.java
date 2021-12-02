@@ -1,6 +1,5 @@
 package ua.com.foxminded.university.domain.service.impl;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -14,6 +13,7 @@ import ua.com.foxminded.university.dao.interfaces.StudentDao;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Student;
+import ua.com.foxminded.university.domain.mapper.StudentDtoMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,12 +38,9 @@ class GroupServiceImplTest {
     private GroupDao groupDaoMock;
     @Mock
     private StudentDao studentDaoMock;
+    @Mock
+    private StudentDtoMapper mapper;
 
-
-//    @BeforeEach
-//    void setUp() {
-//        groupService = new GroupServiceImpl(groupDaoMock, studentDaoMock);
-//    }
 
     @Test
     @DisplayName("test 'add' when call add method then should call Dao once")
@@ -55,7 +52,7 @@ class GroupServiceImplTest {
 
     @Nested
     @DisplayName("test 'getById' method")
-    class getByIdTest {
+    class GetByIdTest {
 
         @Test
         @DisplayName("when Dao return Optional with Group then method should " +

@@ -10,6 +10,7 @@ import ua.com.foxminded.university.dao.interfaces.RoomDao;
 import ua.com.foxminded.university.domain.entity.Room;
 import ua.com.foxminded.university.domain.service.interfaces.RoomService;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,6 +19,8 @@ import java.util.List;
 @Service
 @Transactional
 public class RoomServiceImpl implements RoomService {
+
+    private static final String MESSAGE_ROOM_NOT_FOUND = "Room id(%d) not found";
 
     private final RoomDao roomDao;
 
@@ -31,7 +34,9 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public Room getById(int id) {
         log.debug("Getting room by id({})", id);
-        Room room = roomDao.getById(id).orElse(new Room());
+        Room room = roomDao.getById(id)
+            .orElseThrow(() -> new EntityNotFoundException(
+                String.format(MESSAGE_ROOM_NOT_FOUND, id)));
         log.info("Found {}", room);
         return room;
     }

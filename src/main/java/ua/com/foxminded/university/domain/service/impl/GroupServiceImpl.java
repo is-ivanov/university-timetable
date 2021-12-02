@@ -2,7 +2,6 @@ package ua.com.foxminded.university.domain.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.com.foxminded.university.dao.interfaces.GroupDao;
@@ -44,12 +43,6 @@ public class GroupServiceImpl implements GroupService {
         return groupDtoMapper.toGroupDto(group);
     }
 
-//    @Override
-//    public GroupDto getDtoById(int groupId) {
-//        Group group = getById(groupId);
-//        return groupDtoMapper.toGroupDto(group);
-//    }
-
     @Override
     public List<GroupDto> getAll() {
         log.debug("Getting all groups");
@@ -57,12 +50,6 @@ public class GroupServiceImpl implements GroupService {
         log.info(FOUND_GROUPS, groups.size());
         return groupDtoMapper.toGroupDtos(groups);
     }
-
-//    @Override
-//    public List<GroupDto> getAllDtos() {
-//        List<Group> groups = getAll();
-//        return groupDtoMapper.toGroupDtos(groups);
-//    }
 
     @Override
     public void update(Group group) {
@@ -127,12 +114,6 @@ public class GroupServiceImpl implements GroupService {
         log.info(FOUND_GROUPS, groups.size());
         return groupDtoMapper.toGroupDtos(groups);
     }
-
-//    @Override
-//    public List<GroupDto> getAllDtosByFacultyId(int facultyId) {
-//        List<Group> groups = getAllByFacultyId(facultyId);
-//        return groupDtoMapper.toGroupDtos(groups);
-//    }
 
     @Override
     public List<GroupDto> getFreeGroupsOnLessonTime(LocalDateTime startTime,

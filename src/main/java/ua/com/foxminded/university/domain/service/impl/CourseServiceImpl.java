@@ -10,6 +10,7 @@ import ua.com.foxminded.university.dao.interfaces.CourseDao;
 import ua.com.foxminded.university.domain.entity.Course;
 import ua.com.foxminded.university.domain.service.interfaces.CourseService;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Slf4j
@@ -17,6 +18,8 @@ import java.util.List;
 @Service
 @Transactional
 public class CourseServiceImpl implements CourseService {
+
+    private static final String MESSAGE_COURSE_NOT_FOUND = "Course id(%d) not found";
 
     private final CourseDao courseDao;
 
@@ -30,7 +33,9 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public Course getById(int id) {
         log.debug("Getting course by id({})", id);
-        Course course = courseDao.getById(id).orElse(new Course());
+        Course course = courseDao.getById(id)
+            .orElseThrow(() -> new EntityNotFoundException(
+                String.format(MESSAGE_COURSE_NOT_FOUND, id)));
         log.info("Found {}", course);
         return course;
     }
