@@ -47,7 +47,7 @@ class CourseServiceImplTest {
 
     @Nested
     @DisplayName("test 'getById' method")
-    class getByIdTest {
+    class GetByIdTest {
 
         @Test
         @DisplayName("when Dao return Optional with Course then method should return Course")
@@ -65,9 +65,7 @@ class CourseServiceImplTest {
             "new EntityNotFoundException")
         void testReturnEmptyCourse() {
             when(courseDaoMock.getById(ID1)).thenReturn(Optional.empty());
-            assertThatThrownBy(() -> {
-                courseService.getById(ID1);
-            })
+            assertThatThrownBy(() -> courseService.getById(ID1))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining("Course id(1) not found");
         }

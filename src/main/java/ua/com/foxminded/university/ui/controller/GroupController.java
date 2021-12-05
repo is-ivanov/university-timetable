@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import ua.com.foxminded.university.domain.dto.GroupDto;
 import ua.com.foxminded.university.domain.dto.StudentDto;
 import ua.com.foxminded.university.domain.entity.Group;
-import ua.com.foxminded.university.domain.mapper.StudentDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 import ua.com.foxminded.university.domain.service.interfaces.StudentService;
@@ -30,7 +29,6 @@ public class GroupController {
     private final GroupService groupService;
     private final FacultyService facultyService;
     private final StudentService studentService;
-    private final StudentDtoMapper studentDtoMapper;
 
     @GetMapping
     public String showGroups(@RequestParam(required = false) Integer facultyId,

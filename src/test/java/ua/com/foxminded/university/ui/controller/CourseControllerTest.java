@@ -5,6 +5,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -21,6 +23,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
@@ -40,6 +43,9 @@ class CourseControllerTest {
     public static final String URI_COURSES_ID = "/courses/{id}";
 
     private MockMvc mockMvc;
+
+    @Captor
+    ArgumentCaptor<Course> courseCaptor;
 
     @Mock
     private CourseService courseServiceMock;
@@ -167,10 +173,10 @@ class CourseControllerTest {
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
 
-            Course course = new Course();
-            course.setName(NAME_FIRST_COURSE);
-
-            verify(courseServiceMock).add(course);
+            verify(courseServiceMock).add(courseCaptor.capture());
+            Course expectedCourse = courseCaptor.getValue();
+            assertThat(expectedCourse.getId()).isNull();
+            assertThat(expectedCourse.getName()).isEqualTo(NAME_FIRST_COURSE);
         }
     }
 

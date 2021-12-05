@@ -13,8 +13,6 @@ import ua.com.foxminded.university.domain.dto.DepartmentDto;
 import ua.com.foxminded.university.domain.dto.GroupDto;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.Faculty;
-import ua.com.foxminded.university.domain.entity.Group;
-import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
@@ -40,7 +38,6 @@ public class FacultyController {
     private final GroupService groupService;
     private final DepartmentService departmentService;
     private final TeacherService teacherService;
-    private final TeacherDtoMapper teacherDtoMapper;
     private final PageSequenceCreator pageSequenceCreator;
 
     @GetMapping

@@ -11,6 +11,7 @@ import ua.com.foxminded.university.domain.entity.Teacher;
 import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import java.util.List;
 @Transactional
 public class TeacherServiceImpl implements TeacherService {
 
+    private static final String MESSAGE_TEACHER_NOT_FOUND = "Teacher id(%d) not found";
     private final TeacherDao teacherDao;
     private final TeacherDtoMapper teacherDtoMapper;
 
@@ -39,7 +41,9 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public TeacherDto getById(int id) {
         log.debug("Getting teacher by id({})", id);
-        Teacher teacher = teacherDao.getById(id).orElse(new Teacher());
+        Teacher teacher = teacherDao.getById(id)
+            .orElseThrow(() -> new EntityNotFoundException(
+                String.format(MESSAGE_TEACHER_NOT_FOUND, id)));
         log.info("Found {}", teacher);
         return teacherDtoMapper.toTeacherDto(teacher);
     }

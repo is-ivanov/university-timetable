@@ -14,13 +14,13 @@ import ua.com.foxminded.university.domain.entity.Teacher;
 import ua.com.foxminded.university.domain.filter.LessonFilter;
 import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.LessonService;
-import ua.com.foxminded.university.domain.service.interfaces.StudentService;
 import ua.com.foxminded.university.exception.ServiceException;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -37,7 +37,6 @@ public class LessonServiceImpl implements LessonService {
     public static final String MESSAGE_ROOM_NOT_AVAILABLE = "Room id(%d) is not available";
 
     private final LessonDao lessonDao;
-    private final StudentService studentService;
     private final LessonDtoMapper lessonDtoMapper;
     private final StudentDao studentDao;
 
@@ -140,8 +139,8 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     public List<LessonDto> getAllForStudentForTimePeriod(int studentId,
-                                                      LocalDateTime startTime,
-                                                      LocalDateTime endTime) {
+                                                         LocalDateTime startTime,
+                                                         LocalDateTime endTime) {
         log.debug("Getting lessons for student id({}) from {} to {})", studentId,
             startTime, endTime);
         List<Lesson> lessonsForStudent = lessonDao
@@ -152,8 +151,8 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     public List<LessonDto> getAllForTeacherForTimePeriod(int teacherId,
-                                                      LocalDateTime startTime,
-                                                      LocalDateTime endTime) {
+                                                         LocalDateTime startTime,
+                                                         LocalDateTime endTime) {
         log.debug("Getting lessons for teacher id({}) from {} to {})", teacherId,
             startTime, endTime);
         List<Lesson> lessonsForTeacher = lessonDao
@@ -164,8 +163,8 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     public List<LessonDto> getAllForRoomForTimePeriod(int roomId,
-                                                   LocalDateTime startTime,
-                                                   LocalDateTime endTime) {
+                                                      LocalDateTime startTime,
+                                                      LocalDateTime endTime) {
         log.debug("Getting lessons for room id({}) from {} to {})", roomId,
             startTime, endTime);
         List<Lesson> lessonsForRoom = lessonDao
@@ -276,14 +275,17 @@ public class LessonServiceImpl implements LessonService {
     private void checkStudent(Student student, Lesson lesson) {
         log.debug("Checking the student id({}) for lesson id({})",
             student.getId(), lesson.getId());
-        List<Lesson> lessonsFromThisStudent = new ArrayList<>(student.getLessons());
-        try {
-            checkAvailableLesson(lesson, lessonsFromThisStudent);
-        } catch (ServiceException e) {
-            log.warn("Student id({}) is not available for the lesson id({})",
-                student.getId(), lesson.getId());
-            throw new ServiceException(String.format(MESSAGE_STUDENT_NOT_AVAILABLE,
-                student.getId()), e);
+        Set<Lesson> lessonsForStudent = student.getLessons();
+        if (lessonsForStudent != null) {
+            List<Lesson> lessonsFromThisStudent = new ArrayList<>(lessonsForStudent);
+            try {
+                checkAvailableLesson(lesson, lessonsFromThisStudent);
+            } catch (ServiceException e) {
+                log.warn("Student id({}) is not available for the lesson id({})",
+                    student.getId(), lesson.getId());
+                throw new ServiceException(String.format(MESSAGE_STUDENT_NOT_AVAILABLE,
+                    student.getId()), e);
+            }
         }
     }
 

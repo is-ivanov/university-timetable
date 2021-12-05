@@ -9,28 +9,31 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.foxminded.university.dao.interfaces.TeacherDao;
+import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.Department;
-import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Teacher;
+import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 
-import java.util.*;
+import javax.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static ua.com.foxminded.university.TestObjects.*;
 
 @ExtendWith(MockitoExtension.class)
 class TeacherServiceImplTest {
 
-    public static final String FIRST_NAME = "FirstName";
-    public static final String LAST_NAME = "LastName";
-    public static final int ID1 = 1;
-    public static final int ID2 = 2;
-
     @Mock
     private TeacherDao teacherDaoMock;
+
+    @Mock
+    private TeacherDtoMapper mapperMock;
 
     @InjectMocks
     private TeacherServiceImpl teacherService;
@@ -48,29 +51,29 @@ class TeacherServiceImplTest {
 
     @Nested
     @DisplayName("test 'getById' method")
-    class getByIdTest {
+    class GetByIdTest {
 
         @Test
         @DisplayName("when Dao return Optional with Teacher then method " +
-            "should return this Teacher")
+            "should return this TeacherDto")
         void testReturnExpectedTeacher() {
-            Teacher expectedTeacher = new Teacher();
-            expectedTeacher.setId(ID1);
-            expectedTeacher.setFirstName(FIRST_NAME);
-            expectedTeacher.setLastName(LAST_NAME);
-            expectedTeacher.setActive(true);
-            expectedTeacher.setDepartment(new Department());
-            when(teacherDaoMock.getById(ID1)).thenReturn(Optional.of(expectedTeacher));
-            assertEquals(expectedTeacher, teacherService.getById(ID1));
+            Teacher teacher = createTestTeacher();
+            TeacherDto teacherDto = createTestTeacherDto();
+
+            when(teacherDaoMock.getById(ID1)).thenReturn(Optional.of(teacher));
+            when(mapperMock.toTeacherDto(teacher)).thenReturn(teacherDto);
+
+            assertThat(teacherService.getById(ID1)).isEqualTo(teacherDto);
         }
 
         @Test
-        @DisplayName("when Dao return empty Optional then method should " +
-            "return empty Teacher")
+        @DisplayName("when Dao return empty Optional then method should throw " +
+            "new EntityNotFoundException")
         void testReturnEmptyTeacher() {
-            Optional<Teacher> optional = Optional.empty();
-            when(teacherDaoMock.getById(anyInt())).thenReturn(optional);
-            assertEquals(new Teacher(), teacherService.getById(anyInt()));
+            when(teacherDaoMock.getById(ID1)).thenReturn(Optional.empty());
+            assertThatThrownBy(() -> teacherService.getById(ID1))
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessageContaining("Teacher id(1) not found");
         }
     }
 
@@ -78,26 +81,13 @@ class TeacherServiceImplTest {
     @DisplayName("test 'getAll' when Dao return List teachers then method " +
         "should return this List")
     void testGetAll_ReturnListTeachers() {
-        Faculty faculty = new Faculty();
-        faculty.setId(ID1);
-        Department department = new Department();
-        department.setId(ID1);
-        department.setFaculty(faculty);
-        Teacher teacher1 = new Teacher();
-        teacher1.setId(ID1);
-        teacher1.setActive(true);
-        teacher1.setFirstName(FIRST_NAME);
-        teacher1.setDepartment(department);
-        List<Teacher> expectedTeachers = new ArrayList<>();
-        expectedTeachers.add(teacher1);
-        Teacher teacher2 = new Teacher();
-        teacher2.setId(ID2);
-        teacher2.setActive(false);
-        teacher2.setDepartment(department);
-        expectedTeachers.add(teacher2);
+        List<Teacher> teachers = createTestTeachers(FACULTY_ID1);
+        List<TeacherDto> teacherDtos = createTestTeacherDtos(FACULTY_ID1);
 
-        when(teacherDaoMock.getAll()).thenReturn(expectedTeachers);
-        assertEquals(expectedTeachers, teacherService.getAll());
+        when(teacherDaoMock.getAll()).thenReturn(teachers);
+        when(mapperMock.toTeacherDtos(teachers)).thenReturn(teacherDtos);
+
+        assertThat(teacherService.getAll()).isEqualTo(teacherDtos);
     }
 
     @Test
@@ -120,7 +110,7 @@ class TeacherServiceImplTest {
 
     @Nested
     @DisplayName("test 'deactivateTeacher' method")
-    class deactivateStudentTest {
+    class DeactivateStudentTest {
 
         @Test
         @DisplayName("should call teacherDao.update once")
@@ -144,7 +134,7 @@ class TeacherServiceImplTest {
 
     @Nested
     @DisplayName("test 'activateTeacher' method")
-    class activateTeacherTest {
+    class ActivateTeacherTest {
 
         @Test
         @DisplayName("should call teacherDao.update once")
@@ -167,7 +157,7 @@ class TeacherServiceImplTest {
 
     @Nested
     @DisplayName("test 'transferTeacherToDepartment' method")
-    class transferTeacherToDepartmentTest {
+    class TransferTeacherToDepartmentTest {
 
         @Test
         @DisplayName("should call teacherDao.update once")
@@ -180,7 +170,7 @@ class TeacherServiceImplTest {
 
         @Test
         @DisplayName("should update Teacher with Departments from parameter")
-        void testSetTeacherDepartmentEqualsExpectedDepartment(){
+        void testSetTeacherDepartmentEqualsExpectedDepartment() {
             Department expectedDepartment = new Department();
             expectedDepartment.setId(ID1);
             expectedDepartment.setName("Test department name");
@@ -197,33 +187,26 @@ class TeacherServiceImplTest {
     @DisplayName("Test 'getAllByDepartment' when Dao return List teachers " +
         "then method should return this list")
     void testGetAllByDepartment() {
-        Faculty faculty = new Faculty();
-        faculty.setId(ID1);
-        Department department = new Department();
-        department.setId(ID1);
-        department.setFaculty(faculty);
-        Teacher teacher1 = new Teacher();
-        teacher1.setId(ID1);
-        teacher1.setFirstName(FIRST_NAME);
-        teacher1.setDepartment(department);
-        List<Teacher> expectedTeachers = new ArrayList<>();
-        expectedTeachers.add(teacher1);
+        List<Teacher> teachers = createTestTeachers(FACULTY_ID1);
+        List<TeacherDto> teacherDtos = createTestTeacherDtos(FACULTY_ID1);
 
-        when(teacherDaoMock.getAllByDepartment(ID1)).thenReturn(expectedTeachers);
-        assertEquals(expectedTeachers, teacherService.getAllByDepartment(ID1));
+        when(teacherDaoMock.getAllByDepartment(DEPARTMENT_ID1)).thenReturn(teachers);
+        when(mapperMock.toTeacherDtos(teachers)).thenReturn(teacherDtos);
+
+        assertThat(teacherService.getAllByDepartment(DEPARTMENT_ID1)).isEqualTo(teacherDtos);
     }
 
     @Test
     @DisplayName("Test 'getAllByFaculty' when Dao return List teachers then " +
         "method should return this list")
     void testGetAllByFaculty() {
-        Teacher teacher = new Teacher();
-        teacher.setId(ID1);
-        teacher.setFirstName(FIRST_NAME);
-        List<Teacher> expectedTeachers = Collections.singletonList(teacher);
+        List<Teacher> teachers = createTestTeachers(FACULTY_ID1);
+        List<TeacherDto> teacherDtos = createTestTeacherDtos(FACULTY_ID1);
 
-        when(teacherDaoMock.getAllByFaculty(ID1)).thenReturn(expectedTeachers);
-        assertEquals(expectedTeachers, teacherService.getAllByFaculty(ID1));
+        when(teacherDaoMock.getAllByFaculty(FACULTY_ID1)).thenReturn(teachers);
+        when(mapperMock.toTeacherDtos(teachers)).thenReturn(teacherDtos);
+
+        assertThat(teacherService.getAllByFaculty(FACULTY_ID1)).isEqualTo(teacherDtos);
     }
 
 }

@@ -16,9 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ua.com.foxminded.university.domain.dto.LessonDto;
-import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Room;
-import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.LessonService;
 import ua.com.foxminded.university.domain.service.interfaces.RoomService;
 import ua.com.foxminded.university.ui.PageSequenceCreator;
@@ -61,9 +59,6 @@ class RoomControllerTest {
 
     @Mock
     private LessonService lessonServiceMock;
-
-    @Mock
-    private LessonDtoMapper lessonDtoMapperMock;
 
     @Mock
     private PageSequenceCreator pageSequenceCreatorMock;
@@ -224,7 +219,7 @@ class RoomControllerTest {
             Room expectedRoom = roomCaptor.getValue();
             assertThat(expectedRoom.getBuilding(), is(BUILDING_FIRST_ROOM));
             assertThat(expectedRoom.getNumber(), is(NUMBER_FIRST_ROOM));
-            assertThat(expectedRoom.getId(), is(0));
+            assertThat(expectedRoom.getId(), is(nullValue()));
         }
     }
 
@@ -271,13 +266,10 @@ class RoomControllerTest {
             "return JSON with list lessonDtos in body")
         void getRequestWithParametersShouldReturnJsonWithListLessonDtos() throws Exception {
             int roomId = 13;
-//            List<Lesson> testLessons = createTestLessons();
             List<LessonDto> testLessonDtos = createTestLessonDtos();
             when(lessonServiceMock.getAllForRoomForTimePeriod(roomId,
                 START_TIME_TIMETABLE, END_TIME_TIMETABLE))
                 .thenReturn(testLessonDtos);
-//            when(lessonDtoMapperMock.toLessonDtos(testLessons))
-//                .thenReturn(testLessonDtos);
             mockMvc.perform(get(URI_ROOMS_ROOM_ID_TIMETABLE, roomId)
                     .param("start", START_TIME_TIMETABLE_ISO)
                     .param("end", END_TIME_TIMETABLE_ISO))

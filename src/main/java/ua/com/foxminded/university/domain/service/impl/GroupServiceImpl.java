@@ -12,6 +12,7 @@ import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.mapper.GroupDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -38,7 +39,9 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public GroupDto getById(int id) {
         log.debug("Getting group by id({})", id);
-        Group group = groupDao.getById(id).orElse(new Group());
+        Group group = groupDao.getById(id)
+            .orElseThrow(() -> new EntityNotFoundException(
+                String.format("Group id(%d) not found", id)));
         log.info("Found {}", group);
         return groupDtoMapper.toGroupDto(group);
     }

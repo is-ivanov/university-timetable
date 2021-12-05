@@ -18,11 +18,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ua.com.foxminded.university.domain.dto.DepartmentDto;
 import ua.com.foxminded.university.domain.dto.GroupDto;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
-import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
-import ua.com.foxminded.university.domain.entity.Group;
-import ua.com.foxminded.university.domain.entity.Teacher;
-import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
@@ -68,9 +64,6 @@ class FacultyControllerTest {
 
     @Mock
     private TeacherService teacherServiceMock;
-
-    @Mock
-    private TeacherDtoMapper teacherDtoMapperMock;
 
     @Mock
     private PageSequenceCreator pageSequenceCreatorMock;
@@ -223,7 +216,7 @@ class FacultyControllerTest {
 
     @Nested
     @DisplayName("test 'updateFaculty' method")
-    class UpdateFaculty {
+    class UpdateFacultyTest {
 
         @Test
         @DisplayName("when PUT request with parameters 'id' and 'name' then should " +
@@ -279,12 +272,12 @@ class FacultyControllerTest {
                     jsonPath("$", hasSize(testGroups.size())),
                     jsonPath("$[0].id", is(GROUP_ID1)),
                     jsonPath("$[0].name", is(NAME_FIRST_GROUP)),
-                    jsonPath("$[0].faculty.id", is(facultyId)),
-                    jsonPath("$[0].faculty.name", is(NAME_FIRST_FACULTY)),
+                    jsonPath("$[0].facultyId", is(facultyId)),
+                    jsonPath("$[0].facultyName", is(NAME_FIRST_FACULTY)),
                     jsonPath("$[1].id", is(GROUP_ID2)),
                     jsonPath("$[1].name", is(NAME_SECOND_GROUP)),
-                    jsonPath("$[1].faculty.id", is(facultyId)),
-                    jsonPath("$[1].faculty.name", is(NAME_FIRST_FACULTY))
+                    jsonPath("$[1].facultyId", is(facultyId)),
+                    jsonPath("$[1].facultyName", is(NAME_FIRST_FACULTY))
                 );
             verify(groupServiceMock, times(1)).getAll();
         }
@@ -305,12 +298,12 @@ class FacultyControllerTest {
                     jsonPath("$", hasSize(testGroups.size())),
                     jsonPath("$[0].id", is(GROUP_ID1)),
                     jsonPath("$[0].name", is(NAME_FIRST_GROUP)),
-                    jsonPath("$[0].faculty.id", is(facultyId)),
-                    jsonPath("$[0].faculty.name", is(NAME_FIRST_FACULTY)),
+                    jsonPath("$[0].facultyId", is(facultyId)),
+                    jsonPath("$[0].facultyName", is(NAME_FIRST_FACULTY)),
                     jsonPath("$[1].id", is(GROUP_ID2)),
                     jsonPath("$[1].name", is(NAME_SECOND_GROUP)),
-                    jsonPath("$[1].faculty.id", is(facultyId)),
-                    jsonPath("$[1].faculty.name", is(NAME_FIRST_FACULTY))
+                    jsonPath("$[1].facultyId", is(facultyId)),
+                    jsonPath("$[1].facultyName", is(NAME_FIRST_FACULTY))
                 );
             verify(groupServiceMock, times(1)).getAllByFacultyId(facultyId);
         }
@@ -340,12 +333,12 @@ class FacultyControllerTest {
                     jsonPath("$", hasSize(testGroups.size())),
                     jsonPath("$[0].id", is(GROUP_ID1)),
                     jsonPath("$[0].name", is(NAME_FIRST_GROUP)),
-                    jsonPath("$[0].faculty.id", is(facultyId)),
-                    jsonPath("$[0].faculty.name", is(NAME_FIRST_FACULTY)),
+                    jsonPath("$[0].facultyId", is(facultyId)),
+                    jsonPath("$[0].facultyName", is(NAME_FIRST_FACULTY)),
                     jsonPath("$[1].id", is(GROUP_ID2)),
                     jsonPath("$[1].name", is(NAME_SECOND_GROUP)),
-                    jsonPath("$[1].faculty.id", is(facultyId)),
-                    jsonPath("$[1].faculty.name", is(NAME_FIRST_FACULTY))
+                    jsonPath("$[1].facultyId", is(facultyId)),
+                    jsonPath("$[1].facultyName", is(NAME_FIRST_FACULTY))
                 );
             verify(groupServiceMock, times(1))
                 .getFreeGroupsByFacultyOnLessonTime(facultyId, DATE_FROM, DATE_TO);
@@ -402,7 +395,7 @@ class FacultyControllerTest {
 
     @Nested
     @DisplayName("test 'getTeachersByFaculty' method")
-    class GetTeachersByFaculty {
+    class GetTeachersByFacultyTest {
 
         @Test
         @DisplayName("when GET request with parameter id then should call " +

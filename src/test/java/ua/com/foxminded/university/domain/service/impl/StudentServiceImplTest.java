@@ -27,7 +27,6 @@ import static ua.com.foxminded.university.TestObjects.*;
 @ExtendWith(MockitoExtension.class)
 class StudentServiceImplTest {
 
-    private static final int ID1 = 1;
     public static final String MESSAGE_STUDENT_NOT_FOUND = "Student id(78) not found";
 
     @Mock

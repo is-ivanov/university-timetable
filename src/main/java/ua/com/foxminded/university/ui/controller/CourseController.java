@@ -20,7 +20,7 @@ import static ua.com.foxminded.university.ui.Util.defineRedirect;
 @RequiredArgsConstructor
 @Controller
 @RequestMapping("/courses")
-public class CourseController {
+public class  CourseController {
 
     public static final String URI_COURSES = "/courses";
 
