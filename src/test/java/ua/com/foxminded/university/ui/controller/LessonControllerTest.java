@@ -91,7 +91,6 @@ class LessonControllerTest {
         void getRequestWithoutParameters() throws Exception {
             List<Faculty> faculties = createTestFaculties();
             List<DepartmentDto> departments = createTestDepartmentDtos();
-//            List<Teacher> teachers = createTestTeachers(ID1);
             List<TeacherDto> teacherDtos = createTestTeacherDtos(ID1);
             List<Course> courses = createTestCourses();
             List<Room> rooms = createTestRooms();
@@ -99,7 +98,6 @@ class LessonControllerTest {
             when(facultyServiceMock.getAllSortedByNameAsc()).thenReturn(faculties);
             when(departmentServiceMock.getAll()).thenReturn(departments);
             when(teacherServiceMock.getAll()).thenReturn(teacherDtos);
-//            when(teacherDtoMapperMock.toTeacherDtos(teachers)).thenReturn(teacherDtos);
             when(courseServiceMock.getAll()).thenReturn(courses);
             when(roomServiceMock.getAll()).thenReturn(rooms);
 

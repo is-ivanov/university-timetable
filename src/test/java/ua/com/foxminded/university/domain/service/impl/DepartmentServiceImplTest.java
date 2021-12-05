@@ -25,9 +25,6 @@ import static ua.com.foxminded.university.TestObjects.*;
 @ExtendWith(MockitoExtension.class)
 class DepartmentServiceImplTest {
 
-    public static final String DEPARTMENT_NAME = "Department name";
-    public static final int ID1 = 1;
-
     @Mock
     private DepartmentDao departmentDaoMock;
 
@@ -70,9 +67,7 @@ class DepartmentServiceImplTest {
         void testReturnEmptyDepartment() {
             when(departmentDaoMock.getById(ID1)).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> {
-                departmentService.getById(ID1);
-            })
+            assertThatThrownBy(() -> departmentService.getById(ID1))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining("Department id(1) not found");
         }

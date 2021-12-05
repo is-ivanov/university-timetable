@@ -4,7 +4,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.jdbc.JdbcTestUtils;
@@ -28,14 +27,18 @@ class JpaGroupDaoImplTest extends IntegrationTestBase {
 
     private static final String TABLE_NAME = "groups";
     private static final String NAME_TEST_GROUP = "GroupName";
-    private static final String MESSAGE_DELETE_GROUP_NOT_FOUND = "Can't delete because group id(4) not found";
-    private static final LocalDateTime START_FIRST_LESSON = LocalDateTime.of(2021, 6, 12, 14, 0);
-    private static final LocalDateTime END_FIRST_LESSON = LocalDateTime.of(2021, 6, 12, 15, 30);
-    private static final LocalDateTime START_SECOND_LESSON = LocalDateTime.of(2021, 6, 10, 14, 0);
-    private static final LocalDateTime END_SECOND_LESSON = LocalDateTime.of(2021, 6, 10, 15, 30);
+    private static final String MESSAGE_DELETE_GROUP_NOT_FOUND =
+        "Can't delete because group id(4) not found";
+    private static final LocalDateTime START_FIRST_LESSON =
+        LocalDateTime.of(2021, 6, 12, 14, 0);
+    private static final LocalDateTime END_FIRST_LESSON =
+        LocalDateTime.of(2021, 6, 12, 15, 30);
+    private static final LocalDateTime START_SECOND_LESSON =
+        LocalDateTime.of(2021, 6, 10, 14, 0);
+    private static final LocalDateTime END_SECOND_LESSON =
+        LocalDateTime.of(2021, 6, 10, 15, 30);
 
     @Autowired
-    @Qualifier("jpaGroupDaoImpl")
     private GroupDao dao;
 
     @Autowired
@@ -205,11 +208,11 @@ class JpaGroupDaoImplTest extends IntegrationTestBase {
 
         @Nested
         @DisplayName("when all students from the group have lesson on checked time")
-        class AllStudentFromGroupHaveLesson {
+        class AllStudentFromGroupHaveLessonTest {
 
             @Nested
             @DisplayName("if checked lesson")
-            class IfCheckedLesson {
+            class IfCheckedLessonTest {
 
                 @Test
                 @DisplayName("starts at the same time as the scheduled lesson " +
@@ -269,11 +272,11 @@ class JpaGroupDaoImplTest extends IntegrationTestBase {
 
         @Nested
         @DisplayName("when several students from the group have lesson on checked time")
-        class SeveralStudentsFromGroupHaveLesson {
+        class SeveralStudentsFromGroupHaveLessonTest {
 
             @Nested
             @DisplayName("then should return this group regardless of checked lesson time")
-            class IfCheckedLesson {
+            class IfCheckedLessonTest {
 
                 @Test
                 @DisplayName("starts at the same time as the scheduled lesson")
@@ -319,15 +322,15 @@ class JpaGroupDaoImplTest extends IntegrationTestBase {
 
         @Nested
         @DisplayName("when the faculty contains groups")
-        class FacultyContainsGroup {
+        class FacultyContainsGroupTest {
 
             @Nested
             @DisplayName("when all students from the group have lesson on checked time")
-            class AllStudentFromGroupHaveLesson {
+            class AllStudentFromGroupHaveLessonTest {
 
                 @Nested
                 @DisplayName("if checked lesson")
-                class IfCheckedLesson {
+                class IfCheckedLessonTest {
 
                     @Test
                     @DisplayName("starts at the same time as the scheduled lesson " +
@@ -389,11 +392,11 @@ class JpaGroupDaoImplTest extends IntegrationTestBase {
 
             @Nested
             @DisplayName("when several students from the group have lesson on checked time")
-            class SeveralStudentsFromGroupHaveLesson {
+            class SeveralStudentsFromGroupHaveLessonTest {
 
                 @Nested
                 @DisplayName("then should return this group regardless of checked lesson time")
-                class IfCheckedLesson {
+                class IfCheckedLessonTest {
 
                     @Test
                     @DisplayName("starts at the same time as the scheduled lesson")

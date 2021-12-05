@@ -4,7 +4,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,10 +26,10 @@ import static ua.com.foxminded.university.TestObjects.*;
 class JpaCourseDaoImplTest extends IntegrationTestBase {
 
     private static final String TEST_COURSE_NAME = "New course";
-    private static final String MESSAGE_DELETE_COURSE_NOT_FOUND = "Can't delete because course id(4) not found";
+    private static final String MESSAGE_DELETE_COURSE_NOT_FOUND =
+        "Can't delete because course id(4) not found";
 
     @Autowired
-    @Qualifier("jpaCourseDaoImpl")
     private CourseDao dao;
 
     @Nested
@@ -173,7 +172,7 @@ class JpaCourseDaoImplTest extends IntegrationTestBase {
     @DisplayName("test 'getAllSortedPaginated' method")
     class GetAllSortedPaginatedTest {
 
-        long totalCourses = 3L;
+        final long totalCourses = 3L;
 
         @Test
         @DisplayName("when pageable size = 1 without sort then return page with " +

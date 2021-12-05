@@ -9,7 +9,6 @@ import ua.com.foxminded.university.domain.dto.DepartmentDto;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
-import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
@@ -28,7 +27,6 @@ public class DepartmentController {
     private final DepartmentService departmentService;
     private final FacultyService facultyService;
     private final TeacherService teacherService;
-    private final TeacherDtoMapper teacherDtoMapper;
 
     @GetMapping
     public String showDepartments(@RequestParam(required = false) Integer facultyId,

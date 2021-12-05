@@ -24,8 +24,7 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
-//@PropertySource("classpath:db.properties")
-@PropertySource("classpath:db_hibernate_auto.properties")
+@PropertySource("classpath:app.properties")
 @ComponentScan({"ua.com.foxminded.university.dao", "ua.com.foxminded.university.domain"})
 public class RootConfig {
 
@@ -85,8 +84,6 @@ public class RootConfig {
     private Properties additionalProperties() {
         Properties properties = new Properties();
         properties.setProperty(HIBERNATE_DIALECT, env.getProperty(HIBERNATE_DIALECT));
-
-//        For db_hibernate_auto.properties
         properties.setProperty(HIBERNATE_FORMAT_SQL, env.getProperty(HIBERNATE_FORMAT_SQL));
         properties.setProperty(HIBERNATE_HIGHLIGHT_SQL, env.getProperty(HIBERNATE_HIGHLIGHT_SQL));
         properties.setProperty(HIBERNATE_USE_SQL_COMMENTS, env.getProperty(HIBERNATE_USE_SQL_COMMENTS));

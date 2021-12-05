@@ -11,34 +11,14 @@ import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.springconfig.TestMapperConfig;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
 import static ua.com.foxminded.university.TestObjects.*;
 
 @SpringJUnitConfig(TestMapperConfig.class)
 class LessonDtoMapperTest {
-
-    private static final String COURSE_NAME = "Test course name";
-    private static final String FIRST_NAME_TEACHER = "FirstNameTeacher";
-    private static final String PATRONYMIC_TEACHER = "PatronymicTeacher";
-    private static final String LAST_NAME_TEACHER = "LastNameTeacher";
-    private static final String FULL_NAME_TEACHER = "LastNameTeacher, F.P.";
-    private static final String GROUP_NAME = "Test group name";
-    private static final String FIRST_NAME_STUDENT = "FirstNameStudent";
-    private static final String PATRONYMIC_STUDENT = "PatronymicStudent";
-    private static final String LAST_NAME_STUDENT = "LastNameStudent";
-    private static final String BUILDING_NAME = "BuildingName";
-    private static final String NUMBER_ROOM = "546";
-    private static final String BUILDING_AND_NUMBER_ROOM = "BuildingName - 546";
-    private static final int DURATION_LESSON_IN_MINUTES = 90;
-    private static final int ID1 = 1;
-    private static final int ID2 = 2;
-    private static final LocalDateTime TIME_START = LocalDateTime.of(2021, 8, 10, 10, 0);
-    private static final LocalDateTime TIME_END = TIME_START.plusMinutes(DURATION_LESSON_IN_MINUTES);
 
     @Autowired
     private LessonDtoMapper mapper;

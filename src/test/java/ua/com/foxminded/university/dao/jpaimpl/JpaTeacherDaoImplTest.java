@@ -26,8 +26,8 @@ import static ua.com.foxminded.university.TestObjects.*;
 class JpaTeacherDaoImplTest extends IntegrationTestBase {
 
     private static final String TABLE_NAME = "teachers";
-    private static final String MESSAGE_DELETE_EXCEPTION = "Can't delete " +
-        "because teacher id(4) not found";
+    private static final String MESSAGE_DELETE_EXCEPTION =
+        "Can't delete because teacher id(4) not found";
     private static final String TEST_TEACHER_FIRST_NAME = "John";
     private static final String TEST_TEACHER_LAST_NAME = "Dou";
     private static final String TEST_TEACHER_PATRONYMIC = "Ivanovich";
@@ -70,7 +70,7 @@ class JpaTeacherDaoImplTest extends IntegrationTestBase {
 
     @Nested
     @DisplayName("test 'getById' method")
-    class getByIdTest {
+    class GetByIdTest {
 
         @Test
         @DisplayName("with teacher_id1 should return expected teacher)")
@@ -98,7 +98,7 @@ class JpaTeacherDaoImplTest extends IntegrationTestBase {
 
     @Nested
     @DisplayName("test 'getAll' method")
-    class getAllTest {
+    class GetAllTest {
 
         @Test
         @DisplayName("should return List with size = 3 with expected teachers")
@@ -114,7 +114,7 @@ class JpaTeacherDaoImplTest extends IntegrationTestBase {
 
     @Nested
     @DisplayName("test 'update' method")
-    class updateTest {
+    class UpdateTest {
 
         @Test
         @DisplayName("with teacher_id1 should write new fields and " +
@@ -162,7 +162,7 @@ class JpaTeacherDaoImplTest extends IntegrationTestBase {
 
     @Nested
     @DisplayName("test 'delete' method")
-    class deleteTest {
+    class DeleteTest {
 
         @Test
         @DisplayName("with teacher_id3 should delete one record and number " +
@@ -184,7 +184,7 @@ class JpaTeacherDaoImplTest extends IntegrationTestBase {
 
     @Nested
     @DisplayName("test 'delete' method with parameter id")
-    class deleteIdTest {
+    class DeleteIdTest {
 
         @Test
         @DisplayName("with teacher_id3 should delete one record and number " +
@@ -214,7 +214,7 @@ class JpaTeacherDaoImplTest extends IntegrationTestBase {
 
     @Nested
     @DisplayName("test 'getAllByDepartment' method")
-    class getAllByDepartmentTest {
+    class GetAllByDepartmentTest {
 
         @Test
         @DisplayName("with department_id1 should return List with size = 2")
@@ -235,7 +235,7 @@ class JpaTeacherDaoImplTest extends IntegrationTestBase {
 
     @Nested
     @DisplayName("test 'getAllByFaculty' method")
-    class getAllByFacultyTest {
+    class GetAllByFacultyTest {
 
         @Test
         @DisplayName("with faculty_id1 should return List with size = 3")

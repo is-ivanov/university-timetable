@@ -4,7 +4,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,11 +30,10 @@ class JpaRoomDaoImplTest extends IntegrationTestBase {
     private static final String TABLE_NAME = "rooms";
     private static final String TEST_BUILDING = "testBuilding";
     private static final String TEST_ROOM_NUMBER = "testRoom";
-    private static final String MESSAGE_DELETE_EXCEPTION = "Can't delete " +
-        "because room id(4) not found";
+    private static final String MESSAGE_DELETE_EXCEPTION =
+        "Can't delete because room id(4) not found";
 
     @Autowired
-    @Qualifier("jpaRoomDaoImpl")
     private RoomDao dao;
 
     @Autowired
@@ -137,8 +135,8 @@ class JpaRoomDaoImplTest extends IntegrationTestBase {
             dao.delete(room);
             List<Room> rooms = dao.getAll();
             assertThat(rooms).hasSize(expectedQuantityRooms);
-                assertThat(rooms).extracting(Room::getNumber)
-                    .doesNotContain(NUMBER_FIRST_ROOM);
+            assertThat(rooms).extracting(Room::getNumber)
+                .doesNotContain(NUMBER_FIRST_ROOM);
         }
     }
 
@@ -183,7 +181,7 @@ class JpaRoomDaoImplTest extends IntegrationTestBase {
     @Nested
     @DisplayName("test 'getAllSortedPaginated' method")
     class GetAllSortedPaginatedTest {
-        long totalRooms = 3L;
+        final long totalRooms = 3L;
 
         @Test
         @DisplayName("when size 1 and first page without sorted then should return " +

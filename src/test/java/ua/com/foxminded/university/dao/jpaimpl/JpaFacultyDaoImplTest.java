@@ -4,7 +4,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,10 +25,10 @@ import static ua.com.foxminded.university.TestObjects.*;
 @Sql("/sql/hibernate/faculty-test-data.sql")
 class JpaFacultyDaoImplTest extends IntegrationTestBase {
 
-    public static final String MESSAGE_DELETE_FACULTY_NOT_FOUND = "Can't delete because faculty id(3) not found";
+    public static final String MESSAGE_DELETE_FACULTY_NOT_FOUND =
+        "Can't delete because faculty id(3) not found";
 
     @Autowired
-    @Qualifier("jpaFacultyDaoImpl")
     private FacultyDao dao;
 
     @Nested
@@ -175,7 +174,7 @@ class JpaFacultyDaoImplTest extends IntegrationTestBase {
     @DisplayName("test 'getAllSortedPaginated' method")
     class GetAllSortedPaginatedTest {
 
-        int totalFaculties = 2;
+        final int totalFaculties = 2;
 
         @Test
         @DisplayName("when size 1 and first page then return first one faculty")

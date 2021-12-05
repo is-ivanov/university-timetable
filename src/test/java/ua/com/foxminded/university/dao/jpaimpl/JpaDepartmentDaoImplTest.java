@@ -4,7 +4,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.jdbc.Sql;
 import ua.com.foxminded.university.dao.interfaces.DepartmentDao;
 import ua.com.foxminded.university.domain.entity.Department;
@@ -23,11 +22,10 @@ import static ua.com.foxminded.university.TestObjects.*;
 @Sql("/sql/hibernate/department-test-data.sql")
 class JpaDepartmentDaoImplTest extends IntegrationTestBase {
 
-    private static final String MESSAGE_DELETE_EXCEPTION = "Can't delete because " +
-        "department id(3) not found";
+    private static final String MESSAGE_DELETE_EXCEPTION =
+        "Can't delete because department id(3) not found";
 
     @Autowired
-    @Qualifier("jpaDepartmentDaoImpl")
     private DepartmentDao dao;
 
     @Nested

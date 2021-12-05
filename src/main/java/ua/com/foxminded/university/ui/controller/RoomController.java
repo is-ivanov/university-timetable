@@ -10,9 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ua.com.foxminded.university.domain.dto.LessonDto;
-import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Room;
-import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.LessonService;
 import ua.com.foxminded.university.domain.service.interfaces.RoomService;
 import ua.com.foxminded.university.ui.PageSequenceCreator;
@@ -35,7 +33,6 @@ public class RoomController {
 
     private final RoomService roomService;
     private final LessonService lessonService;
-    private final LessonDtoMapper lessonDtoMapper;
     private final PageSequenceCreator pageSequenceCreator;
 
     @GetMapping

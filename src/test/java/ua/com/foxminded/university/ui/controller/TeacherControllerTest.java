@@ -17,8 +17,6 @@ import ua.com.foxminded.university.domain.dto.DepartmentDto;
 import ua.com.foxminded.university.domain.dto.LessonDto;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.Faculty;
-import ua.com.foxminded.university.domain.entity.Lesson;
-import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
 import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
@@ -65,9 +63,6 @@ class TeacherControllerTest {
     @Mock
     private LessonService lessonServiceMock;
 
-    @Mock
-    private LessonDtoMapper lessonMapperMock;
-
     @InjectMocks
     private TeacherController teacherController;
 
@@ -111,14 +106,11 @@ class TeacherControllerTest {
             int facultyId = 15;
             int departmentId = 47;
 
-//            List<Teacher> testTeachers = createTestTeachers(facultyId);
             List<DepartmentDto> departments = createTestDepartmentDtos();
             List<TeacherDto> testTeacherDtos = createTestTeacherDtos(facultyId);
 
             when(teacherServiceMock.getAllByDepartment(departmentId))
                 .thenReturn(testTeacherDtos);
-//            when(teacherMapperMock.toTeacherDtos(testTeachers))
-//                .thenReturn(testTeacherDtos);
             when(departmentServiceMock.getAllByFaculty(facultyId))
                 .thenReturn(departments);
 
@@ -141,13 +133,10 @@ class TeacherControllerTest {
         void getRequestWithFacultyIdAndWithoutDepartmentId() throws Exception {
             int facultyId = 34;
 
-//            List<Teacher> testTeachers = createTestTeachers(facultyId);
             List<TeacherDto> testTeacherDtos = createTestTeacherDtos(facultyId);
 
             when(teacherServiceMock.getAllByFaculty(facultyId))
                 .thenReturn(testTeacherDtos);
-//            when(teacherMapperMock.toTeacherDtos(testTeachers))
-//                .thenReturn(testTeacherDtos);
 
             mockMvc.perform(get(URI_TEACHERS)
                     .param("facultyId", String.valueOf(facultyId)))
@@ -169,13 +158,10 @@ class TeacherControllerTest {
         @DisplayName("when GET request with parameters time_start and time_end " +
             "then should return JSON with list teacherDtos in body")
         void getRequestWithParametersShouldReturnJsonListTeacherDtos() throws Exception {
-//            List<Teacher> testTeachers = createTestTeachers(FACULTY_ID1);
             List<TeacherDto> testTeacherDtos = createTestTeacherDtos(FACULTY_ID1);
 
             when(teacherServiceMock.getFreeTeachersOnLessonTime(DATE_FROM, DATE_TO))
                 .thenReturn(testTeacherDtos);
-//            when(teacherMapperMock.toTeacherDtos(testTeachers))
-//                .thenReturn(testTeacherDtos);
 
             mockMvc.perform(get(URI_TEACHERS_FREE)
                     .param("time_start", TEXT_DATE_FROM)
@@ -237,12 +223,9 @@ class TeacherControllerTest {
         @Test
         @DisplayName("when GET request with PathVariable id then should return JSON with expected teacherDto in body")
         void getRequestWithIdShouldReturnJsonWithTeacherDto() throws Exception {
-//            Teacher testTeacher = createTestTeacher();
             TeacherDto testTeacherDto = createTestTeacherDto();
 
             when(teacherServiceMock.getById(TEACHER_ID1)).thenReturn(testTeacherDto);
-//            when(teacherMapperMock.toTeacherDto(testTeacher))
-//                .thenReturn(testTeacherDto);
 
             mockMvc.perform(get(URI_TEACHERS_ID, TEACHER_ID1))
                 .andDo(print())
@@ -311,14 +294,11 @@ class TeacherControllerTest {
             "should return JSON with list lessonDtos in body ")
         void getRequestWithParametersShouldReturnJsonWithListLessonDtos() throws Exception {
             int teacherId = 46;
-//            List<Lesson> testLessons = createTestLessons();
             List<LessonDto> testLessonDtos = createTestLessonDtos();
 
             when(lessonServiceMock.getAllForTeacherForTimePeriod(teacherId,
                 START_TIME_TIMETABLE, END_TIME_TIMETABLE))
                 .thenReturn(testLessonDtos);
-//            when(lessonMapperMock.toLessonDtos(testLessons))
-//                .thenReturn(testLessonDtos);
 
             mockMvc.perform(get(URI_TEACHERS_ID_TIMETABLE, teacherId)
                 .param("start", START_TIME_TIMETABLE_ISO)

@@ -41,8 +41,10 @@ class RoomControllerTest {
     public static final String ROOM_NUMBER = "room_number";
     public static final String URI_ROOMS_ROOM_ID_TIMETABLE = "/rooms/{id}/timetable";
     public static final String URI_ROOMS_FREE = "/rooms/free";
-    public static final LocalDateTime START_TIME_TIMETABLE = LocalDateTime.of(2021, 9, 27, 0, 0, 0);
-    public static final LocalDateTime END_TIME_TIMETABLE = LocalDateTime.of(2021, 11, 8, 0, 0, 0);
+    public static final LocalDateTime START_TIME_TIMETABLE =
+        LocalDateTime.of(2021, 9, 27, 0, 0, 0);
+    public static final LocalDateTime END_TIME_TIMETABLE =
+        LocalDateTime.of(2021, 11, 8, 0, 0, 0);
     public static final String START_TIME_TIMETABLE_ISO = "2021-09-27T00:00:00+03:00";
     public static final String END_TIME_TIMETABLE_ISO = "2021-11-08T00:00:00+03:00";
 

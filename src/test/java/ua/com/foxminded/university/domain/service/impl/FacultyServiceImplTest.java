@@ -68,9 +68,7 @@ class FacultyServiceImplTest {
             " new EntityNotFoundException")
         void testReturnEmptyFaculty() {
             when(facultyDaoMock.getById(ID1)).thenReturn(Optional.empty());
-            assertThatThrownBy(() -> {
-                facultyService.getById(ID1);
-            })
+            assertThatThrownBy(() -> facultyService.getById(ID1))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining("Faculty id(1) not found");
         }

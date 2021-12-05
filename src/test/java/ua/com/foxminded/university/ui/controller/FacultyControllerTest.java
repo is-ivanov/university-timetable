@@ -402,13 +402,10 @@ class FacultyControllerTest {
             "teacherDtoMapper and teacherService once")
         void getRequestWithParameterIdEquals4() throws Exception {
             int facultyId = 4;
-//            List<Teacher> testTeachers = createTestTeachers(facultyId);
             List<TeacherDto> testTeacherDtos = createTestTeacherDtos(facultyId);
 
             when(teacherServiceMock.getAllByFaculty(facultyId))
                 .thenReturn(testTeacherDtos);
-//            when(teacherDtoMapperMock.toTeacherDtos(testTeachers))
-//                .thenReturn(testTeacherDtos);
 
             mockMvc.perform(get(URI_FACULTIES_ID_TEACHERS, facultyId))
                 .andDo(print())

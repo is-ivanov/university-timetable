@@ -8,9 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ua.com.foxminded.university.domain.dto.LessonDto;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
-import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Teacher;
-import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
 import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
@@ -36,7 +34,6 @@ public class TeacherController {
     private final DepartmentService departmentService;
     private final TeacherDtoMapper teacherMapper;
     private final LessonService lessonService;
-    private final LessonDtoMapper lessonDtoMapper;
 
     @GetMapping
     public String showTeachers(@RequestParam(required = false) Integer facultyId,

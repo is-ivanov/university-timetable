@@ -14,10 +14,10 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <java.version>8</java.version>
-        <mockito.version>4.0.0</mockito.version>
+        <mockito.version>4.1.0</mockito.version>
         <slf4j.version>1.7.32</slf4j.version>
         <logback.version>1.2.7</logback.version>
-        <thymeleaf.version>3.0.12.RELEASE</thymeleaf.version>
+        <thymeleaf.version>3.0.13.RELEASE</thymeleaf.version>
         <mapstruct.version>1.5.0.Beta1</mapstruct.version>
         <lombok.version>1.18.22</lombok.version>
         <lombok-mapstruct-binding.version>0.2.0
@@ -87,9 +87,9 @@
             <version>2.2</version>
         </dependency>
         <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
-            <version>8.0.4</version>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>4.6.2</version>
         </dependency>
 
         <!--Spring-->
@@ -248,18 +248,18 @@
             <version>3.21.0</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>1.4.200</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.github.hakky54</groupId>
-            <artifactId>logcaptor</artifactId>
-            <version>2.7.0</version>
-            <scope>test</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.h2database</groupId>-->
+<!--            <artifactId>h2</artifactId>-->
+<!--            <version>1.4.200</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>io.github.hakky54</groupId>-->
+<!--            <artifactId>logcaptor</artifactId>-->
+<!--            <version>2.7.0</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>com.jayway.jsonpath</groupId>
             <artifactId>json-path</artifactId>

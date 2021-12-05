@@ -48,7 +48,7 @@ class RoomServiceImplTest {
 
     @Nested
     @DisplayName("test 'getById' method")
-    class getByIdTest {
+    class GetByIdTest {
 
 
         @Test
@@ -68,9 +68,7 @@ class RoomServiceImplTest {
             "return empty Room")
         void testReturnEmptyRoom() {
             when(roomDaoMock.getById(ID1)).thenReturn(Optional.empty());
-            assertThatThrownBy(() -> {
-                roomService.getById(ID1);
-            })
+            assertThatThrownBy(() -> roomService.getById(ID1))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining("Room id(1) not found");
         }

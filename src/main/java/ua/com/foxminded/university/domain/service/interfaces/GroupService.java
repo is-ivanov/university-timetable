@@ -9,18 +9,12 @@ import java.util.List;
 
 public interface GroupService extends Service<Group, GroupDto> {
 
-//    List<GroupDto> getAllDtos();
-
-//    GroupDto getDtoById(int groupId);
-
     void deactivateGroup(Group group);
 
     Group joinGroups(List<Group> groups, String nameNewGroup,
                      Faculty facultyNewGroup);
 
     List<GroupDto> getAllByFacultyId(int facultyId);
-
-//    List<GroupDto> getAllDtosByFacultyId(int facultyId);
 
     List<GroupDto> getFreeGroupsOnLessonTime(LocalDateTime startTime,
                                           LocalDateTime endTime);
