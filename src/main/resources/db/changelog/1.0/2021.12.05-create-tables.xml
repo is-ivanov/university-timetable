@@ -1,0 +1,234 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+    <changeSet author="Ivan" id="1638734844140-1">
+        <createTable tableName="courses">
+            <column autoIncrement="true" name="course_id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true"
+                             primaryKeyName="pk_courses"/>
+            </column>
+            <column name="course_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Ivan" id="1638734844140-3">
+        <createTable tableName="departments">
+            <column autoIncrement="true" name="department_id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true"
+                             primaryKeyName="pk_departments"/>
+            </column>
+            <column name="department_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="faculty_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Ivan" id="1638734844140-5">
+        <createTable tableName="faculties">
+            <column autoIncrement="true" name="faculty_id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true"
+                             primaryKeyName="pk_faculties"/>
+            </column>
+            <column name="faculty_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Ivan" id="1638734844140-7">
+        <createTable tableName="groups">
+            <column autoIncrement="true" name="group_id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true"
+                             primaryKeyName="pk_groups"/>
+            </column>
+            <column name="group_name" type="VARCHAR(15)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="faculty_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="group_active" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Ivan" id="1638734844140-9">
+        <createTable tableName="lessons">
+            <column autoIncrement="true" name="lesson_id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true"
+                             primaryKeyName="pk_lessons"/>
+            </column>
+            <column name="teacher_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="course_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="room_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="time_start" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="time_end" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Ivan" id="1638734844140-11">
+        <createTable tableName="rooms">
+            <column autoIncrement="true" name="room_id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true"
+                             primaryKeyName="pk_rooms"/>
+            </column>
+            <column name="building" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="room_number" type="VARCHAR(15)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Ivan" id="1638734844140-13">
+        <createTable tableName="students">
+            <column autoIncrement="true" name="student_id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true"
+                             primaryKeyName="pk_students"/>
+            </column>
+            <column name="student_first_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="student_last_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="student_patronymic" type="VARCHAR(100)"/>
+            <column name="group_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="student_active" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Ivan" id="1638734844140-15">
+        <createTable tableName="teachers">
+            <column autoIncrement="true" name="teacher_id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true"
+                             primaryKeyName="pk_teachers"/>
+            </column>
+            <column name="teacher_first_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="teacher_last_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="teacher_patronymic" type="VARCHAR(100)"/>
+            <column name="department_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="teacher_active" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Ivan" id="1638734844140-17">
+        <createTable tableName="students_lessons">
+            <column name="student_id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true"
+                             primaryKeyName="pk_students_lessons"/>
+            </column>
+            <column name="lesson_id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true"
+                             primaryKeyName="pk_students_lessons"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Ivan" id="1638734844140-19">
+        <addForeignKeyConstraint baseColumnNames="course_id"
+                                 baseTableName="lessons"
+                                 constraintName="fk_course" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="course_id"
+                                 referencedTableName="courses" validate="true"/>
+    </changeSet>
+    <changeSet author="Ivan" id="1638734844140-20">
+        <addForeignKeyConstraint baseColumnNames="department_id"
+                                 baseTableName="teachers"
+                                 constraintName="fk_department"
+                                 deferrable="false" initiallyDeferred="false"
+                                 onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="department_id"
+                                 referencedTableName="departments"
+                                 validate="true"/>
+    </changeSet>
+    <changeSet author="Ivan" id="1638734844140-21">
+        <addForeignKeyConstraint baseColumnNames="faculty_id"
+                                 baseTableName="departments"
+                                 constraintName="fk_faculty" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="faculty_id"
+                                 referencedTableName="faculties"
+                                 validate="true"/>
+    </changeSet>
+    <changeSet author="Ivan" id="1638734844140-22">
+        <addForeignKeyConstraint baseColumnNames="group_id"
+                                 baseTableName="students"
+                                 constraintName="fk_group" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="group_id"
+                                 referencedTableName="groups" validate="true"/>
+    </changeSet>
+    <changeSet author="Ivan" id="1638734844140-23">
+        <addForeignKeyConstraint baseColumnNames="lesson_id"
+                                 baseTableName="students_lessons"
+                                 constraintName="fk_lesson" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="lesson_id"
+                                 referencedTableName="lessons" validate="true"/>
+    </changeSet>
+    <changeSet author="Ivan" id="1638734844140-24">
+        <addForeignKeyConstraint baseColumnNames="room_id"
+                                 baseTableName="lessons"
+                                 constraintName="fk_room" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="room_id"
+                                 referencedTableName="rooms" validate="true"/>
+    </changeSet>
+    <changeSet author="Ivan" id="1638734844140-25">
+        <addForeignKeyConstraint baseColumnNames="teacher_id"
+                                 baseTableName="lessons"
+                                 constraintName="fk_teacher" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="teacher_id"
+                                 referencedTableName="teachers"
+                                 validate="true"/>
+    </changeSet>
+    <changeSet author="Ivan" id="1638734844140-26">
+        <addForeignKeyConstraint baseColumnNames="student_id"
+                                 baseTableName="students_lessons"
+                                 constraintName="fk_students" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="student_id"
+                                 referencedTableName="students"
+                                 validate="true"/>
+    </changeSet>
+</databaseChangeLog>
