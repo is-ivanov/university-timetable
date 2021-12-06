@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.com.foxminded.university.dao.interfaces.StudentDao;
+import ua.com.foxminded.university.dao.interfaces.StudentRepository;
 import ua.com.foxminded.university.domain.dto.StudentDto;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
@@ -22,7 +22,7 @@ import java.util.List;
 @Transactional
 public class StudentServiceImpl implements StudentService {
 
-    private final StudentDao studentDao;
+    private final StudentRepository studentRepository;
     private final StudentDtoMapper studentDtoMapper;
 
     @Override
@@ -31,8 +31,8 @@ public class StudentServiceImpl implements StudentService {
             student.getFirstName(), student.getPatronymic(),
             student.getLastName(), student.isActive(),
             student.getGroup().getName());
-        studentDao.add(student);
-        log.info("Student [{} {} {}, active={}, group {}] added successfully",
+        studentRepository.add(student);
+        log.debug("Student [{} {} {}, active={}, group {}] added successfully",
             student.getFirstName(), student.getPatronymic(),
             student.getLastName(), student.isActive(),
             student.getGroup().getName());
@@ -41,18 +41,18 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public StudentDto getById(int id) {
         log.debug("Getting student by id({})", id);
-        Student student = studentDao.getById(id)
+        Student student = studentRepository.getById(id)
             .orElseThrow(() -> new EntityNotFoundException(
                 String.format("Student id(%d) not found", id)));
-        log.info("Found {}", student);
+        log.debug("Found {}", student);
         return studentDtoMapper.toStudentDto(student);
     }
 
     @Override
     public List<StudentDto> getAll() {
         log.debug("Getting all students");
-        List<Student> students = studentDao.getAll();
-        log.info("Found {} students", students.size());
+        List<Student> students = studentRepository.getAll();
+        log.debug("Found {} students", students.size());
         return studentDtoMapper.toStudentDtos(students);
 
     }
@@ -62,8 +62,8 @@ public class StudentServiceImpl implements StudentService {
         log.debug("Updating student [id={}, {} {} {}, active={}]",
             student.getId(), student.getFirstName(), student.getPatronymic(),
             student.getLastName(), student.isActive());
-        studentDao.update(student);
-        log.info("Update student id({})", student.getId());
+        studentRepository.update(student);
+        log.debug("Update student id({})", student.getId());
     }
 
     @Override
@@ -71,15 +71,15 @@ public class StudentServiceImpl implements StudentService {
         log.debug("Deleting student [id={}, {} {} {}, active={}]",
             student.getId(), student.getFirstName(), student.getPatronymic(),
             student.getLastName(), student.isActive());
-        studentDao.delete(student);
-        log.info("Delete student id({})", student.getId());
+        studentRepository.delete(student);
+        log.debug("Delete student id({})", student.getId());
     }
 
     @Override
     public void delete(int id) {
         log.debug("Deleting student id({})", id);
-        studentDao.delete(id);
-        log.info("Delete student id({})", id);
+        studentRepository.delete(id);
+        log.debug("Delete student id({})", id);
     }
 
     @Override
@@ -87,8 +87,8 @@ public class StudentServiceImpl implements StudentService {
         log.debug("Deactivating student [id={}, {} {} {}]", student.getId(),
             student.getFirstName(), student.getPatronymic(), student.getLastName());
         student.setActive(false);
-        studentDao.update(student);
-        log.info("Deactivate student id({})", student.getId());
+        studentRepository.update(student);
+        log.debug("Deactivate student id({})", student.getId());
     }
 
     @Override
@@ -97,8 +97,8 @@ public class StudentServiceImpl implements StudentService {
             student.getFirstName(), student.getPatronymic(), student.getLastName());
         student.setActive(true);
         student.setGroup(group);
-        studentDao.update(student);
-        log.info("Activate student id({})", student.getId());
+        studentRepository.update(student);
+        log.debug("Activate student id({})", student.getId());
     }
 
     @Override
@@ -106,8 +106,8 @@ public class StudentServiceImpl implements StudentService {
         log.debug("Transferring student id({}) to group id({})",
             student.getId(), group.getId());
         student.setGroup(group);
-        studentDao.update(student);
-        log.info("Complete transfer student id({}) to group id({})",
+        studentRepository.update(student);
+        log.debug("Complete transfer student id({}) to group id({})",
             student.getId(), group.getId());
         return student;
     }
@@ -115,8 +115,8 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public List<StudentDto> getStudentsByGroup(Group group) {
         log.debug("Getting all students from group ({})", group);
-        List<Student> students = studentDao.getStudentsByGroup(group);
-        log.info("Found {} students from group {}", students.size(), group);
+        List<Student> students = studentRepository.getStudentsByGroup(group);
+        log.debug("Found {} students from group {}", students.size(), group);
         return studentDtoMapper.toStudentDtos(students);
     }
 
@@ -125,8 +125,8 @@ public class StudentServiceImpl implements StudentService {
         log.debug("Getting all students from group id({})", groupId);
         Group group = new Group();
         group.setId(groupId);
-        List<Student> students = studentDao.getStudentsByGroup(group);
-        log.info("Found {} students from group id({})", students.size(), groupId);
+        List<Student> students = studentRepository.getStudentsByGroup(group);
+        log.debug("Found {} students from group id({})", students.size(), groupId);
         return studentDtoMapper.toStudentDtos(students);
     }
 
@@ -134,16 +134,16 @@ public class StudentServiceImpl implements StudentService {
     public List<StudentDto> getStudentsByFaculty(int facultyId) {
         log.debug("Getting all students from faculty id({})", facultyId);
         Faculty faculty = new Faculty(facultyId, null);
-        List<Student> students = studentDao.getStudentsByFaculty(faculty);
-        log.info("Found {} student from faculty id({})", students.size(), facultyId);
+        List<Student> students = studentRepository.getStudentsByFaculty(faculty);
+        log.debug("Found {} student from faculty id({})", students.size(), facultyId);
         return studentDtoMapper.toStudentDtos(students);
     }
 
     @Override
     public List<Student> getAllActiveStudents() {
         log.debug("Getting all active students");
-        List<Student> students = studentDao.getActiveStudents();
-        log.info("Found {} students", students.size());
+        List<Student> students = studentRepository.getActiveStudents();
+        log.debug("Found {} students", students.size());
         return students;
     }
 
@@ -153,9 +153,9 @@ public class StudentServiceImpl implements StudentService {
                                                   LocalDateTime endTime) {
         log.debug("Getting active students from group id({}) free from {} to {}",
             groupId, startTime, endTime);
-        List<Student> freeStudents = studentDao.getFreeStudentsFromGroup(groupId,
+        List<Student> freeStudents = studentRepository.getFreeStudentsFromGroup(groupId,
             startTime, endTime);
-        log.info("Found {} free student from group id({})", freeStudents.size(),
+        log.debug("Found {} free student from group id({})", freeStudents.size(),
             groupId);
         return studentDtoMapper.toStudentDtos(freeStudents);
     }

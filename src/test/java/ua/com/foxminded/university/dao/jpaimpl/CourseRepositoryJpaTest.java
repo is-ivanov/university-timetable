@@ -9,7 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
-import ua.com.foxminded.university.dao.interfaces.CourseDao;
+import ua.com.foxminded.university.dao.interfaces.CourseRepository;
 import ua.com.foxminded.university.domain.entity.Course;
 import ua.com.foxminded.university.exception.DaoException;
 import ua.com.foxminded.university.springconfig.IntegrationTestBase;
@@ -23,14 +23,14 @@ import static ua.com.foxminded.university.TestObjects.*;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 @Sql("/sql/hibernate/course-test-data.sql")
-class JpaCourseDaoImplTest extends IntegrationTestBase {
+class CourseRepositoryJpaTest extends IntegrationTestBase {
 
     private static final String TEST_COURSE_NAME = "New course";
     private static final String MESSAGE_DELETE_COURSE_NOT_FOUND =
         "Can't delete because course id(4) not found";
 
     @Autowired
-    private CourseDao dao;
+    private CourseRepository dao;
 
     @Nested
     @DisplayName("test 'add' method")

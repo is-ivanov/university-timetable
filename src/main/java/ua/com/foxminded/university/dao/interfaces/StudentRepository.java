@@ -8,7 +8,7 @@ import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Student;
 
-public interface StudentDao extends Dao<Student> {
+public interface StudentRepository extends Repository<Student> {
 
     List<Student> getStudentsByLesson(Lesson lesson);
 

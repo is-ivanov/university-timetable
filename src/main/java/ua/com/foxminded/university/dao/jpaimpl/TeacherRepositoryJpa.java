@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Repository;
-import ua.com.foxminded.university.dao.interfaces.TeacherDao;
+import ua.com.foxminded.university.dao.interfaces.TeacherRepository;
 import ua.com.foxminded.university.domain.entity.Teacher;
 import ua.com.foxminded.university.exception.DaoException;
 
@@ -19,13 +19,13 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 @PropertySource("classpath:queries/jpql_query.properties")
-public class JpaTeacherDaoImpl implements TeacherDao {
+public class TeacherRepositoryJpa implements TeacherRepository {
 
-    private static final String QUERY_GET_ALL = "Teacher.getAll";
-    private static final String QUERY_DELETE_BY_ID = "Teacher.deleteById";
-    private static final String QUERY_GET_FREE_TEACHERS = "Teacher.getFreeTeachersOnLessonTime";
-    private static final String QUERY_GET_ALL_BY_DEPARTMENT = "Teacher.getTeachersByDepartment";
-    private static final String QUERY_GET_ALL_BY_FACULTY = "Teacher.getTeachersByFaculty";
+    private static final String QUERY_GET_ALL = "teacher.getAll";
+    private static final String QUERY_DELETE_BY_ID = "teacher.deleteById";
+    private static final String QUERY_GET_FREE_TEACHERS = "teacher.getFreeTeachersOnLessonTime";
+    private static final String QUERY_GET_ALL_BY_DEPARTMENT = "teacher.getTeachersByDepartment";
+    private static final String QUERY_GET_ALL_BY_FACULTY = "teacher.getTeachersByFaculty";
     private static final String MESSAGE_DELETE_TEACHER_NOT_FOUND = "Can't delete because teacher id(%d) not found";
 
     private final Environment env;
@@ -37,14 +37,14 @@ public class JpaTeacherDaoImpl implements TeacherDao {
     public void add(Teacher teacher) {
         log.debug("Saving {}", teacher);
         entityManager.persist(teacher);
-        log.info("{} saved successfully", teacher);
+        log.debug("{} saved successfully", teacher);
     }
 
     @Override
     public Optional<Teacher> getById(int id) {
         log.debug("Getting teacher by id({})", id);
         Teacher teacher = entityManager.find(Teacher.class, id);
-        log.info("Found {}", teacher);
+        log.debug("Found {}", teacher);
         return Optional.ofNullable(teacher);
     }
 
@@ -54,20 +54,20 @@ public class JpaTeacherDaoImpl implements TeacherDao {
         List<Teacher> teachers = entityManager.createQuery(
                 env.getProperty(QUERY_GET_ALL), Teacher.class)
             .getResultList();
-        log.info("Found {} teachers", teachers.size());
+        log.debug("Found {} teachers", teachers.size());
         return teachers;
     }
 
     @Override
     public void update(Teacher teacher) {
         entityManager.merge(teacher);
-        log.info("Update {}", teacher);
+        log.debug("Update {}", teacher);
     }
 
     @Override
     public void delete(Teacher teacher) {
         entityManager.remove(teacher);
-        log.info("Delete {}", teacher);
+        log.debug("Delete {}", teacher);
     }
 
     @Override
@@ -81,7 +81,7 @@ public class JpaTeacherDaoImpl implements TeacherDao {
             throw new DaoException(String
                 .format(MESSAGE_DELETE_TEACHER_NOT_FOUND, id));
         } else {
-            log.info("Delete teacher id({})", id);
+            log.debug("Delete teacher id({})", id);
         }
     }
 
@@ -93,7 +93,7 @@ public class JpaTeacherDaoImpl implements TeacherDao {
                 Teacher.class)
             .setParameter("departmentId", departmentId)
             .getResultList();
-        log.info("Found {} teachers from department id({})", teachers.size(),
+        log.debug("Found {} teachers from department id({})", teachers.size(),
             departmentId);
         return teachers;
     }
@@ -106,7 +106,7 @@ public class JpaTeacherDaoImpl implements TeacherDao {
                 Teacher.class)
             .setParameter("facultyId", facultyId)
             .getResultList();
-        log.info("Found {} teachers from faculty id({})", teachers.size(),
+        log.debug("Found {} teachers from faculty id({})", teachers.size(),
             facultyId);
         return teachers;
     }
@@ -121,7 +121,7 @@ public class JpaTeacherDaoImpl implements TeacherDao {
             .setParameter("time_start", startTime)
             .setParameter("time_end", endTime)
             .getResultList();
-        log.info("Found {} active free teachers", freeTeachers.size());
+        log.debug("Found {} active free teachers", freeTeachers.size());
         return freeTeachers;
     }
 }

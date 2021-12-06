@@ -9,7 +9,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
-import ua.com.foxminded.university.dao.interfaces.FacultyDao;
+import ua.com.foxminded.university.dao.interfaces.FacultyRepository;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.exception.DaoException;
 
@@ -24,16 +24,16 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 @PropertySource("classpath:queries/jpql_query.properties")
-public class JpaFacultyDaoImpl implements FacultyDao {
+public class FacultyRepositoryJpa implements FacultyRepository {
 
     public static final String FACULTY_NAME = "faculty_name";
     public static final String MESSAGE_DELETE_FACULTY_NOT_FOUND = "Can't delete because faculty id(%d) not found";
 
-    private static final String QUERY_GET_ALL = "Faculty.getAll";
-    private static final String QUERY_GET_ALL_SORTED_PAGINATED = "Faculty.getAllSortedPaginated";
-    private static final String QUERY_GET_ALL_SORTED_NAME_ASC = "Faculty.getAllSortedByNameAsc";
-    private static final String QUERY_DELETE_BY_ID = "Faculty.deleteById";
-    private static final String QUERY_COUNT_ALL = "Faculty.countAll";
+    private static final String QUERY_GET_ALL = "faculty.getAll";
+    private static final String QUERY_GET_ALL_SORTED_PAGINATED = "faculty.getAllSortedPaginated";
+    private static final String QUERY_GET_ALL_SORTED_NAME_ASC = "faculty.getAllSortedByNameAsc";
+    private static final String QUERY_DELETE_BY_ID = "faculty.deleteById";
+    private static final String QUERY_COUNT_ALL = "faculty.countAll";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -44,14 +44,14 @@ public class JpaFacultyDaoImpl implements FacultyDao {
     public void add(Faculty faculty) {
         log.debug("Saving {}", faculty);
         entityManager.persist(faculty);
-        log.info("{} saved successfully", faculty);
+        log.debug("{} saved successfully", faculty);
     }
 
     @Override
     public Optional<Faculty> getById(int id) {
         log.debug("Getting faculty by id({})", id);
         Faculty result = entityManager.find(Faculty.class, id);
-        log.info("Found {}", result);
+        log.debug("Found {}", result);
         return Optional.ofNullable(result);
     }
 
@@ -60,20 +60,20 @@ public class JpaFacultyDaoImpl implements FacultyDao {
         log.debug("Getting all faculties");
         List<Faculty> faculties = entityManager.createQuery(env.getProperty(QUERY_GET_ALL),
             Faculty.class).getResultList();
-        log.info("Found {} faculties", faculties.size());
+        log.debug("Found {} faculties", faculties.size());
         return faculties;
     }
 
     @Override
     public void update(Faculty faculty) {
         entityManager.merge(faculty);
-        log.info("Update {}", faculty);
+        log.debug("Update {}", faculty);
     }
 
     @Override
     public void delete(Faculty faculty) {
         entityManager.remove(faculty);
-        log.info("Delete {}", faculty);
+        log.debug("Delete {}", faculty);
     }
 
     @Override
@@ -87,7 +87,7 @@ public class JpaFacultyDaoImpl implements FacultyDao {
             throw new DaoException(
                 String.format(MESSAGE_DELETE_FACULTY_NOT_FOUND, id));
         } else {
-            log.info("Delete faculty id({})", id);
+            log.debug("Delete faculty id({})", id);
         }
     }
 
@@ -97,7 +97,7 @@ public class JpaFacultyDaoImpl implements FacultyDao {
         List<Faculty> faculties = entityManager.createQuery(
                 env.getProperty(QUERY_GET_ALL_SORTED_NAME_ASC), Faculty.class)
             .getResultList();
-        log.info("Found {} sorted faculties", faculties.size());
+        log.debug("Found {} sorted faculties", faculties.size());
         return faculties;
     }
 
@@ -117,7 +117,7 @@ public class JpaFacultyDaoImpl implements FacultyDao {
             .setFirstResult((int) pageable.getOffset())
             .setMaxResults(pageable.getPageSize())
             .getResultList();
-        log.info("Found {} faculties", faculties.size());
+        log.debug("Found {} faculties", faculties.size());
         return new PageImpl<>(faculties, pageable, countAll());
     }
 

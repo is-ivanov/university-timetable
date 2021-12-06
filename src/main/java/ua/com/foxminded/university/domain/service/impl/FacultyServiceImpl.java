@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.com.foxminded.university.dao.interfaces.FacultyDao;
+import ua.com.foxminded.university.dao.interfaces.FacultyRepository;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 
@@ -21,67 +21,67 @@ public class FacultyServiceImpl implements FacultyService {
 
     private static final String MESSAGE_FACULTY_NOT_FOUND = "Faculty id(%d) not found";
 
-    private final FacultyDao facultyDao;
+    private final FacultyRepository facultyRepository;
 
     @Override
     public void add(Faculty faculty) {
         log.debug("Adding {}", faculty);
-        facultyDao.add(faculty);
-        log.info("{} added successfully", faculty);
+        facultyRepository.add(faculty);
+        log.debug("{} added successfully", faculty);
     }
 
     @Override
     public Faculty getById(int id) {
         log.debug("Getting faculty by id({})", id);
-        Faculty faculty = facultyDao.getById(id)
+        Faculty faculty = facultyRepository.getById(id)
             .orElseThrow(() -> new EntityNotFoundException(
                 String.format(MESSAGE_FACULTY_NOT_FOUND, id)));
-        log.info("Found {}", faculty);
+        log.debug("Found {}", faculty);
         return faculty;
     }
 
     @Override
     public List<Faculty> getAll() {
         log.debug("Getting all faculties");
-        List<Faculty> faculties = facultyDao.getAll();
-        log.info("Found {} faculties", faculties.size());
+        List<Faculty> faculties = facultyRepository.getAll();
+        log.debug("Found {} faculties", faculties.size());
         return faculties;
     }
 
     @Override
     public void update(Faculty faculty) {
         log.debug("Updating {}", faculty);
-        facultyDao.update(faculty);
-        log.info("Update {}", faculty);
+        facultyRepository.update(faculty);
+        log.debug("Update {}", faculty);
     }
 
     @Override
     public void delete(Faculty faculty) {
         log.debug("Deleting {}", faculty);
-        facultyDao.delete(faculty);
-        log.info("Delete {}", faculty);
+        facultyRepository.delete(faculty);
+        log.debug("Delete {}", faculty);
     }
 
     @Override
     public void delete(int id) {
         log.debug("Deleting faculty id({})", id);
-        facultyDao.delete(id);
-        log.info("Delete faculty id({})", id);
+        facultyRepository.delete(id);
+        log.debug("Delete faculty id({})", id);
     }
 
     @Override
     public List<Faculty> getAllSortedByNameAsc() {
         log.debug("Getting all faculties sorted by name ascending");
-        List<Faculty> faculties = facultyDao.getAllSortedByNameAsc();
-        log.info("Found {} sorted faculties", faculties.size());
+        List<Faculty> faculties = facultyRepository.getAllSortedByNameAsc();
+        log.debug("Found {} sorted faculties", faculties.size());
         return faculties;
     }
 
     @Override
     public Page<Faculty> getAllSortedPaginated(Pageable pageable) {
         log.debug("Getting sorted page {} from list of faculties", pageable.getPageNumber());
-        Page<Faculty> pageFaculties = facultyDao.getAllSortedPaginated(pageable);
-        log.info("Found {} faculties on page {}", pageFaculties.getContent().size(),
+        Page<Faculty> pageFaculties = facultyRepository.getAllSortedPaginated(pageable);
+        log.debug("Found {} faculties on page {}", pageFaculties.getContent().size(),
             pageFaculties.getNumber());
         return pageFaculties;
     }

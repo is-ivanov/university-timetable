@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.jdbc.JdbcTestUtils;
-import ua.com.foxminded.university.dao.interfaces.TeacherDao;
+import ua.com.foxminded.university.dao.interfaces.TeacherRepository;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Teacher;
 import ua.com.foxminded.university.exception.DaoException;
@@ -23,7 +23,7 @@ import static ua.com.foxminded.university.TestObjects.*;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 @Sql("/sql/hibernate/teacher-test-data.sql")
-class JpaTeacherDaoImplTest extends IntegrationTestBase {
+class TeacherRepositoryJpaTest extends IntegrationTestBase {
 
     private static final String TABLE_NAME = "teachers";
     private static final String MESSAGE_DELETE_EXCEPTION =
@@ -34,7 +34,7 @@ class JpaTeacherDaoImplTest extends IntegrationTestBase {
 
 
     @Autowired
-    private TeacherDao dao;
+    private TeacherRepository dao;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;

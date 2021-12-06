@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.jdbc.JdbcTestUtils;
-import ua.com.foxminded.university.dao.interfaces.StudentDao;
+import ua.com.foxminded.university.dao.interfaces.StudentRepository;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Lesson;
@@ -22,7 +22,7 @@ import static ua.com.foxminded.university.TestObjects.*;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 @Sql("/sql/hibernate/student-test-data.sql")
-class JpaStudentDaoImplTest extends IntegrationTestBase {
+class StudentRepositoryJpaTest extends IntegrationTestBase {
 
     private static final String TABLE_NAME = "students";
     private static final String TEST_STUDENT_FIRST_NAME = "Student First Name";
@@ -30,7 +30,7 @@ class JpaStudentDaoImplTest extends IntegrationTestBase {
     private static final String TEST_STUDENT_PATRONYMIC = "Student patronymic";
 
     @Autowired
-    private StudentDao dao;
+    private StudentRepository dao;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;

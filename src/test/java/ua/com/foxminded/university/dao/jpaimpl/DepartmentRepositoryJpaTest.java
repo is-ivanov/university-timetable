@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
-import ua.com.foxminded.university.dao.interfaces.DepartmentDao;
+import ua.com.foxminded.university.dao.interfaces.DepartmentRepository;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.exception.DaoException;
@@ -20,13 +20,13 @@ import static ua.com.foxminded.university.TestObjects.*;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 @Sql("/sql/hibernate/department-test-data.sql")
-class JpaDepartmentDaoImplTest extends IntegrationTestBase {
+class DepartmentRepositoryJpaTest extends IntegrationTestBase {
 
     private static final String MESSAGE_DELETE_EXCEPTION =
         "Can't delete because department id(3) not found";
 
     @Autowired
-    private DepartmentDao dao;
+    private DepartmentRepository dao;
 
     @Nested
     @DisplayName("test 'add' method")

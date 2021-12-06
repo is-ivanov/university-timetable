@@ -6,7 +6,7 @@ import ua.com.foxminded.university.domain.entity.Faculty;
 
 import java.util.List;
 
-public interface FacultyDao extends Dao<Faculty> {
+public interface FacultyRepository extends Repository<Faculty> {
 
     List<Faculty> getAllSortedByNameAsc();
 

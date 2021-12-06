@@ -11,7 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.jdbc.JdbcTestUtils;
-import ua.com.foxminded.university.dao.interfaces.RoomDao;
+import ua.com.foxminded.university.dao.interfaces.RoomRepository;
 import ua.com.foxminded.university.domain.entity.Room;
 import ua.com.foxminded.university.exception.DaoException;
 import ua.com.foxminded.university.springconfig.IntegrationTestBase;
@@ -25,7 +25,7 @@ import static ua.com.foxminded.university.TestObjects.*;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 @Sql("/sql/hibernate/room-test-data.sql")
-class JpaRoomDaoImplTest extends IntegrationTestBase {
+class RoomRepositoryJpaTest extends IntegrationTestBase {
 
     private static final String TABLE_NAME = "rooms";
     private static final String TEST_BUILDING = "testBuilding";
@@ -34,7 +34,7 @@ class JpaRoomDaoImplTest extends IntegrationTestBase {
         "Can't delete because room id(4) not found";
 
     @Autowired
-    private RoomDao dao;
+    private RoomRepository dao;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;

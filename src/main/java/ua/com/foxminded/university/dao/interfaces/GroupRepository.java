@@ -5,7 +5,7 @@ import ua.com.foxminded.university.domain.entity.Group;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface GroupDao extends Dao<Group> {
+public interface GroupRepository extends Repository<Group> {
 
     List<Group> getAllByFacultyId(int facultyId);
 

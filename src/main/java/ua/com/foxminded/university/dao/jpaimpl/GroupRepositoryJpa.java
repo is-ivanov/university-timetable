@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Repository;
-import ua.com.foxminded.university.dao.interfaces.GroupDao;
+import ua.com.foxminded.university.dao.interfaces.GroupRepository;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.exception.DaoException;
 
@@ -20,14 +20,14 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 @PropertySource("classpath:queries/jpql_query.properties")
-public class JpaGroupDaoImpl implements GroupDao {
+public class GroupRepositoryJpa implements GroupRepository {
 
-    private static final String QUERY_GET_ALL = "Group.getAll";
-    private static final String QUERY_GET_ALL_ACTIVE = "Group.getAllActive";
-    private static final String QUERY_GET_ALL_BY_FACULTY = "Group.getAllByFaculty";
-    private static final String QUERY_DELETE_BY_ID = "Group.deleteById";
-    private static final String QUERY_GET_FREE_GROUPS = "Group.getFreeGroupsOnLessonTime";
-    private static final String QUERY_GET_FREE_GROUPS_BY_FACULTY = "Group.getFreeGroupsByFacultyOnLessonTime";
+    private static final String QUERY_GET_ALL = "group.getAll";
+    private static final String QUERY_GET_ALL_ACTIVE = "group.getAllActive";
+    private static final String QUERY_GET_ALL_BY_FACULTY = "group.getAllByFaculty";
+    private static final String QUERY_DELETE_BY_ID = "group.deleteById";
+    private static final String QUERY_GET_FREE_GROUPS = "group.getFreeGroupsOnLessonTime";
+    private static final String QUERY_GET_FREE_GROUPS_BY_FACULTY = "group.getFreeGroupsByFacultyOnLessonTime";
     private static final String LOG_FOUND_GROUPS = "Found {} groups";
     private static final String MESSAGE_DELETE_GROUP_NOT_FOUND = "Can't delete because group id(%d) not found";
 
@@ -40,14 +40,14 @@ public class JpaGroupDaoImpl implements GroupDao {
     public void add(Group group) {
         log.debug("Saving {}", group);
         entityManager.persist(group);
-        log.info("{} saved successfully", group);
+        log.debug("{} saved successfully", group);
     }
 
     @Override
     public Optional<Group> getById(int id) {
         log.debug("Getting group by id({})", id);
         Group group = entityManager.find(Group.class, id);
-        log.info("Found {}", group);
+        log.debug("Found {}", group);
         return Optional.ofNullable(group);
     }
 
@@ -57,20 +57,20 @@ public class JpaGroupDaoImpl implements GroupDao {
         List<Group> groups = entityManager
             .createQuery(env.getProperty(QUERY_GET_ALL),
                 Group.class).getResultList();
-        log.info(LOG_FOUND_GROUPS, groups.size());
+        log.debug(LOG_FOUND_GROUPS, groups.size());
         return groups;
     }
 
     @Override
     public void update(Group group) {
         entityManager.merge(group);
-        log.info("Update {}", group);
+        log.debug("Update {}", group);
     }
 
     @Override
     public void delete(Group group) {
         entityManager.remove(group);
-        log.info("Delete {}", group);
+        log.debug("Delete {}", group);
     }
 
     @Override
@@ -84,7 +84,7 @@ public class JpaGroupDaoImpl implements GroupDao {
             throw new DaoException(
                 String.format(MESSAGE_DELETE_GROUP_NOT_FOUND, id));
         } else {
-            log.info("Delete group id({})", id);
+            log.debug("Delete group id({})", id);
         }
     }
 
@@ -95,7 +95,7 @@ public class JpaGroupDaoImpl implements GroupDao {
             Group.class);
         query.setParameter("facultyId", facultyId);
         List<Group> groups = query.getResultList();
-        log.info(LOG_FOUND_GROUPS, groups.size());
+        log.debug(LOG_FOUND_GROUPS, groups.size());
         return groups;
     }
 
@@ -108,7 +108,7 @@ public class JpaGroupDaoImpl implements GroupDao {
             .setParameter("time_start", startTime)
             .setParameter("time_end", endTime)
             .getResultList();
-        log.info(LOG_FOUND_GROUPS, groups.size());
+        log.debug(LOG_FOUND_GROUPS, groups.size());
         return groups;
     }
 
@@ -124,7 +124,7 @@ public class JpaGroupDaoImpl implements GroupDao {
             .setParameter("time_start", startTime)
             .setParameter("time_end", endTime)
             .getResultList();
-        log.info(LOG_FOUND_GROUPS, freeGroups.size());
+        log.debug(LOG_FOUND_GROUPS, freeGroups.size());
         return freeGroups;
     }
 
@@ -134,7 +134,7 @@ public class JpaGroupDaoImpl implements GroupDao {
         List<Group> activeGroups = entityManager.createQuery(
                 env.getProperty(QUERY_GET_ALL_ACTIVE), Group.class)
             .getResultList();
-        log.info(LOG_FOUND_GROUPS, activeGroups.size());
+        log.debug(LOG_FOUND_GROUPS, activeGroups.size());
         return activeGroups;
     }
 }

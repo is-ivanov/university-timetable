@@ -9,7 +9,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
-import ua.com.foxminded.university.dao.interfaces.RoomDao;
+import ua.com.foxminded.university.dao.interfaces.RoomRepository;
 import ua.com.foxminded.university.domain.entity.Room;
 import ua.com.foxminded.university.exception.DaoException;
 
@@ -25,13 +25,13 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 @PropertySource("classpath:queries/jpql_query.properties")
-public class JpaRoomDaoImpl implements RoomDao {
+public class RoomRepositoryJpa implements RoomRepository {
 
-    public static final String QUERY_GET_ALL = "Room.getAll";
-    public static final String QUERY_GET_ALL_SORTED_PAGINATED = "Room.getAllSortedPaginated";
-    public static final String QUERY_DELETE_BY_ID = "Room.deleteById";
-    public static final String QUERY_GET_FREE_ROOMS = "Room.getFreeRoomsOnLessonTime";
-    public static final String QUERY_COUNT_ALL = "Room.countAll";
+    public static final String QUERY_GET_ALL = "room.getAll";
+    public static final String QUERY_GET_ALL_SORTED_PAGINATED = "room.getAllSortedPaginated";
+    public static final String QUERY_DELETE_BY_ID = "room.deleteById";
+    public static final String QUERY_GET_FREE_ROOMS = "room.getFreeRoomsOnLessonTime";
+    public static final String QUERY_COUNT_ALL = "room.countAll";
     public static final String MESSAGE_DELETE_ROOM_NOT_FOUND = "Can't delete because room id(%d) not found";
     public static final String ROOM_NUMBER = "room_number";
 
@@ -44,14 +44,14 @@ public class JpaRoomDaoImpl implements RoomDao {
     public void add(Room room) {
         log.debug("Saving {}", room);
         entityManager.persist(room);
-        log.info("{} saved successfully", room);
+        log.debug("{} saved successfully", room);
     }
 
     @Override
     public Optional<Room> getById(int id) {
         log.debug("Getting room by id({})", id);
         Room room = entityManager.find(Room.class, id);
-        log.info("Found {}", room);
+        log.debug("Found {}", room);
         return Optional.ofNullable(room);
     }
 
@@ -61,20 +61,20 @@ public class JpaRoomDaoImpl implements RoomDao {
         List<Room> rooms = entityManager.
             createQuery(env.getProperty(QUERY_GET_ALL), Room.class)
             .getResultList();
-        log.info("Found {} rooms", rooms.size());
+        log.debug("Found {} rooms", rooms.size());
         return rooms;
     }
 
     @Override
     public void update(Room room) {
         entityManager.merge(room);
-        log.info("Update {}", room);
+        log.debug("Update {}", room);
     }
 
     @Override
     public void delete(Room room) {
         entityManager.remove(room);
-        log.info("{} deleted", room);
+        log.debug("{} deleted", room);
     }
 
     @Override
@@ -88,7 +88,7 @@ public class JpaRoomDaoImpl implements RoomDao {
             throw new DaoException(String
                 .format(MESSAGE_DELETE_ROOM_NOT_FOUND, id));
         } else {
-            log.info("Delete room id({})", id);
+            log.debug("Delete room id({})", id);
         }
     }
 
@@ -101,7 +101,7 @@ public class JpaRoomDaoImpl implements RoomDao {
             .setParameter("time_start", startTime)
             .setParameter("time_end", endTime)
             .getResultList();
-        log.info("Found {} free rooms", freeRooms.size());
+        log.debug("Found {} free rooms", freeRooms.size());
         return freeRooms;
     }
 
@@ -129,7 +129,7 @@ public class JpaRoomDaoImpl implements RoomDao {
             .setFirstResult((int) pageable.getOffset())
             .setMaxResults(pageable.getPageSize())
             .getResultList();
-        log.info("Found {} rooms", rooms.size());
+        log.debug("Found {} rooms", rooms.size());
         return new PageImpl<>(rooms, pageable, countAll());
     }
 }

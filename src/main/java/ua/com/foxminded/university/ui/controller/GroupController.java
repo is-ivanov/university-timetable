@@ -52,7 +52,7 @@ public class GroupController {
         model.addAttribute("groups", groups);
         model.addAttribute("facultyIdSelect", facultyId);
         model.addAttribute("newGroup", new Group());
-        log.info("The list of groups and selected faculty is loaded into the model");
+        log.debug("The list of groups and selected faculty is loaded into the model");
         return "group";
     }
 
@@ -61,7 +61,7 @@ public class GroupController {
                               HttpServletRequest request) {
         log.debug("Creating {}", group);
         groupService.add(group);
-        log.info("{} is created", group);
+        log.debug("{} is created", group);
         return defineRedirect(request);
     }
 
@@ -70,7 +70,7 @@ public class GroupController {
     public GroupDto getGroup(@PathVariable("id") int groupId) {
         log.debug("Getting group id({})", groupId);
         GroupDto group = groupService.getById(groupId);
-        log.info("Found {}", group);
+        log.debug("Found {}", group);
         return group;
     }
 
@@ -80,7 +80,7 @@ public class GroupController {
                               HttpServletRequest request) {
         log.debug("Updating group id({})", groupId);
         groupService.update(group);
-        log.info("Group id({}) is updated", groupId);
+        log.debug("Group id({}) is updated", groupId);
         return defineRedirect(request);
     }
 
@@ -89,7 +89,7 @@ public class GroupController {
                               HttpServletRequest request) {
         log.debug("Deleting group id({})", groupId);
         groupService.delete(groupId);
-        log.info("Group id({}) is deleted", groupId);
+        log.debug("Group id({}) is deleted", groupId);
         return defineRedirect(request);
     }
 
@@ -106,7 +106,7 @@ public class GroupController {
             groupId, startTime, endTime);
         List<StudentDto> freeStudentsFromGroup =
             studentService.getFreeStudentsFromGroup(groupId, startTime, endTime);
-        log.info("Found {} students", freeStudentsFromGroup.size());
+        log.debug("Found {} students", freeStudentsFromGroup.size());
         return freeStudentsFromGroup;
     }
 

@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Repository;
-import ua.com.foxminded.university.dao.interfaces.StudentDao;
+import ua.com.foxminded.university.dao.interfaces.StudentRepository;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Lesson;
@@ -22,15 +22,15 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 @PropertySource("classpath:queries/jpql_query.properties")
-public class JpaStudentDaoImpl implements StudentDao {
+public class StudentRepositoryJpa implements StudentRepository {
 
-    private static final String QUERY_GET_ALL = "Student.getAll";
-    private static final String QUERY_GET_ALL_ACTIVE = "Student.getAllActive";
-    private static final String QUERY_DELETE_BY_ID = "Student.deleteById";
-    private static final String QUERY_GET_ALL_BY_LESSON = "Student.getStudentsByLesson";
-    private static final String QUERY_GET_ALL_BY_GROUP = "Student.getStudentsByGroup";
-    private static final String QUERY_GET_ALL_BY_FACULTY = "Student.getStudentsByFaculty";
-    private static final String QUERY_GET_FREE_STUDENTS_BY_GROUP = "Student.getFreeStudentsFromGroupOnLessonTime";
+    private static final String QUERY_GET_ALL = "student.getAll";
+    private static final String QUERY_GET_ALL_ACTIVE = "student.getAllActive";
+    private static final String QUERY_DELETE_BY_ID = "student.deleteById";
+    private static final String QUERY_GET_ALL_BY_LESSON = "student.getStudentsByLesson";
+    private static final String QUERY_GET_ALL_BY_GROUP = "student.getStudentsByGroup";
+    private static final String QUERY_GET_ALL_BY_FACULTY = "student.getStudentsByFaculty";
+    private static final String QUERY_GET_FREE_STUDENTS_BY_GROUP = "student.getFreeStudentsFromGroupOnLessonTime";
     private static final String MESSAGE_DELETE_STUDENT_NOT_FOUND = "Can't delete because student id(%d) not found";
 
     private final Environment env;
@@ -45,7 +45,7 @@ public class JpaStudentDaoImpl implements StudentDao {
             student.getLastName(), student.isActive(),
             student.getGroup().getName());
         entityManager.persist(student);
-        log.info("Student [{} {} {}, active={}, group {}] saved successfully",
+        log.debug("Student [{} {} {}, active={}, group {}] saved successfully",
             student.getFirstName(), student.getPatronymic(),
             student.getLastName(), student.isActive(),
             student.getGroup().getName());
@@ -55,7 +55,7 @@ public class JpaStudentDaoImpl implements StudentDao {
     public Optional<Student> getById(int id) {
         log.debug("Getting student by id({})", id);
         Student student = entityManager.find(Student.class, id);
-        log.info("Found {}", student);
+        log.debug("Found {}", student);
         return Optional.ofNullable(student);
     }
 
@@ -65,20 +65,20 @@ public class JpaStudentDaoImpl implements StudentDao {
         List<Student> students = entityManager
             .createQuery(env.getProperty(QUERY_GET_ALL), Student.class)
             .getResultList();
-        log.info("Found {} students", students.size());
+        log.debug("Found {} students", students.size());
         return students;
     }
 
     @Override
     public void update(Student student) {
         entityManager.merge(student);
-        log.info("Update {}", student);
+        log.debug("Update {}", student);
     }
 
     @Override
     public void delete(Student student) {
         entityManager.remove(student);
-        log.info("Delete {}", student);
+        log.debug("Delete {}", student);
     }
 
     @Override
@@ -92,7 +92,7 @@ public class JpaStudentDaoImpl implements StudentDao {
             throw new DaoException(String
                 .format(MESSAGE_DELETE_STUDENT_NOT_FOUND, id));
         } else {
-            log.info("Delete student id({})", id);
+            log.debug("Delete student id({})", id);
         }
     }
 
@@ -103,7 +103,7 @@ public class JpaStudentDaoImpl implements StudentDao {
                 env.getProperty(QUERY_GET_ALL_BY_LESSON), Student.class)
             .setParameter("lessonId", lesson.getId())
             .getResultList();
-        log.info("Found {} students from lesson id({})", students.size(),
+        log.debug("Found {} students from lesson id({})", students.size(),
             lesson.getId());
         return students;
     }
@@ -115,7 +115,7 @@ public class JpaStudentDaoImpl implements StudentDao {
                 env.getProperty(QUERY_GET_ALL_BY_GROUP), Student.class)
             .setParameter("groupId", group.getId())
             .getResultList();
-        log.info("Found {} students from group id({})", students.size(),
+        log.debug("Found {} students from group id({})", students.size(),
             group.getId());
         return students;
     }
@@ -126,7 +126,7 @@ public class JpaStudentDaoImpl implements StudentDao {
                 env.getProperty(QUERY_GET_ALL_BY_FACULTY), Student.class)
             .setParameter("facultyId", faculty.getId())
             .getResultList();
-        log.info("Found {} students from ({})", students.size(), faculty);
+        log.debug("Found {} students from ({})", students.size(), faculty);
         return students;
     }
 
@@ -136,7 +136,7 @@ public class JpaStudentDaoImpl implements StudentDao {
         List<Student> students = entityManager.createQuery(
                 env.getProperty(QUERY_GET_ALL_ACTIVE), Student.class)
             .getResultList();
-        log.info("Found {} students", students.size());
+        log.debug("Found {} students", students.size());
         return students;
     }
 
@@ -152,7 +152,7 @@ public class JpaStudentDaoImpl implements StudentDao {
             .setParameter("time_start", startTime)
             .setParameter("time_end", endTime)
             .getResultList();
-        log.info("Found {} free student from group id({})",
+        log.debug("Found {} free student from group id({})",
             freeStudents.size(), groupId);
         return freeStudents;
     }

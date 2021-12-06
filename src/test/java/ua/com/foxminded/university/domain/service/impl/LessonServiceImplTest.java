@@ -8,8 +8,8 @@ import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ua.com.foxminded.university.dao.interfaces.LessonDao;
-import ua.com.foxminded.university.dao.interfaces.StudentDao;
+import ua.com.foxminded.university.dao.interfaces.LessonRepository;
+import ua.com.foxminded.university.dao.interfaces.StudentRepository;
 import ua.com.foxminded.university.domain.dto.LessonDto;
 import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Room;
@@ -39,10 +39,10 @@ class LessonServiceImplTest {
     public static final String MESSAGE_STUDENT_IS_INACTIVE = "Student id(78) is inactive";
 
     @Mock
-    private LessonDao lessonDaoMock;
+    private LessonRepository lessonRepositoryMock;
 
     @Mock
-    private StudentDao studentDaoMock;
+    private StudentRepository studentRepositoryMock;
 
     @Mock
     private LessonDtoMapper mapperMock;
@@ -51,13 +51,13 @@ class LessonServiceImplTest {
     private LessonServiceImpl lessonService;
 
     @Test
-    @DisplayName("test 'getAll' when Dao return List lessons then method " +
+    @DisplayName("test 'getAll' when Repository return List lessons then method " +
         "should return this List")
     void testGetAll_ReturnListLessons() {
         List<Lesson> lessons = createTestLessons();
         List<LessonDto> lessonDtos = createTestLessonDtos();
 
-        when(lessonDaoMock.getAll()).thenReturn(lessons);
+        when(lessonRepositoryMock.getAll()).thenReturn(lessons);
         when(mapperMock.toLessonDtos(lessons)).thenReturn(lessonDtos);
 
         assertThat(lessonService.getAll()).isEqualTo(lessonDtos);
@@ -72,12 +72,12 @@ class LessonServiceImplTest {
             "lessonDao in Order")
         void whenDeleteLesson_CallDaoInOrder() {
             Lesson testLesson = createTestLesson(LESSON_ID1);
-            InOrder inOrder = inOrder(lessonDaoMock);
+            InOrder inOrder = inOrder(lessonRepositoryMock);
 
             lessonService.delete(testLesson);
 
-            inOrder.verify(lessonDaoMock).deleteAllStudentsFromLesson(testLesson.getId());
-            inOrder.verify(lessonDaoMock).delete(testLesson);
+            inOrder.verify(lessonRepositoryMock).deleteAllStudentsFromLesson(testLesson.getId());
+            inOrder.verify(lessonRepositoryMock).delete(testLesson);
         }
     }
 
@@ -88,12 +88,12 @@ class LessonServiceImplTest {
         @DisplayName("when call delete method then should call " +
             "lessonDao in Order")
         void whenDeleteLesson_CallDaoInOrder() {
-            InOrder inOrder = inOrder(lessonDaoMock);
+            InOrder inOrder = inOrder(lessonRepositoryMock);
 
             lessonService.delete(ID1);
 
-            inOrder.verify(lessonDaoMock).deleteAllStudentsFromLesson(ID1);
-            inOrder.verify(lessonDaoMock).delete(ID1);
+            inOrder.verify(lessonRepositoryMock).deleteAllStudentsFromLesson(ID1);
+            inOrder.verify(lessonRepositoryMock).delete(ID1);
         }
     }
 
@@ -108,7 +108,7 @@ class LessonServiceImplTest {
 
             lessonService.add(testLesson);
 
-            verify(lessonDaoMock, times(1)).add(testLesson);
+            verify(lessonRepositoryMock, times(1)).add(testLesson);
         }
 
         @Test
@@ -126,7 +126,7 @@ class LessonServiceImplTest {
             List<Lesson> lessonsThisTeacher =
                 Collections.singletonList(anotherLessonAtSameTime);
 
-            when(lessonDaoMock.getAllForTeacher(TEACHER_ID1)).thenReturn(lessonsThisTeacher);
+            when(lessonRepositoryMock.getAllForTeacher(TEACHER_ID1)).thenReturn(lessonsThisTeacher);
 
             assertThatThrownBy(() -> lessonService.add(testLesson))
                 .isInstanceOf(ServiceException.class)
@@ -148,7 +148,7 @@ class LessonServiceImplTest {
             List<Lesson> lessonsThisTeacher =
                 Collections.singletonList(anotherLessonWithOverlappedTime);
 
-            when(lessonDaoMock.getAllForTeacher(TEACHER_ID1)).thenReturn(lessonsThisTeacher);
+            when(lessonRepositoryMock.getAllForTeacher(TEACHER_ID1)).thenReturn(lessonsThisTeacher);
 
             assertThatThrownBy(() -> lessonService.add(testLesson))
                 .isInstanceOf(ServiceException.class)
@@ -170,7 +170,7 @@ class LessonServiceImplTest {
             List<Lesson> lessonsThisRoom =
                 Collections.singletonList(anotherLessonAtSameTime);
 
-            when(lessonDaoMock.getAllForRoom(ROOM_ID1)).thenReturn(lessonsThisRoom);
+            when(lessonRepositoryMock.getAllForRoom(ROOM_ID1)).thenReturn(lessonsThisRoom);
 
             assertThatThrownBy(() -> lessonService.add(testLesson))
                 .isInstanceOf(ServiceException.class)
@@ -192,7 +192,7 @@ class LessonServiceImplTest {
             List<Lesson> lessonsThisRoom =
                 Collections.singletonList(anotherLessonWithOverlappedTime);
 
-            when(lessonDaoMock.getAllForRoom(ROOM_ID1)).thenReturn(lessonsThisRoom);
+            when(lessonRepositoryMock.getAllForRoom(ROOM_ID1)).thenReturn(lessonsThisRoom);
 
             ServiceException e = assertThrows(ServiceException.class,
                 () -> lessonService.add(testLesson));
@@ -209,7 +209,7 @@ class LessonServiceImplTest {
         void testUpdateCheckPassed_CallDaoOnce() throws ServiceException {
             Lesson testLesson = createTestLesson(LESSON_ID1);
             lessonService.update(testLesson);
-            verify(lessonDaoMock, times(1)).update(testLesson);
+            verify(lessonRepositoryMock, times(1)).update(testLesson);
         }
 
         @Test
@@ -226,7 +226,7 @@ class LessonServiceImplTest {
             List<Lesson> lessonsThisTeacher =
                 Collections.singletonList(anotherLessonAtSameTime);
 
-            when(lessonDaoMock.getAllForTeacher(TEACHER_ID1)).thenReturn(lessonsThisTeacher);
+            when(lessonRepositoryMock.getAllForTeacher(TEACHER_ID1)).thenReturn(lessonsThisTeacher);
 
             ServiceException e = assertThrows(ServiceException.class,
                 () -> lessonService.update(testLesson));
@@ -248,7 +248,7 @@ class LessonServiceImplTest {
             List<Lesson> lessonsThisTeacher =
                 Collections.singletonList(anotherLessonWithOverlappedTime);
 
-            when(lessonDaoMock.getAllForTeacher(TEACHER_ID1)).thenReturn(lessonsThisTeacher);
+            when(lessonRepositoryMock.getAllForTeacher(TEACHER_ID1)).thenReturn(lessonsThisTeacher);
 
             ServiceException e = assertThrows(ServiceException.class,
                 () -> lessonService.update(testLesson));
@@ -270,7 +270,7 @@ class LessonServiceImplTest {
             List<Lesson> lessonsThisRoom =
                 Collections.singletonList(anotherLessonAtSameTime);
 
-            when(lessonDaoMock.getAllForRoom(ROOM_ID1)).thenReturn(lessonsThisRoom);
+            when(lessonRepositoryMock.getAllForRoom(ROOM_ID1)).thenReturn(lessonsThisRoom);
 
             ServiceException e = assertThrows(ServiceException.class,
                 () -> lessonService.update(testLesson));
@@ -292,7 +292,7 @@ class LessonServiceImplTest {
             List<Lesson> lessonsThisRoom =
                 Collections.singletonList(anotherLessonWithOverlappedTime);
 
-            when(lessonDaoMock.getAllForRoom(ROOM_ID1)).thenReturn(lessonsThisRoom);
+            when(lessonRepositoryMock.getAllForRoom(ROOM_ID1)).thenReturn(lessonsThisRoom);
 
             ServiceException e = assertThrows(ServiceException.class,
                 () -> lessonService.update(testLesson));
@@ -305,23 +305,23 @@ class LessonServiceImplTest {
     class GetByIdTest {
 
         @Test
-        @DisplayName("when Dao return Optional with Lesson then method should" +
+        @DisplayName("when Repository return Optional with Lesson then method should" +
             " return this Lesson")
         void testReturnExpectedLesson() {
             Lesson lesson = createTestLesson(LESSON_ID1);
             LessonDto lessonDto = createTestLessonDto(LESSON_ID1);
 
-            when(lessonDaoMock.getById(anyInt())).thenReturn(Optional.of(lesson));
+            when(lessonRepositoryMock.getById(anyInt())).thenReturn(Optional.of(lesson));
             when(mapperMock.toLessonDto(lesson)).thenReturn(lessonDto);
 
             assertThat(lessonService.getById(anyInt())).isEqualTo(lessonDto);
         }
 
         @Test
-        @DisplayName("when Dao return empty Optional then method should throw " +
+        @DisplayName("when Repository return empty Optional then method should throw " +
             "EntityNotFoundException")
         void testReturnEmptyLesson() {
-            when(lessonDaoMock.getById(anyInt())).thenReturn(Optional.empty());
+            when(lessonRepositoryMock.getById(anyInt())).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> lessonService.getById(ID1))
                 .isInstanceOf(EntityNotFoundException.class)
@@ -342,12 +342,12 @@ class LessonServiceImplTest {
                 .active(true)
                 .build();
 
-            when(lessonDaoMock.getById(LESSON_ID1)).thenReturn(Optional.of(testLesson));
-            when(studentDaoMock.getById(STUDENT_ID2)).thenReturn(Optional.of(student));
+            when(lessonRepositoryMock.getById(LESSON_ID1)).thenReturn(Optional.of(testLesson));
+            when(studentRepositoryMock.getById(STUDENT_ID2)).thenReturn(Optional.of(student));
 
             lessonService.addStudentToLesson(LESSON_ID1, STUDENT_ID2);
 
-            verify(lessonDaoMock).addStudentToLesson(LESSON_ID1, STUDENT_ID2);
+            verify(lessonRepositoryMock).addStudentToLesson(LESSON_ID1, STUDENT_ID2);
         }
 
         @Test
@@ -359,11 +359,11 @@ class LessonServiceImplTest {
                 .active(false)
                 .build();
 
-            when(lessonDaoMock.getById(LESSON_ID1)).thenReturn(Optional.of(testLesson));
-            when(studentDaoMock.getById(STUDENT_ID2)).thenReturn(Optional.of(student));
+            when(lessonRepositoryMock.getById(LESSON_ID1)).thenReturn(Optional.of(testLesson));
+            when(studentRepositoryMock.getById(STUDENT_ID2)).thenReturn(Optional.of(student));
 
 
-            verify(lessonDaoMock, never()).addStudentToLesson(LESSON_ID1, STUDENT_ID2);
+            verify(lessonRepositoryMock, never()).addStudentToLesson(LESSON_ID1, STUDENT_ID2);
 
             assertThatThrownBy(() -> lessonService.addStudentToLesson(
                 LESSON_ID1, STUDENT_ID2))
@@ -391,8 +391,8 @@ class LessonServiceImplTest {
                 .lessons(lessonsThisStudent)
                 .build();
 
-            when(lessonDaoMock.getById(LESSON_ID1)).thenReturn(Optional.of(testLesson));
-            when(studentDaoMock.getById(STUDENT_ID2)).thenReturn(Optional.of(studentAdding));
+            when(lessonRepositoryMock.getById(LESSON_ID1)).thenReturn(Optional.of(testLesson));
+            when(studentRepositoryMock.getById(STUDENT_ID2)).thenReturn(Optional.of(studentAdding));
 
             assertThatThrownBy(() -> lessonService.addStudentToLesson(
                 LESSON_ID1, STUDENT_ID2))
@@ -411,7 +411,7 @@ class LessonServiceImplTest {
             lessonFilter.setFacultyId(ID1);
 
             lessonService.getAllWithFilter(lessonFilter);
-            verify(lessonDaoMock, times(1))
+            verify(lessonRepositoryMock, times(1))
                 .getAllWithFilter(lessonFilter);
         }
 

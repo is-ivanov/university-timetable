@@ -5,7 +5,7 @@ import ua.com.foxminded.university.domain.entity.Teacher;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface TeacherDao extends Dao<Teacher> {
+public interface TeacherRepository extends Repository<Teacher> {
 
     List<Teacher> getAllByDepartment(int departmentId);
 

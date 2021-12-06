@@ -9,7 +9,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
-import ua.com.foxminded.university.dao.interfaces.CourseDao;
+import ua.com.foxminded.university.dao.interfaces.CourseRepository;
 import ua.com.foxminded.university.domain.entity.Course;
 import ua.com.foxminded.university.exception.DaoException;
 
@@ -24,14 +24,14 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 @PropertySource("classpath:queries/jpql_query.properties")
-public class JpaCourseDaoImpl implements CourseDao {
+public class CourseRepositoryJpa implements CourseRepository {
 
     private static final String COURSE_NAME = "course_name";
     private static final String MESSAGE_DELETE_COURSE_NOT_FOUND = "Can't delete because course id(%s) not found";
-    private static final String QUERY_GET_ALL = "Course.getAll";
-    private static final String QUERY_GET_ALL_SORTED_PAGINATED = "Course.getAllSortedPaginated";
-    private static final String QUERY_DELETE_BY_ID = "Course.deleteById";
-    private static final String QUERY_COUNT_ALL = "Course.countAll";
+    private static final String QUERY_GET_ALL = "course.getAll";
+    private static final String QUERY_GET_ALL_SORTED_PAGINATED = "course.getAllSortedPaginated";
+    private static final String QUERY_DELETE_BY_ID = "course.deleteById";
+    private static final String QUERY_COUNT_ALL = "course.countAll";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -42,14 +42,14 @@ public class JpaCourseDaoImpl implements CourseDao {
     public void add(Course course) {
         log.debug("Saving {}", course);
         entityManager.persist(course);
-        log.info("{} saved successfully", course);
+        log.debug("{} saved successfully", course);
     }
 
     @Override
     public Optional<Course> getById(int id) {
         log.debug("Getting course by id({})", id);
         Course course = entityManager.find(Course.class, id);
-        log.info("Found {}", course);
+        log.debug("Found {}", course);
         return Optional.ofNullable(course);
     }
 
@@ -58,20 +58,20 @@ public class JpaCourseDaoImpl implements CourseDao {
         log.debug("Getting all courses");
         List<Course> courses = entityManager.createQuery(env.getProperty(QUERY_GET_ALL),
             Course.class).getResultList();
-        log.info("Found {} courses", courses.size());
+        log.debug("Found {} courses", courses.size());
         return courses;
     }
 
     @Override
     public void update(Course course) {
         entityManager.merge(course);
-        log.info("Update {}", course);
+        log.debug("Update {}", course);
     }
 
     @Override
     public void delete(Course course) {
         entityManager.remove(course);
-        log.info("Delete {}", course);
+        log.debug("Delete {}", course);
     }
 
     @Override
@@ -84,7 +84,7 @@ public class JpaCourseDaoImpl implements CourseDao {
             throw new DaoException(
                 String.format(MESSAGE_DELETE_COURSE_NOT_FOUND, id));
         } else {
-            log.info("Delete course id({})", id);
+            log.debug("Delete course id({})", id);
         }
     }
 
@@ -111,7 +111,7 @@ public class JpaCourseDaoImpl implements CourseDao {
             .setFirstResult((int) pageable.getOffset())
             .setMaxResults(pageable.getPageSize())
             .getResultList();
-        log.info("Found {} courses", courses.size());
+        log.debug("Found {} courses", courses.size());
         return new PageImpl<>(courses, pageable, countAll());
     }
 }

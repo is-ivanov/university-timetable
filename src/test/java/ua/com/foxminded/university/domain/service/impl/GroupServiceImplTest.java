@@ -8,8 +8,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ua.com.foxminded.university.dao.interfaces.GroupDao;
-import ua.com.foxminded.university.dao.interfaces.StudentDao;
+import ua.com.foxminded.university.dao.interfaces.GroupRepository;
+import ua.com.foxminded.university.dao.interfaces.StudentRepository;
 import ua.com.foxminded.university.domain.dto.GroupDto;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
@@ -33,9 +33,9 @@ class GroupServiceImplTest {
     public static final String NAME_GROUP = "Group name";
 
     @Mock
-    private GroupDao groupDaoMock;
+    private GroupRepository groupRepositoryMock;
     @Mock
-    private StudentDao studentDaoMock;
+    private StudentRepository studentRepositoryMock;
     @Mock
     private GroupDtoMapper mapperMock;
 
@@ -43,11 +43,11 @@ class GroupServiceImplTest {
     private GroupServiceImpl groupService;
 
     @Test
-    @DisplayName("test 'add' when call add method then should call Dao once")
+    @DisplayName("test 'add' when call add method then should call Repository once")
     void testAdd_CallDaoOnce() {
         Group group = new Group();
         groupService.add(group);
-        verify(groupDaoMock).add(group);
+        verify(groupRepositoryMock).add(group);
     }
 
     @Nested
@@ -55,23 +55,23 @@ class GroupServiceImplTest {
     class GetByIdTest {
 
         @Test
-        @DisplayName("when Dao return Optional with Group then method should " +
+        @DisplayName("when Repository return Optional with Group then method should " +
             "return this Group")
         void testReturnExpectedGroup() {
             Group group = createTestGroup();
             GroupDto groupDto = createTestGroupDto();
 
-            when(groupDaoMock.getById(ID1)).thenReturn(Optional.of(group));
+            when(groupRepositoryMock.getById(ID1)).thenReturn(Optional.of(group));
             when(mapperMock.toGroupDto(group)).thenReturn(groupDto);
 
             assertThat(groupService.getById(ID1)).isEqualTo(groupDto);
         }
 
         @Test
-        @DisplayName("when Dao return empty Optional then method should " +
+        @DisplayName("when Repository return empty Optional then method should " +
             "return empty Group")
         void testReturnEmptyGroup() {
-            when(groupDaoMock.getById(ID3)).thenReturn(Optional.empty());
+            when(groupRepositoryMock.getById(ID3)).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> groupService.getById(ID3))
                 .isInstanceOf(EntityNotFoundException.class)
@@ -80,13 +80,13 @@ class GroupServiceImplTest {
     }
 
     @Test
-    @DisplayName("test 'getAll' when Dao return List groups then method " +
+    @DisplayName("test 'getAll' when Repository return List groups then method " +
         "should return this List")
     void testGetAll_ReturnListGroups() {
         List<Group> groups = createTestGroups();
         List<GroupDto> groupDtos = createTestGroupDtos(FACULTY_ID1);
 
-        when(groupDaoMock.getAll()).thenReturn(groups);
+        when(groupRepositoryMock.getAll()).thenReturn(groups);
         when(mapperMock.toGroupDtos(groups)).thenReturn(groupDtos);
 
         assertThat(groupService.getAll()).isEqualTo(groupDtos);
@@ -98,7 +98,7 @@ class GroupServiceImplTest {
     void testUpdate_CallDaoOnce() {
         Group group = new Group();
         groupService.update(group);
-        verify(groupDaoMock).update(group);
+        verify(groupRepositoryMock).update(group);
     }
 
     @Test
@@ -107,7 +107,7 @@ class GroupServiceImplTest {
     void testDelete_CallDaoOnce() {
         Group group = new Group();
         groupService.delete(group);
-        verify(groupDaoMock).delete(group);
+        verify(groupRepositoryMock).delete(group);
     }
 
     @Nested
@@ -119,7 +119,7 @@ class GroupServiceImplTest {
         void testCallGroupDaoOnce() {
             Group group = new Group();
             groupService.deactivateGroup(group);
-            verify(groupDaoMock).update(group);
+            verify(groupRepositoryMock).update(group);
         }
 
         @Test
@@ -129,7 +129,7 @@ class GroupServiceImplTest {
             groupService.deactivateGroup(group);
             ArgumentCaptor<Group> captor =
                 ArgumentCaptor.forClass(Group.class);
-            verify(groupDaoMock).update(captor.capture());
+            verify(groupRepositoryMock).update(captor.capture());
             assertFalse(captor.getValue().isActive());
         }
     }
@@ -161,7 +161,7 @@ class GroupServiceImplTest {
             groups.add(new Group());
             groups.add(new Group());
             groupService.joinGroups(groups, NAME_GROUP, new Faculty());
-            verify(studentDaoMock, times(groups.size()))
+            verify(studentRepositoryMock, times(groups.size()))
                 .getStudentsByGroup(any());
         }
 
@@ -184,23 +184,23 @@ class GroupServiceImplTest {
             }
             groups.add(group1);
             groups.add(group2);
-            when(studentDaoMock.getStudentsByGroup(any()))
+            when(studentRepositoryMock.getStudentsByGroup(any()))
                 .thenReturn(studentsGroup1).thenReturn(studentsGroup2);
             groupService.joinGroups(groups, NAME_GROUP, new Faculty());
-            verify(studentDaoMock,
+            verify(studentRepositoryMock,
                 times(quantityStudentsInGroup1 + quantityStudentsInGroup2))
                 .update(any());
         }
     }
 
     @Test
-    @DisplayName("test 'getAllByFacultyId' when Dao return List groups then " +
+    @DisplayName("test 'getAllByFacultyId' when Repository return List groups then " +
         "method should return this List")
     void testGetAllByFacultyId_ReturnListGroups() {
         List<Group> groups = createTestGroups();
         List<GroupDto> groupDtos = createTestGroupDtos(FACULTY_ID1);
 
-        when(groupDaoMock.getAllByFacultyId(FACULTY_ID1)).thenReturn(groups);
+        when(groupRepositoryMock.getAllByFacultyId(FACULTY_ID1)).thenReturn(groups);
         when(mapperMock.toGroupDtos(groups)).thenReturn(groupDtos);
 
         assertThat(groupService.getAllByFacultyId(FACULTY_ID1)).isEqualTo(groupDtos);

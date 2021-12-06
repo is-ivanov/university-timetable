@@ -68,7 +68,7 @@ public class StudentController {
         model.addAttribute("facultyIdSelect", facultyId);
         model.addAttribute("groupIdSelect", groupId);
         model.addAttribute("newStudent", new Student());
-        log.info("The required data is loaded into the model");
+        log.debug("The required data is loaded into the model");
         return "student";
     }
 
@@ -78,7 +78,7 @@ public class StudentController {
         log.debug("Creating student [{} {} {}]", studentDto.getFirstName(),
             studentDto.getPatronymic(), studentDto.getLastName());
         studentService.add(studentDtoMapper.toStudent(studentDto));
-        log.info("Student [{}, {}, {}] is created", studentDto.getFirstName(),
+        log.debug("Student [{}, {}, {}] is created", studentDto.getFirstName(),
             studentDto.getPatronymic(), studentDto.getLastName());
         return defineRedirect(request);
     }
@@ -88,7 +88,7 @@ public class StudentController {
     public StudentDto getStudent(@PathVariable("id") int studentId) {
         log.debug("Getting student id({})", studentId);
         StudentDto student = studentService.getById(studentId);
-        log.info("Found student [{} {} {}]", student.getFirstName(),
+        log.debug("Found student [{} {} {}]", student.getFirstName(),
             student.getPatronymic(), student.getLastName());
         return student;
     }
@@ -99,7 +99,7 @@ public class StudentController {
                                 HttpServletRequest request) {
         log.debug("Updating student id({})", studentId);
         studentService.update(studentDtoMapper.toStudent(studentDto));
-        log.info("Student id({}) is updated", studentId);
+        log.debug("Student id({}) is updated", studentId);
         return defineRedirect(request);
     }
 
@@ -108,7 +108,7 @@ public class StudentController {
                                 HttpServletRequest request) {
         log.debug("Deleting student id({})", studentId);
         studentService.delete(studentId);
-        log.info("Student id({}) is deleted", studentId);
+        log.debug("Student id({}) is deleted", studentId);
         return defineRedirect(request);
     }
 
@@ -126,7 +126,7 @@ public class StudentController {
         List<LessonDto> lessonsForStudent = lessonService
             .getAllForStudentForTimePeriod(studentId,
                 startTime.toLocalDateTime(), endTime.toLocalDateTime());
-        log.info("Found {} lessons", lessonsForStudent.size());
+        log.debug("Found {} lessons", lessonsForStudent.size());
         return lessonsForStudent;
     }
 

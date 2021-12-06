@@ -7,10 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.jdbc.JdbcTestUtils;
-import ua.com.foxminded.university.dao.interfaces.CourseDao;
-import ua.com.foxminded.university.dao.interfaces.LessonDao;
-import ua.com.foxminded.university.dao.interfaces.RoomDao;
-import ua.com.foxminded.university.dao.interfaces.TeacherDao;
+import ua.com.foxminded.university.dao.interfaces.CourseRepository;
+import ua.com.foxminded.university.dao.interfaces.LessonRepository;
+import ua.com.foxminded.university.dao.interfaces.RoomRepository;
+import ua.com.foxminded.university.dao.interfaces.TeacherRepository;
 import ua.com.foxminded.university.domain.entity.*;
 import ua.com.foxminded.university.domain.filter.LessonFilter;
 import ua.com.foxminded.university.springconfig.IntegrationTestBase;
@@ -25,21 +25,21 @@ import static ua.com.foxminded.university.TestObjects.*;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 @Sql("/sql/hibernate/lesson-test-data.sql")
-class JpaLessonDaoImplTest extends IntegrationTestBase {
+class LessonRepositoryJpaTest extends IntegrationTestBase {
 
     private static final String TABLE_LESSONS = "lessons";
 
     @Autowired
-    private LessonDao dao;
+    private LessonRepository dao;
 
     @Autowired
-    private TeacherDao teacherDao;
+    private TeacherRepository teacherRepository;
 
     @Autowired
-    private CourseDao courseDao;
+    private CourseRepository courseRepository;
 
     @Autowired
-    private RoomDao roomDao;
+    private RoomRepository roomRepository;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -130,9 +130,9 @@ class JpaLessonDaoImplTest extends IntegrationTestBase {
         void testUpdateExistingLesson_WriteNewFields() {
             Lesson lessonForChange = dao.getById(LESSON_ID1).get();
 
-            Teacher newTeacher = teacherDao.getById(TEACHER_ID2).get();
-            Course newCourse = courseDao.getById(COURSE_ID2).get();
-            Room newRoom = roomDao.getById(ROOM_ID2).get();
+            Teacher newTeacher = teacherRepository.getById(TEACHER_ID2).get();
+            Course newCourse = courseRepository.getById(COURSE_ID2).get();
+            Room newRoom = roomRepository.getById(ROOM_ID2).get();
 
             lessonForChange.setCourse(newCourse);
             lessonForChange.setRoom(newRoom);

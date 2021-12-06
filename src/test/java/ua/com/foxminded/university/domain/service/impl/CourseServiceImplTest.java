@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ua.com.foxminded.university.dao.interfaces.CourseDao;
+import ua.com.foxminded.university.dao.interfaces.CourseRepository;
 import ua.com.foxminded.university.domain.entity.Course;
 
 import javax.persistence.EntityNotFoundException;
@@ -30,11 +30,11 @@ class CourseServiceImplTest {
     private CourseServiceImpl courseService;
 
     @Mock
-    private CourseDao courseDaoMock;
+    private CourseRepository courseRepositoryMock;
 
     @BeforeEach
     void setUp() {
-        courseService = new CourseServiceImpl(courseDaoMock);
+        courseService = new CourseServiceImpl(courseRepositoryMock);
     }
 
     @Test
@@ -42,7 +42,7 @@ class CourseServiceImplTest {
     void testAdd_CallDaoOnce() {
         Course course = new Course();
         courseService.add(course);
-        verify(courseDaoMock).add(course);
+        verify(courseRepositoryMock).add(course);
     }
 
     @Nested
@@ -50,21 +50,21 @@ class CourseServiceImplTest {
     class GetByIdTest {
 
         @Test
-        @DisplayName("when Dao return Optional with Course then method should return Course")
+        @DisplayName("when Repository return Optional with Course then method should return Course")
         void testReturnExpectedCourse() {
             Course expectedCourse = new Course();
             expectedCourse.setId(ID1);
             expectedCourse.setName(COURSE_NAME);
-            when(courseDaoMock.getById(ID1))
+            when(courseRepositoryMock.getById(ID1))
                     .thenReturn(Optional.of(expectedCourse));
             assertEquals(expectedCourse, courseService.getById(ID1));
         }
 
         @Test
-        @DisplayName("when Dao return empty Optional then method should throw " +
+        @DisplayName("when Repository return empty Optional then method should throw " +
             "new EntityNotFoundException")
         void testReturnEmptyCourse() {
-            when(courseDaoMock.getById(ID1)).thenReturn(Optional.empty());
+            when(courseRepositoryMock.getById(ID1)).thenReturn(Optional.empty());
             assertThatThrownBy(() -> courseService.getById(ID1))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining("Course id(1) not found");
@@ -72,7 +72,7 @@ class CourseServiceImplTest {
     }
 
     @Test
-    @DisplayName("test 'getAll' when Dao return List courses then method return this List")
+    @DisplayName("test 'getAll' when Repository return List courses then method return this List")
     void testGetAll_ReturnListCourses(){
         Course course1 = new Course();
         course1.setId(ID1);
@@ -81,7 +81,7 @@ class CourseServiceImplTest {
         List<Course> expectedCourses = new ArrayList<>();
         expectedCourses.add(course1);
         expectedCourses.add(course2);
-        when(courseDaoMock.getAll()).thenReturn(expectedCourses);
+        when(courseRepositoryMock.getAll()).thenReturn(expectedCourses);
         assertEquals(expectedCourses, courseService.getAll());
     }
 
@@ -90,7 +90,7 @@ class CourseServiceImplTest {
     void testUpdate_CallDaoOnce(){
         Course course = new Course();
         courseService.update(course);
-        verify(courseDaoMock).update(course);
+        verify(courseRepositoryMock).update(course);
     }
 
     @Test
@@ -98,7 +98,7 @@ class CourseServiceImplTest {
     void testDelete_CallDaoOnce(){
         Course course = new Course();
         courseService.delete(course);
-        verify(courseDaoMock).delete(course);
+        verify(courseRepositoryMock).delete(course);
     }
 
 }

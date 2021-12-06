@@ -66,7 +66,7 @@ public class TeacherController {
         model.addAttribute("facultyIdSelect", facultyId);
         model.addAttribute("departmentIdSelect", departmentId);
         model.addAttribute("newTeacher", new Teacher());
-        log.info("The required data is loaded into the model");
+        log.debug("The required data is loaded into the model");
         return "teacher";
     }
 
@@ -81,7 +81,7 @@ public class TeacherController {
         log.debug("Getting teachers free from {} to {}", startTime, endTime);
         List<TeacherDto> freeTeachers =
             teacherService.getFreeTeachersOnLessonTime(startTime, endTime);
-        log.info("Found {} active free teachers", freeTeachers.size());
+        log.debug("Found {} active free teachers", freeTeachers.size());
         return freeTeachers;
     }
 
@@ -91,7 +91,7 @@ public class TeacherController {
         log.debug("Creating teacher [{} {} {}]", teacherDto.getFirstName(),
             teacherDto.getPatronymic(), teacherDto.getLastName());
         teacherService.add(teacherMapper.toTeacher(teacherDto));
-        log.info("Teacher [{}, {}, {}] is created", teacherDto.getFirstName(),
+        log.debug("Teacher [{}, {}, {}] is created", teacherDto.getFirstName(),
             teacherDto.getPatronymic(), teacherDto.getLastName());
         return defineRedirect(request);
     }
@@ -101,7 +101,7 @@ public class TeacherController {
     public TeacherDto getTeacher(@PathVariable("id") int teacherId) {
         log.debug("Getting teacher id({})", teacherId);
         TeacherDto teacher = teacherService.getById(teacherId);
-        log.info("Found teacher [{} {} {}]", teacher.getFirstName(),
+        log.debug("Found teacher [{} {} {}]", teacher.getFirstName(),
             teacher.getPatronymic(), teacher.getLastName());
         return teacher;
     }
@@ -112,7 +112,7 @@ public class TeacherController {
                                 HttpServletRequest request) {
         log.debug("Updating teacher id({})", teacherId);
         teacherService.update(teacherMapper.toTeacher(teacherDto));
-        log.info("Teacher id({}) is updated", teacherId);
+        log.debug("Teacher id({}) is updated", teacherId);
         return defineRedirect(request);
     }
 
@@ -121,7 +121,7 @@ public class TeacherController {
                                 HttpServletRequest request) {
         log.debug("Deleting teacher id({})", teacherId);
         teacherService.delete(teacherId);
-        log.info("Teacher id({}) is deleted", teacherId);
+        log.debug("Teacher id({}) is deleted", teacherId);
         return defineRedirect(request);
     }
 
@@ -139,7 +139,7 @@ public class TeacherController {
         List<LessonDto> lessonsForTeacher = lessonService
             .getAllForTeacherForTimePeriod(teacherId,
                 startTime.toLocalDateTime(), endTime.toLocalDateTime());
-        log.info("Found {} lessons", lessonsForTeacher.size());
+        log.debug("Found {} lessons", lessonsForTeacher.size());
         return lessonsForTeacher;
     }
 

@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.jdbc.JdbcTestUtils;
-import ua.com.foxminded.university.dao.interfaces.GroupDao;
+import ua.com.foxminded.university.dao.interfaces.GroupRepository;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.exception.DaoException;
@@ -23,7 +23,7 @@ import static ua.com.foxminded.university.TestObjects.*;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 @Sql("/sql/hibernate/group-test-data.sql")
-class JpaGroupDaoImplTest extends IntegrationTestBase {
+class GroupRepositoryJpaTest extends IntegrationTestBase {
 
     private static final String TABLE_NAME = "groups";
     private static final String NAME_TEST_GROUP = "GroupName";
@@ -39,7 +39,7 @@ class JpaGroupDaoImplTest extends IntegrationTestBase {
         LocalDateTime.of(2021, 6, 10, 15, 30);
 
     @Autowired
-    private GroupDao dao;
+    private GroupRepository dao;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;

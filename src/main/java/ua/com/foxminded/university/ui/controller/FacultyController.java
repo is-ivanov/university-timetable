@@ -52,7 +52,7 @@ public class FacultyController {
         model.addAttribute("pages", pageSequenceCreator
             .createPageSequence(pageFaculties.getTotalPages(),
                 pageFaculties.getNumber() + 1));
-        log.info("The required data is loaded into the model");
+        log.debug("The required data is loaded into the model");
         return "faculty";
     }
 
@@ -61,7 +61,7 @@ public class FacultyController {
                                 HttpServletRequest request) {
         log.debug("Creating {}", faculty);
         facultyService.add(faculty);
-        log.info("{} is created", faculty);
+        log.debug("{} is created", faculty);
         return defineRedirect(request);
     }
 
@@ -70,7 +70,7 @@ public class FacultyController {
     public Faculty getFaculty(@PathVariable("id") int facultyId) {
         log.debug("Getting faculty by id({})", facultyId);
         Faculty faculty = facultyService.getById(facultyId);
-        log.info("Found {}", faculty);
+        log.debug("Found {}", faculty);
         return faculty;
     }
 
@@ -80,7 +80,7 @@ public class FacultyController {
                                 HttpServletRequest request) {
         log.debug("Updating faculty with id({})", faculty);
         facultyService.update(faculty);
-        log.info("Faculty id({}) is updated", facultyId);
+        log.debug("Faculty id({}) is updated", facultyId);
         return defineRedirect(request);
     }
 
@@ -89,7 +89,7 @@ public class FacultyController {
                                 HttpServletRequest request) {
         log.debug("Deleting faculty with id({})", facultyId);
         facultyService.delete(facultyId);
-        log.info("Faculty id({}) is deleted", facultyId);
+        log.debug("Faculty id({}) is deleted", facultyId);
         return defineRedirect(request);
     }
 
@@ -118,7 +118,7 @@ public class FacultyController {
             facultyId, startTime, endTime);
         List<GroupDto> freeGroups = groupService
             .getFreeGroupsByFacultyOnLessonTime(facultyId, startTime, endTime);
-        log.info("Found {} groups", freeGroups.size());
+        log.debug("Found {} groups", freeGroups.size());
         return freeGroups;
     }
 
@@ -139,7 +139,7 @@ public class FacultyController {
     public List<TeacherDto> getTeachersByFaculty(@PathVariable("id") int facultyId) {
         log.debug("Getting teacherDtos by faculty id({})", facultyId);
         List<TeacherDto> teachers = teacherService.getAllByFaculty(facultyId);
-        log.info("Found {} teachers", teachers.size());
+        log.debug("Found {} teachers", teachers.size());
         return teachers;
     }
 

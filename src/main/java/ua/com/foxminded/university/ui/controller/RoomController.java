@@ -47,7 +47,7 @@ public class RoomController {
         model.addAttribute("pages", pageSequenceCreator
             .createPageSequence(pageRooms.getTotalPages(),
                 pageRooms.getNumber() + 1));
-        log.info("The list of rooms is loaded into the model");
+        log.debug("The list of rooms is loaded into the model");
         return "room";
     }
 
@@ -56,7 +56,7 @@ public class RoomController {
     public Room showRoom(@PathVariable("id") int roomId) {
         log.debug("Getting room by id({})", roomId);
         Room room = roomService.getById(roomId);
-        log.info("Found {}", room);
+        log.debug("Found {}", room);
         return room;
     }
 
@@ -70,7 +70,7 @@ public class RoomController {
                                        LocalDateTime endTime) {
         log.debug("Getting rooms free from {} to {}", startTime, endTime);
         List<Room> freeRooms = roomService.getFreeRoomsOnLessonTime(startTime, endTime);
-        log.info("Found {} free rooms", freeRooms.size());
+        log.debug("Found {} free rooms", freeRooms.size());
         return freeRooms;
     }
 
@@ -79,7 +79,7 @@ public class RoomController {
                              HttpServletRequest request) {
         log.debug("Creating {}", room);
         roomService.add(room);
-        log.info("{} is created", room);
+        log.debug("{} is created", room);
         return defineRedirect(request);
     }
 
@@ -89,7 +89,7 @@ public class RoomController {
                              HttpServletRequest request) {
         log.debug("Updating room id({})", roomId);
         roomService.update(room);
-        log.info("Room id({}) is updated", roomId);
+        log.debug("Room id({}) is updated", roomId);
         return defineRedirect(request);
     }
 
@@ -98,7 +98,7 @@ public class RoomController {
                              HttpServletRequest request) {
         log.debug("Deleting room with id({})", roomId);
         roomService.delete(roomId);
-        log.info("Room id({}) is deleted", roomId);
+        log.debug("Room id({}) is deleted", roomId);
         return defineRedirect(request);
     }
 
@@ -116,7 +116,7 @@ public class RoomController {
         List<LessonDto> lessonsForTeacher = lessonService
             .getAllForRoomForTimePeriod(roomId,
                 startTime.toLocalDateTime(), endTime.toLocalDateTime());
-        log.info("Found {} lessons", lessonsForTeacher.size());
+        log.debug("Found {} lessons", lessonsForTeacher.size());
         return lessonsForTeacher;
     }
 }

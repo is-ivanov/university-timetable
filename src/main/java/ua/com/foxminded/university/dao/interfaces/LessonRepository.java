@@ -6,7 +6,7 @@ import java.util.List;
 import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.filter.LessonFilter;
 
-public interface LessonDao extends Dao<Lesson> {
+public interface LessonRepository extends Repository<Lesson> {
 
     void addStudentToLesson(int lessonId, int studentId);
 

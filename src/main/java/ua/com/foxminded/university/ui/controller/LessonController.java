@@ -42,7 +42,7 @@ public class LessonController {
     @GetMapping
     public String showLessons(Model model) {
         model.addAttribute("lessonFilter", new LessonFilter());
-        log.info("The required data is loaded into the model. Loading page");
+        log.debug("The required data is loaded into the model. Loading page");
         return LESSONS;
     }
 
@@ -68,7 +68,7 @@ public class LessonController {
         model.addAttribute("lessons",
                 lessonService.getAllWithFilter(lessonFilter));
         model.addAttribute("newLesson", new LessonDto());
-        log.info("The required data is loaded into the model");
+        log.debug("The required data is loaded into the model");
         return LESSONS;
     }
 
@@ -77,7 +77,7 @@ public class LessonController {
     public LessonDto getLessonWithStudents(@PathVariable("id") int lessonId) {
         log.debug("Getting lesson id({})", lessonId);
         LessonDto lessonDto = lessonService.getById(lessonId);
-        log.info("Found lesson [teacher {}, course {}, room {}]",
+        log.debug("Found lesson [teacher {}, course {}, room {}]",
             lessonDto.getTeacherFullName(), lessonDto.getCourseName(),
             lessonDto.getBuildingAndRoom());
         return lessonDto;
@@ -114,7 +114,7 @@ public class LessonController {
         model.addAttribute("groups",
             groupService.getFreeGroupsOnLessonTime(timeStart, timeEnd));
 
-        log.info("The required data is loaded into the model. Loading page lesson id({})",
+        log.debug("The required data is loaded into the model. Loading page lesson id({})",
             lessonId);
         return "lesson";
     }
@@ -124,7 +124,7 @@ public class LessonController {
                                HttpServletRequest request) {
         log.debug("Creating lesson {}", lessonDto);
         lessonService.add(lessonDtoMapper.toLesson(lessonDto));
-        log.info("Lesson {} is created", lessonDto);
+        log.debug("Lesson {} is created", lessonDto);
         return defineRedirect(request);
     }
 
@@ -134,7 +134,7 @@ public class LessonController {
                                      HttpServletRequest request) {
         log.debug("Adding student id({}) to lesson id({})", studentId, lessonId);
         lessonService.addStudentToLesson(lessonId, studentId);
-        log.info("Student id({}) added to lesson id({}) successfully", studentId, lessonId);
+        log.debug("Student id({}) added to lesson id({}) successfully", studentId, lessonId);
         return defineRedirect(request);
     }
 
@@ -145,7 +145,7 @@ public class LessonController {
         log.debug("Adding all students from group id({}) to lesson id({})",
             groupId, lessonId);
         lessonService.addStudentsFromGroupToLesson(groupId, lessonId);
-        log.info("Student from group id({}) is added to lesson id({})", groupId,
+        log.debug("Student from group id({}) is added to lesson id({})", groupId,
             lessonId);
         return defineRedirect(request);
     }
@@ -157,7 +157,7 @@ public class LessonController {
         log.debug("Updating lesson id({})", lessonId);
         lessonDto.setId(lessonId);
         lessonService.update(lessonDtoMapper.toLesson(lessonDto));
-        log.info("Lesson id({}) updated successfully", lessonId);
+        log.debug("Lesson id({}) updated successfully", lessonId);
         return defineRedirect(request);
     }
 
@@ -172,7 +172,7 @@ public class LessonController {
             log.debug("Remove students id({}) from lesson id({})", studentIds, lessonId);
             lessonService.removeStudentsFromLesson(lessonId, studentIds);
         }
-        log.info("Students id({}) successfully removed from lesson id({})",
+        log.debug("Students id({}) successfully removed from lesson id({})",
             studentIds, lessonId);
         return defineRedirect(request);
     }
@@ -182,7 +182,7 @@ public class LessonController {
                                HttpServletRequest request) {
         log.debug("Deleting lesson id({})", lessonId);
         lessonService.delete(lessonId);
-        log.info("Lesson id({}) is deleted", lessonId);
+        log.debug("Lesson id({}) is deleted", lessonId);
         return defineRedirect(request);
     }
 

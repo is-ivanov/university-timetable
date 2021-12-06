@@ -51,7 +51,7 @@ public class DepartmentController {
         model.addAttribute("departments", departments);
         model.addAttribute("facultySelected", facultySelected);
         model.addAttribute("newDepartment", new Department());
-        log.info("The list of departments and selected faculty is loaded into the model");
+        log.debug("The list of departments and selected faculty is loaded into the model");
         return "department";
     }
 
@@ -60,7 +60,7 @@ public class DepartmentController {
                                    HttpServletRequest request) {
         log.debug("Creating {}", department);
         departmentService.add(department);
-        log.info("{} is created", department);
+        log.debug("{} is created", department);
         return defineRedirect(request);
     }
 
@@ -69,7 +69,7 @@ public class DepartmentController {
     public DepartmentDto getDepartment(@PathVariable("id") int departmentId) {
         log.debug("Getting department id({})", departmentId);
         DepartmentDto department = departmentService.getById(departmentId);
-        log.info("Found {}", department);
+        log.debug("Found {}", department);
         return department;
     }
 
@@ -79,7 +79,7 @@ public class DepartmentController {
                                    HttpServletRequest request) {
         log.debug("Updating department id({})", departmentId);
         departmentService.update(department);
-        log.info("Department id({}) is updated", departmentId);
+        log.debug("Department id({}) is updated", departmentId);
         return defineRedirect(request);
     }
 
@@ -88,7 +88,7 @@ public class DepartmentController {
                                    HttpServletRequest request) {
         log.debug("Deleting department id({})", departmentId);
         departmentService.delete(departmentId);
-        log.info("Department id({}) is deleted", departmentId);
+        log.debug("Department id({}) is deleted", departmentId);
         return defineRedirect(request);
     }
 
@@ -97,7 +97,7 @@ public class DepartmentController {
     public List<TeacherDto> getTeachersByDepartment(@PathVariable("id") int departmentId) {
         log.debug("Getting teacherDtos by department id({})", departmentId);
         List<TeacherDto> teachers = teacherService.getAllByDepartment(departmentId);
-        log.info("Found {} teachers", teachers.size());
+        log.debug("Found {} teachers", teachers.size());
         return teachers;
     }
 }

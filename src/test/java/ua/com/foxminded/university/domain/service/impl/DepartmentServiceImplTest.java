@@ -7,7 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ua.com.foxminded.university.dao.interfaces.DepartmentDao;
+import ua.com.foxminded.university.dao.interfaces.DepartmentRepository;
 import ua.com.foxminded.university.domain.dto.DepartmentDto;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.mapper.DepartmentDtoMapper;
@@ -26,7 +26,7 @@ import static ua.com.foxminded.university.TestObjects.*;
 class DepartmentServiceImplTest {
 
     @Mock
-    private DepartmentDao departmentDaoMock;
+    private DepartmentRepository departmentRepositoryMock;
 
     @Mock
     private DepartmentDtoMapper mapperMock;
@@ -36,11 +36,11 @@ class DepartmentServiceImplTest {
 
 
     @Test
-    @DisplayName("test 'add' when call add method then should call Dao once")
+    @DisplayName("test 'add' when call add method then should call Repository once")
     void testAdd_CallDaoOnce() {
         Department department = new Department();
         departmentService.add(department);
-        verify(departmentDaoMock).add(department);
+        verify(departmentRepositoryMock).add(department);
     }
 
     @Nested
@@ -48,13 +48,13 @@ class DepartmentServiceImplTest {
     class GetByIdTest {
 
         @Test
-        @DisplayName("when Dao return Optional with Department then method " +
+        @DisplayName("when Repository return Optional with Department then method " +
             "should return this DepartmentDto")
         void testReturnExpectedDepartment() {
             Department department = createTestDepartment(FACULTY_ID1);
             DepartmentDto expectedDepartmentDto = createTestDepartmentDto();
 
-            when(departmentDaoMock.getById(ID1)).thenReturn(Optional.of(department));
+            when(departmentRepositoryMock.getById(ID1)).thenReturn(Optional.of(department));
             when(mapperMock.toDepartmentDto(department)).thenReturn(expectedDepartmentDto);
 
             DepartmentDto actualDepartmentDto = departmentService.getById(ID1);
@@ -62,10 +62,10 @@ class DepartmentServiceImplTest {
         }
 
         @Test
-        @DisplayName("when Dao return empty Optional then method should throw" +
+        @DisplayName("when Repository return empty Optional then method should throw" +
             " new EntityNotFoundException")
         void testReturnEmptyDepartment() {
-            when(departmentDaoMock.getById(ID1)).thenReturn(Optional.empty());
+            when(departmentRepositoryMock.getById(ID1)).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> departmentService.getById(ID1))
                 .isInstanceOf(EntityNotFoundException.class)
@@ -74,13 +74,13 @@ class DepartmentServiceImplTest {
     }
 
     @Test
-    @DisplayName("test 'getAll' when Dao return List departments then " +
+    @DisplayName("test 'getAll' when Repository return List departments then " +
         "method should return this List")
     void testGetAll_ReturnListDepartments() {
         List<Department> testDepartments = createTestDepartments();
         List<DepartmentDto> testDepartmentDtos = createTestDepartmentDtos();
 
-        when(departmentDaoMock.getAll()).thenReturn(testDepartments);
+        when(departmentRepositoryMock.getAll()).thenReturn(testDepartments);
         when(mapperMock.toDepartmentDtos(testDepartments)).thenReturn(testDepartmentDtos);
 
         assertThat(departmentService.getAll()).isEqualTo(testDepartmentDtos);
@@ -92,7 +92,7 @@ class DepartmentServiceImplTest {
     void testUpdate_CallDaoOnce() {
         Department department = new Department();
         departmentService.update(department);
-        verify(departmentDaoMock).update(department);
+        verify(departmentRepositoryMock).update(department);
     }
 
     @Test
@@ -101,17 +101,17 @@ class DepartmentServiceImplTest {
     void testDelete_CallDaoOnce() {
         Department department = new Department();
         departmentService.delete(department);
-        verify(departmentDaoMock).delete(department);
+        verify(departmentRepositoryMock).delete(department);
     }
 
     @Test
-    @DisplayName("test 'getAllByFacultyId' when Dao return List departments " +
+    @DisplayName("test 'getAllByFacultyId' when Repository return List departments " +
         "then method should return this List")
     void testGetAllByFacultyId_ReturnListDepartments() {
         List<Department> testDepartments = createTestDepartments();
         List<DepartmentDto> testDepartmentDtos = createTestDepartmentDtos();
 
-        when(departmentDaoMock.getAllByFacultyId(ID1)).thenReturn(testDepartments);
+        when(departmentRepositoryMock.getAllByFacultyId(ID1)).thenReturn(testDepartments);
         when(mapperMock.toDepartmentDtos(testDepartments)).thenReturn(testDepartmentDtos);
 
         assertThat(departmentService.getAllByFaculty(ID1)).isEqualTo(testDepartmentDtos);
