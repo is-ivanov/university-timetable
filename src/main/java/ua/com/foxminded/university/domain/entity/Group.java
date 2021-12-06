@@ -29,7 +29,8 @@ public class Group {
 
     @ToString.Exclude
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "faculty_id", nullable = false)
+    @JoinColumn(name = "faculty_id", nullable = false,
+        foreignKey = @ForeignKey(name = "fk_faculty"))
     private Faculty faculty;
 
     @Column(name = "group_active", nullable = false)

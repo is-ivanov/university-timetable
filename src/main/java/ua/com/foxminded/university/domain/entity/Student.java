@@ -22,7 +22,7 @@ import java.util.Set;
 public class Student extends Person {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_id")
+    @JoinColumn(name = "group_id", foreignKey = @ForeignKey(name = "fk_group"))
     @ToString.Exclude
     private Group group;
 

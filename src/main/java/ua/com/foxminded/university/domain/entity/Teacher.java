@@ -18,7 +18,8 @@ import java.util.Objects;
 public class Teacher extends Person {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "department_id", nullable = false)
+    @JoinColumn(name = "department_id", nullable = false,
+        foreignKey = @ForeignKey(name = "fk_department"))
     @ToString.Exclude
     private Department department;
 

@@ -32,17 +32,20 @@ public class Lesson {
 
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "course_id", nullable = false)
+    @JoinColumn(name = "course_id", nullable = false,
+        foreignKey = @ForeignKey(name = "fk_course"))
     private Course course;
 
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "teacher_id", nullable = false)
+    @JoinColumn(name = "teacher_id", nullable = false,
+        foreignKey = @ForeignKey(name = "fk_teacher"))
     private Teacher teacher;
 
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "room_id", nullable = false)
+    @JoinColumn(name = "room_id", nullable = false,
+        foreignKey = @ForeignKey(name = "fk_room"))
     private Room room;
 
     @Column(name = "time_start")
@@ -54,7 +57,9 @@ public class Lesson {
     @ManyToMany()
     @JoinTable(name = "students_lessons",
         joinColumns = @JoinColumn(name = "lesson_id"),
-        inverseJoinColumns = @JoinColumn(name = "student_id"))
+        inverseJoinColumns = @JoinColumn(name = "student_id"),
+        foreignKey = @ForeignKey(name = "fk_lesson"),
+        inverseForeignKey = @ForeignKey(name = "fk_student"))
     @ToString.Exclude
     private Set<Student> students = new HashSet<>();
 
