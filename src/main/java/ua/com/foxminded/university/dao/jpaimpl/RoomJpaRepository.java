@@ -25,7 +25,7 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 @PropertySource("classpath:queries/jpql_query.properties")
-public class RoomRepositoryJpa implements RoomRepository {
+public class RoomJpaRepository implements RoomRepository {
 
     public static final String QUERY_GET_ALL = "room.getAll";
     public static final String QUERY_GET_ALL_SORTED_PAGINATED = "room.getAllSortedPaginated";

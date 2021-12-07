@@ -22,7 +22,7 @@ import static ua.com.foxminded.university.TestObjects.*;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 @Sql("/sql/hibernate/student-test-data.sql")
-class StudentRepositoryJpaTest extends IntegrationTestBase {
+class StudentJpaRepositoryTest extends IntegrationTestBase {
 
     private static final String TABLE_NAME = "students";
     private static final String TEST_STUDENT_FIRST_NAME = "Student First Name";

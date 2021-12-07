@@ -22,7 +22,7 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 @PropertySource("classpath:queries/jpql_query.properties")
-public class StudentRepositoryJpa implements StudentRepository {
+public class StudentJpaRepository implements StudentRepository {
 
     private static final String QUERY_GET_ALL = "student.getAll";
     private static final String QUERY_GET_ALL_ACTIVE = "student.getAllActive";

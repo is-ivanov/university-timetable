@@ -23,7 +23,7 @@ import static ua.com.foxminded.university.TestObjects.*;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 @Sql("/sql/hibernate/group-test-data.sql")
-class GroupRepositoryJpaTest extends IntegrationTestBase {
+class GroupJpaRepositoryTest extends IntegrationTestBase {
 
     private static final String TABLE_NAME = "groups";
     private static final String NAME_TEST_GROUP = "GroupName";

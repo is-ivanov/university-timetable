@@ -24,7 +24,7 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 @PropertySource("classpath:queries/jpql_query.properties")
-public class FacultyRepositoryJpa implements FacultyRepository {
+public class FacultyJpaRepository implements FacultyRepository {
 
     public static final String FACULTY_NAME = "faculty_name";
     public static final String MESSAGE_DELETE_FACULTY_NOT_FOUND = "Can't delete because faculty id(%d) not found";

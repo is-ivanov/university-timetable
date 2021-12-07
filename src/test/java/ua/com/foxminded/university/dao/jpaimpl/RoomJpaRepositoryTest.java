@@ -25,7 +25,7 @@ import static ua.com.foxminded.university.TestObjects.*;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 @Sql("/sql/hibernate/room-test-data.sql")
-class RoomRepositoryJpaTest extends IntegrationTestBase {
+class RoomJpaRepositoryTest extends IntegrationTestBase {
 
     private static final String TABLE_NAME = "rooms";
     private static final String TEST_BUILDING = "testBuilding";

@@ -23,7 +23,7 @@ import static ua.com.foxminded.university.TestObjects.*;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 @Sql("/sql/hibernate/course-test-data.sql")
-class CourseRepositoryJpaTest extends IntegrationTestBase {
+class CourseJpaRepositoryTest extends IntegrationTestBase {
 
     private static final String TEST_COURSE_NAME = "New course";
     private static final String MESSAGE_DELETE_COURSE_NOT_FOUND =

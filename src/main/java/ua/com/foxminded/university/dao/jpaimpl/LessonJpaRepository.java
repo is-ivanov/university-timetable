@@ -22,7 +22,7 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 @PropertySource("classpath:queries/jpql_query.properties")
-public class LessonRepositoryJpa implements LessonRepository {
+public class LessonJpaRepository implements LessonRepository {
 
     private static final String QUERY_GET_ALL = "lesson.getAll";
     private static final String QUERY_DELETE_BY_ID = "lesson.deleteById";

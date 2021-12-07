@@ -20,7 +20,7 @@ import static ua.com.foxminded.university.TestObjects.*;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 @Sql("/sql/hibernate/department-test-data.sql")
-class DepartmentRepositoryJpaTest extends IntegrationTestBase {
+class DepartmentJpaRepositoryTest extends IntegrationTestBase {
 
     private static final String MESSAGE_DELETE_EXCEPTION =
         "Can't delete because department id(3) not found";

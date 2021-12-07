@@ -20,7 +20,7 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 @PropertySource("classpath:queries/jpql_query.properties")
-public class GroupRepositoryJpa implements GroupRepository {
+public class GroupJpaRepository implements GroupRepository {
 
     private static final String QUERY_GET_ALL = "group.getAll";
     private static final String QUERY_GET_ALL_ACTIVE = "group.getAllActive";

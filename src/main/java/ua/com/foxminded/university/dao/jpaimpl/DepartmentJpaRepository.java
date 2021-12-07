@@ -19,7 +19,7 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 @PropertySource("classpath:queries/jpql_query.properties")
-public class DepartmentRepositoryJpa implements DepartmentRepository {
+public class DepartmentJpaRepository implements DepartmentRepository {
 
     private static final String QUERY_GET_ALL = "department.getAll";
     private static final String QUERY_GET_ALL_BY_FACULTY = "department.getAllByFacultyId";

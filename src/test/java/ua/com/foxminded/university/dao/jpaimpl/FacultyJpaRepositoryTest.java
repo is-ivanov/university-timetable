@@ -23,7 +23,7 @@ import static ua.com.foxminded.university.TestObjects.*;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 @Sql("/sql/hibernate/faculty-test-data.sql")
-class FacultyRepositoryJpaTest extends IntegrationTestBase {
+class FacultyJpaRepositoryTest extends IntegrationTestBase {
 
     public static final String MESSAGE_DELETE_FACULTY_NOT_FOUND =
         "Can't delete because faculty id(3) not found";
