@@ -18,12 +18,11 @@ public interface LessonDtoMapper {
     @Mapping(target = "roomId", source = "room.id")
     @Mapping(target = "buildingAndRoom",
         expression = "java(lesson.getRoom().getBuildingAndRoom())")
-    LessonDto lessonToLessonDto(Lesson lesson);
+    LessonDto toLessonDto(Lesson lesson);
 
-    @InheritInverseConfiguration(name = "lessonToLessonDto")
-    @Mapping(target = "students", ignore = true)
-    Lesson lessonDtoToLesson(LessonDto lessonDto);
+    @InheritInverseConfiguration(name = "toLessonDto")
+    Lesson toLesson(LessonDto lessonDto);
 
-    List<LessonDto> lessonsToLessonDtos(List<Lesson> lessons);
+    List<LessonDto> toLessonDtos(List<Lesson> lessons);
 
 }

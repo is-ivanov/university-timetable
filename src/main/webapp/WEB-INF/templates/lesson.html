@@ -156,7 +156,7 @@
         </thead>
         <tbody>
         <tr class="align-middle" th:each="studentDto : ${lesson.students}"
-            th:if="${#lists.size(lesson.students) gt 0 and lesson.students.get(0).getId() ne 0}"
+            th:if="${#lists.size(lesson.students) gt 0}"
             th:data-bs-id="${studentDto.id}"
             th:classappend="${studentDto.active} ? 'active' : 'inactive'">
           <td class="check-box-table-cell">

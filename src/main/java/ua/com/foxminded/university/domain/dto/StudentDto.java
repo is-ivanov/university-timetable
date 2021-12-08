@@ -1,22 +1,18 @@
 package ua.com.foxminded.university.domain.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Value;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Value
 @Builder
 public class StudentDto {
 
-    private Integer id;
-    private String firstName;
-    private String patronymic;
-    private String lastName;
-    private boolean active;
-    private String fullName;
-    private int groupId;
-    private String groupName;
+    Integer id;
+    String firstName;
+    String patronymic;
+    String lastName;
+    boolean active;
+    String fullName;
+    int groupId;
+    String groupName;
 }

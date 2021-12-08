@@ -5,10 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ua.com.foxminded.university.domain.dto.DepartmentDto;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
-import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
@@ -27,7 +27,6 @@ public class DepartmentController {
     private final DepartmentService departmentService;
     private final FacultyService facultyService;
     private final TeacherService teacherService;
-    private final TeacherDtoMapper teacherDtoMapper;
 
     @GetMapping
     public String showDepartments(@RequestParam(required = false) Integer facultyId,
@@ -36,13 +35,13 @@ public class DepartmentController {
         List<Faculty> allFaculties = facultyService.getAllSortedByNameAsc();
         model.addAttribute("faculties", allFaculties);
         Faculty facultySelected = null;
-        List<Department> departments;
+        List<DepartmentDto> departments;
         if (facultyId != null && facultyId > 0) {
             log.debug("get departments by facultyId ({})", facultyId);
             departments = departmentService.getAllByFaculty(facultyId);
             log.debug("get selected faculty");
             facultySelected = allFaculties.stream()
-                .filter(faculty -> faculty.getId() == facultyId)
+                .filter(faculty -> faculty.getId().equals(facultyId))
                 .findFirst().orElse(null);
         } else {
             log.debug("get all departments");
@@ -52,7 +51,7 @@ public class DepartmentController {
         model.addAttribute("departments", departments);
         model.addAttribute("facultySelected", facultySelected);
         model.addAttribute("newDepartment", new Department());
-        log.info("The list of departments and selected faculty is loaded into the model");
+        log.debug("The list of departments and selected faculty is loaded into the model");
         return "department";
     }
 
@@ -61,16 +60,16 @@ public class DepartmentController {
                                    HttpServletRequest request) {
         log.debug("Creating {}", department);
         departmentService.add(department);
-        log.info("{} is created", department);
+        log.debug("{} is created", department);
         return defineRedirect(request);
     }
 
     @GetMapping("/{id}")
     @ResponseBody
-    public Department getDepartment(@PathVariable("id") int departmentId) {
+    public DepartmentDto getDepartment(@PathVariable("id") int departmentId) {
         log.debug("Getting department id({})", departmentId);
-        Department department = departmentService.getById(departmentId);
-        log.info("Found {}", department);
+        DepartmentDto department = departmentService.getById(departmentId);
+        log.debug("Found {}", department);
         return department;
     }
 
@@ -80,7 +79,7 @@ public class DepartmentController {
                                    HttpServletRequest request) {
         log.debug("Updating department id({})", departmentId);
         departmentService.update(department);
-        log.info("Department id({}) is updated", departmentId);
+        log.debug("Department id({}) is updated", departmentId);
         return defineRedirect(request);
     }
 
@@ -89,7 +88,7 @@ public class DepartmentController {
                                    HttpServletRequest request) {
         log.debug("Deleting department id({})", departmentId);
         departmentService.delete(departmentId);
-        log.info("Department id({}) is deleted", departmentId);
+        log.debug("Department id({}) is deleted", departmentId);
         return defineRedirect(request);
     }
 
@@ -97,9 +96,8 @@ public class DepartmentController {
     @ResponseBody
     public List<TeacherDto> getTeachersByDepartment(@PathVariable("id") int departmentId) {
         log.debug("Getting teacherDtos by department id({})", departmentId);
-        List<TeacherDto> teachers = teacherDtoMapper
-            .teachersToTeacherDtos(teacherService.getAllByDepartment(departmentId));
-        log.info("Found {} teachers", teachers.size());
+        List<TeacherDto> teachers = teacherService.getAllByDepartment(departmentId);
+        log.debug("Found {} teachers", teachers.size());
         return teachers;
     }
 }

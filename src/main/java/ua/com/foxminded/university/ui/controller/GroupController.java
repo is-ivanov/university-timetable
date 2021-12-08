@@ -6,9 +6,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ua.com.foxminded.university.domain.dto.GroupDto;
 import ua.com.foxminded.university.domain.dto.StudentDto;
 import ua.com.foxminded.university.domain.entity.Group;
-import ua.com.foxminded.university.domain.mapper.StudentDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 import ua.com.foxminded.university.domain.service.interfaces.StudentService;
@@ -29,7 +29,6 @@ public class GroupController {
     private final GroupService groupService;
     private final FacultyService facultyService;
     private final StudentService studentService;
-    private final StudentDtoMapper studentDtoMapper;
 
     @GetMapping
     public String showGroups(@RequestParam(required = false) Integer facultyId,
@@ -41,7 +40,7 @@ public class GroupController {
         }
         log.debug("Get faculties for selector");
         model.addAttribute("faculties", facultyService.getAllSortedByNameAsc());
-        List<Group> groups;
+        List<GroupDto> groups;
         if (facultyId != null && facultyId > 0) {
             log.debug("get groups by facultyId ({})", facultyId);
             groups = groupService.getAllByFacultyId(facultyId);
@@ -53,7 +52,7 @@ public class GroupController {
         model.addAttribute("groups", groups);
         model.addAttribute("facultyIdSelect", facultyId);
         model.addAttribute("newGroup", new Group());
-        log.info("The list of groups and selected faculty is loaded into the model");
+        log.debug("The list of groups and selected faculty is loaded into the model");
         return "group";
     }
 
@@ -62,16 +61,16 @@ public class GroupController {
                               HttpServletRequest request) {
         log.debug("Creating {}", group);
         groupService.add(group);
-        log.info("{} is created", group);
+        log.debug("{} is created", group);
         return defineRedirect(request);
     }
 
     @GetMapping("/{id}")
     @ResponseBody
-    public Group getGroup(@PathVariable("id") int groupId) {
+    public GroupDto getGroup(@PathVariable("id") int groupId) {
         log.debug("Getting group id({})", groupId);
-        Group group = groupService.getById(groupId);
-        log.info("Found {}", group);
+        GroupDto group = groupService.getById(groupId);
+        log.debug("Found {}", group);
         return group;
     }
 
@@ -81,7 +80,7 @@ public class GroupController {
                               HttpServletRequest request) {
         log.debug("Updating group id({})", groupId);
         groupService.update(group);
-        log.info("Group id({}) is updated", groupId);
+        log.debug("Group id({}) is updated", groupId);
         return defineRedirect(request);
     }
 
@@ -90,7 +89,7 @@ public class GroupController {
                               HttpServletRequest request) {
         log.debug("Deleting group id({})", groupId);
         groupService.delete(groupId);
-        log.info("Group id({}) is deleted", groupId);
+        log.debug("Group id({}) is deleted", groupId);
         return defineRedirect(request);
     }
 
@@ -105,9 +104,9 @@ public class GroupController {
                                                          LocalDateTime endTime) {
         log.debug("Getting active students from group id({}) free from {} to {}",
             groupId, startTime, endTime);
-        List<StudentDto> freeStudentsFromGroup = studentDtoMapper.studentsToStudentDtos(
-            studentService.getFreeStudentsFromGroup(groupId, startTime, endTime));
-        log.info("Found {} students", freeStudentsFromGroup.size());
+        List<StudentDto> freeStudentsFromGroup =
+            studentService.getFreeStudentsFromGroup(groupId, startTime, endTime);
+        log.debug("Found {} students", freeStudentsFromGroup.size());
         return freeStudentsFromGroup;
     }
 

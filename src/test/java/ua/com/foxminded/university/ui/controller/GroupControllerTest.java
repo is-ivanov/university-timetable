@@ -13,11 +13,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import ua.com.foxminded.university.domain.dto.GroupDto;
 import ua.com.foxminded.university.domain.dto.StudentDto;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
-import ua.com.foxminded.university.domain.entity.Student;
-import ua.com.foxminded.university.domain.mapper.StudentDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 import ua.com.foxminded.university.domain.service.interfaces.StudentService;
@@ -57,9 +56,6 @@ class GroupControllerTest {
     @Mock
     private StudentService studentServiceMock;
 
-    @Mock
-    private StudentDtoMapper studentDtoMapperMock;
-
     @InjectMocks
     private GroupController groupController;
 
@@ -77,7 +73,7 @@ class GroupControllerTest {
             "groupService.getAll once")
         void getRequestWithoutParameters() throws Exception {
             List<Faculty> allFaculties = createTestFaculties();
-            List<Group> allGroups = createTestGroups();
+            List<GroupDto> allGroups = createTestGroupDtos(FACULTY_ID1);
 
             when(facultyServiceMock.getAllSortedByNameAsc()).thenReturn(allFaculties);
             when(groupServiceMock.getAll()).thenReturn(allGroups);
@@ -93,7 +89,7 @@ class GroupControllerTest {
                     model().attributeDoesNotExist("isShowInactive", "facultySelect")
                 );
 
-            verify(groupServiceMock, times(0)).getAllByFacultyId(anyInt());
+            verify(groupServiceMock, never()).getAllByFacultyId(anyInt());
         }
 
         @Test
@@ -103,7 +99,7 @@ class GroupControllerTest {
             int facultyId = 1;
 
             List<Faculty> expectedFaculties = createTestFaculties();
-            List<Group> expectedGroups = createTestGroups(facultyId);
+            List<GroupDto> expectedGroups = createTestGroupDtos(facultyId);
 
             when(facultyServiceMock.getAllSortedByNameAsc()).thenReturn(expectedFaculties);
             when(groupServiceMock.getAllByFacultyId(facultyId)).thenReturn(expectedGroups);
@@ -160,7 +156,7 @@ class GroupControllerTest {
             "groupService.getById once and return JSON with expected group")
         void getRequestWithParameterId() throws Exception {
             int groupId = GROUP_ID1;
-            Group testGroup = createTestGroup();
+            GroupDto testGroup = createTestGroupDto();
 
             when(groupServiceMock.getById(groupId)).thenReturn(testGroup);
 
@@ -172,8 +168,8 @@ class GroupControllerTest {
                     jsonPath("$.id", is(groupId)),
                     jsonPath("$.name", is(NAME_FIRST_GROUP)),
                     jsonPath("$.active", is(true)),
-                    jsonPath("$.faculty.id", is(FACULTY_ID1)),
-                    jsonPath("$.faculty.name", is(NAME_FIRST_FACULTY))
+                    jsonPath("$.facultyId", is(FACULTY_ID1)),
+                    jsonPath("$.facultyName", is(NAME_FIRST_FACULTY))
                 );
             verify(groupServiceMock,times(1)).getById(groupId);
         }
@@ -232,13 +228,10 @@ class GroupControllerTest {
             LocalDateTime startTime = LocalDateTime.of(2021, 10, 12, 13, 15);
             LocalDateTime endTime = LocalDateTime.of(2021, 10, 12, 14, 45);
 
-            List<Student> testStudents = createTestStudents();
             List<StudentDto> testStudentDtos = createTestStudentDtos(groupId);
 
             when(studentServiceMock.getFreeStudentsFromGroup(groupId, startTime,
-                endTime)).thenReturn(testStudents);
-            when(studentDtoMapperMock.studentsToStudentDtos(testStudents))
-                .thenReturn(testStudentDtos);
+                endTime)).thenReturn(testStudentDtos);
 
             mockMvc.perform(get(URI_GROUPS_ID_STUDENTS_FREE, groupId)
                     .param(TIME_START, "2021-10-12 13:15")

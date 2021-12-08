@@ -61,7 +61,7 @@
           th:classappend="${group.active} ? 'active' : (${isShowInactive}? 'inactive' : 'inactive d-none')">
         <td th:utext="${group.id}">...</td>
         <td class="group_name" th:utext="${group.name}">...</td>
-        <td th:utext="${group.faculty.name}">...</td>
+        <td th:utext="${group.facultyName}">...</td>
         <td th:utext="${group.active} ? 'active' : 'inactive'" class="text-center"
             th:classappend="${group.active} ? 'active' : 'inactive'">...
         </td>
@@ -247,7 +247,7 @@
       $('#formEdit').attr('action', href);
       $.get(href, function (group) {
         $('#editGroupNameInput').val(group.name);
-        let facultyId = group.faculty.id;
+        let facultyId = group.facultyId;
         $('#switchActiveEditGroup').prop('checked', group.active);
         $('#editGroupFacultySelect option[value=' + facultyId + ']').prop('selected', true);
       });

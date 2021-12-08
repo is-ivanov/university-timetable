@@ -7,14 +7,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ua.com.foxminded.university.dao.interfaces.FacultyDao;
+import ua.com.foxminded.university.dao.interfaces.FacultyRepository;
 import ua.com.foxminded.university.domain.entity.Faculty;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -30,49 +32,50 @@ class FacultyServiceImplTest {
     private FacultyServiceImpl facultyService;
 
     @Mock
-    private FacultyDao facultyDaoMock;
+    private FacultyRepository facultyRepositoryMock;
 
     @BeforeEach
     void setUp() {
-        facultyService = new FacultyServiceImpl(facultyDaoMock);
+        facultyService = new FacultyServiceImpl(facultyRepositoryMock);
     }
 
     @Test
-    @DisplayName("test 'add' when call add method then should call Dao once")
+    @DisplayName("test 'add' when call add method then should call Repository once")
     void testAdd_CallDaoOnce() {
         Faculty faculty = new Faculty();
         facultyService.add(faculty);
-        verify(facultyDaoMock).add(faculty);
+        verify(facultyRepositoryMock).add(faculty);
     }
 
     @Nested
     @DisplayName("test 'getById' method")
-    class getByIdTest {
+    class GetByIdTest {
 
         @Test
-        @DisplayName("when Dao return Optional with Faculty then method " +
+        @DisplayName("when Repository return Optional with Faculty then method " +
             "should return this Faculty")
         void testReturnExpectedFaculty() {
             Faculty expectedFaculty = new Faculty();
             expectedFaculty.setId(ID1);
             expectedFaculty.setName(FIRST_FACULTY_NAME);
-            when(facultyDaoMock.getById(ID1))
+            when(facultyRepositoryMock.getById(ID1))
                 .thenReturn(Optional.of(expectedFaculty));
             assertEquals(expectedFaculty, facultyService.getById(ID1));
         }
 
         @Test
-        @DisplayName("when Dao return empty Optional then method should return" +
-            " empty Faculty")
+        @DisplayName("when Repository return empty Optional then method should throw" +
+            " new EntityNotFoundException")
         void testReturnEmptyFaculty() {
-            Optional<Faculty> optional = Optional.empty();
-            when(facultyDaoMock.getById(ID1)).thenReturn(optional);
-            assertEquals(new Faculty(), facultyService.getById(ID1));
+            when(facultyRepositoryMock.getById(ID1)).thenReturn(Optional.empty());
+            assertThatThrownBy(() -> facultyService.getById(ID1))
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessageContaining("Faculty id(1) not found");
         }
     }
 
     @Test
-    @DisplayName("test 'getAll' when Dao return List faculties then method " +
+    @DisplayName("test 'getAll' when Repository return List faculties then method " +
         "should return this List")
     void testGetAll_ReturnListFaculties() {
         Faculty faculty1 = new Faculty();
@@ -82,7 +85,7 @@ class FacultyServiceImplTest {
         List<Faculty> expectedFaculties = new ArrayList<>();
         expectedFaculties.add(faculty1);
         expectedFaculties.add(faculty2);
-        when(facultyDaoMock.getAll()).thenReturn(expectedFaculties);
+        when(facultyRepositoryMock.getAll()).thenReturn(expectedFaculties);
         assertEquals(expectedFaculties, facultyService.getAll());
     }
 
@@ -92,7 +95,7 @@ class FacultyServiceImplTest {
     void testUpdate_CallDaoOnce() {
         Faculty faculty = new Faculty();
         facultyService.update(faculty);
-        verify(facultyDaoMock).update(faculty);
+        verify(facultyRepositoryMock).update(faculty);
     }
 
     @Test
@@ -101,11 +104,11 @@ class FacultyServiceImplTest {
     void testDelete_CallDaoOnce() {
         Faculty faculty = new Faculty();
         facultyService.delete(faculty);
-        verify(facultyDaoMock).delete(faculty);
+        verify(facultyRepositoryMock).delete(faculty);
     }
 
     @Test
-    @DisplayName("test 'getAllSortedByNameAsc' when Dao return List faculties" +
+    @DisplayName("test 'getAllSortedByNameAsc' when Repository return List faculties" +
         " then method should return this List")
     void testGetAllSortedAscByName() {
         Faculty firstFaculty = new Faculty(ID1, FIRST_FACULTY_NAME);
@@ -113,7 +116,7 @@ class FacultyServiceImplTest {
         LinkedList<Faculty> facultiesFromDao = new LinkedList<>();
         facultiesFromDao.add(firstFaculty);
         facultiesFromDao.add(secondFaculty);
-        when(facultyDaoMock.getAllSortedByNameAsc()).thenReturn(facultiesFromDao);
+        when(facultyRepositoryMock.getAllSortedByNameAsc()).thenReturn(facultiesFromDao);
         assertEquals(facultiesFromDao, facultyService.getAllSortedByNameAsc());
     }
 }

@@ -15,12 +15,10 @@ import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import ua.com.foxminded.university.domain.dto.DepartmentDto;
+import ua.com.foxminded.university.domain.dto.GroupDto;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
-import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
-import ua.com.foxminded.university.domain.entity.Group;
-import ua.com.foxminded.university.domain.entity.Teacher;
-import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
@@ -66,9 +64,6 @@ class FacultyControllerTest {
 
     @Mock
     private TeacherService teacherServiceMock;
-
-    @Mock
-    private TeacherDtoMapper teacherDtoMapperMock;
 
     @Mock
     private PageSequenceCreator pageSequenceCreatorMock;
@@ -221,7 +216,7 @@ class FacultyControllerTest {
 
     @Nested
     @DisplayName("test 'updateFaculty' method")
-    class UpdateFaculty {
+    class UpdateFacultyTest {
 
         @Test
         @DisplayName("when PUT request with parameters 'id' and 'name' then should " +
@@ -265,7 +260,7 @@ class FacultyControllerTest {
             "groupService.getAll once and return JSON with groups")
         void getRequestWithId0() throws Exception {
             int facultyId = 0;
-            List<Group> testGroups = createTestGroups(facultyId);
+            List<GroupDto> testGroups = createTestGroupDtos(facultyId);
 
             when(groupServiceMock.getAll()).thenReturn(testGroups);
 
@@ -277,12 +272,12 @@ class FacultyControllerTest {
                     jsonPath("$", hasSize(testGroups.size())),
                     jsonPath("$[0].id", is(GROUP_ID1)),
                     jsonPath("$[0].name", is(NAME_FIRST_GROUP)),
-                    jsonPath("$[0].faculty.id", is(facultyId)),
-                    jsonPath("$[0].faculty.name", is(NAME_FIRST_FACULTY)),
+                    jsonPath("$[0].facultyId", is(facultyId)),
+                    jsonPath("$[0].facultyName", is(NAME_FIRST_FACULTY)),
                     jsonPath("$[1].id", is(GROUP_ID2)),
                     jsonPath("$[1].name", is(NAME_SECOND_GROUP)),
-                    jsonPath("$[1].faculty.id", is(facultyId)),
-                    jsonPath("$[1].faculty.name", is(NAME_FIRST_FACULTY))
+                    jsonPath("$[1].facultyId", is(facultyId)),
+                    jsonPath("$[1].facultyName", is(NAME_FIRST_FACULTY))
                 );
             verify(groupServiceMock, times(1)).getAll();
         }
@@ -292,7 +287,7 @@ class FacultyControllerTest {
             "groupService.getAllByFacultyId once and return JSON with groups")
         void getRequestWithId2() throws Exception {
             int facultyId = 3;
-            List<Group> testGroups = createTestGroups(facultyId);
+            List<GroupDto> testGroups = createTestGroupDtos(facultyId);
             when(groupServiceMock.getAllByFacultyId(facultyId)).thenReturn(testGroups);
 
             mockMvc.perform(get(URI_FACULTIES_ID_GROUPS, facultyId))
@@ -303,12 +298,12 @@ class FacultyControllerTest {
                     jsonPath("$", hasSize(testGroups.size())),
                     jsonPath("$[0].id", is(GROUP_ID1)),
                     jsonPath("$[0].name", is(NAME_FIRST_GROUP)),
-                    jsonPath("$[0].faculty.id", is(facultyId)),
-                    jsonPath("$[0].faculty.name", is(NAME_FIRST_FACULTY)),
+                    jsonPath("$[0].facultyId", is(facultyId)),
+                    jsonPath("$[0].facultyName", is(NAME_FIRST_FACULTY)),
                     jsonPath("$[1].id", is(GROUP_ID2)),
                     jsonPath("$[1].name", is(NAME_SECOND_GROUP)),
-                    jsonPath("$[1].faculty.id", is(facultyId)),
-                    jsonPath("$[1].faculty.name", is(NAME_FIRST_FACULTY))
+                    jsonPath("$[1].facultyId", is(facultyId)),
+                    jsonPath("$[1].facultyName", is(NAME_FIRST_FACULTY))
                 );
             verify(groupServiceMock, times(1)).getAllByFacultyId(facultyId);
         }
@@ -324,7 +319,7 @@ class FacultyControllerTest {
         void getRequestWithParameters() throws Exception {
             int facultyId = 4;
 
-            List<Group> testGroups = createTestGroups(facultyId);
+            List<GroupDto> testGroups = createTestGroupDtos(facultyId);
 
             when(groupServiceMock.getFreeGroupsByFacultyOnLessonTime(facultyId,
                 DATE_FROM, DATE_TO)).thenReturn(testGroups);
@@ -338,12 +333,12 @@ class FacultyControllerTest {
                     jsonPath("$", hasSize(testGroups.size())),
                     jsonPath("$[0].id", is(GROUP_ID1)),
                     jsonPath("$[0].name", is(NAME_FIRST_GROUP)),
-                    jsonPath("$[0].faculty.id", is(facultyId)),
-                    jsonPath("$[0].faculty.name", is(NAME_FIRST_FACULTY)),
+                    jsonPath("$[0].facultyId", is(facultyId)),
+                    jsonPath("$[0].facultyName", is(NAME_FIRST_FACULTY)),
                     jsonPath("$[1].id", is(GROUP_ID2)),
                     jsonPath("$[1].name", is(NAME_SECOND_GROUP)),
-                    jsonPath("$[1].faculty.id", is(facultyId)),
-                    jsonPath("$[1].faculty.name", is(NAME_FIRST_FACULTY))
+                    jsonPath("$[1].facultyId", is(facultyId)),
+                    jsonPath("$[1].facultyName", is(NAME_FIRST_FACULTY))
                 );
             verify(groupServiceMock, times(1))
                 .getFreeGroupsByFacultyOnLessonTime(facultyId, DATE_FROM, DATE_TO);
@@ -352,14 +347,14 @@ class FacultyControllerTest {
 
     @Nested
     @DisplayName("test 'getDepartmentsByFaculty' method")
-    class GetDepartmentsByFaculty {
+    class GetDepartmentsByFacultyTest {
 
         @Test
         @DisplayName("when GET request with parameter id = 0 then should call " +
             "departmentService.getAll once and return JSON with departments")
         void getRequestWithParameterIdEquals0() throws Exception {
             int facultyId = 0;
-            List<Department> testDepartments = createTestDepartments(facultyId);
+            List<DepartmentDto> testDepartments = createTestDepartmentDtos();
 
             when(departmentServiceMock.getAll()).thenReturn(testDepartments);
 
@@ -381,7 +376,7 @@ class FacultyControllerTest {
             "departmentService.getAllByFaculty once and return JSON with departments")
         void getRequestWithParameterIdEquals8() throws Exception {
             int facultyId = 8;
-            List<Department> testDepartments = createTestDepartments(facultyId);
+            List<DepartmentDto> testDepartments = createTestDepartmentDtos();
 
             when(departmentServiceMock.getAllByFaculty(facultyId)).thenReturn(testDepartments);
 
@@ -400,19 +395,16 @@ class FacultyControllerTest {
 
     @Nested
     @DisplayName("test 'getTeachersByFaculty' method")
-    class GetTeachersByFaculty {
+    class GetTeachersByFacultyTest {
 
         @Test
         @DisplayName("when GET request with parameter id then should call " +
             "teacherDtoMapper and teacherService once")
         void getRequestWithParameterIdEquals4() throws Exception {
             int facultyId = 4;
-            List<Teacher> testTeachers = createTestTeachers(facultyId);
             List<TeacherDto> testTeacherDtos = createTestTeacherDtos(facultyId);
 
             when(teacherServiceMock.getAllByFaculty(facultyId))
-                .thenReturn(testTeachers);
-            when(teacherDtoMapperMock.teachersToTeacherDtos(testTeachers))
                 .thenReturn(testTeacherDtos);
 
             mockMvc.perform(get(URI_FACULTIES_ID_TEACHERS, facultyId))
@@ -420,7 +412,7 @@ class FacultyControllerTest {
                 .andExpectAll(
                     status().isOk(),
                     content().contentType(MediaType.APPLICATION_JSON),
-                    jsonPath("$", hasSize(testTeachers.size())),
+                    jsonPath("$", hasSize(testTeacherDtos.size())),
                     jsonPath("$[0].firstName", is(NAME_FIRST_TEACHER)),
                     jsonPath("$[0].lastName", is(LAST_NAME_FIRST_TEACHER)),
                     jsonPath("$[0].patronymic", is(PATRONYMIC_FIRST_TEACHER)),

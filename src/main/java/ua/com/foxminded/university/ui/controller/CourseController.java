@@ -20,7 +20,7 @@ import static ua.com.foxminded.university.ui.Util.defineRedirect;
 @RequiredArgsConstructor
 @Controller
 @RequestMapping("/courses")
-public class CourseController {
+public class  CourseController {
 
     public static final String URI_COURSES = "/courses";
 
@@ -39,7 +39,7 @@ public class CourseController {
         model.addAttribute("pages", pageSequenceCreator
             .createPageSequence(pageCourses.getTotalPages(),
                 pageCourses.getNumber() + 1));
-        log.info("The list of courses is loaded into model");
+        log.debug("The list of courses is loaded into model");
         return "course";
     }
 
@@ -48,7 +48,7 @@ public class CourseController {
                                HttpServletRequest request) {
         log.debug("Creating {}", course);
         courseService.add(course);
-        log.info("{} is created", course);
+        log.debug("{} is created", course);
         return defineRedirect(request);
     }
 
@@ -57,7 +57,7 @@ public class CourseController {
     public Course getCourse(@PathVariable("id") int courseId) {
         log.debug("Getting course id({}})", courseId);
         Course course = courseService.getById(courseId);
-        log.info("Found {}", course);
+        log.debug("Found {}", course);
         return course;
     }
 
@@ -67,7 +67,7 @@ public class CourseController {
                                HttpServletRequest request) {
         log.debug("Updating course id({})", courseId);
         courseService.update(course);
-        log.info("Course id({}) is updated", courseId);
+        log.debug("Course id({}) is updated", courseId);
         return defineRedirect(request);
     }
 
@@ -76,7 +76,7 @@ public class CourseController {
                                HttpServletRequest request) {
         log.debug("Deleting course id({})", courseId);
         courseService.delete(courseId);
-        log.info("Course id({}) is deleted", courseId);
+        log.debug("Course id({}) is deleted", courseId);
         return defineRedirect(request);
     }
 }

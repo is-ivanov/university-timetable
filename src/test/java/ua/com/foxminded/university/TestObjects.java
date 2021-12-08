@@ -1,64 +1,78 @@
 package ua.com.foxminded.university;
 
-import ua.com.foxminded.university.domain.dto.LessonDto;
-import ua.com.foxminded.university.domain.dto.StudentDto;
-import ua.com.foxminded.university.domain.dto.TeacherDto;
+import ua.com.foxminded.university.domain.dto.*;
 import ua.com.foxminded.university.domain.entity.*;
 import ua.com.foxminded.university.domain.filter.LessonFilter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 public class TestObjects {
     public static final int ID1 = 1;
     public static final int ID2 = 2;
+    public static final int ID3 = 3;
     public static final int FACULTY_ID1 = 10;
     public static final int FACULTY_ID2 = 4;
     public static final int DEPARTMENT_ID1 = 8;
     public static final int DEPARTMENT_ID2 = 54;
     public static final int TEACHER_ID1 = 7;
     public static final int TEACHER_ID2 = 78;
+    public static final int TEACHER_ID3 = 12;
     public static final int STUDENT_ID1 = 12;
     public static final int STUDENT_ID2 = 78;
+    public static final int STUDENT_ID3 = 3;
     public static final int COURSE_ID1 = 45;
     public static final int COURSE_ID2 = 13;
     public static final int ROOM_ID1 = 5;
     public static final int ROOM_ID2 = 62;
     public static final int LESSON_ID1 = 23;
     public static final int LESSON_ID2 = 2;
+    public static final int LESSON_ID3 = 75;
     public static final int GROUP_ID1 = 2;
     public static final int GROUP_ID2 = 14;
     public static final String NAME_FIRST_FACULTY = "IT faculty";
     public static final String NAME_SECOND_FACULTY = "Chemistry faculty";
+    public static final String NAME_THIRD_FACULTY = "Faculty name";
     public static final String NAME_FIRST_GROUP = "99XT-1";
     public static final String NAME_SECOND_GROUP = "56FDS";
+    public static final String NAME_THIRD_GROUP = "21Ger-1";
     public static final String NAME_FIRST_DEPARTMENT = "Java department";
     public static final String NAME_SECOND_DEPARTMENT = "C# department";
+    public static final String NAME_THIRD_DEPARTMENT = "JavaScript department";
     public static final String NAME_FIRST_COURSE = "Java";
     public static final String NAME_SECOND_COURSE = "English";
+    public static final String NAME_THIRD_COURSE = "Chemistry";
     public static final String BUILDING_FIRST_ROOM = "building-1";
     public static final String NUMBER_FIRST_ROOM = "1457a";
     public static final String BUILDING_AND_NUMBER_FIRST_ROOM = "building-1 - 1457a";
     public static final String BUILDING_SECOND_ROOM = "building-2";
     public static final String NUMBER_SECOND_ROOM = "812b";
+    public static final String BUILDING_THIRD_ROOM = "building-2";
+    public static final String NUMBER_THIRD_ROOM = "145";
     public static final String NAME_FIRST_STUDENT = "Mike";
     public static final String PATRONYMIC_FIRST_STUDENT = "Jr";
     public static final String LAST_NAME_FIRST_STUDENT = "Smith";
-    public static final String FULL_NAME_FIRST_STUDENT = "Smith M.J.";
+    public static final String FULL_NAME_FIRST_STUDENT = "Smith, M.J.";
     public static final String NAME_SECOND_STUDENT = "Alan";
     public static final String PATRONYMIC_SECOND_STUDENT = "III";
     public static final String LAST_NAME_SECOND_STUDENT = "Johnson";
-    public static final String FULL_NAME_SECOND_STUDENT = "Johnson A.I.";
+    public static final String FULL_NAME_SECOND_STUDENT = "Johnson, A.I.";
+    public static final String NAME_THIRD_STUDENT = "Peter";
+    public static final String PATRONYMIC_THIRD_STUDENT = "Dre";
+    public static final String LAST_NAME_THIRD_STUDENT = "Daddy";
     public static final String NAME_FIRST_TEACHER = "Ivan";
     public static final String PATRONYMIC_FIRST_TEACHER = "Petrovich";
     public static final String LAST_NAME_FIRST_TEACHER = "Ivanov";
-    public static final String FULL_NAME_FIRST_TEACHER = "Ivanov I.P.";
+    public static final String FULL_NAME_FIRST_TEACHER = "Ivanov, I.P.";
     public static final String NAME_SECOND_TEACHER = "Oleg";
     public static final String PATRONYMIC_SECOND_TEACHER = "Ivanovich";
     public static final String LAST_NAME_SECOND_TEACHER = "Petrov";
-    public static final String NAME_THIRD_STUDENT = "Peter";
+    public static final String NAME_THIRD_TEACHER = "John";
+    public static final String PATRONYMIC_THIRD_TEACHER = "Jr";
+    public static final String LAST_NAME_THIRD_TEACHER = "Thompson";
     public static final LocalDateTime DATE_START_FIRST_LESSON =
         LocalDateTime.of(2021, 5, 10, 10, 0);
     public static final String TEXT_DATE_START_FIRST_LESSON = "2021-05-10 10:00";
@@ -78,6 +92,10 @@ public class TestObjects {
 
     public static Faculty createTestFaculty() {
         return new Faculty(FACULTY_ID1, NAME_FIRST_FACULTY);
+    }
+
+    public static Faculty createTestSecondFaculty() {
+        return new Faculty(FACULTY_ID2, NAME_SECOND_FACULTY);
     }
 
     public static Faculty createTestFaculty(int facultyId) {
@@ -104,6 +122,16 @@ public class TestObjects {
         return new Group(GROUP_ID1, NAME_FIRST_GROUP, createTestFaculty(), true);
     }
 
+    public static Group createTestSecondGroup() {
+        return new Group(GROUP_ID2, NAME_SECOND_GROUP, createTestSecondFaculty(),
+            true);
+    }
+
+    public static GroupDto createTestGroupDto() {
+        return new GroupDto(GROUP_ID1, NAME_FIRST_GROUP, true,
+            FACULTY_ID1, NAME_FIRST_FACULTY);
+    }
+
     public static List<Group> createTestGroups() {
         Faculty faculty = createTestFaculty();
         Group group1 = new Group(GROUP_ID1, NAME_FIRST_GROUP, faculty, true);
@@ -118,8 +146,21 @@ public class TestObjects {
         return new ArrayList<>(Arrays.asList(group1, group2));
     }
 
+    public static List<GroupDto> createTestGroupDtos(int facultyId) {
+        GroupDto group1 = new GroupDto(GROUP_ID1, NAME_FIRST_GROUP, true,
+            facultyId,NAME_FIRST_FACULTY);
+        GroupDto group2 = new GroupDto(GROUP_ID2, NAME_SECOND_GROUP,true,
+            facultyId, NAME_FIRST_FACULTY);
+        return new ArrayList<>(Arrays.asList(group1, group2));
+    }
+
     public static Department createTestDepartment(int facultyId) {
         return new Department(DEPARTMENT_ID1, NAME_FIRST_DEPARTMENT, createTestFaculty(facultyId));
+    }
+
+    public static DepartmentDto createTestDepartmentDto() {
+        return new DepartmentDto(DEPARTMENT_ID1, NAME_FIRST_DEPARTMENT,
+            FACULTY_ID1, NAME_FIRST_FACULTY);
     }
 
     public static List<Department> createTestDepartments() {
@@ -133,6 +174,14 @@ public class TestObjects {
         Faculty faculty = createTestFaculty(facultyId);
         Department department1 = new Department(DEPARTMENT_ID1, NAME_FIRST_DEPARTMENT, faculty);
         Department department2 = new Department(DEPARTMENT_ID2, NAME_SECOND_DEPARTMENT, faculty);
+        return new ArrayList<>(Arrays.asList(department1, department2));
+    }
+
+    public static List<DepartmentDto> createTestDepartmentDtos() {
+        DepartmentDto department1 = new DepartmentDto(DEPARTMENT_ID1,
+            NAME_FIRST_DEPARTMENT, FACULTY_ID1, NAME_FIRST_FACULTY);
+        DepartmentDto department2 = new DepartmentDto(DEPARTMENT_ID2,
+            NAME_SECOND_DEPARTMENT, FACULTY_ID1, NAME_FIRST_FACULTY);
         return new ArrayList<>(Arrays.asList(department1, department2));
     }
 
@@ -211,7 +260,7 @@ public class TestObjects {
             .firstName(NAME_FIRST_TEACHER)
             .patronymic(PATRONYMIC_FIRST_TEACHER)
             .lastName(LAST_NAME_FIRST_TEACHER)
-            .department(createTestDepartment(ID1))
+            .department(createTestDepartment(FACULTY_ID1))
             .active(true)
             .build();
     }
@@ -285,6 +334,17 @@ public class TestObjects {
         return new ArrayList<>(Arrays.asList(room1, room2));
     }
 
+    public static Lesson createTestLesson() {
+        return Lesson.builder()
+            .course(createTestCourse())
+            .teacher(createTestTeacher())
+            .room(createTestRoom())
+            .timeStart(DATE_START_FIRST_LESSON)
+            .timeEnd(DATE_END_FIRST_LESSON)
+            .students(new HashSet<>(createTestStudents()))
+            .build();
+    }
+
     public static Lesson createTestLesson(int lessonId) {
         return Lesson.builder()
             .id(lessonId)
@@ -293,7 +353,7 @@ public class TestObjects {
             .room(createTestRoom())
             .timeStart(DATE_START_FIRST_LESSON)
             .timeEnd(DATE_END_FIRST_LESSON)
-            .students(createTestStudents())
+            .students(new HashSet<>(createTestStudents()))
             .build();
     }
 
@@ -306,24 +366,9 @@ public class TestObjects {
             .room(createTestRoom())
             .timeStart(DATE_START_SECOND_LESSON)
             .timeEnd(DATE_END_SECOND_LESSON)
-            .students(createTestStudents())
+            .students(new HashSet<>(createTestStudents()))
             .build();
         return new ArrayList<>(Arrays.asList(lesson1, lesson2));
-    }
-
-    public static LessonDto createTestLessonDto() {
-        return LessonDto.builder()
-            .id(LESSON_ID1)
-            .courseId(COURSE_ID1)
-            .courseName(NAME_FIRST_COURSE)
-            .teacherId(TEACHER_ID1)
-            .teacherFullName(FULL_NAME_FIRST_TEACHER)
-            .roomId(ROOM_ID1)
-            .buildingAndRoom(BUILDING_AND_NUMBER_FIRST_ROOM)
-            .timeStart(DATE_START_FIRST_LESSON)
-            .timeEnd(DATE_END_FIRST_LESSON)
-            .students(createTestStudentDtos(ID2))
-            .build();
     }
 
     public static LessonDto createTestLessonDto(int lessonId) {
@@ -337,7 +382,7 @@ public class TestObjects {
             .buildingAndRoom(BUILDING_AND_NUMBER_FIRST_ROOM)
             .timeStart(DATE_START_FIRST_LESSON)
             .timeEnd(DATE_END_FIRST_LESSON)
-            .students(createTestStudentDtos(ID2))
+            .students(new HashSet<>(createTestStudentDtos(ID2)))
             .build();
     }
 
@@ -353,7 +398,7 @@ public class TestObjects {
             .buildingAndRoom(BUILDING_AND_NUMBER_FIRST_ROOM)
             .timeStart(DATE_START_SECOND_LESSON)
             .timeEnd(DATE_END_SECOND_LESSON)
-            .students(createTestStudentDtos(ID2))
+            .students(new HashSet<>(createTestStudentDtos(ID2)))
             .build();
         return new ArrayList<>(Arrays.asList(lessonDto1, lessonDto2));
     }

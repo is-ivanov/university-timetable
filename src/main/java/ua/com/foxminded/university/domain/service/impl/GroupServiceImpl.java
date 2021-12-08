@@ -3,12 +3,16 @@ package ua.com.foxminded.university.domain.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ua.com.foxminded.university.dao.interfaces.GroupDao;
-import ua.com.foxminded.university.dao.interfaces.StudentDao;
+import org.springframework.transaction.annotation.Transactional;
+import ua.com.foxminded.university.dao.interfaces.GroupRepository;
+import ua.com.foxminded.university.dao.interfaces.StudentRepository;
+import ua.com.foxminded.university.domain.dto.GroupDto;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
+import ua.com.foxminded.university.domain.mapper.GroupDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -16,63 +20,67 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class GroupServiceImpl implements GroupService {
 
     public static final String FOUND_GROUPS = "Found {} groups";
 
-    private final GroupDao groupDao;
-    private final StudentDao studentDao;
+    private final GroupRepository groupRepository;
+    private final StudentRepository studentRepository;
+    private final GroupDtoMapper groupDtoMapper;
 
     @Override
     public void add(Group group) {
         log.debug("Adding {}", group);
-        groupDao.add(group);
-        log.info("{} added successfully", group);
+        groupRepository.add(group);
+        log.debug("{} added successfully", group);
     }
 
     @Override
-    public Group getById(int id) {
+    public GroupDto getById(int id) {
         log.debug("Getting group by id({})", id);
-        Group group = groupDao.getById(id).orElse(new Group());
-        log.info("Found {}", group);
-        return group;
+        Group group = groupRepository.getById(id)
+            .orElseThrow(() -> new EntityNotFoundException(
+                String.format("Group id(%d) not found", id)));
+        log.debug("Found {}", group);
+        return groupDtoMapper.toGroupDto(group);
     }
 
     @Override
-    public List<Group> getAll() {
+    public List<GroupDto> getAll() {
         log.debug("Getting all groups");
-        List<Group> groups = groupDao.getAll();
-        log.info(FOUND_GROUPS, groups.size());
-        return groups;
+        List<Group> groups = groupRepository.getAll();
+        log.debug(FOUND_GROUPS, groups.size());
+        return groupDtoMapper.toGroupDtos(groups);
     }
 
     @Override
     public void update(Group group) {
         log.debug("Updating {}", group);
-        groupDao.update(group);
-        log.info("Update {}", group);
+        groupRepository.update(group);
+        log.debug("Update {}", group);
     }
 
     @Override
     public void delete(Group group) {
         log.debug("Deleting {}", group);
-        groupDao.delete(group);
-        log.info("Delete {}", group);
+        groupRepository.delete(group);
+        log.debug("Delete {}", group);
     }
 
     @Override
     public void delete(int id) {
         log.debug("Deleting group id({})", id);
-        groupDao.delete(id);
-        log.info("Delete group id({})", id);
+        groupRepository.delete(id);
+        log.debug("Delete group id({})", id);
     }
 
     @Override
     public void deactivateGroup(Group group) {
         log.debug("Deactivating {}", group);
         group.setActive(false);
-        groupDao.update(group);
-        log.info("Deactivate {}", group);
+        groupRepository.update(group);
+        log.debug("Deactivate {}", group);
     }
 
     @Override
@@ -87,55 +95,55 @@ public class GroupServiceImpl implements GroupService {
         newGroup.setFaculty(facultyNewGroup);
         newGroup.setActive(true);
         log.debug("Saving new {} in DB", newGroup);
-        groupDao.add(newGroup);
+        groupRepository.add(newGroup);
         log.debug("Replace all students from groups id ({}) into new {}",
             groupsId, newGroup);
         groups.forEach(group -> {
-            studentDao.getStudentsByGroup(group).forEach(student -> {
+            studentRepository.getStudentsByGroup(group).forEach(student -> {
                 student.setGroup(newGroup);
-                studentDao.update(student);
+                studentRepository.update(student);
             });
             log.debug("Deactivating former {}", group);
             deactivateGroup(group);
         });
-        log.info("Create new {}", newGroup);
+        log.debug("Create new {}", newGroup);
         return newGroup;
     }
 
     @Override
-    public List<Group> getAllByFacultyId(int facultyId) {
+    public List<GroupDto> getAllByFacultyId(int facultyId) {
         log.debug("Getting all groups by faculty id({})", facultyId);
-        List<Group> groups = groupDao.getAllByFacultyId(facultyId);
-        log.info(FOUND_GROUPS, groups.size());
-        return groups;
+        List<Group> groups = groupRepository.getAllByFacultyId(facultyId);
+        log.debug(FOUND_GROUPS, groups.size());
+        return groupDtoMapper.toGroupDtos(groups);
     }
 
     @Override
-    public List<Group> getFreeGroupsOnLessonTime(LocalDateTime startTime,
+    public List<GroupDto> getFreeGroupsOnLessonTime(LocalDateTime startTime,
                                                  LocalDateTime endTime) {
         log.debug("Getting groups free from {} to {}", startTime, endTime);
-        List<Group> groups = groupDao.getFreeGroupsOnLessonTime(startTime, endTime);
-        log.info(FOUND_GROUPS, groups.size());
-        return groups;
+        List<Group> groups = groupRepository.getFreeGroupsOnLessonTime(startTime, endTime);
+        log.debug(FOUND_GROUPS, groups.size());
+        return groupDtoMapper.toGroupDtos(groups);
     }
 
     @Override
-    public List<Group> getFreeGroupsByFacultyOnLessonTime(int facultyId,
+    public List<GroupDto> getFreeGroupsByFacultyOnLessonTime(int facultyId,
                                                           LocalDateTime startTime,
                                                           LocalDateTime endTime) {
         log.debug("Getting active groups from faculty id({}) free from {} to {}",
             facultyId, startTime, endTime);
-        List<Group> freeGroups = groupDao
+        List<Group> freeGroups = groupRepository
             .getFreeGroupsByFacultyOnLessonTime(facultyId, startTime, endTime);
-        log.info(FOUND_GROUPS, freeGroups.size());
-        return freeGroups;
+        log.debug(FOUND_GROUPS, freeGroups.size());
+        return groupDtoMapper.toGroupDtos(freeGroups);
     }
 
     @Override
     public List<Group> getActiveGroups() {
         log.debug("Getting all active groups");
-        List<Group> groups = groupDao.getActiveGroups();
-        log.info(FOUND_GROUPS, groups.size());
+        List<Group> groups = groupRepository.getActiveGroups();
+        log.debug(FOUND_GROUPS, groups.size());
         return groups;
     }
 }

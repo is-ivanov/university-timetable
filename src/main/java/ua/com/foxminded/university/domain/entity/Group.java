@@ -1,17 +1,58 @@
 package ua.com.foxminded.university.domain.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.Hibernate;
 
-@Data
+import javax.persistence.*;
+import java.util.Objects;
+
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "groups", indexes = {
+    @Index(name = "idx_group_group_name", columnList = "group_name", unique = true),
+    @Index(name = "idx_group_group_active", columnList = "group_active"),
+    @Index(name = "idx_group_faculty_id", columnList = "faculty_id")
+})
 public class Group {
 
-    private int id;
+    @Id
+    @GeneratedValue
+    @Column(name = "group_id")
+    private Integer id;
+
+    @Column(name = "group_name", nullable = false, unique = true, length = 15)
     private String name;
+
+    @ToString.Exclude
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "faculty_id", nullable = false,
+        foreignKey = @ForeignKey(name = "fk_faculty"))
     private Faculty faculty;
+
+    @Column(name = "group_active", nullable = false)
     private boolean active;
 
+    public Group(String name, Faculty faculty, boolean active) {
+        this.name = name;
+        this.faculty = faculty;
+        this.active = active;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o))
+            return false;
+        Group group = (Group) o;
+        return id != null && Objects.equals(id, group.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

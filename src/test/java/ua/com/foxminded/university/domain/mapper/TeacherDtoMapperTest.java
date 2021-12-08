@@ -1,16 +1,12 @@
 package ua.com.foxminded.university.domain.mapper;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Teacher;
-import ua.com.foxminded.university.springconfig.TestRootConfig;
 
 import java.util.Arrays;
 import java.util.List;
@@ -18,8 +14,6 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TestRootConfig.class)
 class TeacherDtoMapperTest {
 
     private static final String FIRST_NAME = "First name";
@@ -30,8 +24,12 @@ class TeacherDtoMapperTest {
     private static final int ID2 = 2;
     private static final String DEPARTMENT_NAME = "department name";
 
-    @Autowired
     private TeacherDtoMapper mapper;
+
+    @BeforeEach
+    void setUp() {
+        mapper = new TeacherDtoMapperImpl();
+    }
 
     @Nested
     @DisplayName("When we convert teacher to teacherDto")
@@ -53,7 +51,7 @@ class TeacherDtoMapperTest {
                 .department(department)
                 .build();
 
-            TeacherDto teacherDto = mapper.teacherToTeacherDto(teacher);
+            TeacherDto teacherDto = mapper.toTeacherDto(teacher);
 
             assertThat(teacherDto.getId(), is(equalTo(ID1)));
             assertThat(teacherDto.getFirstName(), is(equalTo(FIRST_NAME)));
@@ -73,7 +71,7 @@ class TeacherDtoMapperTest {
             Teacher teacher = new Teacher();
             teacher.setActive(false);
 
-            TeacherDto teacherDto = mapper.teacherToTeacherDto(teacher);
+            TeacherDto teacherDto = mapper.toTeacherDto(teacher);
 
             assertThat(teacherDto.isActive(), is(false));
             assertThat(teacherDto.getDepartmentName(), nullValue());
@@ -82,7 +80,7 @@ class TeacherDtoMapperTest {
 
     @Nested
     @DisplayName("When we convert list teachers into list teacherDto")
-    class teachersToTeacherDtosTest {
+    class TeachersToTeacherDtosTest {
 
         @Test
         @DisplayName("should return expected list teacherDtos")
@@ -106,7 +104,7 @@ class TeacherDtoMapperTest {
                 .build();
             List<Teacher> teachers = Arrays.asList(teacher1, teacher2);
 
-            List<TeacherDto> teacherDtos = mapper.teachersToTeacherDtos(teachers);
+            List<TeacherDto> teacherDtos = mapper.toTeacherDtos(teachers);
             assertThat(teacherDtos.get(0).getId(), is(equalTo(ID1)));
             assertThat(teacherDtos.get(0).isActive(), is(true));
             assertThat(teacherDtos.get(1).isActive(), is(false));
@@ -134,7 +132,7 @@ class TeacherDtoMapperTest {
                 .departmentName(DEPARTMENT_NAME)
                 .build();
 
-            Teacher teacher = mapper.teacherDtoToTeacher(teacherDto);
+            Teacher teacher = mapper.toTeacher(teacherDto);
 
             assertThat(teacher.getId(), is(equalTo(ID1)));
             assertThat(teacher.getFirstName(), is(equalTo(FIRST_NAME)));

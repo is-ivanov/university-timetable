@@ -13,23 +13,20 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import ua.com.foxminded.university.domain.dto.DepartmentDto;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
-import ua.com.foxminded.university.domain.entity.Teacher;
-import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -42,14 +39,9 @@ class DepartmentControllerTest {
     public static final int ID1 = 1;
     public static final int ID2 = 2;
     public static final String NAME_FIRST_FACULTY = "Faculty1 name";
-    public static final String NAME_FIRST_DEPARTMENT = "First department";
     public static final String NAME_SECOND_DEPARTMENT = "Second department";
     public static final String URI_DEPARTMENTS = "/departments";
     public static final String URI_DEPARTMENTS_ID = "/departments/{id}";
-    public static final String FIRST_NAME_FIRST_STUDENT = "John";
-    public static final String LAST_NAME_FIRST_STUDENT = "Johnson";
-    public static final String FIRST_NAME_SECOND_STUDENT = "Anna";
-    public static final String LAST_NAME_SECOND_STUDENT = "Peterson";
 
     private MockMvc mockMvc;
 
@@ -65,9 +57,6 @@ class DepartmentControllerTest {
     @Mock
     private TeacherService teacherServiceMock;
 
-    @Mock
-    private TeacherDtoMapper teacherDtoMapperMock;
-
     @InjectMocks
     private DepartmentController departmentController;
 
@@ -78,17 +67,19 @@ class DepartmentControllerTest {
 
     @Nested
     @DisplayName("test 'showDepartments' method")
-    class ShowDepartments {
+    class ShowDepartmentsTest {
 
         @Test
         @DisplayName("when GET request without parameters")
         void getRequestWithoutParameters() throws Exception {
             List<Faculty> expectedFaculties = createTestFaculties();
-            Department department1 = new Department(ID1, NAME_FIRST_DEPARTMENT,
-                expectedFaculties.get(0));
-            Department department2 = new Department(ID2, NAME_SECOND_DEPARTMENT,
-                expectedFaculties.get(1));
-            List<Department> allDepartments = Arrays.asList(department1,
+            Faculty faculty1 = expectedFaculties.get(0);
+            Faculty faculty2 = expectedFaculties.get(1);
+            DepartmentDto department1 = new DepartmentDto(ID1, NAME_FIRST_DEPARTMENT,
+                faculty1.getId(), faculty1.getName());
+            DepartmentDto department2 = new DepartmentDto(ID2, NAME_SECOND_DEPARTMENT,
+                faculty2.getId(), faculty2.getName());
+            List<DepartmentDto> allDepartments = Arrays.asList(department1,
                 department2);
 
             when(facultyServiceMock.getAllSortedByNameAsc()).thenReturn(expectedFaculties);
@@ -110,7 +101,7 @@ class DepartmentControllerTest {
         void getRequestWithParameterFacultyId() throws Exception {
             List<Faculty> testFaculties = createTestFaculties();
             Faculty faculty1 = testFaculties.get(0);
-            List<Department> departmentsFromFacultyId1 = createTestDepartments(FACULTY_ID1);
+            List<DepartmentDto> departmentsFromFacultyId1 = createTestDepartmentDtos();
 
             when(facultyServiceMock.getAllSortedByNameAsc())
                 .thenReturn(testFaculties);
@@ -165,8 +156,8 @@ class DepartmentControllerTest {
         void getRequestWithIdParameter() throws Exception {
             int departmentId = anyInt();
             Faculty faculty = new Faculty(ID1, NAME_FIRST_FACULTY);
-            Department expectedDepartment = new Department(departmentId,
-                NAME_FIRST_DEPARTMENT, faculty);
+            DepartmentDto expectedDepartment = new DepartmentDto(departmentId,
+                NAME_FIRST_DEPARTMENT, faculty.getId(), faculty.getName());
 
             when(departmentServiceMock.getById(departmentId)).thenReturn(expectedDepartment);
 
@@ -224,33 +215,16 @@ class DepartmentControllerTest {
 
     @Nested
     @DisplayName("test 'getTeachersByDepartment' method")
-    class getTeachersByDepartmentTest {
+    class GetTeachersByDepartmentTest {
 
         @Test
         @DisplayName("when GET request with parameters 'id' then should return " +
             "expected list teacherDTO")
         void GetTeachersByDepartment() throws Exception {
-            int departmentId = anyInt();
-
-            List<Teacher> teachers = new ArrayList<>();
-            TeacherDto teacher1 = TeacherDto.builder()
-                .id(ID1)
-                .firstName(FIRST_NAME_FIRST_STUDENT)
-                .lastName(LAST_NAME_FIRST_STUDENT)
-                .departmentId(departmentId)
-                .departmentName(NAME_FIRST_DEPARTMENT)
-                .build();
-            TeacherDto teacher2 = TeacherDto.builder()
-                .id(ID2)
-                .firstName(FIRST_NAME_SECOND_STUDENT)
-                .lastName(LAST_NAME_SECOND_STUDENT)
-                .departmentId(departmentId)
-                .departmentName(NAME_FIRST_DEPARTMENT)
-                .build();
-            List<TeacherDto> teacherDtos = Arrays.asList(teacher1, teacher2);
+            int departmentId = DEPARTMENT_ID1;
+            List<TeacherDto> teachers = createTestTeacherDtos(FACULTY_ID1);
 
             when(teacherServiceMock.getAllByDepartment(departmentId)).thenReturn(teachers);
-            when(teacherDtoMapperMock.teachersToTeacherDtos(anyList())).thenReturn(teacherDtos);
 
             mockMvc.perform(get("/departments/{id}/teachers", departmentId))
                 .andDo(print())
@@ -258,14 +232,14 @@ class DepartmentControllerTest {
                     status().isOk(),
                     content().contentType(MediaType.APPLICATION_JSON),
                     jsonPath("$", hasSize(2)),
-                    jsonPath("$[0].id", is(ID1)),
-                    jsonPath("$[0].firstName", is(FIRST_NAME_FIRST_STUDENT)),
-                    jsonPath("$[0].lastName", is(LAST_NAME_FIRST_STUDENT)),
+                    jsonPath("$[0].id", is(TEACHER_ID1)),
+                    jsonPath("$[0].firstName", is(NAME_FIRST_TEACHER)),
+                    jsonPath("$[0].lastName", is(LAST_NAME_FIRST_TEACHER)),
                     jsonPath("$[0].departmentId", is(departmentId)),
                     jsonPath("$[0].departmentName", is(NAME_FIRST_DEPARTMENT)),
-                    jsonPath("$[1].id", is(ID2)),
-                    jsonPath("$[1].firstName", is(FIRST_NAME_SECOND_STUDENT)),
-                    jsonPath("$[1].lastName", is(LAST_NAME_SECOND_STUDENT)),
+                    jsonPath("$[1].id", is(TEACHER_ID2)),
+                    jsonPath("$[1].firstName", is(NAME_SECOND_TEACHER)),
+                    jsonPath("$[1].lastName", is(LAST_NAME_SECOND_TEACHER)),
                     jsonPath("$[1].departmentId", is(departmentId)),
                     jsonPath("$[1].departmentName", is(NAME_FIRST_DEPARTMENT))
                 );

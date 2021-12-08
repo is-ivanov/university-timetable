@@ -7,19 +7,19 @@ import ua.com.foxminded.university.domain.entity.Teacher;
 
 import java.util.List;
 
-@Mapper (componentModel = "spring")
+@Mapper(componentModel = "spring")
 public interface TeacherDtoMapper {
 
     @Mapping(target = "departmentId", source = "department.id")
     @Mapping(target = "departmentName", source = "department.name")
-    TeacherDto teacherToTeacherDto(Teacher teacher);
+    TeacherDto toTeacherDto(Teacher teacher);
 
 
     @Mapping(target = "department")
     @Mapping(target = "department.id", source = "departmentId")
     @Mapping(target = "department.name", source = "departmentName")
-    Teacher teacherDtoToTeacher(TeacherDto teacherDto);
+    Teacher toTeacher(TeacherDto teacherDto);
 
-    List<TeacherDto> teachersToTeacherDtos(List<Teacher> teachers);
+    List<TeacherDto> toTeacherDtos(List<Teacher> teachers);
 
 }

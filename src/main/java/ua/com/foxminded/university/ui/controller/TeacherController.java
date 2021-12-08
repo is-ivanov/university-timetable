@@ -8,9 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ua.com.foxminded.university.domain.dto.LessonDto;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
-import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Teacher;
-import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
 import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
@@ -36,7 +34,6 @@ public class TeacherController {
     private final DepartmentService departmentService;
     private final TeacherDtoMapper teacherMapper;
     private final LessonService lessonService;
-    private final LessonDtoMapper lessonDtoMapper;
 
     @GetMapping
     public String showTeachers(@RequestParam(required = false) Integer facultyId,
@@ -52,13 +49,11 @@ public class TeacherController {
         if (departmentId != null && departmentId > 0) {
             log.debug("Get teachers by departmentId ({})", departmentId);
             model.addAttribute("teachers",
-                teacherMapper.teachersToTeacherDtos(
-                    teacherService.getAllByDepartment(departmentId)));
+                    teacherService.getAllByDepartment(departmentId));
         } else if (facultyId != null && facultyId > 0) {
             log.debug("Get teachers by facultyId ({})", facultyId);
             model.addAttribute("teachers",
-                teacherMapper.teachersToTeacherDtos(
-                    teacherService.getAllByFaculty(facultyId)));
+                    teacherService.getAllByFaculty(facultyId));
         }
         if (facultyId != null && facultyId > 0) {
             log.debug("Get departments for selector by facultyId ({})", facultyId);
@@ -70,8 +65,8 @@ public class TeacherController {
         log.debug("adding selected faculty and department into model");
         model.addAttribute("facultyIdSelect", facultyId);
         model.addAttribute("departmentIdSelect", departmentId);
-        model.addAttribute("newTeacher", new TeacherDto());
-        log.info("The required data is loaded into the model");
+        model.addAttribute("newTeacher", new Teacher());
+        log.debug("The required data is loaded into the model");
         return "teacher";
     }
 
@@ -84,10 +79,10 @@ public class TeacherController {
                                             @DateTimeFormat(pattern = DATE_TIME_PATTERN)
                                                 LocalDateTime endTime) {
         log.debug("Getting teachers free from {} to {}", startTime, endTime);
-        List<Teacher> freeTeachers =
+        List<TeacherDto> freeTeachers =
             teacherService.getFreeTeachersOnLessonTime(startTime, endTime);
-        log.info("Found {} active free teachers", freeTeachers.size());
-        return teacherMapper.teachersToTeacherDtos(freeTeachers);
+        log.debug("Found {} active free teachers", freeTeachers.size());
+        return freeTeachers;
     }
 
     @PostMapping
@@ -95,8 +90,8 @@ public class TeacherController {
                                 HttpServletRequest request) {
         log.debug("Creating teacher [{} {} {}]", teacherDto.getFirstName(),
             teacherDto.getPatronymic(), teacherDto.getLastName());
-        teacherService.add(teacherMapper.teacherDtoToTeacher(teacherDto));
-        log.info("Teacher [{}, {}, {}] is created", teacherDto.getFirstName(),
+        teacherService.add(teacherMapper.toTeacher(teacherDto));
+        log.debug("Teacher [{}, {}, {}] is created", teacherDto.getFirstName(),
             teacherDto.getPatronymic(), teacherDto.getLastName());
         return defineRedirect(request);
     }
@@ -105,10 +100,10 @@ public class TeacherController {
     @ResponseBody
     public TeacherDto getTeacher(@PathVariable("id") int teacherId) {
         log.debug("Getting teacher id({})", teacherId);
-        Teacher teacher = teacherService.getById(teacherId);
-        log.info("Found teacher [{} {} {}]", teacher.getFirstName(),
+        TeacherDto teacher = teacherService.getById(teacherId);
+        log.debug("Found teacher [{} {} {}]", teacher.getFirstName(),
             teacher.getPatronymic(), teacher.getLastName());
-        return teacherMapper.teacherToTeacherDto(teacher);
+        return teacher;
     }
 
     @PutMapping("/{id}")
@@ -116,8 +111,8 @@ public class TeacherController {
                                 @PathVariable("id") int teacherId,
                                 HttpServletRequest request) {
         log.debug("Updating teacher id({})", teacherId);
-        teacherService.update(teacherMapper.teacherDtoToTeacher(teacherDto));
-        log.info("Teacher id({}) is updated", teacherId);
+        teacherService.update(teacherMapper.toTeacher(teacherDto));
+        log.debug("Teacher id({}) is updated", teacherId);
         return defineRedirect(request);
     }
 
@@ -126,7 +121,7 @@ public class TeacherController {
                                 HttpServletRequest request) {
         log.debug("Deleting teacher id({})", teacherId);
         teacherService.delete(teacherId);
-        log.info("Teacher id({}) is deleted", teacherId);
+        log.debug("Teacher id({}) is deleted", teacherId);
         return defineRedirect(request);
     }
 
@@ -141,12 +136,11 @@ public class TeacherController {
                                                     ZonedDateTime endTime) {
         log.debug("Getting lessons for teacher id({}) from {} to {}", teacherId,
             startTime, endTime);
-        List<Lesson> lessonsForTeacher = lessonService
+        List<LessonDto> lessonsForTeacher = lessonService
             .getAllForTeacherForTimePeriod(teacherId,
                 startTime.toLocalDateTime(), endTime.toLocalDateTime());
-        List<LessonDto> lessonDtos = lessonDtoMapper.lessonsToLessonDtos(lessonsForTeacher);
-        log.info("Found {} lessons", lessonDtos.size());
-        return lessonDtos;
+        log.debug("Found {} lessons", lessonsForTeacher.size());
+        return lessonsForTeacher;
     }
 
 }
