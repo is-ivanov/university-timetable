@@ -3,54 +3,54 @@
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd"
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.5.xsd"
     objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
-    <changeSet id="1638776746723-37" author="Ivan">
+    <changeSet id="1639048112003-37" author="mnpz (generated)">
         <addUniqueConstraint columnNames="course_name"
                              constraintName="uk_e6rl70tjjnfr7cpqd6koh0abk"
                              tableName="courses"/>
     </changeSet>
-    <changeSet id="1638776746723-38" author="Ivan">
+    <changeSet id="1639048112003-38" author="mnpz (generated)">
         <createIndex indexName="idx_department" tableName="departments">
             <column name="department_name"/>
         </createIndex>
     </changeSet>
-    <changeSet id="1638776746723-40" author="Ivan">
+    <changeSet id="1639048112003-40" author="mnpz (generated)">
         <addUniqueConstraint columnNames="faculty_name"
                              constraintName="uk_jrs3jldywwfd0vk743hmoxxn4"
                              tableName="faculties"/>
     </changeSet>
-    <changeSet id="1638776746723-44" author="Ivan">
+    <changeSet id="1639048112003-44" author="mnpz (generated)">
         <createIndex indexName="idx_lesson_time_end" tableName="lessons">
             <column name="time_end"/>
         </createIndex>
     </changeSet>
-    <changeSet id="1638776746723-45" author="Ivan">
+    <changeSet id="1639048112003-45" author="mnpz (generated)">
         <createIndex indexName="idx_lesson_time_start" tableName="lessons">
             <column name="time_start"/>
         </createIndex>
     </changeSet>
-    <changeSet id="1638776746723-47" author="Ivan">
+    <changeSet id="1639048112003-47" author="mnpz (generated)">
         <createIndex indexName="idx_group_faculty_id" tableName="groups">
             <column name="faculty_id"/>
         </createIndex>
     </changeSet>
-    <changeSet id="1638776746723-48" author="Ivan">
+    <changeSet id="1639048112003-48" author="mnpz (generated)">
         <createIndex indexName="idx_group_group_active" tableName="groups">
             <column name="group_active"/>
         </createIndex>
     </changeSet>
-    <changeSet id="1638776746723-49" author="Ivan">
+    <changeSet id="1639048112003-49" author="mnpz (generated)">
         <addUniqueConstraint columnNames="group_name"
                              constraintName="uk_7o859iyhxd19rv4hywgdvu2v4"
                              tableName="groups"/>
     </changeSet>
-    <changeSet id="1638776746723-50" author="Ivan">
+    <changeSet id="1639048112003-50" author="mnpz (generated)">
         <createIndex indexName="idx_student_active" tableName="students">
             <column name="active"/>
         </createIndex>
     </changeSet>
-    <changeSet id="1638776746723-52" author="Ivan">
+    <changeSet id="1639048112003-52" author="mnpz (generated)">
         <addForeignKeyConstraint baseColumnNames="student_id"
                                  baseTableName="students_lessons"
                                  constraintName="fk_student"
@@ -58,84 +58,87 @@
                                  referencedColumnNames="id"
                                  referencedTableName="students"/>
     </changeSet>
-    <changeSet id="1638776746723-54" author="Ivan">
+    <changeSet id="1639048112003-54" author="mnpz (generated)">
         <createIndex indexName="idx_room_building" tableName="rooms">
             <column name="building"/>
         </createIndex>
     </changeSet>
-    <changeSet id="1638776746723-55" author="Ivan">
+    <changeSet id="1639048112003-55" author="mnpz (generated)">
         <createIndex indexName="idx_room_room_number" tableName="rooms">
             <column name="room_number"/>
         </createIndex>
     </changeSet>
-    <changeSet id="1638776746723-56" author="Ivan">
+    <changeSet id="1639048112003-56" author="mnpz (generated)">
         <createSequence cacheSize="1" cycle="false" dataType="bigint"
                         incrementBy="1" maxValue="9223372036854775807"
                         minValue="1" sequenceName="hibernate_sequence"
                         startValue="1"/>
     </changeSet>
-    <changeSet id="1638776746723-57" author="Ivan">
-        <renameColumn tableName="students"
-                      oldColumnName="student_id"
-                      newColumnName="id"/>
+    <changeSet id="1639048112003-57" author="mnpz (generated)">
+        <addColumn tableName="students">
+            <column name="id" type="int4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="active" type="bool">
+                <constraints nullable="false"/>
+            </column>
+            <column name="first_name" type="varchar(100 BYTE)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="varchar(100 BYTE)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="patronymic" type="varchar(100 BYTE)"/>
+        </addColumn>
     </changeSet>
-    <changeSet id="1638776746723-58" author="Ivan">
-        <renameColumn tableName="students"
-                      oldColumnName="student_active"
-                      newColumnName="active"/>
+    <changeSet id="1639048112003-58" author="mnpz (generated)">
+        <addColumn tableName="teachers">
+            <column name="id" type="int4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="active" type="bool">
+                <constraints nullable="false"/>
+            </column>
+            <column name="first_name" type="varchar(100 BYTE)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="varchar(100 BYTE)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="patronymic" type="varchar(100 BYTE)"/>
+        </addColumn>
     </changeSet>
-    <changeSet id="1638776746723-59" author="Ivan">
-        <renameColumn tableName="students"
-                      oldColumnName="student_first_name"
-                      newColumnName="first_name"/>
-    </changeSet>
-    <changeSet id="1638776746723-60" author="Ivan">
-        <renameColumn tableName="students"
-                      oldColumnName="student_last_name"
-                      newColumnName="last_name"/>
-    </changeSet>
-    <changeSet id="1638776746723-61" author="Ivan">
-        <renameColumn tableName="students"
-                      oldColumnName="student_patronymic"
-                      newColumnName="patronymic"/>
-    </changeSet>
-    <changeSet id="1638776746723-62" author="Ivan">
-        <renameColumn tableName="teachers"
-                      oldColumnName="teacher_id"
-                      newColumnName="id"/>
-    </changeSet>
-    <changeSet id="1638776746723-63" author="Ivan">
-        <renameColumn tableName="teachers"
-                      oldColumnName="teacher_active"
-                      newColumnName="active"/>
-    </changeSet>
-    <changeSet id="1638776746723-64" author="Ivan">
-        <renameColumn tableName="teachers"
-                      oldColumnName="teacher_first_name"
-                      newColumnName="first_name"/>
-    </changeSet>
-    <changeSet id="1638776746723-65" author="Ivan">
-        <renameColumn tableName="teachers"
-                      oldColumnName="teacher_last_name"
-                      newColumnName="last_name"/>
-    </changeSet>
-    <changeSet id="1638776746723-66" author="Ivan">
-        <renameColumn tableName="teachers"
-                      oldColumnName="teacher_patronymic"
-                      newColumnName="patronymic"/>
-    </changeSet>
-
-    <changeSet id="1638776746723-67" author="Ivan">
+    <changeSet id="1639048112003-67" author="mnpz (generated)">
         <dropForeignKeyConstraint baseTableName="students_lessons"
                                   constraintName="fk_students"/>
     </changeSet>
+    <changeSet id="1639048112003-71" author="mnpz (generated)">
+        <dropColumn columnName="student_active" tableName="students"/>
 
-    <changeSet id="1638776746723-1" author="Ivan">
+        <dropColumn columnName="student_first_name" tableName="students"/>
+
+        <dropColumn columnName="student_last_name" tableName="students"/>
+
+        <dropColumn columnName="student_patronymic" tableName="students"/>
+
+        <dropColumn columnName="student_id" tableName="students"/>
+    </changeSet>
+    <changeSet id="1639048112003-75" author="mnpz (generated)">
+        <dropColumn columnName="teacher_active" tableName="teachers"/>
+
+        <dropColumn columnName="teacher_first_name" tableName="teachers"/>
+
+        <dropColumn columnName="teacher_last_name" tableName="teachers"/>
+
+        <dropColumn columnName="teacher_patronymic" tableName="teachers"/>
+
+        <dropColumn columnName="teacher_id" tableName="teachers"/>
+    </changeSet>
+    <changeSet id="1639048112003-1" author="mnpz (generated)">
         <dropForeignKeyConstraint baseTableName="lessons"
                                   constraintName="fk_course"/>
     </changeSet>
-
-    <changeSet id="1638776746723-2" author="Ivan">
+    <changeSet id="1639048112003-2" author="mnpz (generated)">
         <addForeignKeyConstraint baseColumnNames="course_id"
                                  baseTableName="lessons"
                                  constraintName="fk_course" onDelete="NO ACTION"
@@ -147,13 +150,11 @@
             <column name="course_id"/>
         </createIndex>
     </changeSet>
-
-    <changeSet id="1638776746723-3" author="Ivan">
+    <changeSet id="1639048112003-3" author="mnpz (generated)">
         <dropForeignKeyConstraint baseTableName="teachers"
                                   constraintName="fk_department"/>
     </changeSet>
-
-    <changeSet id="1638776746723-4" author="Ivan">
+    <changeSet id="1639048112003-4" author="mnpz (generated)">
         <addForeignKeyConstraint baseColumnNames="department_id"
                                  baseTableName="teachers"
                                  constraintName="fk_department"
@@ -161,13 +162,11 @@
                                  referencedColumnNames="department_id"
                                  referencedTableName="departments"/>
     </changeSet>
-
-    <changeSet id="1638776746723-5" author="Ivan">
+    <changeSet id="1639048112003-5" author="mnpz (generated)">
         <dropForeignKeyConstraint baseTableName="departments"
                                   constraintName="fk_faculty"/>
     </changeSet>
-
-    <changeSet id="1638776746723-6" author="Ivan">
+    <changeSet id="1639048112003-6" author="mnpz (generated)">
         <addForeignKeyConstraint baseColumnNames="faculty_id"
                                  baseTableName="departments"
                                  constraintName="fk_faculty"
@@ -180,13 +179,11 @@
             <column name="faculty_id"/>
         </createIndex>
     </changeSet>
-
-    <changeSet id="1638776746723-7" author="Ivan">
+    <changeSet id="1639048112003-7" author="mnpz (generated)">
         <dropForeignKeyConstraint baseTableName="students"
                                   constraintName="fk_group"/>
     </changeSet>
-
-    <changeSet id="1638776746723-8" author="Ivan">
+    <changeSet id="1639048112003-8" author="mnpz (generated)">
         <addForeignKeyConstraint baseColumnNames="group_id"
                                  baseTableName="students"
                                  constraintName="fk_group" onDelete="NO ACTION"
@@ -194,13 +191,11 @@
                                  referencedColumnNames="group_id"
                                  referencedTableName="groups"/>
     </changeSet>
-
-    <changeSet id="1638776746723-9" author="Ivan">
+    <changeSet id="1639048112003-9" author="mnpz (generated)">
         <dropForeignKeyConstraint baseTableName="students_lessons"
                                   constraintName="fk_lesson"/>
     </changeSet>
-
-    <changeSet id="1638776746723-10" author="Ivan">
+    <changeSet id="1639048112003-10" author="mnpz (generated)">
         <addForeignKeyConstraint baseColumnNames="lesson_id"
                                  baseTableName="students_lessons"
                                  constraintName="fk_lesson" onDelete="NO ACTION"
@@ -208,13 +203,11 @@
                                  referencedColumnNames="lesson_id"
                                  referencedTableName="lessons"/>
     </changeSet>
-
-    <changeSet id="1638776746723-11" author="Ivan">
+    <changeSet id="1639048112003-11" author="mnpz (generated)">
         <dropForeignKeyConstraint baseTableName="lessons"
                                   constraintName="fk_room"/>
     </changeSet>
-
-    <changeSet id="1638776746723-12" author="Ivan">
+    <changeSet id="1639048112003-12" author="mnpz (generated)">
         <addForeignKeyConstraint baseColumnNames="room_id"
                                  baseTableName="lessons"
                                  constraintName="fk_room" onDelete="NO ACTION"
@@ -226,13 +219,11 @@
             <column name="room_id"/>
         </createIndex>
     </changeSet>
-
-    <changeSet id="1638776746723-13" author="Ivan">
+    <changeSet id="1639048112003-13" author="mnpz (generated)">
         <dropForeignKeyConstraint baseTableName="lessons"
                                   constraintName="fk_teacher"/>
     </changeSet>
-
-    <changeSet id="1638776746723-14" author="Ivan">
+    <changeSet id="1639048112003-14" author="mnpz (generated)">
         <addForeignKeyConstraint baseColumnNames="teacher_id"
                                  baseTableName="lessons"
                                  constraintName="fk_teacher"
@@ -244,99 +235,80 @@
             <column name="teacher_id"/>
         </createIndex>
     </changeSet>
-
-    <changeSet id="1638776746723-15" author="Ivan">
+    <changeSet id="1639048112003-15" author="mnpz (generated)">
         <modifyDataType columnName="building" newDataType="varchar(100)"
                         tableName="rooms"/>
     </changeSet>
-
-    <changeSet id="1638776746723-16" author="Ivan">
+    <changeSet id="1639048112003-16" author="mnpz (generated)">
         <modifyDataType columnName="course_id" newDataType="int"
                         tableName="courses"/>
     </changeSet>
-
-    <changeSet id="1638776746723-17" author="Ivan">
+    <changeSet id="1639048112003-17" author="mnpz (generated)">
         <dropDefaultValue columnDataType="int" columnName="course_id"
                           tableName="courses"/>
     </changeSet>
-
-    <changeSet id="1638776746723-18" author="Ivan">
+    <changeSet id="1639048112003-18" author="mnpz (generated)">
         <modifyDataType columnName="department_id" newDataType="int"
                         tableName="departments"/>
     </changeSet>
-
-    <changeSet id="1638776746723-19" author="Ivan">
+    <changeSet id="1639048112003-19" author="mnpz (generated)">
         <dropDefaultValue columnDataType="int" columnName="department_id"
                           tableName="departments"/>
     </changeSet>
-
-    <changeSet id="1638776746723-20" author="Ivan">
+    <changeSet id="1639048112003-20" author="mnpz (generated)">
         <modifyDataType columnName="faculty_id" newDataType="int"
                         tableName="faculties"/>
     </changeSet>
-
-    <changeSet id="1638776746723-21" author="Ivan">
+    <changeSet id="1639048112003-21" author="mnpz (generated)">
         <dropDefaultValue columnDataType="int" columnName="faculty_id"
                           tableName="faculties"/>
     </changeSet>
-
-    <changeSet id="1638776746723-22" author="Ivan">
+    <changeSet id="1639048112003-22" author="mnpz (generated)">
         <modifyDataType columnName="group_id" newDataType="int"
                         tableName="groups"/>
     </changeSet>
-
-    <changeSet id="1638776746723-23" author="Ivan">
+    <changeSet id="1639048112003-23" author="mnpz (generated)">
         <dropDefaultValue columnDataType="int" columnName="group_id"
                           tableName="groups"/>
     </changeSet>
-
-    <changeSet id="1638776746723-24" author="Ivan">
+    <changeSet id="1639048112003-24" author="mnpz (generated)">
         <modifyDataType columnName="lesson_id" newDataType="int"
                         tableName="lessons"/>
     </changeSet>
-
-    <changeSet id="1638776746723-25" author="Ivan">
+    <changeSet id="1639048112003-25" author="mnpz (generated)">
         <dropDefaultValue columnDataType="int" columnName="lesson_id"
                           tableName="lessons"/>
     </changeSet>
-
-    <changeSet id="1638776746723-26" author="Ivan">
+    <changeSet id="1639048112003-26" author="mnpz (generated)">
         <modifyDataType columnName="room_id" newDataType="int"
                         tableName="rooms"/>
     </changeSet>
-
-    <changeSet id="1638776746723-27" author="Ivan">
+    <changeSet id="1639048112003-27" author="mnpz (generated)">
         <dropDefaultValue columnDataType="int" columnName="room_id"
                           tableName="rooms"/>
     </changeSet>
-
-    <changeSet id="1638776746723-28" author="Ivan">
+    <changeSet id="1639048112003-28" author="mnpz (generated)">
         <modifyDataType columnName="room_number" newDataType="varchar(20)"
                         tableName="rooms"/>
     </changeSet>
-
-    <changeSet id="1638776746723-29" author="Ivan">
+    <changeSet id="1639048112003-29" author="mnpz (generated)">
         <dropNotNullConstraint columnDataType="timestamp" columnName="time_end"
                                tableName="lessons"/>
     </changeSet>
-
-    <changeSet id="1638776746723-30" author="Ivan">
+    <changeSet id="1639048112003-30" author="mnpz (generated)">
         <dropNotNullConstraint columnDataType="timestamp"
                                columnName="time_start" tableName="lessons"/>
     </changeSet>
-
-    <changeSet id="1638776746723-32" author="Ivan">
+    <changeSet id="1639048112003-32" author="mnpz (generated)">
         <addPrimaryKey columnNames="lesson_id, student_id"
                        constraintName="students_lessons_pkey"
                        tableName="students_lessons"/>
     </changeSet>
-
-    <changeSet id="1638776746723-34" author="Ivan">
+    <changeSet id="1639048112003-34" author="mnpz (generated)">
         <addPrimaryKey columnNames="id" constraintName="students_pkey"
                        tableName="students"/>
     </changeSet>
-
-    <changeSet id="1638776746723-36" author="Ivan">
+    <changeSet id="1639048112003-36" author="mnpz (generated)">
         <addPrimaryKey columnNames="id" constraintName="teachers_pkey"
                        tableName="teachers"/>
     </changeSet>

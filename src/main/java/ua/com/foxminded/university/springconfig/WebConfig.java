@@ -16,56 +16,63 @@ import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 
 import java.util.List;
 
-@RequiredArgsConstructor
-@EnableWebMvc
+//@RequiredArgsConstructor
+//@EnableWebMvc
 @Configuration
-@ComponentScan("ua.com.foxminded.university.ui")
-public class WebConfig implements WebMvcConfigurer {
-
-    private final ApplicationContext applicationContext;
+//@ComponentScan("ua.com.foxminded.university.ui")
+public class WebConfig {
 
     @Bean
-    public SpringResourceTemplateResolver templateResolver() {
-        SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
-        templateResolver.setApplicationContext(this.applicationContext);
-        templateResolver.setPrefix("/WEB-INF/templates/");
-        templateResolver.setSuffix(".html");
-        return templateResolver;
+    public LayoutDialect layoutDialect() {
+        return new LayoutDialect();
     }
 
-    @Bean
-    public SpringTemplateEngine templateEngine() {
-        SpringTemplateEngine templateEngine = new SpringTemplateEngine();
-        templateEngine.setTemplateResolver(templateResolver());
-        templateEngine.setEnableSpringELCompiler(true);
-        templateEngine.addDialect(new LayoutDialect());
-        templateEngine.addDialect(new Java8TimeDialect());
-        return templateEngine;
-    }
+//    private final ApplicationContext applicationContext;
 
-    @Override
-    public void configureViewResolvers(ViewResolverRegistry registry) {
-        ThymeleafViewResolver resolver = new ThymeleafViewResolver();
-        resolver.setTemplateEngine(templateEngine());
-        registry.viewResolver(resolver);
-    }
+//    @Bean
+//    public SpringResourceTemplateResolver templateResolver() {
+//        SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
+//        templateResolver.setApplicationContext(this.applicationContext);
+//        templateResolver.setPrefix("/WEB-INF/templates/");
+//        templateResolver.setSuffix(".html");
+//        return templateResolver;
+//    }
 
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry
-            .addResourceHandler("/webjars/**", "/css/**", "/js/**", "/img/**")
-            .addResourceLocations("/webjars/", "/WEB-INF/resources/css/",
-                "/WEB-INF/resources/js/", "/WEB-INF/resources/img/")
-            .resourceChain(false);
-    }
+//    @Bean
+//    public SpringTemplateEngine templateEngine() {
+//        SpringTemplateEngine templateEngine = new SpringTemplateEngine();
+//        templateEngine.setTemplateResolver(templateResolver());
+//        templateEngine.setEnableSpringELCompiler(true);
+//        templateEngine.addDialect(new LayoutDialect());
+//        templateEngine.addDialect(new Java8TimeDialect());
+//        return templateEngine;
+//    }
 
-    @Override
-    public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
-        configurer.enable();
-    }
+//    @Override
+//    public void configureViewResolvers(ViewResolverRegistry registry) {
+//        ThymeleafViewResolver resolver = new ThymeleafViewResolver();
+//        resolver.setTemplateEngine(templateEngine());
+//        registry.viewResolver(resolver);
+//    }
+//
+//    @Override
+//    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+//        registry
+//            .addResourceHandler("/webjars/**", "/css/**", "/js/**", "/img/**")
+//            .addResourceLocations("/webjars/", "/WEB-INF/resources/css/",
+//                "/WEB-INF/resources/js/", "/WEB-INF/resources/img/")
+//            .resourceChain(false);
+//    }
+//
+//    @Override
+//    public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+//        configurer.enable();
+//    }
+//
+//    @Override
+//    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+//        resolvers.add(new PageableHandlerMethodArgumentResolver());
+//    }
 
-    @Override
-    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(new PageableHandlerMethodArgumentResolver());
-    }
+
 }
