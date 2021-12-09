@@ -1,6 +1,5 @@
 spring:
   datasource:
-#    jndi-name: java:comp/env/jdbc/university_hibernate
     url: jdbc:postgresql://localhost:5432/university_hibernate
     username: postgres
     password: 1234
@@ -8,17 +7,19 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
-
-    show-sql: true
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQL10Dialect
+        format_sql: true
+        highlight_sql: true
+    open-in-view: false
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
-
-#hibernate.dialect=org.hibernate.dialect.PostgreSQL10Dialect
-#hibernate.format_sql=true
-#hibernate.highlight_sql=true
-#hibernate.use_sql_comments=true
-#hibernate.hbm2ddl.auto=none
-#hibernate.generate_statistics=true
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+logging:
+  level:
+    org.hibernate.SQL: debug
+    ua.com.foxminded.university: debug
