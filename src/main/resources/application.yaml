@@ -19,7 +19,8 @@ spring:
     hiddenmethod:
       filter:
         enabled: true
-logging:
-  level:
-    org.hibernate.SQL: debug
-    ua.com.foxminded.university: debug
+#logging:
+#  level:
+#    web: debug
+#    org.hibernate.SQL: debug
+#    ua.com.foxminded.university: debug

@@ -12,9 +12,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "courses", indexes = {
-    @Index(name = "idx_course_course_name", columnList = "course_name", unique = true)
-})
+@Table(name = "courses")
 public class Course {
 
     @Id
