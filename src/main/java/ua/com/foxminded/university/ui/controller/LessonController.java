@@ -88,7 +88,6 @@ public class LessonController {
                                          Model model) {
         log.debug("Getting data for lesson.html for lesson id({})", lessonId);
         LessonDto lesson = lessonService.getById(lessonId);
-//        LessonDto lessonDto = lessonDtoMapper.toLessonDto(lesson);
         model.addAttribute("lesson", lesson);
 
         LocalDateTime timeStart = lesson.getTimeStart();
