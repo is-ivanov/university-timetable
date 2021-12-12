@@ -1,12 +1,9 @@
 package ua.com.foxminded.university.dao.interfaces;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import ua.com.foxminded.university.domain.entity.Course;
 
-public interface CourseRepository extends Repository<Course> {
-
-    int countAll();
-
-    Page<Course> getAllSortedPaginated (Pageable pageable);
+@Repository
+public interface CourseRepository extends JpaRepository<Course, Integer> {
 }

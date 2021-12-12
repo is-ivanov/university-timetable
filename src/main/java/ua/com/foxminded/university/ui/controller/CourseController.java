@@ -29,7 +29,7 @@ public class  CourseController {
 
     @GetMapping
     public String showCourses(Model model,
-                              @PageableDefault(sort = "course_name") Pageable pageable) {
+                              @PageableDefault(sort = "name") Pageable pageable) {
         log.debug("Getting data for course.html");
         Page<Course> pageCourses = courseService.getAllSortedPaginated(pageable);
         model.addAttribute("courses", pageCourses.getContent());

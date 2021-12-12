@@ -26,14 +26,14 @@ public class FacultyServiceImpl implements FacultyService {
     @Override
     public void add(Faculty faculty) {
         log.debug("Adding {}", faculty);
-        facultyRepository.add(faculty);
+        facultyRepository.save(faculty);
         log.debug("{} added successfully", faculty);
     }
 
     @Override
     public Faculty getById(int id) {
         log.debug("Getting faculty by id({})", id);
-        Faculty faculty = facultyRepository.getById(id)
+        Faculty faculty = facultyRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException(
                 String.format(MESSAGE_FACULTY_NOT_FOUND, id)));
         log.debug("Found {}", faculty);
@@ -43,7 +43,7 @@ public class FacultyServiceImpl implements FacultyService {
     @Override
     public List<Faculty> getAll() {
         log.debug("Getting all faculties");
-        List<Faculty> faculties = facultyRepository.getAll();
+        List<Faculty> faculties = facultyRepository.findAll();
         log.debug("Found {} faculties", faculties.size());
         return faculties;
     }
@@ -51,7 +51,7 @@ public class FacultyServiceImpl implements FacultyService {
     @Override
     public void update(Faculty faculty) {
         log.debug("Updating {}", faculty);
-        facultyRepository.update(faculty);
+        facultyRepository.save(faculty);
         log.debug("Update {}", faculty);
     }
 
@@ -65,14 +65,14 @@ public class FacultyServiceImpl implements FacultyService {
     @Override
     public void delete(int id) {
         log.debug("Deleting faculty id({})", id);
-        facultyRepository.delete(id);
+        facultyRepository.deleteById(id);
         log.debug("Delete faculty id({})", id);
     }
 
     @Override
     public List<Faculty> getAllSortedByNameAsc() {
         log.debug("Getting all faculties sorted by name ascending");
-        List<Faculty> faculties = facultyRepository.getAllSortedByNameAsc();
+        List<Faculty> faculties = facultyRepository.findAllByOrderByNameAsc();
         log.debug("Found {} sorted faculties", faculties.size());
         return faculties;
     }
@@ -80,7 +80,7 @@ public class FacultyServiceImpl implements FacultyService {
     @Override
     public Page<Faculty> getAllSortedPaginated(Pageable pageable) {
         log.debug("Getting sorted page {} from list of faculties", pageable.getPageNumber());
-        Page<Faculty> pageFaculties = facultyRepository.getAllSortedPaginated(pageable);
+        Page<Faculty> pageFaculties = facultyRepository.findAll(pageable);
         log.debug("Found {} faculties on page {}", pageFaculties.getContent().size(),
             pageFaculties.getNumber());
         return pageFaculties;

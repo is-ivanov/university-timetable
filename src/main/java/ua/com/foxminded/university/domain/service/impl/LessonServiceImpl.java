@@ -100,7 +100,7 @@ public class LessonServiceImpl implements LessonService {
     public void addStudentToLesson(int lessonId, int studentId) {
         log.debug("Getting lessonId({}) and studentId({})", lessonId, studentId);
         Lesson lesson = getLessonById(lessonId);
-        Student student = studentRepository.getById(studentId)
+        Student student = studentRepository.findById(studentId)
             .orElseThrow(() -> new EntityNotFoundException(
                 String.format("Student id(%d) not found", studentId)));
         checkAndSaveStudentToLesson(lesson, student);
@@ -113,7 +113,7 @@ public class LessonServiceImpl implements LessonService {
         Lesson lesson = getLessonById(lessonId);
         log.debug("Getting active students from group id({})", groupId);
         List<Student> studentsFromGroup =
-            studentRepository.getFreeStudentsFromGroup(groupId,
+            studentRepository.findFreeStudentsFromGroup(groupId,
                 lesson.getTimeStart(), lesson.getTimeEnd());
         for (Student student : studentsFromGroup) {
             checkAndSaveStudentToLesson(lesson, student);

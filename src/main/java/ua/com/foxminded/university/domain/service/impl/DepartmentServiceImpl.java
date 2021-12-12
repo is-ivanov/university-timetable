@@ -10,7 +10,6 @@ import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.mapper.DepartmentDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Slf4j
@@ -28,16 +27,14 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public void add(Department department) {
         log.debug("Adding {}", department);
-        departmentRepository.add(department);
+        departmentRepository.save(department);
         log.debug("{} added successfully", department);
     }
 
     @Override
     public DepartmentDto getById(int id) {
         log.debug("Getting department by id({})", id);
-        Department department = departmentRepository.getById(id)
-            .orElseThrow(() -> new EntityNotFoundException(
-                String.format(MESSAGE_DEPARTMENT_NOT_FOUND, id)));
+        Department department = departmentRepository.getById(id);
         log.debug("Found {}", department);
         return departmentDtoMapper.toDepartmentDto(department);
     }
@@ -46,7 +43,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public List<DepartmentDto> getAll() {
         log.debug("Getting all departments");
-        List<Department> departments = departmentRepository.getAll();
+        List<Department> departments = departmentRepository.findAll();
         log.debug("Found {} departments", departments.size());
         return departmentDtoMapper.toDepartmentDtos(departments);
     }
@@ -55,7 +52,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public void update(Department department) {
         log.debug("Updating {}", department);
-        departmentRepository.update(department);
+        departmentRepository.save(department);
         log.debug("Update {}", department);
     }
 
@@ -69,14 +66,14 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public void delete(int id) {
         log.debug("Deleting department id({})", id);
-        departmentRepository.delete(id);
+        departmentRepository.deleteById(id);
         log.debug("Delete department id({})", id);
     }
 
     @Override
     public List<DepartmentDto> getAllByFaculty(int facultyId) {
         log.debug("Getting all departments from faculty id({})", facultyId);
-        List<Department> departments = departmentRepository.getAllByFacultyId(facultyId);
+        List<Department> departments = departmentRepository.findAllByFacultyId(facultyId);
         log.debug("Found {} departments", departments.size());
         return departmentDtoMapper.toDepartmentDtos(departments);
     }

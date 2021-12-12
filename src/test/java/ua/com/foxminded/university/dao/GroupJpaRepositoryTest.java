@@ -1,4 +1,4 @@
-package ua.com.foxminded.university.dao.jpaimpl;
+package ua.com.foxminded.university.dao;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -6,19 +6,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.jdbc.JdbcTestUtils;
 import ua.com.foxminded.university.dao.interfaces.GroupRepository;
-import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
-import ua.com.foxminded.university.exception.DaoException;
 import ua.com.foxminded.university.springconfig.IntegrationTestBase;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static ua.com.foxminded.university.TestObjects.*;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
@@ -44,144 +39,144 @@ class GroupJpaRepositoryTest extends IntegrationTestBase {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    @Nested
-    @DisplayName("test 'add' method")
-    class AddTest {
-
-        @Test
-        @DisplayName("after add test group should CountRowsTable = 4")
-        void testAddGroupCountRows() {
-            Faculty faculty = new Faculty(ID1, NAME_FIRST_FACULTY);
-
-            Group group = new Group(NAME_TEST_GROUP, faculty, true);
-
-            int expectedRowsInTable = JdbcTestUtils.countRowsInTable(jdbcTemplate,
-                TABLE_NAME) + 1;
-
-            dao.add(group);
-            List<Group> actualGroups = dao.getAll();
-            assertThat(actualGroups).hasSize(expectedRowsInTable);
-            assertThat(actualGroups).extracting(Group::getName)
-                .contains(NAME_TEST_GROUP);
-        }
-
-    }
-
-    @Nested
-    @DisplayName("test 'getById' method")
-    class GetByIdTest {
-
-        @Test
-        @DisplayName("with id=1 should return expected group")
-        void testGetByIdGroup() {
-
-            Group actualGroup = dao.getById(ID1).get();
-            assertThat(actualGroup.getId()).isEqualTo(ID1);
-            assertThat(actualGroup.getName()).isEqualTo(NAME_FIRST_GROUP);
-            assertThat(actualGroup.isActive()).isTrue();
-        }
-
-        @Test
-        @DisplayName("with id=4 should return empty Optional")
-        void testGetByIdGroupEmptyOptional() {
-            Optional<Group> groupOptional = dao.getById(4);
-            assertThat(groupOptional).isEmpty();
-        }
-    }
-
-    @Nested
-    @DisplayName("test 'getAll' method")
-    class GetAllTest {
-
-        @Test
-        @DisplayName("should return List with size = 3")
-        void testGetAllGroups() {
-            int expectedQuantityGroups = JdbcTestUtils
-                .countRowsInTable(jdbcTemplate, TABLE_NAME);
-            List<Group> groups = dao.getAll();
-            assertThat(groups).hasSize(expectedQuantityGroups);
-            assertThat(groups).extracting(Group::getName)
-                .containsOnly(NAME_FIRST_GROUP, NAME_SECOND_GROUP, NAME_THIRD_GROUP);
-        }
-    }
-
-    @Nested
-    @DisplayName("test 'update' method")
-    class UpdateTest {
-
-        @Test
-        @DisplayName("with group id=1 should write new fields and getById(1) " +
-            "return expected group")
-        void testUpdateExistingGroup_WriteExpectedGroup() {
-            Faculty expectedFaculty = new Faculty(ID2, NAME_SECOND_FACULTY);
-            Group expectedGroup = new Group(ID1, NAME_TEST_GROUP,
-                expectedFaculty, true);
-            dao.update(expectedGroup);
-            Group actualGroup = dao.getById(ID1).get();
-            assertThat(actualGroup).isEqualTo(expectedGroup);
-        }
-
-        @Test
-        @DisplayName("with group id=4 should write new group")
-        void testUpdateNonExistingGroup_CreateNewGroup() {
-            Faculty expectedFaculty = new Faculty(ID2, NAME_SECOND_FACULTY);
-            Group expectedGroup = new Group(5, NAME_TEST_GROUP,
-                expectedFaculty, true);
-            dao.update(expectedGroup);
-
-            Group actualGroup = dao.getById(5).get();
-            assertThat(actualGroup).isEqualTo(expectedGroup);
-        }
-    }
-
-    @Nested
-    @DisplayName("test 'delete' method")
-    class DeleteTest {
-
-        @Nested
-        @DisplayName("delete(group) method")
-        class DeleteGroupTest {
-
-            @Test
-            @DisplayName("with group id=3 should delete one record and number " +
-                "of records should decrease by one")
-            void testDeleteExistingGroup_ReduceNumberRowsInTable() {
-
-                Group group = dao.getById(ID3).get();
-                dao.delete(group);
-                List<Group> groups = dao.getAll();
-                assertThat(groups).hasSize(2);
-                assertThat(groups).extracting(Group::getName)
-                    .doesNotContain(NAME_THIRD_GROUP);
-            }
-        }
-
-        @Nested
-        @DisplayName("delete(groupId) method")
-        class DeleteGroupIdTest {
-
-            @Test
-            @DisplayName("with group id=3 should delete one record and number " +
-                "of records should decrease by one")
-            void testDeleteExistingGroupId3_ReduceNumberRowsInTable() {
-                dao.delete(ID3);
-                List<Group> groups = dao.getAll();
-                assertThat(groups).hasSize(2);
-                assertThat(groups).extracting(Group::getName)
-                    .doesNotContain(NAME_THIRD_GROUP);
-            }
-
-            @Test
-            @DisplayName("with group id=4 should throw DaoException with " +
-                "expected message")
-            void testDeleteNonExistingGroup_ThrowDaoException() {
-                assertThatThrownBy(() -> dao.delete(4))
-                    .isInstanceOf(DaoException.class)
-                    .hasMessageContaining(MESSAGE_DELETE_GROUP_NOT_FOUND);
-            }
-        }
-    }
-
+//    @Nested
+//    @DisplayName("test 'add' method")
+//    class AddTest {
+//
+//        @Test
+//        @DisplayName("after add test group should CountRowsTable = 4")
+//        void testAddGroupCountRows() {
+//            Faculty faculty = new Faculty(ID1, NAME_FIRST_FACULTY);
+//
+//            Group group = new Group(NAME_TEST_GROUP, faculty, true);
+//
+//            int expectedRowsInTable = JdbcTestUtils.countRowsInTable(jdbcTemplate,
+//                TABLE_NAME) + 1;
+//
+//            dao.add(group);
+//            List<Group> actualGroups = dao.getAll();
+//            assertThat(actualGroups).hasSize(expectedRowsInTable);
+//            assertThat(actualGroups).extracting(Group::getName)
+//                .contains(NAME_TEST_GROUP);
+//        }
+//
+//    }
+//
+//    @Nested
+//    @DisplayName("test 'getById' method")
+//    class GetByIdTest {
+//
+//        @Test
+//        @DisplayName("with id=1 should return expected group")
+//        void testGetByIdGroup() {
+//
+//            Group actualGroup = dao.getById(ID1).get();
+//            assertThat(actualGroup.getId()).isEqualTo(ID1);
+//            assertThat(actualGroup.getName()).isEqualTo(NAME_FIRST_GROUP);
+//            assertThat(actualGroup.isActive()).isTrue();
+//        }
+//
+//        @Test
+//        @DisplayName("with id=4 should return empty Optional")
+//        void testGetByIdGroupEmptyOptional() {
+//            Optional<Group> groupOptional = dao.getById(4);
+//            assertThat(groupOptional).isEmpty();
+//        }
+//    }
+//
+//    @Nested
+//    @DisplayName("test 'getAll' method")
+//    class GetAllTest {
+//
+//        @Test
+//        @DisplayName("should return List with size = 3")
+//        void testGetAllGroups() {
+//            int expectedQuantityGroups = JdbcTestUtils
+//                .countRowsInTable(jdbcTemplate, TABLE_NAME);
+//            List<Group> groups = dao.getAll();
+//            assertThat(groups).hasSize(expectedQuantityGroups);
+//            assertThat(groups).extracting(Group::getName)
+//                .containsOnly(NAME_FIRST_GROUP, NAME_SECOND_GROUP, NAME_THIRD_GROUP);
+//        }
+//    }
+//
+//    @Nested
+//    @DisplayName("test 'update' method")
+//    class UpdateTest {
+//
+//        @Test
+//        @DisplayName("with group id=1 should write new fields and getById(1) " +
+//            "return expected group")
+//        void testUpdateExistingGroup_WriteExpectedGroup() {
+//            Faculty expectedFaculty = new Faculty(ID2, NAME_SECOND_FACULTY);
+//            Group expectedGroup = new Group(ID1, NAME_TEST_GROUP,
+//                expectedFaculty, true);
+//            dao.update(expectedGroup);
+//            Group actualGroup = dao.getById(ID1).get();
+//            assertThat(actualGroup).isEqualTo(expectedGroup);
+//        }
+//
+//        @Test
+//        @DisplayName("with group id=4 should write new group")
+//        void testUpdateNonExistingGroup_CreateNewGroup() {
+//            Faculty expectedFaculty = new Faculty(ID2, NAME_SECOND_FACULTY);
+//            Group expectedGroup = new Group(5, NAME_TEST_GROUP,
+//                expectedFaculty, true);
+//            dao.update(expectedGroup);
+//
+//            Group actualGroup = dao.getById(5).get();
+//            assertThat(actualGroup).isEqualTo(expectedGroup);
+//        }
+//    }
+//
+//    @Nested
+//    @DisplayName("test 'delete' method")
+//    class DeleteTest {
+//
+//        @Nested
+//        @DisplayName("delete(group) method")
+//        class DeleteGroupTest {
+//
+//            @Test
+//            @DisplayName("with group id=3 should delete one record and number " +
+//                "of records should decrease by one")
+//            void testDeleteExistingGroup_ReduceNumberRowsInTable() {
+//
+//                Group group = dao.getById(ID3).get();
+//                dao.delete(group);
+//                List<Group> groups = dao.getAll();
+//                assertThat(groups).hasSize(2);
+//                assertThat(groups).extracting(Group::getName)
+//                    .doesNotContain(NAME_THIRD_GROUP);
+//            }
+//        }
+//
+//        @Nested
+//        @DisplayName("delete(groupId) method")
+//        class DeleteGroupIdTest {
+//
+//            @Test
+//            @DisplayName("with group id=3 should delete one record and number " +
+//                "of records should decrease by one")
+//            void testDeleteExistingGroupId3_ReduceNumberRowsInTable() {
+//                dao.delete(ID3);
+//                List<Group> groups = dao.getAll();
+//                assertThat(groups).hasSize(2);
+//                assertThat(groups).extracting(Group::getName)
+//                    .doesNotContain(NAME_THIRD_GROUP);
+//            }
+//
+//            @Test
+//            @DisplayName("with group id=4 should throw DaoException with " +
+//                "expected message")
+//            void testDeleteNonExistingGroup_ThrowDaoException() {
+//                assertThatThrownBy(() -> dao.delete(4))
+//                    .isInstanceOf(DaoException.class)
+//                    .hasMessageContaining(MESSAGE_DELETE_GROUP_NOT_FOUND);
+//            }
+//        }
+//    }
+//
     @Nested
     @DisplayName("test 'getAllByFacultyId' method")
     class GetAllByFacultyIdTest {
@@ -189,7 +184,7 @@ class GroupJpaRepositoryTest extends IntegrationTestBase {
         @Test
         @DisplayName("with faculty id=1 should return List with size = 3")
         void testGetGroupsByFacultyId1() {
-            List<Group> groupsFromFaculty1 = dao.getAllByFacultyId(ID1);
+            List<Group> groupsFromFaculty1 = dao.findAllByFacultyId(ID1);
             assertThat(groupsFromFaculty1).hasSize(3);
             assertThat(groupsFromFaculty1).extracting(Group::getName)
                 .contains(NAME_FIRST_GROUP, NAME_SECOND_GROUP, NAME_THIRD_GROUP);
@@ -198,7 +193,7 @@ class GroupJpaRepositoryTest extends IntegrationTestBase {
         @Test
         @DisplayName("with faculty id=2 should return empty List")
         void testGetGroupsByFacultyId2() {
-            assertThat(dao.getAllByFacultyId(ID2)).isEmpty();
+            assertThat(dao.findAllByFacultyId(ID2)).isEmpty();
         }
     }
 
@@ -220,7 +215,7 @@ class GroupJpaRepositoryTest extends IntegrationTestBase {
                 void lessonStartsAtSameTimeScheduledLesson() {
 
                     List<Group> freeGroupsOnSecondLessonTime = dao
-                        .getFreeGroupsOnLessonTime(START_SECOND_LESSON,
+                        .findFreeGroupsOnLessonTime(START_SECOND_LESSON,
                             END_SECOND_LESSON.plusMinutes(2));
 
                     assertThat(freeGroupsOnSecondLessonTime).hasSize(1);
@@ -238,7 +233,7 @@ class GroupJpaRepositoryTest extends IntegrationTestBase {
                 void lessonStartsBeforeAndEndsDuringScheduledLesson() {
 
                     List<Group> freeGroupsOnSecondLessonTime = dao
-                        .getFreeGroupsOnLessonTime(START_SECOND_LESSON.minusHours(1),
+                        .findFreeGroupsOnLessonTime(START_SECOND_LESSON.minusHours(1),
                             START_SECOND_LESSON.plusHours(1));
 
                     assertThat(freeGroupsOnSecondLessonTime).hasSize(1);
@@ -256,7 +251,7 @@ class GroupJpaRepositoryTest extends IntegrationTestBase {
                 void lessonStartsAndEndsDuringScheduledLesson() {
 
                     List<Group> freeGroupsOnSecondLessonTime = dao
-                        .getFreeGroupsOnLessonTime(START_SECOND_LESSON.plusMinutes(1),
+                        .findFreeGroupsOnLessonTime(START_SECOND_LESSON.plusMinutes(1),
                             END_SECOND_LESSON.minusMinutes(1));
 
                     assertThat(freeGroupsOnSecondLessonTime).hasSize(1);
@@ -283,7 +278,7 @@ class GroupJpaRepositoryTest extends IntegrationTestBase {
                 void lessonStartsAtSameTimeScheduledLesson() {
 
                     List<Group> freeGroupsOnSecondLessonTime = dao
-                        .getFreeGroupsOnLessonTime(START_FIRST_LESSON,
+                        .findFreeGroupsOnLessonTime(START_FIRST_LESSON,
                             END_FIRST_LESSON.plusMinutes(2));
 
                     assertThat(freeGroupsOnSecondLessonTime).hasSize(2);
@@ -296,7 +291,7 @@ class GroupJpaRepositoryTest extends IntegrationTestBase {
                 void lessonStartsBeforeAndEndsDuringScheduledLesson() {
 
                     List<Group> freeGroupsOnSecondLessonTime = dao
-                        .getFreeGroupsOnLessonTime(START_FIRST_LESSON.minusHours(1),
+                        .findFreeGroupsOnLessonTime(START_FIRST_LESSON.minusHours(1),
                             END_FIRST_LESSON.minusHours(1));
 
                     assertThat(freeGroupsOnSecondLessonTime).hasSize(2);
@@ -315,7 +310,7 @@ class GroupJpaRepositoryTest extends IntegrationTestBase {
         @DisplayName("when faculty without group then return empty list")
         void testFacultyWithoutGroup_ReturnEmptyList() {
             List<Group> freeGroupsFaculty2 =
-                dao.getFreeGroupsByFacultyOnLessonTime(ID2, START_FIRST_LESSON,
+                dao.findFreeGroupsByFacultyOnLessonTime(ID2, START_FIRST_LESSON,
                     END_FIRST_LESSON);
             assertThat(freeGroupsFaculty2).isEmpty();
         }
@@ -338,7 +333,7 @@ class GroupJpaRepositoryTest extends IntegrationTestBase {
                     void lessonStartsAtSameTimeScheduledLesson() {
 
                         List<Group> freeGroupsOnFaculty1InSecondLessonTime = dao
-                            .getFreeGroupsByFacultyOnLessonTime(ID1, START_SECOND_LESSON,
+                            .findFreeGroupsByFacultyOnLessonTime(ID1, START_SECOND_LESSON,
                                 END_SECOND_LESSON.plusMinutes(2));
 
                         assertThat(freeGroupsOnFaculty1InSecondLessonTime).hasSize(1);
@@ -356,7 +351,7 @@ class GroupJpaRepositoryTest extends IntegrationTestBase {
                     void lessonStartsBeforeAndEndsDuringScheduledLesson() {
 
                         List<Group> freeGroupsOnFaculty1InSecondLessonTime = dao
-                            .getFreeGroupsByFacultyOnLessonTime(ID1,
+                            .findFreeGroupsByFacultyOnLessonTime(ID1,
                                 START_SECOND_LESSON.minusHours(1),
                                 START_SECOND_LESSON.plusHours(1));
 
@@ -375,7 +370,7 @@ class GroupJpaRepositoryTest extends IntegrationTestBase {
                     void lessonStartsAndEndsDuringScheduledLesson() {
 
                         List<Group> freeGroupsOnFaculty1InSecondLessonTime = dao
-                            .getFreeGroupsByFacultyOnLessonTime(ID1,
+                            .findFreeGroupsByFacultyOnLessonTime(ID1,
                                 START_SECOND_LESSON.plusMinutes(1),
                                 END_SECOND_LESSON.minusMinutes(1));
 
@@ -403,7 +398,7 @@ class GroupJpaRepositoryTest extends IntegrationTestBase {
                     void lessonStartsAtSameTimeScheduledLesson() {
 
                         List<Group> freeGroupsOnFaculty1InSecondLessonTime = dao
-                            .getFreeGroupsByFacultyOnLessonTime(ID1,
+                            .findFreeGroupsByFacultyOnLessonTime(ID1,
                                 START_FIRST_LESSON,
                                 END_FIRST_LESSON.plusMinutes(2));
 
@@ -417,7 +412,7 @@ class GroupJpaRepositoryTest extends IntegrationTestBase {
                     void lessonStartsBeforeAndEndsDuringScheduledLesson() {
 
                         List<Group> freeGroupsOnFaculty1InSecondLessonTime = dao
-                            .getFreeGroupsByFacultyOnLessonTime(ID1,
+                            .findFreeGroupsByFacultyOnLessonTime(ID1,
                                 START_FIRST_LESSON.minusHours(1),
                                 END_FIRST_LESSON.minusHours(1));
 
@@ -438,7 +433,7 @@ class GroupJpaRepositoryTest extends IntegrationTestBase {
         @DisplayName("should return List with size = 2 with expected groups")
         void testGetActiveGroups() {
 
-            List<Group> groups = dao.getActiveGroups();
+            List<Group> groups = dao.findAllByActiveTrue();
             assertThat(groups).hasSize(2);
             assertThat(groups).extracting(Group::getName)
                 .containsOnly(NAME_FIRST_GROUP, NAME_SECOND_GROUP);

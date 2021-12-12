@@ -27,14 +27,14 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public void add(Room room) {
         log.debug("Adding {}", room);
-        roomRepository.add(room);
+        roomRepository.save(room);
         log.debug("{} added successfully", room);
     }
 
     @Override
     public Room getById(int id) {
         log.debug("Getting room by id({})", id);
-        Room room = roomRepository.getById(id)
+        Room room = roomRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException(
                 String.format(MESSAGE_ROOM_NOT_FOUND, id)));
         log.debug("Found {}", room);
@@ -44,7 +44,7 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public List<Room> getAll() {
         log.debug("Getting all rooms");
-        List<Room> rooms = roomRepository.getAll();
+        List<Room> rooms = roomRepository.findAll();
         log.debug("Found {} rooms", rooms.size());
         return rooms;
     }
@@ -52,7 +52,7 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public void update(Room room) {
         log.debug("Updating {}", room);
-        roomRepository.update(room);
+        roomRepository.save(room);
         log.debug("Update {}", room);
     }
 
@@ -66,7 +66,7 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public void delete(int id) {
         log.debug("Deleting room id({})", id);
-        roomRepository.delete(id);
+        roomRepository.deleteById(id);
         log.debug("Delete room id({})", id);
     }
 
@@ -74,7 +74,7 @@ public class RoomServiceImpl implements RoomService {
     public List<Room> getFreeRoomsOnLessonTime(LocalDateTime startTime,
                                                LocalDateTime endTime) {
         log.debug("Getting free rooms from {} to {}", startTime, endTime);
-        List<Room> freeRooms = roomRepository.getFreeRoomsOnLessonTime(startTime, endTime);
+        List<Room> freeRooms = roomRepository.findFreeRoomsOnLessonTime(startTime, endTime);
         log.debug("Found {} free rooms", freeRooms.size());
         return freeRooms;
     }
@@ -82,7 +82,7 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public Page<Room> getAllSortedPaginated(Pageable pageable) {
         log.debug("Getting sorted page {} from list of rooms", pageable.getPageNumber());
-        Page<Room> pageRooms = roomRepository.getAllSortedPaginated(pageable);
+        Page<Room> pageRooms = roomRepository.findAll(pageable);
         log.debug("Found {} rooms on page {}", pageRooms.getContent().size(),
             pageRooms.getNumber());
         return pageRooms;

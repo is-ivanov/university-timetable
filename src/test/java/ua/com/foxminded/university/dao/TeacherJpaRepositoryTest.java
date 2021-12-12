@@ -1,4 +1,4 @@
-package ua.com.foxminded.university.dao.jpaimpl;
+package ua.com.foxminded.university.dao;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

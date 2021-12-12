@@ -1,0 +1,14 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+        highlight_sql: true
+    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+  liquibase:
+    enabled: false
+logging:
+  level:
+    web: info

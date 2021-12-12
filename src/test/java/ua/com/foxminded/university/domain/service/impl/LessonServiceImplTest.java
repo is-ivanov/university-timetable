@@ -343,7 +343,7 @@ class LessonServiceImplTest {
                 .build();
 
             when(lessonRepositoryMock.getById(LESSON_ID1)).thenReturn(Optional.of(testLesson));
-            when(studentRepositoryMock.getById(STUDENT_ID2)).thenReturn(Optional.of(student));
+            when(studentRepositoryMock.findById(STUDENT_ID2)).thenReturn(Optional.of(student));
 
             lessonService.addStudentToLesson(LESSON_ID1, STUDENT_ID2);
 
@@ -360,7 +360,7 @@ class LessonServiceImplTest {
                 .build();
 
             when(lessonRepositoryMock.getById(LESSON_ID1)).thenReturn(Optional.of(testLesson));
-            when(studentRepositoryMock.getById(STUDENT_ID2)).thenReturn(Optional.of(student));
+            when(studentRepositoryMock.findById(STUDENT_ID2)).thenReturn(Optional.of(student));
 
 
             verify(lessonRepositoryMock, never()).addStudentToLesson(LESSON_ID1, STUDENT_ID2);
@@ -392,7 +392,7 @@ class LessonServiceImplTest {
                 .build();
 
             when(lessonRepositoryMock.getById(LESSON_ID1)).thenReturn(Optional.of(testLesson));
-            when(studentRepositoryMock.getById(STUDENT_ID2)).thenReturn(Optional.of(studentAdding));
+            when(studentRepositoryMock.findById(STUDENT_ID2)).thenReturn(Optional.of(studentAdding));
 
             assertThatThrownBy(() -> lessonService.addStudentToLesson(
                 LESSON_ID1, STUDENT_ID2))

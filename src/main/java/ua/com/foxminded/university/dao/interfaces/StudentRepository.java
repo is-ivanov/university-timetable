@@ -1,24 +1,40 @@
 package ua.com.foxminded.university.dao.interfaces;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import ua.com.foxminded.university.domain.entity.Faculty;
+import ua.com.foxminded.university.domain.entity.Group;
+import ua.com.foxminded.university.domain.entity.Student;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
-import ua.com.foxminded.university.domain.entity.Faculty;
-import ua.com.foxminded.university.domain.entity.Group;
-import ua.com.foxminded.university.domain.entity.Lesson;
-import ua.com.foxminded.university.domain.entity.Student;
+public interface StudentRepository extends JpaRepository<Student, Integer> {
 
-public interface StudentRepository extends Repository<Student> {
+    List<Student> findAllByGroup(Group group);
 
-    List<Student> getStudentsByLesson(Lesson lesson);
+    @Query("SELECT s " +
+        "FROM Student s " +
+        "WHERE s.group.faculty = :faculty")
+    List<Student> findAllByFaculty(Faculty faculty);
 
-    List<Student> getStudentsByGroup(Group group);
+    List<Student> findAllByActiveTrue();
 
-    List<Student> getStudentsByFaculty(Faculty faculty);
-
-    List<Student> getActiveStudents ();
-
-    List<Student> getFreeStudentsFromGroup(int groupId,
-                                           LocalDateTime startTime,
-                                           LocalDateTime endTime);
+    @Query("SELECT s " +
+        "FROM Student s " +
+        "WHERE s.group.id = :groupId " +
+          "AND s.group.active = TRUE " +
+          "AND s.active = TRUE " +
+          "AND s.id NOT IN " +
+             "( " +
+                "SELECT s2.id " +
+                "FROM Student s2 " +
+                    "JOIN s2.lessons l " +
+                "WHERE l.timeEnd >= :startTime " +
+                  "AND l.timeStart <= :endTime " +
+             ") " +
+        "ORDER BY s.lastName, s.firstName")
+    List<Student> findFreeStudentsFromGroup(int groupId,
+                                            LocalDateTime startTime,
+                                            LocalDateTime endTime);
 }

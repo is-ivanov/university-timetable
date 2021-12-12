@@ -1,4 +1,4 @@
-package ua.com.foxminded.university.dao.jpaimpl;
+package ua.com.foxminded.university.dao;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -131,8 +131,8 @@ class LessonJpaRepositoryTest extends IntegrationTestBase {
             Lesson lessonForChange = dao.getById(LESSON_ID1).get();
 
             Teacher newTeacher = teacherRepository.getById(TEACHER_ID2).get();
-            Course newCourse = courseRepository.getById(COURSE_ID2).get();
-            Room newRoom = roomRepository.getById(ROOM_ID2).get();
+            Course newCourse = courseRepository.getById(COURSE_ID2);
+            Room newRoom = roomRepository.getById(ROOM_ID2);
 
             lessonForChange.setCourse(newCourse);
             lessonForChange.setRoom(newRoom);
