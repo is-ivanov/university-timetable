@@ -56,13 +56,6 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
     @Override
-    public void delete(Faculty faculty) {
-        log.debug("Deleting {}", faculty);
-        facultyRepository.delete(faculty);
-        log.debug("Delete {}", faculty);
-    }
-
-    @Override
     public void delete(int id) {
         log.debug("Deleting faculty id({})", id);
         facultyRepository.deleteById(id);

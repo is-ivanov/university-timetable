@@ -31,7 +31,7 @@ public class TeacherServiceImpl implements TeacherService {
             teacher.getFirstName(), teacher.getPatronymic(),
             teacher.getLastName(), teacher.isActive(),
             teacher.getDepartment().getName());
-        teacherRepository.add(teacher);
+        teacherRepository.save(teacher);
         log.debug("Teacher [{} {} {}, active={}, department {}] added " +
                 "successfully", teacher.getFirstName(), teacher.getPatronymic(),
             teacher.getLastName(), teacher.isActive(),
@@ -41,7 +41,7 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public TeacherDto getById(int id) {
         log.debug("Getting teacher by id({})", id);
-        Teacher teacher = teacherRepository.getById(id)
+        Teacher teacher = teacherRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException(
                 String.format(MESSAGE_TEACHER_NOT_FOUND, id)));
         log.debug("Found {}", teacher);
@@ -51,7 +51,7 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public List<TeacherDto> getAll() {
         log.debug("Getting all teachers");
-        List<Teacher> teachers = teacherRepository.getAll();
+        List<Teacher> teachers = teacherRepository.findAll();
         log.debug("Found {} teachers", teachers.size());
         return teacherDtoMapper.toTeacherDtos(teachers);
     }
@@ -61,23 +61,14 @@ public class TeacherServiceImpl implements TeacherService {
         log.debug("Updating teacher [id={}, {} {} {}, active={}]",
             teacher.getId(), teacher.getFirstName(), teacher.getPatronymic(),
             teacher.getLastName(), teacher.isActive());
-        teacherRepository.update(teacher);
+        teacherRepository.save(teacher);
         log.debug("Update teacher id({})", teacher.getId());
-    }
-
-    @Override
-    public void delete(Teacher teacher) {
-        log.debug("Deleting teacher [id={}, {} {} {}, active={}]",
-            teacher.getId(), teacher.getFirstName(), teacher.getPatronymic(),
-            teacher.getLastName(), teacher.isActive());
-        teacherRepository.delete(teacher);
-        log.debug("Delete teacher id({})", teacher.getId());
     }
 
     @Override
     public void delete(int id) {
         log.debug("Deleting teacher id({})", id);
-        teacherRepository.delete(id);
+        teacherRepository.deleteById(id);
         log.debug("Delete teacher id({})", id);
     }
 
@@ -86,7 +77,7 @@ public class TeacherServiceImpl implements TeacherService {
         log.debug("Deactivating teacher [id={}, {} {} {}]", teacher.getId(),
             teacher.getFirstName(), teacher.getPatronymic(), teacher.getLastName());
         teacher.setActive(false);
-        teacherRepository.update(teacher);
+        teacherRepository.save(teacher);
         log.debug("Deactivate teacher id({})", teacher.getId());
     }
 
@@ -95,7 +86,7 @@ public class TeacherServiceImpl implements TeacherService {
         log.debug("Activating teacher [id={}, {} {} {}]", teacher.getId(),
             teacher.getFirstName(), teacher.getPatronymic(), teacher.getLastName());
         teacher.setActive(true);
-        teacherRepository.update(teacher);
+        teacherRepository.save(teacher);
         log.debug("Activate teacher id({})", teacher.getId());
     }
 
@@ -105,7 +96,7 @@ public class TeacherServiceImpl implements TeacherService {
         log.debug("Transferring teacher id({}) to department id({})",
             teacher.getId(), department.getId());
         teacher.setDepartment(department);
-        teacherRepository.update(teacher);
+        teacherRepository.save(teacher);
         log.debug("Complete transfer teacher id({}) to department id({})",
             teacher.getId(), department.getId());
         return teacher;
@@ -114,7 +105,7 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public List<TeacherDto> getAllByDepartment(int departmentId) {
         log.debug("Getting all teachers from department id({})", departmentId);
-        List<Teacher> teachers = teacherRepository.getAllByDepartment(departmentId);
+        List<Teacher> teachers = teacherRepository.findAllByDepartmentId(departmentId);
         log.debug("Found {} teachers from department id({})", teachers.size(), departmentId);
         return teacherDtoMapper.toTeacherDtos(teachers);
     }
@@ -122,7 +113,7 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public List<TeacherDto> getAllByFaculty(int facultyId) {
         log.debug("Getting all teachers from faculty id({})", facultyId);
-        List<Teacher> teachers = teacherRepository.getAllByFaculty(facultyId);
+        List<Teacher> teachers = teacherRepository.findAllByFacultyId(facultyId);
         log.debug("Found {} teachers from faculty id({})", teachers.size(), facultyId);
         return teacherDtoMapper.toTeacherDtos(teachers);
     }
@@ -132,7 +123,7 @@ public class TeacherServiceImpl implements TeacherService {
                                                      LocalDateTime endTime) {
         log.debug("Getting active teachers free from {} to {}", startTime, endTime);
         List<Teacher> freeTeachers =
-            teacherRepository.getFreeTeachersOnLessonTime(startTime, endTime);
+            teacherRepository.findFreeTeachersOnLessonTime(startTime, endTime);
         log.debug("Found {} active free teachers", freeTeachers.size());
         return teacherDtoMapper.toTeacherDtos(freeTeachers);
     }

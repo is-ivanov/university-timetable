@@ -56,13 +56,6 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public void delete(Course course) {
-        log.debug("Deleting {}", course);
-        courseRepository.delete(course);
-        log.debug("Delete {}", course);
-    }
-
-    @Override
     public void delete(int id) {
         log.debug("Deleting course id({})", id);
         courseRepository.deleteById(id);

@@ -39,178 +39,178 @@ class TeacherJpaRepositoryTest extends IntegrationTestBase {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    @Nested
-    @DisplayName("test 'add' method")
-    class AddTest {
-
-        @Test
-        @DisplayName("add test teacher should add one row in table")
-        void testAddTeacher() {
-            Department department = createTestDepartment(FACULTY_ID1);
-
-            Teacher teacher = Teacher.builder()
-                .firstName(TEST_TEACHER_FIRST_NAME)
-                .patronymic(TEST_TEACHER_PATRONYMIC)
-                .lastName(TEST_TEACHER_LAST_NAME)
-                .active(true)
-                .department(department)
-                .build();
-
-            int expectedRowsInTable = JdbcTestUtils.countRowsInTable(
-                jdbcTemplate, TABLE_NAME) + 1;
-
-            dao.add(teacher);
-
-            List<Teacher> teachers = dao.getAll();
-            assertThat(teachers).hasSize(expectedRowsInTable);
-            assertThat(teachers).extracting(Teacher::getFirstName)
-                .contains(TEST_TEACHER_FIRST_NAME);
-        }
-    }
-
-    @Nested
-    @DisplayName("test 'getById' method")
-    class GetByIdTest {
-
-        @Test
-        @DisplayName("with teacher_id1 should return expected teacher)")
-        void testGetByIdTeacher() {
-            Teacher actualTeacher = dao.getById(TEACHER_ID1).get();
-            assertThat(actualTeacher.getId()).isEqualTo(TEACHER_ID1);
-            assertThat(actualTeacher.getFirstName()).isEqualTo(NAME_FIRST_TEACHER);
-            assertThat(actualTeacher.getPatronymic()).isEqualTo(PATRONYMIC_FIRST_TEACHER);
-            assertThat(actualTeacher.getLastName()).isEqualTo(LAST_NAME_FIRST_TEACHER);
-            assertThat(actualTeacher.isActive()).isEqualTo(true);
-
-            Department actualDepartment = actualTeacher.getDepartment();
-            assertThat(actualDepartment.getId()).isEqualTo(DEPARTMENT_ID1);
-            assertThat(actualDepartment.getName()).isEqualTo(NAME_FIRST_DEPARTMENT);
-
-        }
-
-        @Test
-        @DisplayName("with id=4 should return empty Optional")
-        void testGetByIdTeacherException() {
-            Optional<Teacher> teacherOptional = dao.getById(4);
-            assertThat(teacherOptional).isEmpty();
-        }
-    }
-
-    @Nested
-    @DisplayName("test 'getAll' method")
-    class GetAllTest {
-
-        @Test
-        @DisplayName("should return List with size = 3 with expected teachers")
-        void testGetAllTeachers() {
-            int expectedQuantityTeachers = JdbcTestUtils
-                .countRowsInTable(jdbcTemplate, TABLE_NAME);
-            List<Teacher> teachers = dao.getAll();
-            assertThat(teachers).hasSize(expectedQuantityTeachers);
-            assertThat(teachers).extracting(Teacher::getFirstName)
-                .containsOnly(NAME_FIRST_TEACHER, NAME_SECOND_TEACHER, NAME_THIRD_TEACHER);
-        }
-    }
-
-    @Nested
-    @DisplayName("test 'update' method")
-    class UpdateTest {
-
-        @Test
-        @DisplayName("with teacher_id1 should write new fields and " +
-            "getById(teacher_id1) return expected teacher")
-        void testUpdateExistingTeacher_WriteNewFields() {
-            Department expectedDepartment = createTestDepartment(FACULTY_ID1);
-            Teacher expectedTeacher = Teacher.builder()
-                .id(TEACHER_ID1)
-                .firstName(TEST_TEACHER_FIRST_NAME)
-                .patronymic(TEST_TEACHER_PATRONYMIC)
-                .lastName(TEST_TEACHER_LAST_NAME)
-                .active(false)
-                .department(expectedDepartment)
-                .build();
-
-            dao.update(expectedTeacher);
-
-            Teacher actualTeacher = dao.getById(TEACHER_ID1).get();
-            assertThat(actualTeacher).isEqualTo(expectedTeacher);
-        }
-
-        @Test
-        @DisplayName("with teacher id=4 should write new teacher with id from sequence")
-        void testUpdateNonExistingTeacher_CreateNewTeacher() {
-            Department expectedDepartment = createTestDepartment(FACULTY_ID1);
-            Teacher expectedTeacher = Teacher.builder()
-                .id(4)
-                .firstName(TEST_TEACHER_FIRST_NAME)
-                .patronymic(TEST_TEACHER_PATRONYMIC)
-                .lastName(TEST_TEACHER_LAST_NAME)
-                .active(false)
-                .department(expectedDepartment)
-                .build();
-
-            dao.update(expectedTeacher);
-
-            Teacher actualTeacher = dao.getById(101).get();
-            assertThat(actualTeacher.getFirstName()).isEqualTo(TEST_TEACHER_FIRST_NAME);
-            assertThat(actualTeacher.getPatronymic()).isEqualTo(TEST_TEACHER_PATRONYMIC);
-            assertThat(actualTeacher.getLastName()).isEqualTo(TEST_TEACHER_LAST_NAME);
-            assertThat(actualTeacher.isActive()).isEqualTo(false);
-            assertThat(actualTeacher.getDepartment()).isEqualTo(expectedDepartment);
-        }
-    }
-
-    @Nested
-    @DisplayName("test 'delete' method")
-    class DeleteTest {
-
-        @Test
-        @DisplayName("with teacher_id3 should delete one record and number " +
-            "records table should one less before")
-        void testDeleteExistingTeacher_ReduceNumberRowsInTable() {
-            int expectedRows = JdbcTestUtils
-                .countRowsInTable(jdbcTemplate, TABLE_NAME) - 1;
-            Teacher teacher = dao.getById(TEACHER_ID3).get();
-
-            dao.delete(teacher);
-
-            List<Teacher> teachers = dao.getAll();
-            assertThat(teachers).hasSize(expectedRows);
-            assertThat(teachers).extracting(Teacher::getFirstName)
-                .doesNotContain(NAME_THIRD_TEACHER);
-        }
-
-    }
-
-    @Nested
-    @DisplayName("test 'delete' method with parameter id")
-    class DeleteIdTest {
-
-        @Test
-        @DisplayName("with teacher_id3 should delete one record and number " +
-            "records table should equals 2")
-        void testDeleteExistingTeacher_ReduceNumberRowsInTable() {
-            int expectedRows = JdbcTestUtils
-                .countRowsInTable(jdbcTemplate, TABLE_NAME) - 1;
-
-            dao.delete(TEACHER_ID3);
-
-            List<Teacher> teachers = dao.getAll();
-            assertThat(teachers).hasSize(expectedRows);
-            assertThat(teachers).extracting("firstName")
-                .doesNotContain(NAME_THIRD_TEACHER);
-        }
-
-        @Test
-        @DisplayName("with teacher id=4 should throw DaoException with " +
-            "expected message")
-        void testDeleteNonExistingTeacher_ThrowDaoException() {
-           assertThatThrownBy(() -> dao.delete(4))
-               .isInstanceOf(DaoException.class)
-               .hasMessageContaining(MESSAGE_DELETE_EXCEPTION);
-        }
-
-    }
+//    @Nested
+//    @DisplayName("test 'add' method")
+//    class AddTest {
+//
+//        @Test
+//        @DisplayName("add test teacher should add one row in table")
+//        void testAddTeacher() {
+//            Department department = createTestDepartment(FACULTY_ID1);
+//
+//            Teacher teacher = Teacher.builder()
+//                .firstName(TEST_TEACHER_FIRST_NAME)
+//                .patronymic(TEST_TEACHER_PATRONYMIC)
+//                .lastName(TEST_TEACHER_LAST_NAME)
+//                .active(true)
+//                .department(department)
+//                .build();
+//
+//            int expectedRowsInTable = JdbcTestUtils.countRowsInTable(
+//                jdbcTemplate, TABLE_NAME) + 1;
+//
+//            dao.add(teacher);
+//
+//            List<Teacher> teachers = dao.getAll();
+//            assertThat(teachers).hasSize(expectedRowsInTable);
+//            assertThat(teachers).extracting(Teacher::getFirstName)
+//                .contains(TEST_TEACHER_FIRST_NAME);
+//        }
+//    }
+//
+//    @Nested
+//    @DisplayName("test 'getById' method")
+//    class GetByIdTest {
+//
+//        @Test
+//        @DisplayName("with teacher_id1 should return expected teacher)")
+//        void testGetByIdTeacher() {
+//            Teacher actualTeacher = dao.getById(TEACHER_ID1).get();
+//            assertThat(actualTeacher.getId()).isEqualTo(TEACHER_ID1);
+//            assertThat(actualTeacher.getFirstName()).isEqualTo(NAME_FIRST_TEACHER);
+//            assertThat(actualTeacher.getPatronymic()).isEqualTo(PATRONYMIC_FIRST_TEACHER);
+//            assertThat(actualTeacher.getLastName()).isEqualTo(LAST_NAME_FIRST_TEACHER);
+//            assertThat(actualTeacher.isActive()).isEqualTo(true);
+//
+//            Department actualDepartment = actualTeacher.getDepartment();
+//            assertThat(actualDepartment.getId()).isEqualTo(DEPARTMENT_ID1);
+//            assertThat(actualDepartment.getName()).isEqualTo(NAME_FIRST_DEPARTMENT);
+//
+//        }
+//
+//        @Test
+//        @DisplayName("with id=4 should return empty Optional")
+//        void testGetByIdTeacherException() {
+//            Optional<Teacher> teacherOptional = dao.getById(4);
+//            assertThat(teacherOptional).isEmpty();
+//        }
+//    }
+//
+//    @Nested
+//    @DisplayName("test 'getAll' method")
+//    class GetAllTest {
+//
+//        @Test
+//        @DisplayName("should return List with size = 3 with expected teachers")
+//        void testGetAllTeachers() {
+//            int expectedQuantityTeachers = JdbcTestUtils
+//                .countRowsInTable(jdbcTemplate, TABLE_NAME);
+//            List<Teacher> teachers = dao.getAll();
+//            assertThat(teachers).hasSize(expectedQuantityTeachers);
+//            assertThat(teachers).extracting(Teacher::getFirstName)
+//                .containsOnly(NAME_FIRST_TEACHER, NAME_SECOND_TEACHER, NAME_THIRD_TEACHER);
+//        }
+//    }
+//
+//    @Nested
+//    @DisplayName("test 'update' method")
+//    class UpdateTest {
+//
+//        @Test
+//        @DisplayName("with teacher_id1 should write new fields and " +
+//            "getById(teacher_id1) return expected teacher")
+//        void testUpdateExistingTeacher_WriteNewFields() {
+//            Department expectedDepartment = createTestDepartment(FACULTY_ID1);
+//            Teacher expectedTeacher = Teacher.builder()
+//                .id(TEACHER_ID1)
+//                .firstName(TEST_TEACHER_FIRST_NAME)
+//                .patronymic(TEST_TEACHER_PATRONYMIC)
+//                .lastName(TEST_TEACHER_LAST_NAME)
+//                .active(false)
+//                .department(expectedDepartment)
+//                .build();
+//
+//            dao.update(expectedTeacher);
+//
+//            Teacher actualTeacher = dao.getById(TEACHER_ID1).get();
+//            assertThat(actualTeacher).isEqualTo(expectedTeacher);
+//        }
+//
+//        @Test
+//        @DisplayName("with teacher id=4 should write new teacher with id from sequence")
+//        void testUpdateNonExistingTeacher_CreateNewTeacher() {
+//            Department expectedDepartment = createTestDepartment(FACULTY_ID1);
+//            Teacher expectedTeacher = Teacher.builder()
+//                .id(4)
+//                .firstName(TEST_TEACHER_FIRST_NAME)
+//                .patronymic(TEST_TEACHER_PATRONYMIC)
+//                .lastName(TEST_TEACHER_LAST_NAME)
+//                .active(false)
+//                .department(expectedDepartment)
+//                .build();
+//
+//            dao.update(expectedTeacher);
+//
+//            Teacher actualTeacher = dao.getById(101).get();
+//            assertThat(actualTeacher.getFirstName()).isEqualTo(TEST_TEACHER_FIRST_NAME);
+//            assertThat(actualTeacher.getPatronymic()).isEqualTo(TEST_TEACHER_PATRONYMIC);
+//            assertThat(actualTeacher.getLastName()).isEqualTo(TEST_TEACHER_LAST_NAME);
+//            assertThat(actualTeacher.isActive()).isEqualTo(false);
+//            assertThat(actualTeacher.getDepartment()).isEqualTo(expectedDepartment);
+//        }
+//    }
+//
+//    @Nested
+//    @DisplayName("test 'delete' method")
+//    class DeleteTest {
+//
+//        @Test
+//        @DisplayName("with teacher_id3 should delete one record and number " +
+//            "records table should one less before")
+//        void testDeleteExistingTeacher_ReduceNumberRowsInTable() {
+//            int expectedRows = JdbcTestUtils
+//                .countRowsInTable(jdbcTemplate, TABLE_NAME) - 1;
+//            Teacher teacher = dao.getById(TEACHER_ID3).get();
+//
+//            dao.delete(teacher);
+//
+//            List<Teacher> teachers = dao.getAll();
+//            assertThat(teachers).hasSize(expectedRows);
+//            assertThat(teachers).extracting(Teacher::getFirstName)
+//                .doesNotContain(NAME_THIRD_TEACHER);
+//        }
+//
+//    }
+//
+//    @Nested
+//    @DisplayName("test 'delete' method with parameter id")
+//    class DeleteIdTest {
+//
+//        @Test
+//        @DisplayName("with teacher_id3 should delete one record and number " +
+//            "records table should equals 2")
+//        void testDeleteExistingTeacher_ReduceNumberRowsInTable() {
+//            int expectedRows = JdbcTestUtils
+//                .countRowsInTable(jdbcTemplate, TABLE_NAME) - 1;
+//
+//            dao.delete(TEACHER_ID3);
+//
+//            List<Teacher> teachers = dao.getAll();
+//            assertThat(teachers).hasSize(expectedRows);
+//            assertThat(teachers).extracting("firstName")
+//                .doesNotContain(NAME_THIRD_TEACHER);
+//        }
+//
+//        @Test
+//        @DisplayName("with teacher id=4 should throw DaoException with " +
+//            "expected message")
+//        void testDeleteNonExistingTeacher_ThrowDaoException() {
+//           assertThatThrownBy(() -> dao.delete(4))
+//               .isInstanceOf(DaoException.class)
+//               .hasMessageContaining(MESSAGE_DELETE_EXCEPTION);
+//        }
+//
+//    }
 
     @Nested
     @DisplayName("test 'getAllByDepartment' method")
@@ -219,7 +219,7 @@ class TeacherJpaRepositoryTest extends IntegrationTestBase {
         @Test
         @DisplayName("with department_id1 should return List with size = 2")
         void testGetAllTeachersByDepartmentId1() {
-            List<Teacher> actualTeachers = dao.getAllByDepartment(DEPARTMENT_ID1);
+            List<Teacher> actualTeachers = dao.findAllByDepartmentId(DEPARTMENT_ID1);
 
             assertThat(actualTeachers).hasSize(2);
             assertThat(actualTeachers).extracting(Teacher::getFirstName)
@@ -229,7 +229,7 @@ class TeacherJpaRepositoryTest extends IntegrationTestBase {
         @Test
         @DisplayName("with department id=4 should return empty List")
         void testGetAllTeachersByDepartmentId4() {
-            assertThat(dao.getAllByDepartment(4)).isEmpty();
+            assertThat(dao.findAllByDepartmentId(4)).isEmpty();
         }
     }
 
@@ -242,7 +242,7 @@ class TeacherJpaRepositoryTest extends IntegrationTestBase {
         void testGetAllTeachersByFacultyId1() {
             int expectedQuantityTeachers =
                 JdbcTestUtils.countRowsInTable(jdbcTemplate, TABLE_NAME);
-            List<Teacher> actualTeachers = dao.getAllByFaculty(FACULTY_ID1);
+            List<Teacher> actualTeachers = dao.findAllByFacultyId(FACULTY_ID1);
             assertThat(actualTeachers).hasSize(expectedQuantityTeachers);
             assertThat(actualTeachers).extracting(Teacher::getFirstName)
                 .containsOnly(NAME_FIRST_TEACHER, NAME_SECOND_TEACHER, NAME_THIRD_TEACHER);
@@ -251,7 +251,7 @@ class TeacherJpaRepositoryTest extends IntegrationTestBase {
         @Test
         @DisplayName("with faculty id=2 should return empty List")
         void testGetAllTeachersByFacultyId2() {
-            assertThat(dao.getAllByFaculty(ID2)).isEmpty();
+            assertThat(dao.findAllByFacultyId(ID2)).isEmpty();
         }
     }
 
@@ -267,7 +267,7 @@ class TeacherJpaRepositoryTest extends IntegrationTestBase {
             LocalDateTime endTime = startTime.plusMinutes(90);
 
             List<Teacher> actualTeachers =
-                dao.getFreeTeachersOnLessonTime(startTime, endTime);
+                dao.findFreeTeachersOnLessonTime(startTime, endTime);
             assertThat(actualTeachers).hasSize(1);
             Teacher freeTeacher = actualTeachers.get(0);
             assertThat(freeTeacher.getId()).isEqualTo(TEACHER_ID3);
@@ -282,7 +282,7 @@ class TeacherJpaRepositoryTest extends IntegrationTestBase {
             LocalDateTime endTime = startTime.plusMinutes(90);
 
             List<Teacher> actualTeachers =
-                dao.getFreeTeachersOnLessonTime(startTime, endTime);
+                dao.findFreeTeachersOnLessonTime(startTime, endTime);
 
             assertThat(actualTeachers).hasSize(2);
             assertThat(actualTeachers).extracting(Teacher::getId)

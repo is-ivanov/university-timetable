@@ -32,5 +32,4 @@ public interface LessonService extends Service<Lesson, LessonDto> {
 
     void removeStudentsFromLesson(int lessonId, int[] studentIds);
 
-    List<Lesson> getLessonsForStudent(Student student);
 }

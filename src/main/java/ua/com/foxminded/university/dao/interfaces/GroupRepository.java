@@ -2,11 +2,13 @@ package ua.com.foxminded.university.dao.interfaces;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 import ua.com.foxminded.university.domain.entity.Group;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Repository
 public interface GroupRepository extends JpaRepository<Group, Integer> {
 
     List<Group> findAllByFacultyId(int facultyId);

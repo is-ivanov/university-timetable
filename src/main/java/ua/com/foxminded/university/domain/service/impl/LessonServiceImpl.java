@@ -45,7 +45,7 @@ public class LessonServiceImpl implements LessonService {
         log.debug("Check lesson id({}) before adding", lesson.getId());
         checkLesson(lesson);
         log.debug("Adding lesson id({})", lesson.getId());
-        lessonRepository.add(lesson);
+        lessonRepository.save(lesson);
         log.debug("Lesson id({}) added successfully", lesson.getId());
     }
 
@@ -54,7 +54,7 @@ public class LessonServiceImpl implements LessonService {
         log.debug("Check lesson id({}) before updating", lesson.getId());
         checkLesson(lesson);
         log.debug("Updating lesson id({})", lesson.getId());
-        lessonRepository.update(lesson);
+        lessonRepository.save(lesson);
         log.debug("Lesson id({}) updated successfully", lesson.getId());
     }
 
@@ -71,19 +71,9 @@ public class LessonServiceImpl implements LessonService {
     @Override
     public List<LessonDto> getAll() {
         log.debug("Getting all lessons");
-        List<Lesson> lessons = lessonRepository.getAll();
+        List<Lesson> lessons = lessonRepository.findAll();
         log.debug(FOUND_LESSONS, lessons.size());
         return lessonDtoMapper.toLessonDtos(lessons);
-    }
-
-    @Override
-    public void delete(Lesson lesson) {
-        log.debug("Start deleting lesson id({})", lesson.getId());
-        log.debug("Deleting all students from lesson id({})", lesson.getId());
-        lessonRepository.deleteAllStudentsFromLesson(lesson.getId());
-        log.debug("Deleting lesson id({})", lesson.getId());
-        lessonRepository.delete(lesson);
-        log.debug("Lesson id({}) deleted successfully", lesson.getId());
     }
 
     @Override
@@ -92,7 +82,7 @@ public class LessonServiceImpl implements LessonService {
         log.debug("Deleting all students from lesson id({})", id);
         lessonRepository.deleteAllStudentsFromLesson(id);
         log.debug("Deleting lesson id({})", id);
-        lessonRepository.delete(id);
+        lessonRepository.deleteById(id);
         log.debug("Lesson id({}) deleted successfully", id);
     }
 
@@ -129,7 +119,7 @@ public class LessonServiceImpl implements LessonService {
             filter.getTeacherId() != null || filter.getCourseId() != null ||
             filter.getRoomId() != null || filter.getDateFrom() != null ||
             filter.getDateTo() != null) {
-            List<Lesson> filteredLessons = lessonRepository.getAllWithFilter(filter);
+            List<Lesson> filteredLessons = lessonRepository.findAllWithFilter(filter);
             return lessonDtoMapper.toLessonDtos(filteredLessons);
         } else {
             log.warn("Filter is empty");
@@ -144,7 +134,7 @@ public class LessonServiceImpl implements LessonService {
         log.debug("Getting lessons for student id({}) from {} to {})", studentId,
             startTime, endTime);
         List<Lesson> lessonsForStudent = lessonRepository
-            .getAllForStudentForTimePeriod(studentId, startTime, endTime);
+            .findAllForStudentForTimePeriod(studentId, startTime, endTime);
         log.debug(FOUND_LESSONS, lessonsForStudent.size());
         return lessonDtoMapper.toLessonDtos(lessonsForStudent);
     }
@@ -156,7 +146,7 @@ public class LessonServiceImpl implements LessonService {
         log.debug("Getting lessons for teacher id({}) from {} to {})", teacherId,
             startTime, endTime);
         List<Lesson> lessonsForTeacher = lessonRepository
-            .getAllForTeacherForTimePeriod(teacherId, startTime, endTime);
+            .findAllForTeacherForTimePeriod(teacherId, startTime, endTime);
         log.debug(FOUND_LESSONS, lessonsForTeacher.size());
         return lessonDtoMapper.toLessonDtos(lessonsForTeacher);
     }
@@ -191,16 +181,10 @@ public class LessonServiceImpl implements LessonService {
             studentIds, lessonId);
     }
 
-    @Override
-    public List<Lesson> getLessonsForStudent(Student student) {
-        log.debug("Getting all lessons for student id({})", student.getId());
-        return lessonRepository.getAllForStudent(student.getId());
-    }
-
     private void checkAndSaveStudentToLesson(Lesson lesson, Student student) {
         if (student.isActive()) {
             checkStudent(student, lesson);
-            lessonRepository.addStudentToLesson(lesson.getId(), student.getId());
+            lesson.getStudents().add(student);
             log.debug("Student id({}) added to lesson({}) successfully", student.getId(),
                 lesson.getId());
         } else {
@@ -261,7 +245,7 @@ public class LessonServiceImpl implements LessonService {
     private void checkTeacher(Teacher teacher, Lesson lesson) {
         log.debug("Checking the teacher id({}) for lesson id({})", teacher.getId(),
             lesson.getId());
-        List<Lesson> lessonsFromThisTeacher = lessonRepository.getAllForTeacher(teacher.getId());
+        List<Lesson> lessonsFromThisTeacher = lessonRepository.findAllByTeacherId(teacher.getId());
         try {
             checkAvailableLesson(lesson, lessonsFromThisTeacher);
         } catch (ServiceException e) {
@@ -292,7 +276,7 @@ public class LessonServiceImpl implements LessonService {
     private void checkRoom(Room room, Lesson lesson) {
         log.debug("Checking the room id({}) for lesson id({})", room.getId(),
             lesson.getId());
-        List<Lesson> lessonsFromThisRoom = lessonRepository.getAllForRoom(room.getId());
+        List<Lesson> lessonsFromThisRoom = lessonRepository.findAllByRoomId(room.getId());
         try {
             checkAvailableLesson(lesson, lessonsFromThisRoom);
         } catch (ServiceException e) {
@@ -304,7 +288,7 @@ public class LessonServiceImpl implements LessonService {
     }
 
     private Lesson getLessonById(int id) {
-        return lessonRepository.getById(id)
+        return lessonRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException(
                 String.format(MESSAGE_LESSON_NOT_FOUND, id)));
     }

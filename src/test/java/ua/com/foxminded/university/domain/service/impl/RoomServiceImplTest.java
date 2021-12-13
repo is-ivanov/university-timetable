@@ -98,12 +98,4 @@ class RoomServiceImplTest {
         verify(roomRepositoryMock).save(room);
     }
 
-    @Test
-    @DisplayName("test 'delete' when call delete method then should call " +
-        "roomDao once")
-    void testDelete_CallDaoOnce() {
-        Room room = new Room();
-        roomService.delete(room);
-        verify(roomRepositoryMock).delete(room);
-    }
 }

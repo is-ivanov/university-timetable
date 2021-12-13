@@ -57,13 +57,6 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public void delete(Room room) {
-        log.debug("Deleting {}", room);
-        roomRepository.delete(room);
-        log.debug("Delete {}", room);
-    }
-
-    @Override
     public void delete(int id) {
         log.debug("Deleting room id({})", id);
         roomRepository.deleteById(id);

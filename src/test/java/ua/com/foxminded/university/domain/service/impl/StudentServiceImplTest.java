@@ -71,15 +71,6 @@ class StudentServiceImplTest {
         verify(studentRepositoryMock).save(student);
     }
 
-    @Test
-    @DisplayName("test 'delete' when call delete method then should call " +
-        "studentDao once")
-    void testDelete_CallDaoOnce() {
-        Student student = new Student();
-        studentService.delete(student);
-        verify(studentRepositoryMock).delete(student);
-    }
-
     @Nested
     @DisplayName("test 'getById' method")
     class GetByIdTest {

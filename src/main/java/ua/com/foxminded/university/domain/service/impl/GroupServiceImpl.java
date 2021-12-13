@@ -62,13 +62,6 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public void delete(Group group) {
-        log.debug("Deleting {}", group);
-        groupRepository.delete(group);
-        log.debug("Delete {}", group);
-    }
-
-    @Override
     public void delete(int id) {
         log.debug("Deleting group id({})", id);
         groupRepository.deleteById(id);
