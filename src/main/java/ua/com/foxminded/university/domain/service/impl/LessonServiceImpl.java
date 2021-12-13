@@ -1,5 +1,6 @@
 package ua.com.foxminded.university.domain.service.impl;
 
+import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -115,11 +116,14 @@ public class LessonServiceImpl implements LessonService {
     public List<LessonDto> getAllWithFilter(LessonFilter filter) {
         log.debug("Getting all lessons with ({})", filter);
         log.debug("Checking filter conditions");
+
         if (filter.getFacultyId() != null || filter.getDepartmentId() != null ||
             filter.getTeacherId() != null || filter.getCourseId() != null ||
             filter.getRoomId() != null || filter.getDateFrom() != null ||
             filter.getDateTo() != null) {
-            List<Lesson> filteredLessons = lessonRepository.findAllWithFilter(filter);
+
+            List<Lesson> filteredLessons = Lists.newArrayList(
+                lessonRepository.findAll(filter.getPredicate()));
             return lessonDtoMapper.toLessonDtos(filteredLessons);
         } else {
             log.warn("Filter is empty");
