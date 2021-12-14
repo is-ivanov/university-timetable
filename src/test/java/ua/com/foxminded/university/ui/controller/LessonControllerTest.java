@@ -296,7 +296,7 @@ class LessonControllerTest {
 
             verify(lessonDtoMapperMock, times(1))
                 .toLesson(lessonDto);
-            verify(lessonServiceMock, times(1)).add(lesson);
+            verify(lessonServiceMock, times(1)).save(lesson);
         }
     }
 
@@ -373,7 +373,7 @@ class LessonControllerTest {
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
 
-            verify(lessonServiceMock, times(1)).update(testLesson);
+            verify(lessonServiceMock, times(1)).save(testLesson);
         }
     }
 

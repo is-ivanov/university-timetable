@@ -78,7 +78,7 @@ public class RoomController {
     public String createRoom(@ModelAttribute Room room,
                              HttpServletRequest request) {
         log.debug("Creating {}", room);
-        roomService.add(room);
+        roomService.save(room);
         log.debug("{} is created", room);
         return defineRedirect(request);
     }
@@ -88,7 +88,7 @@ public class RoomController {
                              @PathVariable("id") int roomId,
                              HttpServletRequest request) {
         log.debug("Updating room id({})", roomId);
-        roomService.update(room);
+        roomService.save(room);
         log.debug("Room id({}) is updated", roomId);
         return defineRedirect(request);
     }

@@ -122,7 +122,7 @@ public class LessonController {
     public String createLesson(@ModelAttribute LessonDto lessonDto,
                                HttpServletRequest request) {
         log.debug("Creating lesson {}", lessonDto);
-        lessonService.add(lessonDtoMapper.toLesson(lessonDto));
+        lessonService.save(lessonDtoMapper.toLesson(lessonDto));
         log.debug("Lesson {} is created", lessonDto);
         return defineRedirect(request);
     }
@@ -155,7 +155,7 @@ public class LessonController {
                                HttpServletRequest request) {
         log.debug("Updating lesson id({})", lessonId);
         lessonDto.setId(lessonId);
-        lessonService.update(lessonDtoMapper.toLesson(lessonDto));
+        lessonService.save(lessonDtoMapper.toLesson(lessonDto));
         log.debug("Lesson id({}) updated successfully", lessonId);
         return defineRedirect(request);
     }

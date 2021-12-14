@@ -53,9 +53,6 @@
         <appender-ref ref="STDOUT"/>
     </logger>
 
-    <!--    <logger name="org.springframework.transaction" level="trace" additivity="false">-->
-    <!--        <appender-ref ref="STDOUT"/>-->
-    <!--    </logger>-->
     <logger name="org.thymeleaf" level="info" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>

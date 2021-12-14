@@ -59,7 +59,7 @@ public class DepartmentController {
     public String createDepartment(@ModelAttribute Department department,
                                    HttpServletRequest request) {
         log.debug("Creating {}", department);
-        departmentService.add(department);
+        departmentService.save(department);
         log.debug("{} is created", department);
         return defineRedirect(request);
     }
@@ -78,7 +78,7 @@ public class DepartmentController {
                                    @PathVariable("id") int departmentId,
                                    HttpServletRequest request) {
         log.debug("Updating department id({})", departmentId);
-        departmentService.update(department);
+        departmentService.save(department);
         log.debug("Department id({}) is updated", departmentId);
         return defineRedirect(request);
     }

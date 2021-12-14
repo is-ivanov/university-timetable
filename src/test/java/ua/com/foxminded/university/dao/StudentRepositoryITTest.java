@@ -8,7 +8,7 @@ import org.springframework.test.context.jdbc.Sql;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Student;
-import ua.com.foxminded.university.springconfig.IntegrationTestBase;
+import ua.com.foxminded.university.springconfig.BaseRepositoryIT;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static ua.com.foxminded.university.TestObjects.*;
 
 @Sql("/sql/hibernate/student-test-data.sql")
-class StudentJpaRepositoryTest extends IntegrationTestBase {
+class StudentRepositoryITTest extends BaseRepositoryIT {
 
     @Autowired
     private StudentRepository repo;

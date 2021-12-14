@@ -25,21 +25,21 @@ public class GroupServiceImpl implements GroupService {
 
     public static final String FOUND_GROUPS = "Found {} groups";
 
-    private final GroupRepository groupRepository;
-    private final StudentRepository studentRepository;
+    private final GroupRepository groupRepo;
+    private final StudentRepository studentRepo;
     private final GroupDtoMapper groupDtoMapper;
 
     @Override
-    public void add(Group group) {
-        log.debug("Adding {}", group);
-        groupRepository.save(group);
-        log.debug("{} added successfully", group);
+    public void save(Group group) {
+        log.debug("Saving {}", group);
+        groupRepo.save(group);
+        log.debug("{} saved successfully", group);
     }
 
     @Override
     public GroupDto getById(int id) {
         log.debug("Getting group by id({})", id);
-        Group group = groupRepository.findById(id)
+        Group group = groupRepo.findById(id)
             .orElseThrow(() -> new EntityNotFoundException(
                 String.format("Group id(%d) not found", id)));
         log.debug("Found {}", group);
@@ -49,22 +49,22 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public List<GroupDto> getAll() {
         log.debug("Getting all groups");
-        List<Group> groups = groupRepository.findAll();
+        List<Group> groups = groupRepo.findAll();
         log.debug(FOUND_GROUPS, groups.size());
         return groupDtoMapper.toGroupDtos(groups);
     }
 
-    @Override
-    public void update(Group group) {
-        log.debug("Updating {}", group);
-        groupRepository.save(group);
-        log.debug("Update {}", group);
-    }
+//    @Override
+//    public void update(Group group) {
+//        log.debug("Updating {}", group);
+//        groupRepository.save(group);
+//        log.debug("Update {}", group);
+//    }
 
     @Override
     public void delete(int id) {
         log.debug("Deleting group id({})", id);
-        groupRepository.deleteById(id);
+        groupRepo.deleteById(id);
         log.debug("Delete group id({})", id);
     }
 
@@ -72,7 +72,7 @@ public class GroupServiceImpl implements GroupService {
     public void deactivateGroup(Group group) {
         log.debug("Deactivating {}", group);
         group.setActive(false);
-        groupRepository.save(group);
+        groupRepo.save(group);
         log.debug("Deactivate {}", group);
     }
 
@@ -88,13 +88,13 @@ public class GroupServiceImpl implements GroupService {
         newGroup.setFaculty(facultyNewGroup);
         newGroup.setActive(true);
         log.debug("Saving new {} in DB", newGroup);
-        groupRepository.save(newGroup);
+        groupRepo.save(newGroup);
         log.debug("Replace all students from groups id ({}) into new {}",
             groupsId, newGroup);
         groups.forEach(group -> {
-            studentRepository.findAllByGroup(group).forEach(student -> {
+            studentRepo.findAllByGroup(group).forEach(student -> {
                 student.setGroup(newGroup);
-                studentRepository.save(student);
+                studentRepo.save(student);
             });
             log.debug("Deactivating former {}", group);
             deactivateGroup(group);
@@ -106,7 +106,7 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public List<GroupDto> getAllByFacultyId(int facultyId) {
         log.debug("Getting all groups by faculty id({})", facultyId);
-        List<Group> groups = groupRepository.findAllByFacultyId(facultyId);
+        List<Group> groups = groupRepo.findAllByFacultyId(facultyId);
         log.debug(FOUND_GROUPS, groups.size());
         return groupDtoMapper.toGroupDtos(groups);
     }
@@ -115,7 +115,7 @@ public class GroupServiceImpl implements GroupService {
     public List<GroupDto> getFreeGroupsOnLessonTime(LocalDateTime startTime,
                                                  LocalDateTime endTime) {
         log.debug("Getting groups free from {} to {}", startTime, endTime);
-        List<Group> groups = groupRepository.findFreeGroupsOnLessonTime(startTime, endTime);
+        List<Group> groups = groupRepo.findFreeGroupsOnLessonTime(startTime, endTime);
         log.debug(FOUND_GROUPS, groups.size());
         return groupDtoMapper.toGroupDtos(groups);
     }
@@ -126,7 +126,7 @@ public class GroupServiceImpl implements GroupService {
                                                           LocalDateTime endTime) {
         log.debug("Getting active groups from faculty id({}) free from {} to {}",
             facultyId, startTime, endTime);
-        List<Group> freeGroups = groupRepository
+        List<Group> freeGroups = groupRepo
             .findFreeGroupsByFacultyOnLessonTime(facultyId, startTime, endTime);
         log.debug(FOUND_GROUPS, freeGroups.size());
         return groupDtoMapper.toGroupDtos(freeGroups);
@@ -135,7 +135,7 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public List<Group> getActiveGroups() {
         log.debug("Getting all active groups");
-        List<Group> groups = groupRepository.findAllByActiveTrue();
+        List<Group> groups = groupRepo.findAllByActiveTrue();
         log.debug(FOUND_GROUPS, groups.size());
         return groups;
     }

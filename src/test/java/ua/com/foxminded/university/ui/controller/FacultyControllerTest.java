@@ -184,7 +184,7 @@ class FacultyControllerTest {
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
 
-            verify(facultyServiceMock, times(1)).add(facultyCaptor.capture());
+            verify(facultyServiceMock, times(1)).save(facultyCaptor.capture());
             assertThat(facultyCaptor.getValue().getName(), is(equalTo(NAME_FIRST_FACULTY)));
         }
     }
@@ -230,7 +230,7 @@ class FacultyControllerTest {
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
 
-            verify(facultyServiceMock, times(1)).update(faculty);
+            verify(facultyServiceMock, times(1)).save(faculty);
         }
     }
 

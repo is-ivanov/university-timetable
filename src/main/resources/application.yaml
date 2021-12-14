@@ -1,13 +1,12 @@
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/university_hibernate
-#    url: jdbc:postgresql://localhost:5432/univ_test
     username: postgres
     password: 1234
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: validate
     properties:
       hibernate:
         format_sql: true
@@ -24,5 +23,4 @@ logging:
   level:
     web: debug
     sql: debug
-#    org.hibernate.SQL: debug
     ua.com.foxminded.university: debug

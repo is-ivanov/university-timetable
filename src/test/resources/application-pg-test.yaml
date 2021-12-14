@@ -9,6 +9,3 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQL10Dialect
   liquibase:
     enabled: false
-logging:
-  level:
-    web: info

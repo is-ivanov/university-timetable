@@ -139,7 +139,7 @@ class GroupControllerTest {
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
 
-            verify(groupServiceMock, times(1)).add(groupCaptor.capture());
+            verify(groupServiceMock, times(1)).save(groupCaptor.capture());
             Group expectedGroup = groupCaptor.getValue();
             assertThat(expectedGroup.getFaculty().getId(), is(equalTo(ID1)));
             assertThat(expectedGroup.getName(), is(equalTo(NAME_FIRST_GROUP)));
@@ -191,7 +191,7 @@ class GroupControllerTest {
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
 
-            verify(groupServiceMock, times(1)).update(groupCaptor.capture());
+            verify(groupServiceMock, times(1)).save(groupCaptor.capture());
             Group expectedGroup = groupCaptor.getValue();
             assertThat(expectedGroup.getId(), is(equalTo(groupId)));
             assertThat(expectedGroup.getName(), is(equalTo(NAME_SECOND_GROUP)));

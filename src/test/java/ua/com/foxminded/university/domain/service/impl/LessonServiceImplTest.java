@@ -38,10 +38,10 @@ class LessonServiceImplTest {
     public static final String MESSAGE_STUDENT_IS_INACTIVE = "Student id(78) is inactive";
 
     @Mock
-    private LessonRepository lessonRepositoryMock;
+    private LessonRepository lessonRepoMock;
 
     @Mock
-    private StudentRepository studentRepositoryMock;
+    private StudentRepository studentRepoMock;
 
     @Mock
     private LessonDtoMapper mapperMock;
@@ -56,29 +56,29 @@ class LessonServiceImplTest {
         List<Lesson> lessons = createTestLessons();
         List<LessonDto> lessonDtos = createTestLessonDtos();
 
-        when(lessonRepositoryMock.findAll()).thenReturn(lessons);
+        when(lessonRepoMock.findAll()).thenReturn(lessons);
         when(mapperMock.toLessonDtos(lessons)).thenReturn(lessonDtos);
 
         assertThat(lessonService.getAll()).isEqualTo(lessonDtos);
     }
 
 
-//    @Nested
-//    @DisplayName("test 'delete lesson' method")
-//    class DeleteLessonTest {
-//        @Test
-//        @DisplayName("when call delete method then should call " +
-//            "lessonDao in Order")
-//        void whenDeleteLesson_CallDaoInOrder() {
-//            Lesson testLesson = createTestLesson(LESSON_ID1);
-//            InOrder inOrder = inOrder(lessonRepositoryMock);
-//
-//            lessonService.delete(testLesson);
-//
-//            inOrder.verify(lessonRepositoryMock).deleteAllStudentsFromLesson(testLesson.getId());
-//            inOrder.verify(lessonRepositoryMock).delete(testLesson);
-//        }
-//    }
+    @Nested
+    @DisplayName("test 'delete' method")
+    class DeleteTest {
+        @Test
+        @DisplayName("when call delete method then should call " +
+            "lessonDao in Order")
+        void whenDeleteLesson_CallDaoInOrder() {
+            InOrder inOrder = inOrder(lessonRepoMock);
+            int lessonId = anyInt();
+
+            lessonService.delete(lessonId);
+
+            inOrder.verify(lessonRepoMock).deleteAllStudentsFromLesson(lessonId);
+            inOrder.verify(lessonRepoMock).deleteById(lessonId);
+        }
+    }
 
     @Nested
     @DisplayName("test 'delete lessonId' method")
@@ -87,27 +87,27 @@ class LessonServiceImplTest {
         @DisplayName("when call delete method then should call " +
             "lessonDao in Order")
         void whenDeleteLesson_CallDaoInOrder() {
-            InOrder inOrder = inOrder(lessonRepositoryMock);
+            InOrder inOrder = inOrder(lessonRepoMock);
 
             lessonService.delete(ID1);
 
-            inOrder.verify(lessonRepositoryMock).deleteAllStudentsFromLesson(ID1);
-            inOrder.verify(lessonRepositoryMock).deleteById(ID1);
+            inOrder.verify(lessonRepoMock).deleteAllStudentsFromLesson(ID1);
+            inOrder.verify(lessonRepoMock).deleteById(ID1);
         }
     }
 
     @Nested
-    @DisplayName("test 'add' method")
-    class AddTest {
+    @DisplayName("test 'save' method")
+    class SaveTest {
 
         @Test
         @DisplayName("when check is passed then should call lessonDao.add once")
         void testAddCheckPassed_CallDaoOnce() {
             Lesson testLesson = createTestLesson(LESSON_ID1);
 
-            lessonService.add(testLesson);
+            lessonService.save(testLesson);
 
-            verify(lessonRepositoryMock, times(1)).save(testLesson);
+            verify(lessonRepoMock, times(1)).save(testLesson);
         }
 
         @Test
@@ -125,9 +125,9 @@ class LessonServiceImplTest {
             List<Lesson> lessonsThisTeacher =
                 Collections.singletonList(anotherLessonAtSameTime);
 
-            when(lessonRepositoryMock.findAllByTeacherId(TEACHER_ID1)).thenReturn(lessonsThisTeacher);
+            when(lessonRepoMock.findAllByTeacherId(TEACHER_ID1)).thenReturn(lessonsThisTeacher);
 
-            assertThatThrownBy(() -> lessonService.add(testLesson))
+            assertThatThrownBy(() -> lessonService.save(testLesson))
                 .isInstanceOf(ServiceException.class)
                 .hasMessage(MESSAGE_TEACHER_NOT_AVAILABLE);
         }
@@ -147,9 +147,9 @@ class LessonServiceImplTest {
             List<Lesson> lessonsThisTeacher =
                 Collections.singletonList(anotherLessonWithOverlappedTime);
 
-            when(lessonRepositoryMock.findAllByTeacherId(TEACHER_ID1)).thenReturn(lessonsThisTeacher);
+            when(lessonRepoMock.findAllByTeacherId(TEACHER_ID1)).thenReturn(lessonsThisTeacher);
 
-            assertThatThrownBy(() -> lessonService.add(testLesson))
+            assertThatThrownBy(() -> lessonService.save(testLesson))
                 .isInstanceOf(ServiceException.class)
                 .hasMessage(MESSAGE_TEACHER_NOT_AVAILABLE);
         }
@@ -169,9 +169,9 @@ class LessonServiceImplTest {
             List<Lesson> lessonsThisRoom =
                 Collections.singletonList(anotherLessonAtSameTime);
 
-            when(lessonRepositoryMock.findAllByRoomId(ROOM_ID1)).thenReturn(lessonsThisRoom);
+            when(lessonRepoMock.findAllByRoomId(ROOM_ID1)).thenReturn(lessonsThisRoom);
 
-            assertThatThrownBy(() -> lessonService.add(testLesson))
+            assertThatThrownBy(() -> lessonService.save(testLesson))
                 .isInstanceOf(ServiceException.class)
                 .hasMessage(MESSAGE_ROOM_NOT_AVAILABLE);
         }
@@ -191,113 +191,113 @@ class LessonServiceImplTest {
             List<Lesson> lessonsThisRoom =
                 Collections.singletonList(anotherLessonWithOverlappedTime);
 
-            when(lessonRepositoryMock.findAllByRoomId(ROOM_ID1)).thenReturn(lessonsThisRoom);
+            when(lessonRepoMock.findAllByRoomId(ROOM_ID1)).thenReturn(lessonsThisRoom);
 
             ServiceException e = assertThrows(ServiceException.class,
-                () -> lessonService.add(testLesson));
+                () -> lessonService.save(testLesson));
             assertThat(e.getMessage()).isEqualTo(MESSAGE_ROOM_NOT_AVAILABLE);
         }
     }
 
-    @Nested
-    @DisplayName("test 'update' method")
-    class UpdateTest {
-
-        @Test
-        @DisplayName("when check is passed should call lessonDao.update once")
-        void testUpdateCheckPassed_CallDaoOnce() throws ServiceException {
-            Lesson testLesson = createTestLesson(LESSON_ID1);
-            lessonService.update(testLesson);
-            verify(lessonRepositoryMock, times(1)).save(testLesson);
-        }
-
-        @Test
-        @DisplayName("when lesson  then should throw ServiceException with message")
-        void whenTeacherHasLessonAtSameTimeAsChecked_ThrowException() {
-            Lesson testLesson = createTestLesson(LESSON_ID1);
-            Teacher teacher = testLesson.getTeacher();
-            Lesson anotherLessonAtSameTime = Lesson.builder()
-                .id(LESSON_ID2)
-                .teacher(teacher)
-                .timeStart(DATE_START_FIRST_LESSON)
-                .timeEnd(DATE_END_FIRST_LESSON)
-                .build();
-            List<Lesson> lessonsThisTeacher =
-                Collections.singletonList(anotherLessonAtSameTime);
-
-            when(lessonRepositoryMock.findAllByTeacherId(TEACHER_ID1)).thenReturn(lessonsThisTeacher);
-
-            ServiceException e = assertThrows(ServiceException.class,
-                () -> lessonService.update(testLesson));
-            assertThat(e.getMessage()).isEqualTo(MESSAGE_TEACHER_NOT_AVAILABLE);
-        }
-
-        @Test
-        @DisplayName("when lesson has teacher who has another lesson overlap time " +
-            "checked lesson then throw ServiceException")
-        void whenTeacherHasLessonOverlapTimeCheckedLesson_ThrowException() {
-            Lesson testLesson = createTestLesson(LESSON_ID1);
-            Teacher teacher = testLesson.getTeacher();
-            Lesson anotherLessonWithOverlappedTime = Lesson.builder()
-                .id(LESSON_ID2)
-                .teacher(teacher)
-                .timeStart(DATE_START_FIRST_LESSON.minusMinutes(30))
-                .timeEnd(DATE_END_FIRST_LESSON.minusMinutes(30))
-                .build();
-            List<Lesson> lessonsThisTeacher =
-                Collections.singletonList(anotherLessonWithOverlappedTime);
-
-            when(lessonRepositoryMock.findAllByTeacherId(TEACHER_ID1)).thenReturn(lessonsThisTeacher);
-
-            ServiceException e = assertThrows(ServiceException.class,
-                () -> lessonService.update(testLesson));
-            assertThat(e.getMessage()).isEqualTo(MESSAGE_TEACHER_NOT_AVAILABLE);
-        }
-
-        @Test
-        @DisplayName("when lesson's room is occupied another lesson at same time " +
-            "as checked lesson then should throw ServiceException")
-        void whenRoomOccupiedAnotherLessonAtSameTimeAsChecked_ThrowException() {
-            Lesson testLesson = createTestLesson(LESSON_ID1);
-            Room room = testLesson.getRoom();
-            Lesson anotherLessonAtSameTime = Lesson.builder()
-                .id(LESSON_ID2)
-                .room(room)
-                .timeStart(DATE_START_FIRST_LESSON)
-                .timeEnd(DATE_END_FIRST_LESSON)
-                .build();
-            List<Lesson> lessonsThisRoom =
-                Collections.singletonList(anotherLessonAtSameTime);
-
-            when(lessonRepositoryMock.findAllByRoomId(ROOM_ID1)).thenReturn(lessonsThisRoom);
-
-            ServiceException e = assertThrows(ServiceException.class,
-                () -> lessonService.update(testLesson));
-            assertThat(e.getMessage()).isEqualTo(MESSAGE_ROOM_NOT_AVAILABLE);
-        }
-
-        @Test
-        @DisplayName("when lesson's room is occupied another lesson which overlap " +
-            "time checked lesson then throw ServiceException")
-        void whenRoomOccupiedAnotherLessonOverlapTimeCheckedLesson_ThrowException() {
-            Lesson testLesson = createTestLesson(LESSON_ID1);
-            Room room = testLesson.getRoom();
-            Lesson anotherLessonWithOverlappedTime = Lesson.builder()
-                .id(LESSON_ID2)
-                .room(room)
-                .timeStart(DATE_START_FIRST_LESSON.minusMinutes(30))
-                .timeEnd(DATE_END_FIRST_LESSON.minusMinutes(30))
-                .build();
-            List<Lesson> lessonsThisRoom =
-                Collections.singletonList(anotherLessonWithOverlappedTime);
-
-            when(lessonRepositoryMock.findAllByRoomId(ROOM_ID1)).thenReturn(lessonsThisRoom);
-
-            ServiceException e = assertThrows(ServiceException.class,
-                () -> lessonService.update(testLesson));
-            assertThat(e.getMessage()).isEqualTo(MESSAGE_ROOM_NOT_AVAILABLE);
-        }
-    }
+//    @Nested
+//    @DisplayName("test 'update' method")
+//    class UpdateTest {
+//
+//        @Test
+//        @DisplayName("when check is passed should call lessonDao.update once")
+//        void testUpdateCheckPassed_CallDaoOnce() throws ServiceException {
+//            Lesson testLesson = createTestLesson(LESSON_ID1);
+//            lessonService.save(testLesson);
+//            verify(lessonRepositoryMock, times(1)).save(testLesson);
+//        }
+//
+//        @Test
+//        @DisplayName("when lesson  then should throw ServiceException with message")
+//        void whenTeacherHasLessonAtSameTimeAsChecked_ThrowException() {
+//            Lesson testLesson = createTestLesson(LESSON_ID1);
+//            Teacher teacher = testLesson.getTeacher();
+//            Lesson anotherLessonAtSameTime = Lesson.builder()
+//                .id(LESSON_ID2)
+//                .teacher(teacher)
+//                .timeStart(DATE_START_FIRST_LESSON)
+//                .timeEnd(DATE_END_FIRST_LESSON)
+//                .build();
+//            List<Lesson> lessonsThisTeacher =
+//                Collections.singletonList(anotherLessonAtSameTime);
+//
+//            when(lessonRepositoryMock.findAllByTeacherId(TEACHER_ID1)).thenReturn(lessonsThisTeacher);
+//
+//            ServiceException e = assertThrows(ServiceException.class,
+//                () -> lessonService.save(testLesson));
+//            assertThat(e.getMessage()).isEqualTo(MESSAGE_TEACHER_NOT_AVAILABLE);
+//        }
+//
+//        @Test
+//        @DisplayName("when lesson has teacher who has another lesson overlap time " +
+//            "checked lesson then throw ServiceException")
+//        void whenTeacherHasLessonOverlapTimeCheckedLesson_ThrowException() {
+//            Lesson testLesson = createTestLesson(LESSON_ID1);
+//            Teacher teacher = testLesson.getTeacher();
+//            Lesson anotherLessonWithOverlappedTime = Lesson.builder()
+//                .id(LESSON_ID2)
+//                .teacher(teacher)
+//                .timeStart(DATE_START_FIRST_LESSON.minusMinutes(30))
+//                .timeEnd(DATE_END_FIRST_LESSON.minusMinutes(30))
+//                .build();
+//            List<Lesson> lessonsThisTeacher =
+//                Collections.singletonList(anotherLessonWithOverlappedTime);
+//
+//            when(lessonRepositoryMock.findAllByTeacherId(TEACHER_ID1)).thenReturn(lessonsThisTeacher);
+//
+//            ServiceException e = assertThrows(ServiceException.class,
+//                () -> lessonService.save(testLesson));
+//            assertThat(e.getMessage()).isEqualTo(MESSAGE_TEACHER_NOT_AVAILABLE);
+//        }
+//
+//        @Test
+//        @DisplayName("when lesson's room is occupied another lesson at same time " +
+//            "as checked lesson then should throw ServiceException")
+//        void whenRoomOccupiedAnotherLessonAtSameTimeAsChecked_ThrowException() {
+//            Lesson testLesson = createTestLesson(LESSON_ID1);
+//            Room room = testLesson.getRoom();
+//            Lesson anotherLessonAtSameTime = Lesson.builder()
+//                .id(LESSON_ID2)
+//                .room(room)
+//                .timeStart(DATE_START_FIRST_LESSON)
+//                .timeEnd(DATE_END_FIRST_LESSON)
+//                .build();
+//            List<Lesson> lessonsThisRoom =
+//                Collections.singletonList(anotherLessonAtSameTime);
+//
+//            when(lessonRepositoryMock.findAllByRoomId(ROOM_ID1)).thenReturn(lessonsThisRoom);
+//
+//            ServiceException e = assertThrows(ServiceException.class,
+//                () -> lessonService.save(testLesson));
+//            assertThat(e.getMessage()).isEqualTo(MESSAGE_ROOM_NOT_AVAILABLE);
+//        }
+//
+//        @Test
+//        @DisplayName("when lesson's room is occupied another lesson which overlap " +
+//            "time checked lesson then throw ServiceException")
+//        void whenRoomOccupiedAnotherLessonOverlapTimeCheckedLesson_ThrowException() {
+//            Lesson testLesson = createTestLesson(LESSON_ID1);
+//            Room room = testLesson.getRoom();
+//            Lesson anotherLessonWithOverlappedTime = Lesson.builder()
+//                .id(LESSON_ID2)
+//                .room(room)
+//                .timeStart(DATE_START_FIRST_LESSON.minusMinutes(30))
+//                .timeEnd(DATE_END_FIRST_LESSON.minusMinutes(30))
+//                .build();
+//            List<Lesson> lessonsThisRoom =
+//                Collections.singletonList(anotherLessonWithOverlappedTime);
+//
+//            when(lessonRepositoryMock.findAllByRoomId(ROOM_ID1)).thenReturn(lessonsThisRoom);
+//
+//            ServiceException e = assertThrows(ServiceException.class,
+//                () -> lessonService.save(testLesson));
+//            assertThat(e.getMessage()).isEqualTo(MESSAGE_ROOM_NOT_AVAILABLE);
+//        }
+//    }
 
     @Nested
     @DisplayName("test 'getById' method")
@@ -310,7 +310,7 @@ class LessonServiceImplTest {
             Lesson lesson = createTestLesson(LESSON_ID1);
             LessonDto lessonDto = createTestLessonDto(LESSON_ID1);
 
-            when(lessonRepositoryMock.findById(anyInt())).thenReturn(Optional.of(lesson));
+            when(lessonRepoMock.findById(anyInt())).thenReturn(Optional.of(lesson));
             when(mapperMock.toLessonDto(lesson)).thenReturn(lessonDto);
 
             assertThat(lessonService.getById(anyInt())).isEqualTo(lessonDto);
@@ -320,7 +320,7 @@ class LessonServiceImplTest {
         @DisplayName("when Repository return empty Optional then method should throw " +
             "EntityNotFoundException")
         void testReturnEmptyLesson() {
-            when(lessonRepositoryMock.findById(anyInt())).thenReturn(Optional.empty());
+            when(lessonRepoMock.findById(anyInt())).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> lessonService.getById(ID1))
                 .isInstanceOf(EntityNotFoundException.class)
@@ -341,12 +341,12 @@ class LessonServiceImplTest {
                 .active(true)
                 .build();
 
-            when(lessonRepositoryMock.findById(LESSON_ID1)).thenReturn(Optional.of(testLesson));
-            when(studentRepositoryMock.findById(STUDENT_ID2)).thenReturn(Optional.of(student));
+            when(lessonRepoMock.findById(LESSON_ID1)).thenReturn(Optional.of(testLesson));
+            when(studentRepoMock.findById(STUDENT_ID2)).thenReturn(Optional.of(student));
 
             lessonService.addStudentToLesson(LESSON_ID1, STUDENT_ID2);
 
-            verify(lessonRepositoryMock).addStudentToLesson(LESSON_ID1, STUDENT_ID2);
+            verify(lessonRepoMock).addStudentToLesson(LESSON_ID1, STUDENT_ID2);
         }
 
         @Test
@@ -358,11 +358,11 @@ class LessonServiceImplTest {
                 .active(false)
                 .build();
 
-            when(lessonRepositoryMock.findById(LESSON_ID1)).thenReturn(Optional.of(testLesson));
-            when(studentRepositoryMock.findById(STUDENT_ID2)).thenReturn(Optional.of(student));
+            when(lessonRepoMock.findById(LESSON_ID1)).thenReturn(Optional.of(testLesson));
+            when(studentRepoMock.findById(STUDENT_ID2)).thenReturn(Optional.of(student));
 
 
-            verify(lessonRepositoryMock, never()).addStudentToLesson(LESSON_ID1, STUDENT_ID2);
+            verify(lessonRepoMock, never()).addStudentToLesson(LESSON_ID1, STUDENT_ID2);
 
             assertThatThrownBy(() -> lessonService.addStudentToLesson(
                 LESSON_ID1, STUDENT_ID2))
@@ -390,8 +390,8 @@ class LessonServiceImplTest {
                 .lessons(lessonsThisStudent)
                 .build();
 
-            when(lessonRepositoryMock.findById(LESSON_ID1)).thenReturn(Optional.of(testLesson));
-            when(studentRepositoryMock.findById(STUDENT_ID2)).thenReturn(Optional.of(studentAdding));
+            when(lessonRepoMock.findById(LESSON_ID1)).thenReturn(Optional.of(testLesson));
+            when(studentRepoMock.findById(STUDENT_ID2)).thenReturn(Optional.of(studentAdding));
 
             assertThatThrownBy(() -> lessonService.addStudentToLesson(
                 LESSON_ID1, STUDENT_ID2))

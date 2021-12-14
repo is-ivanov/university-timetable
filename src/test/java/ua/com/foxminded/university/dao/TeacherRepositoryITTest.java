@@ -8,7 +8,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import ua.com.foxminded.university.domain.entity.Teacher;
-import ua.com.foxminded.university.springconfig.IntegrationTestBase;
+import ua.com.foxminded.university.springconfig.BaseRepositoryIT;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static ua.com.foxminded.university.TestObjects.*;
 
 @Sql("/sql/hibernate/teacher-test-data.sql")
-class TeacherJpaRepositoryTest extends IntegrationTestBase {
+class TeacherRepositoryITTest extends BaseRepositoryIT {
 
     private static final String TABLE_NAME = "teachers";
 

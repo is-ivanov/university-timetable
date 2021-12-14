@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 import ua.com.foxminded.university.domain.entity.Group;
-import ua.com.foxminded.university.springconfig.IntegrationTestBase;
+import ua.com.foxminded.university.springconfig.BaseRepositoryIT;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static ua.com.foxminded.university.TestObjects.*;
 
 @Sql("/sql/hibernate/group-test-data.sql")
-class GroupJpaRepositoryTest extends IntegrationTestBase {
+class GroupRepositoryITTest extends BaseRepositoryIT {
 
     private static final LocalDateTime START_FIRST_LESSON =
         LocalDateTime.of(2021, 6, 12, 14, 0);

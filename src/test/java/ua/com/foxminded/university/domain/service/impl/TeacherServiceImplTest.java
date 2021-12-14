@@ -30,7 +30,7 @@ import static ua.com.foxminded.university.TestObjects.*;
 class TeacherServiceImplTest {
 
     @Mock
-    private TeacherRepository teacherRepositoryMock;
+    private TeacherRepository teacherRepoMock;
 
     @Mock
     private TeacherDtoMapper mapperMock;
@@ -39,14 +39,14 @@ class TeacherServiceImplTest {
     private TeacherServiceImpl teacherService;
 
     @Test
-    @DisplayName("test 'add' when call add method then should call Repository once")
-    void testAdd_CallDaoOnce() {
+    @DisplayName("test 'save' when call add method then should call Repository once")
+    void testSave_CallDaoOnce() {
         Teacher teacher = new Teacher();
         Department department = new Department();
         department.setName(anyString());
         teacher.setDepartment(department);
-        teacherService.add(teacher);
-        verify(teacherRepositoryMock).save(teacher);
+        teacherService.save(teacher);
+        verify(teacherRepoMock).save(teacher);
     }
 
     @Nested
@@ -60,7 +60,7 @@ class TeacherServiceImplTest {
             Teacher teacher = createTestTeacher();
             TeacherDto teacherDto = createTestTeacherDto();
 
-            when(teacherRepositoryMock.findById(ID1)).thenReturn(Optional.of(teacher));
+            when(teacherRepoMock.findById(ID1)).thenReturn(Optional.of(teacher));
             when(mapperMock.toTeacherDto(teacher)).thenReturn(teacherDto);
 
             assertThat(teacherService.getById(ID1)).isEqualTo(teacherDto);
@@ -70,7 +70,7 @@ class TeacherServiceImplTest {
         @DisplayName("when Repository return empty Optional then method should throw " +
             "new EntityNotFoundException")
         void testReturnEmptyTeacher() {
-            when(teacherRepositoryMock.findById(ID1)).thenReturn(Optional.empty());
+            when(teacherRepoMock.findById(ID1)).thenReturn(Optional.empty());
             assertThatThrownBy(() -> teacherService.getById(ID1))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining("Teacher id(1) not found");
@@ -84,20 +84,20 @@ class TeacherServiceImplTest {
         List<Teacher> teachers = createTestTeachers(FACULTY_ID1);
         List<TeacherDto> teacherDtos = createTestTeacherDtos(FACULTY_ID1);
 
-        when(teacherRepositoryMock.findAll()).thenReturn(teachers);
+        when(teacherRepoMock.findAll()).thenReturn(teachers);
         when(mapperMock.toTeacherDtos(teachers)).thenReturn(teacherDtos);
 
         assertThat(teacherService.getAll()).isEqualTo(teacherDtos);
     }
 
-    @Test
-    @DisplayName("test 'update' when call update method then should call " +
-        "teacherDao once")
-    void testUpdate_CallDaoOnce() {
-        Teacher teacher = new Teacher();
-        teacherService.update(teacher);
-        verify(teacherRepositoryMock).save(teacher);
-    }
+//    @Test
+//    @DisplayName("test 'update' when call update method then should call " +
+//        "teacherDao once")
+//    void testUpdate_CallDaoOnce() {
+//        Teacher teacher = new Teacher();
+//        teacherService.update(teacher);
+//        verify(teacherRepositoryMock).save(teacher);
+//    }
 
     @Nested
     @DisplayName("test 'deactivateTeacher' method")
@@ -108,7 +108,7 @@ class TeacherServiceImplTest {
         void testCallTeacherDaoOnce() {
             Teacher teacher = new Teacher();
             teacherService.deactivateTeacher(teacher);
-            verify(teacherRepositoryMock).save(teacher);
+            verify(teacherRepoMock).save(teacher);
         }
 
         @Test
@@ -118,7 +118,7 @@ class TeacherServiceImplTest {
             teacherService.deactivateTeacher(teacher);
             ArgumentCaptor<Teacher> captor =
                 ArgumentCaptor.forClass(Teacher.class);
-            verify(teacherRepositoryMock).save(captor.capture());
+            verify(teacherRepoMock).save(captor.capture());
             assertFalse(captor.getValue().isActive());
         }
     }
@@ -132,7 +132,7 @@ class TeacherServiceImplTest {
         void testCallTeacherDaoOnce() {
             Teacher teacher = new Teacher();
             teacherService.deactivateTeacher(teacher);
-            verify(teacherRepositoryMock).save(teacher);
+            verify(teacherRepoMock).save(teacher);
         }
 
         @Test
@@ -141,7 +141,7 @@ class TeacherServiceImplTest {
             teacherService.activateTeacher(new Teacher());
             ArgumentCaptor<Teacher> captor =
                 ArgumentCaptor.forClass(Teacher.class);
-            verify(teacherRepositoryMock).save(captor.capture());
+            verify(teacherRepoMock).save(captor.capture());
             assertTrue(captor.getValue().isActive());
         }
     }
@@ -156,7 +156,7 @@ class TeacherServiceImplTest {
             Teacher teacher = new Teacher();
             teacherService.transferTeacherToDepartment(teacher,
                 new Department());
-            verify(teacherRepositoryMock).save(teacher);
+            verify(teacherRepoMock).save(teacher);
         }
 
         @Test
@@ -169,7 +169,7 @@ class TeacherServiceImplTest {
             teacherService.transferTeacherToDepartment(teacher, expectedDepartment);
             ArgumentCaptor<Teacher> captor =
                 ArgumentCaptor.forClass(Teacher.class);
-            verify(teacherRepositoryMock).save(captor.capture());
+            verify(teacherRepoMock).save(captor.capture());
             assertEquals(expectedDepartment, captor.getValue().getDepartment());
         }
     }
@@ -181,7 +181,7 @@ class TeacherServiceImplTest {
         List<Teacher> teachers = createTestTeachers(FACULTY_ID1);
         List<TeacherDto> teacherDtos = createTestTeacherDtos(FACULTY_ID1);
 
-        when(teacherRepositoryMock.findAllByDepartmentId(DEPARTMENT_ID1)).thenReturn(teachers);
+        when(teacherRepoMock.findAllByDepartmentId(DEPARTMENT_ID1)).thenReturn(teachers);
         when(mapperMock.toTeacherDtos(teachers)).thenReturn(teacherDtos);
 
         assertThat(teacherService.getAllByDepartment(DEPARTMENT_ID1)).isEqualTo(teacherDtos);
@@ -194,7 +194,7 @@ class TeacherServiceImplTest {
         List<Teacher> teachers = createTestTeachers(FACULTY_ID1);
         List<TeacherDto> teacherDtos = createTestTeacherDtos(FACULTY_ID1);
 
-        when(teacherRepositoryMock.findAllByFaculty(FACULTY_ID1)).thenReturn(teachers);
+        when(teacherRepoMock.findAllByFaculty(FACULTY_ID1)).thenReturn(teachers);
         when(mapperMock.toTeacherDtos(teachers)).thenReturn(teacherDtos);
 
         assertThat(teacherService.getAllByFaculty(FACULTY_ID1)).isEqualTo(teacherDtos);

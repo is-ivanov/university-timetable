@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 import ua.com.foxminded.university.domain.entity.Department;
-import ua.com.foxminded.university.springconfig.IntegrationTestBase;
+import ua.com.foxminded.university.springconfig.BaseRepositoryIT;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static ua.com.foxminded.university.TestObjects.*;
 
 @Sql("/sql/hibernate/department-test-data.sql")
-class DepartmentJpaRepositoryTest extends IntegrationTestBase {
+class DepartmentRepositoryITTest extends BaseRepositoryIT {
 
     @Autowired
     private DepartmentRepository repo;

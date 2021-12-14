@@ -22,17 +22,14 @@ import java.util.List;
 @Transactional
 public class StudentServiceImpl implements StudentService {
 
-    private final StudentRepository studentRepository;
+    private final StudentRepository studentRepo;
     private final StudentDtoMapper studentDtoMapper;
 
     @Override
-    public void add(Student student) {
-        log.debug("Adding student [{} {} {}, active={}, group {}]",
-            student.getFirstName(), student.getPatronymic(),
-            student.getLastName(), student.isActive(),
-            student.getGroup().getName());
-        studentRepository.save(student);
-        log.debug("Student [{} {} {}, active={}, group {}] added successfully",
+    public void save(Student student) {
+        log.debug("Saving student {}", student);
+        studentRepo.save(student);
+        log.debug("Student [{} {} {}, active={}, group {}] saved successfully",
             student.getFirstName(), student.getPatronymic(),
             student.getLastName(), student.isActive(),
             student.getGroup().getName());
@@ -41,7 +38,7 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public StudentDto getById(int id) {
         log.debug("Getting student by id({})", id);
-        Student student = studentRepository.findById(id)
+        Student student = studentRepo.findById(id)
             .orElseThrow(() -> new EntityNotFoundException(
                 String.format("Student id(%d) not found", id)));
         log.debug("Found {}", student);
@@ -51,25 +48,25 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public List<StudentDto> getAll() {
         log.debug("Getting all students");
-        List<Student> students = studentRepository.findAll();
+        List<Student> students = studentRepo.findAll();
         log.debug("Found {} students", students.size());
         return studentDtoMapper.toStudentDtos(students);
 
     }
 
-    @Override
-    public void update(Student student) {
-        log.debug("Updating student [id={}, {} {} {}, active={}]",
-            student.getId(), student.getFirstName(), student.getPatronymic(),
-            student.getLastName(), student.isActive());
-        studentRepository.save(student);
-        log.debug("Update student id({})", student.getId());
-    }
+//    @Override
+//    public void update(Student student) {
+//        log.debug("Updating student [id={}, {} {} {}, active={}]",
+//            student.getId(), student.getFirstName(), student.getPatronymic(),
+//            student.getLastName(), student.isActive());
+//        studentRepository.save(student);
+//        log.debug("Update student id({})", student.getId());
+//    }
 
     @Override
     public void delete(int id) {
         log.debug("Deleting student id({})", id);
-        studentRepository.deleteById(id);
+        studentRepo.deleteById(id);
         log.debug("Delete student id({})", id);
     }
 
@@ -78,7 +75,7 @@ public class StudentServiceImpl implements StudentService {
         log.debug("Deactivating student [id={}, {} {} {}]", student.getId(),
             student.getFirstName(), student.getPatronymic(), student.getLastName());
         student.setActive(false);
-        studentRepository.save(student);
+        studentRepo.save(student);
         log.debug("Deactivate student id({})", student.getId());
     }
 
@@ -88,7 +85,7 @@ public class StudentServiceImpl implements StudentService {
             student.getFirstName(), student.getPatronymic(), student.getLastName());
         student.setActive(true);
         student.setGroup(group);
-        studentRepository.save(student);
+        studentRepo.save(student);
         log.debug("Activate student id({})", student.getId());
     }
 
@@ -97,7 +94,7 @@ public class StudentServiceImpl implements StudentService {
         log.debug("Transferring student id({}) to group id({})",
             student.getId(), group.getId());
         student.setGroup(group);
-        studentRepository.save(student);
+        studentRepo.save(student);
         log.debug("Complete transfer student id({}) to group id({})",
             student.getId(), group.getId());
         return student;
@@ -106,7 +103,7 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public List<StudentDto> getStudentsByGroup(Group group) {
         log.debug("Getting all students from group ({})", group);
-        List<Student> students = studentRepository.findAllByGroup(group);
+        List<Student> students = studentRepo.findAllByGroup(group);
         log.debug("Found {} students from group {}", students.size(), group);
         return studentDtoMapper.toStudentDtos(students);
     }
@@ -116,7 +113,7 @@ public class StudentServiceImpl implements StudentService {
         log.debug("Getting all students from group id({})", groupId);
         Group group = new Group();
         group.setId(groupId);
-        List<Student> students = studentRepository.findAllByGroup(group);
+        List<Student> students = studentRepo.findAllByGroup(group);
         log.debug("Found {} students from group id({})", students.size(), groupId);
         return studentDtoMapper.toStudentDtos(students);
     }
@@ -125,7 +122,7 @@ public class StudentServiceImpl implements StudentService {
     public List<StudentDto> getStudentsByFaculty(int facultyId) {
         log.debug("Getting all students from faculty id({})", facultyId);
         Faculty faculty = new Faculty(facultyId, null);
-        List<Student> students = studentRepository.findAllByFaculty(faculty);
+        List<Student> students = studentRepo.findAllByFaculty(faculty);
         log.debug("Found {} student from faculty id({})", students.size(), facultyId);
         return studentDtoMapper.toStudentDtos(students);
     }
@@ -133,7 +130,7 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public List<Student> getAllActiveStudents() {
         log.debug("Getting all active students");
-        List<Student> students = studentRepository.findAllByActiveTrue();
+        List<Student> students = studentRepo.findAllByActiveTrue();
         log.debug("Found {} students", students.size());
         return students;
     }
@@ -144,7 +141,7 @@ public class StudentServiceImpl implements StudentService {
                                                   LocalDateTime endTime) {
         log.debug("Getting active students from group id({}) free from {} to {}",
             groupId, startTime, endTime);
-        List<Student> freeStudents = studentRepository.findFreeStudentsFromGroup(groupId,
+        List<Student> freeStudents = studentRepo.findFreeStudentsFromGroup(groupId,
             startTime, endTime);
         log.debug("Found {} free student from group id({})", freeStudents.size(),
             groupId);

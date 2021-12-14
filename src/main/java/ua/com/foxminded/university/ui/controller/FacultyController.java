@@ -60,7 +60,7 @@ public class FacultyController {
     public String createFaculty(@ModelAttribute Faculty faculty,
                                 HttpServletRequest request) {
         log.debug("Creating {}", faculty);
-        facultyService.add(faculty);
+        facultyService.save(faculty);
         log.debug("{} is created", faculty);
         return defineRedirect(request);
     }
@@ -79,7 +79,7 @@ public class FacultyController {
                                 @PathVariable("id") int facultyId,
                                 HttpServletRequest request) {
         log.debug("Updating faculty with id({})", faculty);
-        facultyService.update(faculty);
+        facultyService.save(faculty);
         log.debug("Faculty id({}) is updated", facultyId);
         return defineRedirect(request);
     }

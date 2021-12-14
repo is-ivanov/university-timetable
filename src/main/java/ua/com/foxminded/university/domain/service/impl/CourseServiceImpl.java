@@ -21,19 +21,19 @@ public class CourseServiceImpl implements CourseService {
 
     private static final String MESSAGE_COURSE_NOT_FOUND = "Course id(%d) not found";
 
-    private final CourseRepository courseRepository;
+    private final CourseRepository courseRepo;
 
     @Override
-    public void add(Course course) {
-        log.debug("Adding {}", course);
-        courseRepository.save(course);
-        log.debug("{} added successfully", course);
+    public void save(Course course) {
+        log.debug("Saving {}", course);
+        courseRepo.save(course);
+        log.debug("{} saved successfully", course);
     }
 
     @Override
     public Course getById(int id) {
         log.debug("Getting course by id({})", id);
-        Course course = courseRepository.findById(id)
+        Course course = courseRepo.findById(id)
             .orElseThrow(() -> new EntityNotFoundException(
             String.format(MESSAGE_COURSE_NOT_FOUND, id)));
         log.debug("Found {}", course);
@@ -43,29 +43,29 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public List<Course> getAll() {
         log.debug("Getting all courses");
-        List<Course> courses = courseRepository.findAll();
+        List<Course> courses = courseRepo.findAll();
         log.debug("Found {} courses", courses.size());
         return courses;
     }
 
-    @Override
-    public void update(Course course) {
-        log.debug("Updating {}", course);
-        courseRepository.save(course);
-        log.debug("Update {}", course);
-    }
+//    @Override
+//    public void update(Course course) {
+//        log.debug("Updating {}", course);
+//        courseRepository.save(course);
+//        log.debug("Update {}", course);
+//    }
 
     @Override
     public void delete(int id) {
         log.debug("Deleting course id({})", id);
-        courseRepository.deleteById(id);
+        courseRepo.deleteById(id);
         log.debug("Delete course id({})", id);
     }
 
     @Override
     public Page<Course> getAllSortedPaginated(Pageable pageable) {
         log.debug("Getting sorted page {} from list of courses", pageable.getPageNumber());
-        Page<Course> pageCourses = courseRepository.findAll(pageable);
+        Page<Course> pageCourses = courseRepo.findAll(pageable);
         log.debug("Found {} courses on page {}", pageCourses.getContent().size(),
             pageCourses.getNumber());
         return pageCourses;

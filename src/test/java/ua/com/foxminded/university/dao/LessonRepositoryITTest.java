@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Student;
-import ua.com.foxminded.university.springconfig.IntegrationTestBase;
+import ua.com.foxminded.university.springconfig.BaseRepositoryIT;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,7 +18,7 @@ import static ua.com.foxminded.university.TestObjects.*;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 @Sql("/sql/hibernate/lesson-test-data.sql")
-class LessonJpaRepositoryTest extends IntegrationTestBase {
+class LessonRepositoryITTest extends BaseRepositoryIT {
 
     @Autowired
     private LessonRepository repo;

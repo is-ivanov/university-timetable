@@ -74,7 +74,7 @@ class CourseControllerTest {
         void getRequestWithoutParameters() throws Exception {
             int totalPages = 1;
             int currentPage = 0;
-            Pageable pageable = PageRequest.of(currentPage, 10, Sort.by("course_name"));
+            Pageable pageable = PageRequest.of(currentPage, 10, Sort.by("name"));
             Course firstCourse = new Course(ID1, NAME_FIRST_COURSE);
             Course secondCourse = new Course(ID2, NAME_SECOND_COURSE);
 
@@ -107,7 +107,7 @@ class CourseControllerTest {
         void getRequestWithPage2() throws Exception {
             int page = 2;
 
-            Pageable pageable = PageRequest.of(page, 10, Sort.by("course_name"));
+            Pageable pageable = PageRequest.of(page, 10, Sort.by("name"));
             Course firstCourse = new Course(ID1, NAME_FIRST_COURSE);
             Course secondCourse = new Course(ID2, NAME_SECOND_COURSE);
 
@@ -173,7 +173,7 @@ class CourseControllerTest {
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
 
-            verify(courseServiceMock).add(courseCaptor.capture());
+            verify(courseServiceMock).save(courseCaptor.capture());
             Course expectedCourse = courseCaptor.getValue();
             assertThat(expectedCourse.getId()).isNull();
             assertThat(expectedCourse.getName()).isEqualTo(NAME_FIRST_COURSE);
@@ -219,7 +219,7 @@ class CourseControllerTest {
                 .andExpect(status().is3xxRedirection());
 
             Course updatedCourse = new Course(courseId, NAME_FIRST_COURSE);
-            verify(courseServiceMock).update(updatedCourse);
+            verify(courseServiceMock).save(updatedCourse);
         }
     }
 

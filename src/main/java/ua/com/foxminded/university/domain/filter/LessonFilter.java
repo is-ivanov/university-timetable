@@ -51,32 +51,40 @@ public class LessonFilter {
 
     private void createTeacherDepartmentFacultyPredicate(List<Predicate> predicates) {
         if (this.teacherId != null && this.teacherId > 0) {
+            log.debug("add predicate by teacherId({})", teacherId);
             predicates.add(QLesson.lesson.teacher.id.eq(teacherId));
         } else if (this.departmentId != null && this.departmentId > 0) {
+            log.debug("add predicate by departmentId({})", departmentId);
             predicates.add(QLesson.lesson.teacher.department.id.eq(departmentId));
         } else if (this.facultyId != null && this.facultyId > 0) {
+            log.debug("add predicate by facultyId({})", facultyId);
             predicates.add(QLesson.lesson.teacher.department.faculty.id.eq(facultyId));
         }
     }
 
     private void createCoursePredicate(List<Predicate> predicates) {
         if (this.courseId != null && courseId > 0) {
+            log.debug("add predicate by courseId({})", courseId);
             predicates.add(QLesson.lesson.course.id.eq(courseId));
         }
     }
 
     private void createRoomPredicate(List<Predicate> predicates) {
         if (this.roomId != null && roomId > 0) {
+            log.debug("add predicate by roomId({})", roomId);
             predicates.add(QLesson.lesson.room.id.eq(roomId));
         }
     }
 
     private void createDatePredicate(List<Predicate> predicates) {
         if (dateFrom != null && dateTo != null) {
+            log.debug("add predicate between {} and {}", dateFrom, dateTo);
             predicates.add(QLesson.lesson.timeStart.between(dateFrom, dateTo));
         } else if (dateFrom != null) {
+            log.debug("add predicate time_start >= {}", dateFrom);
             predicates.add(QLesson.lesson.timeStart.goe(dateFrom));
         } else if (dateTo != null) {
+            log.debug("add predicate time_start <= {}", dateTo);
             predicates.add(QLesson.lesson.timeStart.loe(dateTo));
         }
     }
