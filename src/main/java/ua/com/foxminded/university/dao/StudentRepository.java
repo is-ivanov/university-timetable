@@ -1,4 +1,4 @@
-package ua.com.foxminded.university.dao.interfaces;
+package ua.com.foxminded.university.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

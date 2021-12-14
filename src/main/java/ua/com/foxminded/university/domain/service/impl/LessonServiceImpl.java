@@ -1,12 +1,11 @@
 package ua.com.foxminded.university.domain.service.impl;
 
-import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.com.foxminded.university.dao.interfaces.LessonRepository;
-import ua.com.foxminded.university.dao.interfaces.StudentRepository;
+import ua.com.foxminded.university.dao.LessonRepository;
+import ua.com.foxminded.university.dao.StudentRepository;
 import ua.com.foxminded.university.domain.dto.LessonDto;
 import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Room;
@@ -122,8 +121,8 @@ public class LessonServiceImpl implements LessonService {
             filter.getRoomId() != null || filter.getDateFrom() != null ||
             filter.getDateTo() != null) {
 
-            List<Lesson> filteredLessons = Lists.newArrayList(
-                lessonRepository.findAll(filter.getPredicate()));
+            Iterable<Lesson> filteredLessons =
+                lessonRepository.findAll(filter.getPredicate());
             return lessonDtoMapper.toLessonDtos(filteredLessons);
         } else {
             log.warn("Filter is empty");
@@ -162,7 +161,7 @@ public class LessonServiceImpl implements LessonService {
         log.debug("Getting lessons for room id({}) from {} to {})", roomId,
             startTime, endTime);
         List<Lesson> lessonsForRoom = lessonRepository
-            .getAllForRoomForTimePeriod(roomId, startTime, endTime);
+            .findAllByRoomByTimePeriod(roomId, startTime, endTime);
         log.debug(FOUND_LESSONS, lessonsForRoom.size());
         return lessonDtoMapper.toLessonDtos(lessonsForRoom);
     }
@@ -170,7 +169,7 @@ public class LessonServiceImpl implements LessonService {
     @Override
     public void removeStudentFromLesson(int lessonId, int studentId) {
         log.debug("Removing student id({}) from lesson id({})", studentId, lessonId);
-        lessonRepository.removeStudentFromLesson(lessonId, studentId);
+        lessonRepository.deleteStudentFromLesson(lessonId, studentId);
         log.debug("Student id({}) successfully removed from lesson id({})",
             studentId, lessonId);
     }
@@ -179,7 +178,7 @@ public class LessonServiceImpl implements LessonService {
     public void removeStudentsFromLesson(int lessonId, int[] studentIds) {
         log.debug("Removing students id({}) from lesson id({})", studentIds, lessonId);
         for (int studentId : studentIds) {
-            lessonRepository.removeStudentFromLesson(lessonId, studentId);
+            lessonRepository.deleteStudentFromLesson(lessonId, studentId);
         }
         log.debug("Students id({}) successfully removed from lesson id({})",
             studentIds, lessonId);

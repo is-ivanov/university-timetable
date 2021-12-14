@@ -8,14 +8,13 @@ import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ua.com.foxminded.university.dao.interfaces.LessonRepository;
-import ua.com.foxminded.university.dao.interfaces.StudentRepository;
+import ua.com.foxminded.university.dao.LessonRepository;
+import ua.com.foxminded.university.dao.StudentRepository;
 import ua.com.foxminded.university.domain.dto.LessonDto;
 import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Room;
 import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.domain.entity.Teacher;
-import ua.com.foxminded.university.domain.filter.LessonFilter;
 import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
 import ua.com.foxminded.university.exception.ServiceException;
 
@@ -401,28 +400,28 @@ class LessonServiceImplTest {
         }
     }
 
-    @Nested
-    @DisplayName("test 'getAllWithFilter' method")
-    class TestGetAllWithFilter {
-        @Test
-        @DisplayName("When one condition not null then call lessonDao once")
-        void whenOneConditionNotNullThenCallLessonDaoOnce() {
-            LessonFilter lessonFilter = new LessonFilter();
-            lessonFilter.setFacultyId(ID1);
-
-            lessonService.getAllWithFilter(lessonFilter);
-            verify(lessonRepositoryMock, times(1))
-                .findAllWithFilter(lessonFilter);
-        }
-
-        @Test
-        @DisplayName("When all conditions is null then should throw ServiceException")
-        void whenAllConditionsIsNullThenShouldThrowServiceException() {
-            LessonFilter lessonFilter = new LessonFilter();
-
-            ServiceException exception = assertThrows(ServiceException.class,
-                () -> lessonService.getAllWithFilter(lessonFilter));
-            assertThat(exception.getMessage()).isEqualTo(MESSAGE_FILTER_NOT_SELECT);
-        }
-    }
+//    @Nested
+//    @DisplayName("test 'getAllWithFilter' method")
+//    class TestGetAllWithFilter {
+//        @Test
+//        @DisplayName("When one condition not null then call lessonDao once")
+//        void whenOneConditionNotNullThenCallLessonDaoOnce() {
+//            LessonFilter lessonFilter = new LessonFilter();
+//            lessonFilter.setFacultyId(ID1);
+//
+//            lessonService.getAllWithFilter(lessonFilter);
+//            verify(lessonRepositoryMock, times(1))
+//                .findAllWithFilter(lessonFilter);
+//        }
+//
+//        @Test
+//        @DisplayName("When all conditions is null then should throw ServiceException")
+//        void whenAllConditionsIsNullThenShouldThrowServiceException() {
+//            LessonFilter lessonFilter = new LessonFilter();
+//
+//            ServiceException exception = assertThrows(ServiceException.class,
+//                () -> lessonService.getAllWithFilter(lessonFilter));
+//            assertThat(exception.getMessage()).isEqualTo(MESSAGE_FILTER_NOT_SELECT);
+//        }
+//    }
 }

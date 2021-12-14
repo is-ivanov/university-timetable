@@ -4,8 +4,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ua.com.foxminded.university.dao.interfaces.GroupRepository;
-import ua.com.foxminded.university.dao.interfaces.StudentRepository;
+import ua.com.foxminded.university.dao.GroupRepository;
+import ua.com.foxminded.university.dao.StudentRepository;
 import ua.com.foxminded.university.domain.mapper.GroupDtoMapper;
 
 @ExtendWith(MockitoExtension.class)

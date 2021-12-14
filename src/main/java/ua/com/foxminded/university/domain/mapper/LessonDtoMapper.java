@@ -25,4 +25,6 @@ public interface LessonDtoMapper {
 
     List<LessonDto> toLessonDtos(List<Lesson> lessons);
 
+    List<LessonDto> toLessonDtos(Iterable<Lesson> lessons);
+
 }

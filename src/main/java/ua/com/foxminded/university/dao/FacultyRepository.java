@@ -1,4 +1,4 @@
-package ua.com.foxminded.university.dao.interfaces;
+package ua.com.foxminded.university.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -11,7 +11,4 @@ public interface FacultyRepository extends JpaRepository<Faculty, Integer> {
 
     List<Faculty> findAllByOrderByNameAsc();
 
-//    Page<Faculty> getAllSortedPaginated(Pageable pageable);
-
-//    int countAll();
 }

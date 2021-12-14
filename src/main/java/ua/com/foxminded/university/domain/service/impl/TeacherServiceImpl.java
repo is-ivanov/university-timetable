@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.com.foxminded.university.dao.interfaces.TeacherRepository;
+import ua.com.foxminded.university.dao.TeacherRepository;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Teacher;
@@ -113,7 +113,7 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public List<TeacherDto> getAllByFaculty(int facultyId) {
         log.debug("Getting all teachers from faculty id({})", facultyId);
-        List<Teacher> teachers = teacherRepository.findAllByFacultyId(facultyId);
+        List<Teacher> teachers = teacherRepository.findAllByFaculty(facultyId);
         log.debug("Found {} teachers from faculty id({})", teachers.size(), facultyId);
         return teacherDtoMapper.toTeacherDtos(teachers);
     }

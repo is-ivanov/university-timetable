@@ -8,7 +8,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ua.com.foxminded.university.dao.interfaces.TeacherRepository;
+import ua.com.foxminded.university.dao.TeacherRepository;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Teacher;
@@ -194,7 +194,7 @@ class TeacherServiceImplTest {
         List<Teacher> teachers = createTestTeachers(FACULTY_ID1);
         List<TeacherDto> teacherDtos = createTestTeacherDtos(FACULTY_ID1);
 
-        when(teacherRepositoryMock.findAllByFacultyId(FACULTY_ID1)).thenReturn(teachers);
+        when(teacherRepositoryMock.findAllByFaculty(FACULTY_ID1)).thenReturn(teachers);
         when(mapperMock.toTeacherDtos(teachers)).thenReturn(teacherDtos);
 
         assertThat(teacherService.getAllByFaculty(FACULTY_ID1)).isEqualTo(teacherDtos);

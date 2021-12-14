@@ -1,4 +1,4 @@
-package ua.com.foxminded.university.dao.interfaces;
+package ua.com.foxminded.university.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -10,13 +10,13 @@ import java.util.List;
 
 @Repository
 public interface TeacherRepository extends JpaRepository<Teacher, Integer> {
-    
+
     List<Teacher> findAllByDepartmentId(int departmentId);
 
     @Query("SELECT t " +
         "FROM Teacher t " +
         "WHERE t.department.faculty.id = :facultyId")
-    List<Teacher> findAllByFacultyId(int facultyId);
+    List<Teacher> findAllByFaculty(int facultyId);
 
     @Query("SELECT t FROM Teacher t " +
         "WHERE t.active = TRUE " +
