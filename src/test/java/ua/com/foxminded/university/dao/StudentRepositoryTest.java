@@ -10,6 +10,7 @@ import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.springconfig.BaseRepositoryIT;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -65,6 +66,23 @@ class StudentRepositoryTest extends BaseRepositoryIT {
             List<Student> actualStudents = repo.findAllByFaculty(faculty);
 
             assertThat(actualStudents).isEmpty();
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'method' method")
+    class MethodTest {
+        @Test
+        @DisplayName("Test name")
+        void testName() {
+            LocalDateTime from = LocalDateTime.of(2021, 6 ,12, 0, 0);
+            LocalDateTime to = LocalDateTime.of(2021, 6 ,13, 0, 0);
+
+            List<Student> students = repo.findAllByActiveTrueAndLessonsTimeEndGreaterThanEqualAndLessonsTimeStartLessThanEqual(from, to);
+
+            assertThat(students).hasSize(1);
+            assertThat(students).extracting(Student::getId)
+                .containsExactly(STUDENT_ID3);
         }
     }
 }

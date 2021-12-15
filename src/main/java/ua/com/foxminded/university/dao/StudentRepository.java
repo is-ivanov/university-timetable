@@ -39,4 +39,6 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
     List<Student> findFreeStudentsFromGroup(int groupId,
                                             LocalDateTime startTime,
                                             LocalDateTime endTime);
+
+    List<Student> findAllByActiveTrueAndLessonsTimeEndGreaterThanEqualAndLessonsTimeStartLessThanEqual(LocalDateTime from, LocalDateTime to);
 }

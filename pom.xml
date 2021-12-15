@@ -240,7 +240,6 @@
                     <excludes>
                         <param>.*entity.Q.*</param>
                     </excludes>
-<!--                    <generatedSourcesScope>compile</generatedSourcesScope>-->
                     <generateAssertions>true</generateAssertions>
                     <generateBddAssertions>false</generateBddAssertions>
                     <generateSoftAssertions>false</generateSoftAssertions>

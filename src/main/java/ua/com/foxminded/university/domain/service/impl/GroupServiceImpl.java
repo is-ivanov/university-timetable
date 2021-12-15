@@ -9,6 +9,7 @@ import ua.com.foxminded.university.dao.StudentRepository;
 import ua.com.foxminded.university.domain.dto.GroupDto;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
+import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.domain.mapper.GroupDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 
@@ -108,6 +109,7 @@ public class GroupServiceImpl implements GroupService {
     public List<GroupDto> getFreeGroupsOnLessonTime(LocalDateTime startTime,
                                                  LocalDateTime endTime) {
         log.debug("Getting groups free from {} to {}", startTime, endTime);
+        List<Student> busyStudents = studentRepo.findAllByActiveTrueAndLessonsTimeEndGreaterThanEqualAndLessonsTimeStartLessThanEqual(startTime, endTime);
         List<Group> groups = groupRepo.findFreeGroupsOnLessonTime(startTime, endTime);
         log.debug(FOUND_GROUPS, groups.size());
         return groupDtoMapper.toGroupDtos(groups);
@@ -132,4 +134,6 @@ public class GroupServiceImpl implements GroupService {
         log.debug(FOUND_GROUPS, groups.size());
         return groups;
     }
+
+
 }
