@@ -48,7 +48,6 @@ public class LessonFilter {
         return ExpressionUtils.allOf(predicates);
     }
 
-
     private void createTeacherDepartmentFacultyPredicate(List<Predicate> predicates) {
         if (this.teacherId != null && this.teacherId > 0) {
             log.debug("add predicate by teacherId({})", teacherId);
