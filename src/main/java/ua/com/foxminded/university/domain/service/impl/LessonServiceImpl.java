@@ -1,5 +1,6 @@
 package ua.com.foxminded.university.domain.service.impl;
 
+import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -48,15 +49,6 @@ public class LessonServiceImpl implements LessonService {
         lessonRepo.save(lesson);
         log.debug("{} saved successfully", lesson);
     }
-
-//    @Override
-//    public void update(Lesson lesson) throws ServiceException {
-//        log.debug("Check lesson id({}) before updating", lesson.getId());
-//        checkLesson(lesson);
-//        log.debug("Updating lesson id({})", lesson.getId());
-//        lessonRepository.save(lesson);
-//        log.debug("Lesson id({}) updated successfully", lesson.getId());
-//    }
 
     @Override
     public LessonDto getById(int id) {
@@ -121,8 +113,8 @@ public class LessonServiceImpl implements LessonService {
             filter.getRoomId() != null || filter.getDateFrom() != null ||
             filter.getDateTo() != null) {
 
-            Iterable<Lesson> filteredLessons =
-                lessonRepo.findAll(filter.getPredicate());
+            Predicate predicate = filter.getPredicate();
+            Iterable<Lesson> filteredLessons = lessonRepo.findAll(predicate);
             return lessonDtoMapper.toLessonDtos(filteredLessons);
         } else {
             log.warn("Filter is empty");
@@ -188,7 +180,6 @@ public class LessonServiceImpl implements LessonService {
         if (student.isActive()) {
             checkStudent(student, lesson);
             lessonRepo.addStudentToLesson(lesson.getId(), student.getId());
-//            lesson.getStudents().add(student);
             log.debug("Student id({}) added to lesson({}) successfully", student.getId(),
                 lesson.getId());
         } else {

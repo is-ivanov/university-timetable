@@ -34,7 +34,6 @@ class LessonServiceImplTest {
     private static final String MESSAGE_TEACHER_NOT_AVAILABLE = "Teacher id(7) is not available";
     private static final String MESSAGE_ROOM_NOT_AVAILABLE = "Room id(5) is not available";
     private static final String MESSAGE_STUDENT_NOT_AVAILABLE = "Student id(78) is not available";
-    private static final String MESSAGE_FILTER_NOT_SELECT = "Select at least one filter";
     public static final String MESSAGE_STUDENT_IS_INACTIVE = "Student id(78) is inactive";
 
     @Mock
@@ -199,106 +198,6 @@ class LessonServiceImplTest {
         }
     }
 
-//    @Nested
-//    @DisplayName("test 'update' method")
-//    class UpdateTest {
-//
-//        @Test
-//        @DisplayName("when check is passed should call lessonDao.update once")
-//        void testUpdateCheckPassed_CallDaoOnce() throws ServiceException {
-//            Lesson testLesson = createTestLesson(LESSON_ID1);
-//            lessonService.save(testLesson);
-//            verify(lessonRepositoryMock, times(1)).save(testLesson);
-//        }
-//
-//        @Test
-//        @DisplayName("when lesson  then should throw ServiceException with message")
-//        void whenTeacherHasLessonAtSameTimeAsChecked_ThrowException() {
-//            Lesson testLesson = createTestLesson(LESSON_ID1);
-//            Teacher teacher = testLesson.getTeacher();
-//            Lesson anotherLessonAtSameTime = Lesson.builder()
-//                .id(LESSON_ID2)
-//                .teacher(teacher)
-//                .timeStart(DATE_START_FIRST_LESSON)
-//                .timeEnd(DATE_END_FIRST_LESSON)
-//                .build();
-//            List<Lesson> lessonsThisTeacher =
-//                Collections.singletonList(anotherLessonAtSameTime);
-//
-//            when(lessonRepositoryMock.findAllByTeacherId(TEACHER_ID1)).thenReturn(lessonsThisTeacher);
-//
-//            ServiceException e = assertThrows(ServiceException.class,
-//                () -> lessonService.save(testLesson));
-//            assertThat(e.getMessage()).isEqualTo(MESSAGE_TEACHER_NOT_AVAILABLE);
-//        }
-//
-//        @Test
-//        @DisplayName("when lesson has teacher who has another lesson overlap time " +
-//            "checked lesson then throw ServiceException")
-//        void whenTeacherHasLessonOverlapTimeCheckedLesson_ThrowException() {
-//            Lesson testLesson = createTestLesson(LESSON_ID1);
-//            Teacher teacher = testLesson.getTeacher();
-//            Lesson anotherLessonWithOverlappedTime = Lesson.builder()
-//                .id(LESSON_ID2)
-//                .teacher(teacher)
-//                .timeStart(DATE_START_FIRST_LESSON.minusMinutes(30))
-//                .timeEnd(DATE_END_FIRST_LESSON.minusMinutes(30))
-//                .build();
-//            List<Lesson> lessonsThisTeacher =
-//                Collections.singletonList(anotherLessonWithOverlappedTime);
-//
-//            when(lessonRepositoryMock.findAllByTeacherId(TEACHER_ID1)).thenReturn(lessonsThisTeacher);
-//
-//            ServiceException e = assertThrows(ServiceException.class,
-//                () -> lessonService.save(testLesson));
-//            assertThat(e.getMessage()).isEqualTo(MESSAGE_TEACHER_NOT_AVAILABLE);
-//        }
-//
-//        @Test
-//        @DisplayName("when lesson's room is occupied another lesson at same time " +
-//            "as checked lesson then should throw ServiceException")
-//        void whenRoomOccupiedAnotherLessonAtSameTimeAsChecked_ThrowException() {
-//            Lesson testLesson = createTestLesson(LESSON_ID1);
-//            Room room = testLesson.getRoom();
-//            Lesson anotherLessonAtSameTime = Lesson.builder()
-//                .id(LESSON_ID2)
-//                .room(room)
-//                .timeStart(DATE_START_FIRST_LESSON)
-//                .timeEnd(DATE_END_FIRST_LESSON)
-//                .build();
-//            List<Lesson> lessonsThisRoom =
-//                Collections.singletonList(anotherLessonAtSameTime);
-//
-//            when(lessonRepositoryMock.findAllByRoomId(ROOM_ID1)).thenReturn(lessonsThisRoom);
-//
-//            ServiceException e = assertThrows(ServiceException.class,
-//                () -> lessonService.save(testLesson));
-//            assertThat(e.getMessage()).isEqualTo(MESSAGE_ROOM_NOT_AVAILABLE);
-//        }
-//
-//        @Test
-//        @DisplayName("when lesson's room is occupied another lesson which overlap " +
-//            "time checked lesson then throw ServiceException")
-//        void whenRoomOccupiedAnotherLessonOverlapTimeCheckedLesson_ThrowException() {
-//            Lesson testLesson = createTestLesson(LESSON_ID1);
-//            Room room = testLesson.getRoom();
-//            Lesson anotherLessonWithOverlappedTime = Lesson.builder()
-//                .id(LESSON_ID2)
-//                .room(room)
-//                .timeStart(DATE_START_FIRST_LESSON.minusMinutes(30))
-//                .timeEnd(DATE_END_FIRST_LESSON.minusMinutes(30))
-//                .build();
-//            List<Lesson> lessonsThisRoom =
-//                Collections.singletonList(anotherLessonWithOverlappedTime);
-//
-//            when(lessonRepositoryMock.findAllByRoomId(ROOM_ID1)).thenReturn(lessonsThisRoom);
-//
-//            ServiceException e = assertThrows(ServiceException.class,
-//                () -> lessonService.save(testLesson));
-//            assertThat(e.getMessage()).isEqualTo(MESSAGE_ROOM_NOT_AVAILABLE);
-//        }
-//    }
-
     @Nested
     @DisplayName("test 'getById' method")
     class GetByIdTest {
@@ -399,29 +298,4 @@ class LessonServiceImplTest {
                 .hasMessage(MESSAGE_STUDENT_NOT_AVAILABLE);
         }
     }
-
-//    @Nested
-//    @DisplayName("test 'getAllWithFilter' method")
-//    class TestGetAllWithFilter {
-//        @Test
-//        @DisplayName("When one condition not null then call lessonDao once")
-//        void whenOneConditionNotNullThenCallLessonDaoOnce() {
-//            LessonFilter lessonFilter = new LessonFilter();
-//            lessonFilter.setFacultyId(ID1);
-//
-//            lessonService.getAllWithFilter(lessonFilter);
-//            verify(lessonRepositoryMock, times(1))
-//                .findAllWithFilter(lessonFilter);
-//        }
-//
-//        @Test
-//        @DisplayName("When all conditions is null then should throw ServiceException")
-//        void whenAllConditionsIsNullThenShouldThrowServiceException() {
-//            LessonFilter lessonFilter = new LessonFilter();
-//
-//            ServiceException exception = assertThrows(ServiceException.class,
-//                () -> lessonService.getAllWithFilter(lessonFilter));
-//            assertThat(exception.getMessage()).isEqualTo(MESSAGE_FILTER_NOT_SELECT);
-//        }
-//    }
 }

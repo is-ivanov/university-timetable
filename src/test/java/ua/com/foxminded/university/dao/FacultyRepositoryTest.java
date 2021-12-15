@@ -14,7 +14,7 @@ import static ua.com.foxminded.university.TestObjects.NAME_FIRST_FACULTY;
 import static ua.com.foxminded.university.TestObjects.NAME_SECOND_FACULTY;
 
 @Sql("/sql/hibernate/faculty-test-data.sql")
-class FacultyRepositoryITTest extends BaseRepositoryIT {
+class FacultyRepositoryTest extends BaseRepositoryIT {
 
     @Autowired
     private FacultyRepository repo;

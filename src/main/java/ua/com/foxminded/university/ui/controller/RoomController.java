@@ -37,7 +37,7 @@ public class RoomController {
 
     @GetMapping
     public String showRooms(Model model,
-                            @PageableDefault(sort = "room_number") Pageable pageable) {
+                            @PageableDefault(sort = "number") Pageable pageable) {
         log.debug("Getting data for room.html");
         Page<Room> pageRooms = roomService.getAllSortedPaginated(pageable);
         model.addAttribute("rooms", pageRooms.getContent());

@@ -48,13 +48,6 @@ public class FacultyServiceImpl implements FacultyService {
         return faculties;
     }
 
-//    @Override
-//    public void update(Faculty faculty) {
-//        log.debug("Updating {}", faculty);
-//        facultyRepository.save(faculty);
-//        log.debug("Update {}", faculty);
-//    }
-
     @Override
     public void delete(int id) {
         log.debug("Deleting faculty id({})", id);
@@ -78,6 +71,5 @@ public class FacultyServiceImpl implements FacultyService {
             pageFaculties.getNumber());
         return pageFaculties;
     }
-
 
 }

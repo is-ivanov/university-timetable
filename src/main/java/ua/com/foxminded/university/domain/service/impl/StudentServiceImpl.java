@@ -54,15 +54,6 @@ public class StudentServiceImpl implements StudentService {
 
     }
 
-//    @Override
-//    public void update(Student student) {
-//        log.debug("Updating student [id={}, {} {} {}, active={}]",
-//            student.getId(), student.getFirstName(), student.getPatronymic(),
-//            student.getLastName(), student.isActive());
-//        studentRepository.save(student);
-//        log.debug("Update student id({})", student.getId());
-//    }
-
     @Override
     public void delete(int id) {
         log.debug("Deleting student id({})", id);

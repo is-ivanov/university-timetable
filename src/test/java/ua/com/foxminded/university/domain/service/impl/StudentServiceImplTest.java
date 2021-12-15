@@ -62,15 +62,6 @@ class StudentServiceImplTest {
         assertThat(studentService.getAll()).isEqualTo(testStudentDtos);
     }
 
-//    @Test
-//    @DisplayName("test 'update' when call update method then should call " +
-//        "studentDao once")
-//    void testUpdate_CallDaoOnce() {
-//        Student student = new Student();
-//        studentService.update(student);
-//        verify(studentRepoMock).save(student);
-//    }
-
     @Nested
     @DisplayName("test 'getById' method")
     class GetByIdTest {

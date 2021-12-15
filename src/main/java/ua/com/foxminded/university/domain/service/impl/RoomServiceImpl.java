@@ -49,13 +49,6 @@ public class RoomServiceImpl implements RoomService {
         return rooms;
     }
 
-//    @Override
-//    public void update(Room room) {
-//        log.debug("Updating {}", room);
-//        roomRepository.save(room);
-//        log.debug("Update {}", room);
-//    }
-
     @Override
     public void delete(int id) {
         log.debug("Deleting room id({})", id);

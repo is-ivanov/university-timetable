@@ -20,7 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static ua.com.foxminded.university.TestObjects.COURSE_ID1;
 
 @ExtendWith(MockitoExtension.class)
 class CourseServiceImplTest {
@@ -87,14 +86,6 @@ class CourseServiceImplTest {
         when(courseRepoMock.findAll()).thenReturn(expectedCourses);
         assertEquals(expectedCourses, courseService.getAll());
     }
-
-//    @Test
-//    @DisplayName("test 'update' when call update method then should call courseDao once")
-//    void testUpdate_CallDaoOnce(){
-//        Course course = new Course();
-//        courseService.update(course);
-//        verify(courseRepoMock).update(course);
-//    }
 
     @Test
     @DisplayName("test 'delete' when call update method then should call courseDao once")

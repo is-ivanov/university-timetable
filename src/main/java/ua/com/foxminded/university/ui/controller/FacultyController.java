@@ -42,7 +42,7 @@ public class FacultyController {
 
     @GetMapping
     public String showFaculties(Model model,
-                                @PageableDefault(sort = "faculty_name") Pageable pageable) {
+                                @PageableDefault(sort = "name") Pageable pageable) {
         log.debug("Getting data for faculty.html");
         Page<Faculty> pageFaculties = facultyService.getAllSortedPaginated(pageable);
         model.addAttribute("faculties", pageFaculties.getContent());
@@ -108,12 +108,12 @@ public class FacultyController {
     @GetMapping("/{id}/groups/free")
     @ResponseBody
     public List<GroupDto> getFreeGroupsByFaculty(@PathVariable("id") int facultyId,
-                                              @RequestParam("time_start")
-                                              @DateTimeFormat(pattern = DATE_TIME_PATTERN)
-                                                  LocalDateTime startTime,
-                                              @RequestParam("time_end")
-                                              @DateTimeFormat(pattern = DATE_TIME_PATTERN)
-                                                  LocalDateTime endTime) {
+                                                 @RequestParam("time_start")
+                                                 @DateTimeFormat(pattern = DATE_TIME_PATTERN)
+                                                     LocalDateTime startTime,
+                                                 @RequestParam("time_end")
+                                                 @DateTimeFormat(pattern = DATE_TIME_PATTERN)
+                                                     LocalDateTime endTime) {
         log.debug("Getting active groups by faculty id({}) free from {} to {}",
             facultyId, startTime, endTime);
         List<GroupDto> freeGroups = groupService

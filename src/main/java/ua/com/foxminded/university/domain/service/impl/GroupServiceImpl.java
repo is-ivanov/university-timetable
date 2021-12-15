@@ -54,13 +54,6 @@ public class GroupServiceImpl implements GroupService {
         return groupDtoMapper.toGroupDtos(groups);
     }
 
-//    @Override
-//    public void update(Group group) {
-//        log.debug("Updating {}", group);
-//        groupRepository.save(group);
-//        log.debug("Update {}", group);
-//    }
-
     @Override
     public void delete(int id) {
         log.debug("Deleting group id({})", id);

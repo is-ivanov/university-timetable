@@ -90,15 +90,6 @@ class FacultyServiceImplTest {
         assertEquals(expectedFaculties, facultyService.getAll());
     }
 
-//    @Test
-//    @DisplayName("test 'update' when call update method then should call " +
-//        "facultyDao once")
-//    void testUpdate_CallDaoOnce() {
-//        Faculty faculty = new Faculty();
-//        facultyService.update(faculty);
-//        verify(facultyRepoMock).update(faculty);
-//    }
-
     @Test
     @DisplayName("test 'delete' when call delete method then should call " +
         "facultyDao once")

@@ -48,13 +48,6 @@ public class CourseServiceImpl implements CourseService {
         return courses;
     }
 
-//    @Override
-//    public void update(Course course) {
-//        log.debug("Updating {}", course);
-//        courseRepository.save(course);
-//        log.debug("Update {}", course);
-//    }
-
     @Override
     public void delete(int id) {
         log.debug("Deleting course id({})", id);

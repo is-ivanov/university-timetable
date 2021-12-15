@@ -93,15 +93,6 @@ class GroupServiceImplTest {
         assertThat(groupService.getAll()).isEqualTo(groupDtos);
     }
 
-//    @Test
-//    @DisplayName("test 'update' when call update method then should call " +
-//        "groupDao once")
-//    void testUpdate_CallDaoOnce() {
-//        Group group = new Group();
-//        groupService.update(group);
-//        verify(groupRepositoryMock).update(group);
-//    }
-
     @Test
     @DisplayName("test 'delete' when call delete method then should call " +
         "groupDao once")

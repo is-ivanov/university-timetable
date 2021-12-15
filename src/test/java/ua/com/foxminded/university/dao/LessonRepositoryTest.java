@@ -18,7 +18,7 @@ import static ua.com.foxminded.university.TestObjects.*;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 @Sql("/sql/hibernate/lesson-test-data.sql")
-class LessonRepositoryITTest extends BaseRepositoryIT {
+class LessonRepositoryTest extends BaseRepositoryIT {
 
     @Autowired
     private LessonRepository repo;

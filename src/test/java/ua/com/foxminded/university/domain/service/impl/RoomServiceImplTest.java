@@ -89,13 +89,4 @@ class RoomServiceImplTest {
         assertEquals(expectedRooms, roomService.getAll());
     }
 
-//    @Test
-//    @DisplayName("test 'update' when call update method then should call " +
-//        "roomDao once")
-//    void testUpdate_CallDaoOnce() {
-//        Room room = new Room();
-//        roomService.update(room);
-//        verify(roomRepositoryMock).save(room);
-//    }
-
 }

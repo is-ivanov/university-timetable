@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static ua.com.foxminded.university.TestObjects.*;
 
 @Sql("/sql/hibernate/teacher-test-data.sql")
-class TeacherRepositoryITTest extends BaseRepositoryIT {
+class TeacherRepositoryTest extends BaseRepositoryIT {
 
     private static final String TABLE_NAME = "teachers";
 

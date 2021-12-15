@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static ua.com.foxminded.university.TestObjects.*;
 
 @Sql("/sql/hibernate/group-test-data.sql")
-class GroupRepositoryITTest extends BaseRepositoryIT {
+class GroupRepositoryTest extends BaseRepositoryIT {
 
     private static final LocalDateTime START_FIRST_LESSON =
         LocalDateTime.of(2021, 6, 12, 14, 0);

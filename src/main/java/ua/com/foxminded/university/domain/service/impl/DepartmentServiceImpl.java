@@ -51,14 +51,6 @@ public class DepartmentServiceImpl implements DepartmentService {
         return departmentDtoMapper.toDepartmentDtos(departments);
     }
 
-
-//    @Override
-//    public void update(Department department) {
-//        log.debug("Updating {}", department);
-//        departmentRepository.save(department);
-//        log.debug("Update {}", department);
-//    }
-
     @Override
     public void delete(int id) {
         log.debug("Deleting department id({})", id);

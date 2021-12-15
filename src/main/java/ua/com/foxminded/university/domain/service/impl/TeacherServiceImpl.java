@@ -54,15 +54,6 @@ public class TeacherServiceImpl implements TeacherService {
         return teacherDtoMapper.toTeacherDtos(teachers);
     }
 
-//    @Override
-//    public void update(Teacher teacher) {
-//        log.debug("Updating teacher [id={}, {} {} {}, active={}]",
-//            teacher.getId(), teacher.getFirstName(), teacher.getPatronymic(),
-//            teacher.getLastName(), teacher.isActive());
-//        teacherRepository.save(teacher);
-//        log.debug("Update teacher id({})", teacher.getId());
-//    }
-
     @Override
     public void delete(int id) {
         log.debug("Deleting teacher id({})", id);

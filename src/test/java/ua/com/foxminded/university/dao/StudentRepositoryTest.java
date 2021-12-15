@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static ua.com.foxminded.university.TestObjects.*;
 
 @Sql("/sql/hibernate/student-test-data.sql")
-class StudentRepositoryITTest extends BaseRepositoryIT {
+class StudentRepositoryTest extends BaseRepositoryIT {
 
     @Autowired
     private StudentRepository repo;

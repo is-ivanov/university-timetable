@@ -87,15 +87,6 @@ class DepartmentServiceImplTest {
         assertThat(departmentService.getAll()).isEqualTo(testDepartmentDtos);
     }
 
-//    @Test
-//    @DisplayName("test 'update' when call update method then should call " +
-//        "departmentDao once")
-//    void testUpdate_CallDaoOnce() {
-//        Department department = new Department();
-//        departmentService.update(department);
-//        verify(departmentRepoMock).update(department);
-//    }
-
     @Test
     @DisplayName("test 'delete' when call delete method then should call " +
         "departmentDao once")

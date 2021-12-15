@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
@@ -31,6 +30,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static ua.com.foxminded.university.domain.entity.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 class CourseControllerTest {
@@ -175,8 +175,8 @@ class CourseControllerTest {
 
             verify(courseServiceMock).save(courseCaptor.capture());
             Course expectedCourse = courseCaptor.getValue();
-            assertThat(expectedCourse.getId()).isNull();
-            assertThat(expectedCourse.getName()).isEqualTo(NAME_FIRST_COURSE);
+            assertThat(expectedCourse).hasId(null);
+            assertThat(expectedCourse).hasName(NAME_FIRST_COURSE);
         }
     }
 

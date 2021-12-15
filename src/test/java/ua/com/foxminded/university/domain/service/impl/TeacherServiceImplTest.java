@@ -90,15 +90,6 @@ class TeacherServiceImplTest {
         assertThat(teacherService.getAll()).isEqualTo(teacherDtos);
     }
 
-//    @Test
-//    @DisplayName("test 'update' when call update method then should call " +
-//        "teacherDao once")
-//    void testUpdate_CallDaoOnce() {
-//        Teacher teacher = new Teacher();
-//        teacherService.update(teacher);
-//        verify(teacherRepositoryMock).save(teacher);
-//    }
-
     @Nested
     @DisplayName("test 'deactivateTeacher' method")
     class DeactivateStudentTest {

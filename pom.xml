@@ -218,18 +218,36 @@
                     </execution>
                 </executions>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-failsafe-plugin</artifactId>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <goals>-->
-<!--                            <goal>integration-test</goal>-->
-<!--                            <goal>verify</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-assertions-generator-maven-plugin</artifactId>
+                <version>2.2.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate-assertions</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <packages>
+                        <param>ua.com.foxminded.university.domain.entity</param>
+                    </packages>
+                    <excludes>
+                        <param>.*entity.Q.*</param>
+                    </excludes>
+<!--                    <generatedSourcesScope>compile</generatedSourcesScope>-->
+                    <generateAssertions>true</generateAssertions>
+                    <generateBddAssertions>false</generateBddAssertions>
+                    <generateSoftAssertions>false</generateSoftAssertions>
+                    <generateJUnitSoftAssertions>false</generateJUnitSoftAssertions>
+                    <skip>false</skip>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>
