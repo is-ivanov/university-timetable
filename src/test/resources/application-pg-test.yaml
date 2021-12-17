@@ -6,6 +6,12 @@ spring:
       hibernate:
         format_sql: true
         highlight_sql: true
+        generate_statistics: true
     database-platform: org.hibernate.dialect.PostgreSQL10Dialect
   liquibase:
     enabled: false
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.cache: DEBUG
+    org.hibernate.stat: DEBUG

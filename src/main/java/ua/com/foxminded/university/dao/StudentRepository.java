@@ -25,20 +25,26 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
     @Query("SELECT s " +
         "FROM Student s " +
         "WHERE s.group.id = :groupId " +
-          "AND s.group.active = TRUE " +
-          "AND s.active = TRUE " +
-          "AND s.id NOT IN " +
-             "( " +
-                "SELECT s2.id " +
-                "FROM Student s2 " +
-                    "JOIN s2.lessons l " +
-                "WHERE l.timeEnd >= :startTime " +
-                  "AND l.timeStart <= :endTime " +
-             ") " +
+        "AND s.group.active = TRUE " +
+        "AND s.active = TRUE " +
+        "AND s.id NOT IN " +
+        "( " +
+        "SELECT s2.id " +
+        "FROM Student s2 " +
+        "JOIN s2.lessons l " +
+        "WHERE l.timeEnd >= :startTime " +
+        "AND l.timeStart <= :endTime " +
+        ") " +
         "ORDER BY s.lastName, s.firstName")
     List<Student> findFreeStudentsFromGroup(int groupId,
                                             LocalDateTime startTime,
                                             LocalDateTime endTime);
 
-    List<Student> findAllByActiveTrueAndLessonsTimeEndGreaterThanEqualAndLessonsTimeStartLessThanEqual(LocalDateTime from, LocalDateTime to);
+    List<Student> findAllByLessonsTimeEndGreaterThanEqualAndLessonsTimeStartLessThanEqual(LocalDateTime from,
+                                                                                          LocalDateTime to);
+
+    default List<Student> findAllBusyStudents(LocalDateTime from, LocalDateTime to) {
+        return findAllByLessonsTimeEndGreaterThanEqualAndLessonsTimeStartLessThanEqual(from, to);
+    }
+
 }

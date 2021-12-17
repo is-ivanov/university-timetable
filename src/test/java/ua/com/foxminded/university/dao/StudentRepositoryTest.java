@@ -13,6 +13,7 @@ import ua.com.foxminded.university.springconfig.BaseRepositoryIT;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static ua.com.foxminded.university.domain.entity.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static ua.com.foxminded.university.TestObjects.*;
 
@@ -70,19 +71,22 @@ class StudentRepositoryTest extends BaseRepositoryIT {
     }
 
     @Nested
-    @DisplayName("test 'method' method")
-    class MethodTest {
+    @DisplayName("test 'findAllBusyStudents' method")
+    class FindAllBusyStudentsTest {
         @Test
-        @DisplayName("Test name")
-        void testName() {
+        @DisplayName("when time from 2021-06-12 to 2021-06-13 then should return " +
+            "one student with student_id3")
+        void from20210612to20210613_returnStudentId3() {
             LocalDateTime from = LocalDateTime.of(2021, 6 ,12, 0, 0);
             LocalDateTime to = LocalDateTime.of(2021, 6 ,13, 0, 0);
 
-            List<Student> students = repo.findAllByActiveTrueAndLessonsTimeEndGreaterThanEqualAndLessonsTimeStartLessThanEqual(from, to);
+            List<Student> students = repo.findAllBusyStudents(from, to);
 
             assertThat(students).hasSize(1);
-            assertThat(students).extracting(Student::getId)
-                .containsExactly(STUDENT_ID3);
+            assertThat(students.get(0))
+                .hasId(STUDENT_ID3)
+                .hasFirstName(NAME_THIRD_STUDENT)
+                .hasLastName(LAST_NAME_THIRD_STUDENT);
         }
     }
 }

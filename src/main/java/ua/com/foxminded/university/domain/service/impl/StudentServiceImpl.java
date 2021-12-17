@@ -15,6 +15,7 @@ import ua.com.foxminded.university.domain.service.interfaces.StudentService;
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -128,8 +129,8 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public List<StudentDto> getFreeStudentsFromGroup(int groupId,
-                                                  LocalDateTime startTime,
-                                                  LocalDateTime endTime) {
+                                                     LocalDateTime startTime,
+                                                     LocalDateTime endTime) {
         log.debug("Getting active students from group id({}) free from {} to {}",
             groupId, startTime, endTime);
         List<Student> freeStudents = studentRepo.findFreeStudentsFromGroup(groupId,
@@ -138,5 +139,20 @@ public class StudentServiceImpl implements StudentService {
             groupId);
         return studentDtoMapper.toStudentDtos(freeStudents);
     }
+
+    @Override
+    public List<Integer> findAllBusyStudentIds(LocalDateTime startTime,
+                                               LocalDateTime endTime) {
+        log.debug("Getting all students free from {} to {}", startTime, endTime);
+        List<Student> busyStudents = studentRepo.findAllBusyStudents(startTime, endTime);
+        log.debug("Found {} students", busyStudents.size());
+        return busyStudents.stream()
+            .map(Student::getId)
+            .collect(Collectors.toList());
+    }
+
+
+
+
 
 }

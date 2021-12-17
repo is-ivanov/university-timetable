@@ -12,11 +12,13 @@ import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.domain.mapper.GroupDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
+import ua.com.foxminded.university.domain.service.interfaces.StudentService;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,6 +31,7 @@ public class GroupServiceImpl implements GroupService {
     private final GroupRepository groupRepo;
     private final StudentRepository studentRepo;
     private final GroupDtoMapper groupDtoMapper;
+    private final StudentService studentService;
 
     @Override
     public void save(Group group) {
@@ -107,18 +110,24 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public List<GroupDto> getFreeGroupsOnLessonTime(LocalDateTime startTime,
-                                                 LocalDateTime endTime) {
+                                                    LocalDateTime endTime) {
         log.debug("Getting groups free from {} to {}", startTime, endTime);
-        List<Student> busyStudents = studentRepo.findAllByActiveTrueAndLessonsTimeEndGreaterThanEqualAndLessonsTimeStartLessThanEqual(startTime, endTime);
-        List<Group> groups = groupRepo.findFreeGroupsOnLessonTime(startTime, endTime);
+        List<Integer> studentIds =
+            studentService.findAllBusyStudentIds(startTime, endTime);
+        List<Group> groups;
+        if (studentIds.isEmpty()) {
+            groups = groupRepo.findAllByActiveTrue();
+        } else {
+            groups = groupRepo.findAllActiveWithoutStudents(studentIds);
+        }
         log.debug(FOUND_GROUPS, groups.size());
         return groupDtoMapper.toGroupDtos(groups);
     }
 
     @Override
     public List<GroupDto> getFreeGroupsByFacultyOnLessonTime(int facultyId,
-                                                          LocalDateTime startTime,
-                                                          LocalDateTime endTime) {
+                                                             LocalDateTime startTime,
+                                                             LocalDateTime endTime) {
         log.debug("Getting active groups from faculty id({}) free from {} to {}",
             facultyId, startTime, endTime);
         List<Group> freeGroups = groupRepo
@@ -134,6 +143,5 @@ public class GroupServiceImpl implements GroupService {
         log.debug(FOUND_GROUPS, groups.size());
         return groups;
     }
-
 
 }

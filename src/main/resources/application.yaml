@@ -21,6 +21,6 @@ spring:
         enabled: true
 logging:
   level:
-    web: debug
-    sql: debug
-    ua.com.foxminded.university: debug
+    web: DEBUG
+    sql: DEBUG
+    ua.com.foxminded.university: DEBUG
