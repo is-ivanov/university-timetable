@@ -12,7 +12,7 @@
 
     <groupId>ua.com.foxminded.javaspring</groupId>
     <artifactId>university</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
     <name>University Timetable</name>
     <description>Application university timetable</description>
 
@@ -108,7 +108,7 @@
         <dependency>
             <groupId>com.github.zhanhb</groupId>
             <artifactId>thymeleaf-layout-dialect</artifactId>
-            <version>2.5.3</version>
+            <version>3.0.0</version>
         </dependency>
 
         <!--UI frameworks-->
