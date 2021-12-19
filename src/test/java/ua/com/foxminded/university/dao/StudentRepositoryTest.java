@@ -13,9 +13,9 @@ import ua.com.foxminded.university.springconfig.BaseRepositoryIT;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static ua.com.foxminded.university.domain.entity.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static ua.com.foxminded.university.TestObjects.*;
+import static ua.com.foxminded.university.domain.entity.Assertions.assertThat;
 
 @Sql("/sql/hibernate/student-test-data.sql")
 class StudentRepositoryTest extends BaseRepositoryIT {

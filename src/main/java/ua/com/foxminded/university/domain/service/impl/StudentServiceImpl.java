@@ -129,30 +129,33 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public List<StudentDto> getFreeStudentsFromGroup(int groupId,
-                                                     LocalDateTime startTime,
-                                                     LocalDateTime endTime) {
+                                                     LocalDateTime from,
+                                                     LocalDateTime to) {
         log.debug("Getting active students from group id({}) free from {} to {}",
-            groupId, startTime, endTime);
-        List<Student> freeStudents = studentRepo.findFreeStudentsFromGroup(groupId,
-            startTime, endTime);
+            groupId, from, to);
+        List<Student> busyStudents = findAllBusyStudents(from, to);
+        List<Integer> busyStudentIds = getIdsFromStudents(busyStudents);
+        List<Student> freeStudents =
+            studentRepo.findAllFromGroupExcluded(busyStudentIds, groupId);
         log.debug("Found {} free student from group id({})", freeStudents.size(),
             groupId);
         return studentDtoMapper.toStudentDtos(freeStudents);
     }
 
     @Override
-    public List<Integer> findAllBusyStudentIds(LocalDateTime startTime,
-                                               LocalDateTime endTime) {
-        log.debug("Getting all students free from {} to {}", startTime, endTime);
-        List<Student> busyStudents = studentRepo.findAllBusyStudents(startTime, endTime);
+    public List<Student> findAllBusyStudents(LocalDateTime from,
+                                             LocalDateTime to) {
+        log.debug("Getting all students free from {} to {}", from, to);
+        List<Student> busyStudents = studentRepo.findAllBusyStudents(from, to);
         log.debug("Found {} students", busyStudents.size());
-        return busyStudents.stream()
+        return busyStudents;
+    }
+
+    @Override
+    public List<Integer> getIdsFromStudents(List<Student> students){
+        return students.stream()
             .map(Student::getId)
             .collect(Collectors.toList());
     }
-
-
-
-
 
 }

@@ -298,4 +298,39 @@ class LessonServiceImplTest {
                 .hasMessage(MESSAGE_STUDENT_NOT_AVAILABLE);
         }
     }
+
+    @Nested
+    @DisplayName("test 'removeStudentsFromLesson' method")
+    class RemoveStudentsFromLessonTest {
+        @Test
+        @DisplayName("Test name")
+        void testName() {
+
+            Student student1 = createTestStudent();
+            Student student2 = Student.builder()
+                .id(STUDENT_ID2)
+                .lessons(new HashSet<>())
+                .build();
+            Student student3 = Student.builder()
+                .id(STUDENT_ID3)
+                .lessons(new HashSet<>())
+                .build();
+
+            Lesson testLesson = createTestLesson();
+            testLesson.getStudents().add(student3);
+            student1.getLessons().add(testLesson);
+            student2.getLessons().add(testLesson);
+            student3.getLessons().add(testLesson);
+
+            Integer[] studentIds = new Integer[] {STUDENT_ID2, STUDENT_ID3};
+
+            when(lessonRepoMock.getById(LESSON_ID1)).thenReturn(testLesson);
+            when(studentRepoMock.getById(STUDENT_ID2)).thenReturn(student2);
+            when(studentRepoMock.getById(STUDENT_ID3)).thenReturn(student3);
+
+            lessonService.removeStudentsFromLesson(LESSON_ID1, studentIds);
+
+            assertThat(testLesson.getStudents()).hasSize(1);
+        }
+    }
 }

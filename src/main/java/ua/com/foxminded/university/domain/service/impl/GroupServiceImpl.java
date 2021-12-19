@@ -18,7 +18,6 @@ import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -112,13 +111,14 @@ public class GroupServiceImpl implements GroupService {
     public List<GroupDto> getFreeGroupsOnLessonTime(LocalDateTime startTime,
                                                     LocalDateTime endTime) {
         log.debug("Getting groups free from {} to {}", startTime, endTime);
-        List<Integer> studentIds =
-            studentService.findAllBusyStudentIds(startTime, endTime);
+        List<Student> busyStudents =
+            studentService.findAllBusyStudents(startTime, endTime);
+        List<Integer> busyStudentIds = studentService.getIdsFromStudents(busyStudents);
         List<Group> groups;
-        if (studentIds.isEmpty()) {
+        if (busyStudentIds.isEmpty()) {
             groups = groupRepo.findAllByActiveTrue();
         } else {
-            groups = groupRepo.findAllActiveWithoutStudents(studentIds);
+            groups = groupRepo.findAllActiveWithoutStudents(busyStudentIds);
         }
         log.debug(FOUND_GROUPS, groups.size());
         return groupDtoMapper.toGroupDtos(groups);
@@ -130,10 +130,18 @@ public class GroupServiceImpl implements GroupService {
                                                              LocalDateTime endTime) {
         log.debug("Getting active groups from faculty id({}) free from {} to {}",
             facultyId, startTime, endTime);
-        List<Group> freeGroups = groupRepo
-            .findFreeGroupsByFacultyOnLessonTime(facultyId, startTime, endTime);
-        log.debug(FOUND_GROUPS, freeGroups.size());
-        return groupDtoMapper.toGroupDtos(freeGroups);
+        List<Student> busyStudents =
+            studentService.findAllBusyStudents(startTime, endTime);
+        List<Integer> busyStudentIds = studentService.getIdsFromStudents(busyStudents);
+        List<Group> groups;
+        if (busyStudentIds.isEmpty()) {
+            groups = groupRepo.findAllByActiveTrue();
+        } else {
+            groups = groupRepo.findAllActiveWithoutStudentsByFaculty(busyStudentIds,
+                facultyId);
+        }
+        log.debug(FOUND_GROUPS, groups.size());
+        return groupDtoMapper.toGroupDtos(groups);
     }
 
     @Override

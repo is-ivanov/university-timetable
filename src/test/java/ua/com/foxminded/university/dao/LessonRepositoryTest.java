@@ -6,12 +6,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 import ua.com.foxminded.university.domain.entity.Lesson;
-import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.springconfig.BaseRepositoryIT;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static ua.com.foxminded.university.TestObjects.*;
@@ -90,26 +88,26 @@ class LessonRepositoryTest extends BaseRepositoryIT {
         }
     }
 
-    @Nested
-    @DisplayName("test 'deleteStudentFromLesson' method")
-    class DeleteStudentFromLessonTest {
-
-        @Test
-        @DisplayName("after delete student_id1 from lesson_id1 Set students " +
-            "from lesson should must be one less than it was")
-        void testDeleteStudentFromLesson() {
-            int expectedNumberStudents = 1;
-
-            repo.deleteStudentFromLesson(LESSON_ID1, STUDENT_ID1);
-
-            Lesson lessonAfter = repo.findById(LESSON_ID1).get();
-            Set<Student> studentsAfter = lessonAfter.getStudents();
-
-            assertThat(studentsAfter).hasSize(expectedNumberStudents);
-            assertThat(studentsAfter).extracting(Student::getId)
-                .doesNotContain(STUDENT_ID1);
-        }
-    }
+//    @Nested
+//    @DisplayName("test 'deleteStudentFromLesson' method")
+//    class DeleteStudentFromLessonTest {
+//
+//        @Test
+//        @DisplayName("after delete student_id1 from lesson_id1 Set students " +
+//            "from lesson should must be one less than it was")
+//        void testDeleteStudentFromLesson() {
+//            int expectedNumberStudents = 1;
+//
+//            repo.deleteStudentFromLesson(LESSON_ID1, STUDENT_ID1);
+//
+//            Lesson lessonAfter = repo.findById(LESSON_ID1).get();
+//            Set<Student> studentsAfter = lessonAfter.getStudents();
+//
+//            assertThat(studentsAfter).hasSize(expectedNumberStudents);
+//            assertThat(studentsAfter).extracting(Student::getId)
+//                .doesNotContain(STUDENT_ID1);
+//        }
+//    }
 
     @Nested
     @DisplayName("test 'getAllForStudentForTimePeriod' method")
@@ -121,7 +119,7 @@ class LessonRepositoryTest extends BaseRepositoryIT {
             LocalDateTime timeFrom = LocalDateTime.of(2021, 5, 9, 0, 0);
             LocalDateTime timeTo = LocalDateTime.of(2021, 5, 11, 0, 0);
 
-            List<Lesson> lessons = repo.findAllForStudentForTimePeriod(STUDENT_ID1,
+            List<Lesson> lessons = repo.findByStudents_IdAndTimeStartGreaterThanEqualAndTimeEndLessThanEqual(STUDENT_ID1,
                 timeFrom, timeTo);
 
             assertThat(lessons).hasSize(1);
@@ -137,7 +135,7 @@ class LessonRepositoryTest extends BaseRepositoryIT {
             LocalDateTime timeFrom = LocalDateTime.of(2021, 10, 1, 0, 0);
             LocalDateTime timeTo = LocalDateTime.of(2021, 10, 30, 0, 0);
 
-            List<Lesson> lessons = repo.findAllForStudentForTimePeriod(STUDENT_ID1,
+            List<Lesson> lessons = repo.findByStudents_IdAndTimeStartGreaterThanEqualAndTimeEndLessThanEqual(STUDENT_ID1,
                 timeFrom, timeTo);
 
             assertThat(lessons).isEmpty();
@@ -154,8 +152,9 @@ class LessonRepositoryTest extends BaseRepositoryIT {
             LocalDateTime timeFrom = LocalDateTime.of(2021, 5, 9, 0, 0);
             LocalDateTime timeTo = LocalDateTime.of(2021, 5, 11, 0, 0);
 
-            List<Lesson> lessons = repo.findAllForTeacherForTimePeriod(TEACHER_ID1,
-                timeFrom, timeTo);
+            List<Lesson> lessons =
+                repo.findByTeacher_IdAndTimeStartGreaterThanEqualAndTimeEndLessThanEqual(
+                    TEACHER_ID1, timeFrom, timeTo);
 
             assertThat(lessons).hasSize(1);
             assertThat(lessons).extracting(Lesson::getId)
@@ -170,8 +169,9 @@ class LessonRepositoryTest extends BaseRepositoryIT {
             LocalDateTime timeFrom = LocalDateTime.of(2021, 1, 1, 0, 0);
             LocalDateTime timeTo = LocalDateTime.of(2021, 12, 30, 0, 0);
 
-            List<Lesson> lessons = repo.findAllForTeacherForTimePeriod(TEACHER_ID1,
-                timeFrom, timeTo);
+            List<Lesson> lessons =
+                repo.findByTeacher_IdAndTimeStartGreaterThanEqualAndTimeEndLessThanEqual(
+                    TEACHER_ID1, timeFrom, timeTo);
 
             assertThat(lessons).hasSize(2);
             assertThat(lessons).extracting(Lesson::getId)
@@ -190,8 +190,9 @@ class LessonRepositoryTest extends BaseRepositoryIT {
             LocalDateTime from = LocalDateTime.of(2021, 5, 9, 0, 0);
             LocalDateTime to = LocalDateTime.of(2021, 5, 11, 0, 0);
 
-            List<Lesson> lessons = repo.findAllByRoomByTimePeriod(ROOM_ID1,
-                from, to);
+            List<Lesson> lessons =
+                repo.findByRoom_IdAndTimeStartGreaterThanEqualAndTimeEndLessThanEqual(
+                    ROOM_ID1, from, to);
 
             assertThat(lessons).hasSize(1);
             assertThat(lessons).extracting(Lesson::getId)
@@ -206,8 +207,9 @@ class LessonRepositoryTest extends BaseRepositoryIT {
             LocalDateTime from = LocalDateTime.of(2021, 1, 1, 0, 0);
             LocalDateTime to = LocalDateTime.of(2021, 12, 30, 0, 0);
 
-            List<Lesson> lessons = repo.findAllByRoomByTimePeriod(ROOM_ID1,
-                from, to);
+            List<Lesson> lessons =
+                repo.findByRoom_IdAndTimeStartGreaterThanEqualAndTimeEndLessThanEqual(
+                    ROOM_ID1, from, to);
 
             assertThat(lessons).hasSize(2);
             assertThat(lessons).extracting(Lesson::getId)

@@ -15,6 +15,7 @@ import ua.com.foxminded.university.domain.entity.Teacher;
 import ua.com.foxminded.university.domain.filter.LessonFilter;
 import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.LessonService;
+import ua.com.foxminded.university.domain.service.interfaces.StudentService;
 import ua.com.foxminded.university.exception.ServiceException;
 
 import javax.persistence.EntityNotFoundException;
@@ -40,6 +41,7 @@ public class LessonServiceImpl implements LessonService {
     private final LessonRepository lessonRepo;
     private final LessonDtoMapper lessonDtoMapper;
     private final StudentRepository studentRepo;
+    private final StudentService studentService;
 
     @Override
     public void save(Lesson lesson) throws ServiceException {
@@ -94,13 +96,15 @@ public class LessonServiceImpl implements LessonService {
         log.debug("Getting lesson by lessonId({})", lessonId);
         Lesson lesson = getLessonById(lessonId);
         log.debug("Getting active students from group id({})", groupId);
-        List<Student> studentsFromGroup =
-            studentRepo.findFreeStudentsFromGroup(groupId,
-                lesson.getTimeStart(), lesson.getTimeEnd());
-        for (Student student : studentsFromGroup) {
+        List<Student> busyStudents =
+            studentService.findAllBusyStudents(lesson.getTimeStart(), lesson.getTimeEnd());
+        List<Integer> busyStudentIds = studentService.getIdsFromStudents(busyStudents);
+        List<Student> freeStudentsFromGroup =
+            studentRepo.findAllFromGroupExcluded(busyStudentIds, groupId);
+        for (Student student : freeStudentsFromGroup) {
             checkAndSaveStudentToLesson(lesson, student);
         }
-        log.debug("{} students is added successfully", studentsFromGroup.size());
+        log.debug("{} students is added successfully", freeStudentsFromGroup.size());
     }
 
     @Override
@@ -129,7 +133,8 @@ public class LessonServiceImpl implements LessonService {
         log.debug("Getting lessons for student id({}) from {} to {})", studentId,
             startTime, endTime);
         List<Lesson> lessonsForStudent = lessonRepo
-            .findAllForStudentForTimePeriod(studentId, startTime, endTime);
+            .findByStudents_IdAndTimeStartGreaterThanEqualAndTimeEndLessThanEqual(
+                studentId, startTime, endTime);
         log.debug(FOUND_LESSONS, lessonsForStudent.size());
         return lessonDtoMapper.toLessonDtos(lessonsForStudent);
     }
@@ -140,8 +145,9 @@ public class LessonServiceImpl implements LessonService {
                                                          LocalDateTime endTime) {
         log.debug("Getting lessons for teacher id({}) from {} to {})", teacherId,
             startTime, endTime);
-        List<Lesson> lessonsForTeacher = lessonRepo
-            .findAllForTeacherForTimePeriod(teacherId, startTime, endTime);
+        List<Lesson> lessonsForTeacher =
+            lessonRepo.findByTeacher_IdAndTimeStartGreaterThanEqualAndTimeEndLessThanEqual(
+                teacherId, startTime, endTime);
         log.debug(FOUND_LESSONS, lessonsForTeacher.size());
         return lessonDtoMapper.toLessonDtos(lessonsForTeacher);
     }
@@ -152,8 +158,9 @@ public class LessonServiceImpl implements LessonService {
                                                       LocalDateTime endTime) {
         log.debug("Getting lessons for room id({}) from {} to {})", roomId,
             startTime, endTime);
-        List<Lesson> lessonsForRoom = lessonRepo
-            .findAllByRoomByTimePeriod(roomId, startTime, endTime);
+        List<Lesson> lessonsForRoom =
+            lessonRepo.findByRoom_IdAndTimeStartGreaterThanEqualAndTimeEndLessThanEqual(
+                roomId, startTime, endTime);
         log.debug(FOUND_LESSONS, lessonsForRoom.size());
         return lessonDtoMapper.toLessonDtos(lessonsForRoom);
     }
@@ -161,16 +168,21 @@ public class LessonServiceImpl implements LessonService {
     @Override
     public void removeStudentFromLesson(int lessonId, int studentId) {
         log.debug("Removing student id({}) from lesson id({})", studentId, lessonId);
-        lessonRepo.deleteStudentFromLesson(lessonId, studentId);
+        Student student = studentRepo.getById(studentId);
+        Lesson lesson = lessonRepo.getById(lessonId);
+        lesson.removeStudent(student);
+//        lessonRepo.deleteStudentFromLesson(lessonId, studentId);
         log.debug("Student id({}) successfully removed from lesson id({})",
             studentId, lessonId);
     }
 
     @Override
-    public void removeStudentsFromLesson(int lessonId, int[] studentIds) {
+    public void removeStudentsFromLesson(int lessonId, Integer[] studentIds) {
         log.debug("Removing students id({}) from lesson id({})", studentIds, lessonId);
+        Lesson lesson = lessonRepo.getById(lessonId);
         for (int studentId : studentIds) {
-            lessonRepo.deleteStudentFromLesson(lessonId, studentId);
+            Student student = studentRepo.getById(studentId);
+            lesson.removeStudent(student);
         }
         log.debug("Students id({}) successfully removed from lesson id({})",
             studentIds, lessonId);

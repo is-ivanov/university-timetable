@@ -21,6 +21,8 @@ spring:
         enabled: true
 logging:
   level:
-    web: DEBUG
+    root: WARN
+    web: INFO
     sql: DEBUG
-    ua.com.foxminded.university: DEBUG
+    ua.com.foxminded.university: INFO
+    org.hibernate.type.descriptor.sql: TRACE

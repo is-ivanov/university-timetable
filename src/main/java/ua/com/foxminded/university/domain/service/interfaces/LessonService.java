@@ -2,7 +2,6 @@ package ua.com.foxminded.university.domain.service.interfaces;
 
 import ua.com.foxminded.university.domain.dto.LessonDto;
 import ua.com.foxminded.university.domain.entity.Lesson;
-import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.domain.filter.LessonFilter;
 
 import java.time.LocalDateTime;
@@ -30,6 +29,6 @@ public interface LessonService extends Service<Lesson, LessonDto> {
 
     void removeStudentFromLesson(int lessonId, int studentId);
 
-    void removeStudentsFromLesson(int lessonId, int[] studentIds);
+    void removeStudentsFromLesson(int lessonId, Integer[] studentIds);
 
 }

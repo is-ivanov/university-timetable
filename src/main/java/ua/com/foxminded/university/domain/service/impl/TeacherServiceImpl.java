@@ -14,6 +14,7 @@ import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -102,7 +103,7 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public List<TeacherDto> getAllByFaculty(int facultyId) {
         log.debug("Getting all teachers from faculty id({})", facultyId);
-        List<Teacher> teachers = teacherRepo.findAllByFaculty(facultyId);
+        List<Teacher> teachers = teacherRepo.findByDepartment_Faculty_IdIs(facultyId);
         log.debug("Found {} teachers from faculty id({})", teachers.size(), facultyId);
         return teacherDtoMapper.toTeacherDtos(teachers);
     }
@@ -111,10 +112,19 @@ public class TeacherServiceImpl implements TeacherService {
     public List<TeacherDto> getFreeTeachersOnLessonTime(LocalDateTime startTime,
                                                         LocalDateTime endTime) {
         log.debug("Getting active teachers free from {} to {}", startTime, endTime);
+        List<Teacher> busyTeachers =
+            teacherRepo.findBusyTeachersOnTime(startTime, endTime);
+        List<Integer> busyTeacherIds = getIdsFromTeachers(busyTeachers);
         List<Teacher> freeTeachers =
-            teacherRepo.findFreeTeachersOnLessonTime(startTime, endTime);
+            teacherRepo.findByActiveIsTrueAndIdNotInOrderByLastNameAscFirstNameAsc(busyTeacherIds);
         log.debug("Found {} active free teachers", freeTeachers.size());
         return teacherDtoMapper.toTeacherDtos(freeTeachers);
+    }
+
+    private List<Integer> getIdsFromTeachers(List<Teacher> teachers) {
+        return teachers.stream()
+            .map(Teacher::getId)
+            .collect(Collectors.toList());
     }
 
 }

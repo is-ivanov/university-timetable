@@ -185,7 +185,7 @@ class TeacherServiceImplTest {
         List<Teacher> teachers = createTestTeachers(FACULTY_ID1);
         List<TeacherDto> teacherDtos = createTestTeacherDtos(FACULTY_ID1);
 
-        when(teacherRepoMock.findAllByFaculty(FACULTY_ID1)).thenReturn(teachers);
+        when(teacherRepoMock.findByDepartment_Faculty_IdIs(FACULTY_ID1)).thenReturn(teachers);
         when(mapperMock.toTeacherDtos(teachers)).thenReturn(teacherDtos);
 
         assertThat(teacherService.getAllByFaculty(FACULTY_ID1)).isEqualTo(teacherDtos);

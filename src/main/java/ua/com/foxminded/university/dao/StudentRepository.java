@@ -8,6 +8,7 @@ import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Student;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -22,29 +23,38 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
 
     List<Student> findAllByActiveTrue();
 
-    @Query("SELECT s " +
-        "FROM Student s " +
-        "WHERE s.group.id = :groupId " +
-        "AND s.group.active = TRUE " +
-        "AND s.active = TRUE " +
-        "AND s.id NOT IN " +
-        "( " +
-        "SELECT s2.id " +
-        "FROM Student s2 " +
-        "JOIN s2.lessons l " +
-        "WHERE l.timeEnd >= :startTime " +
-        "AND l.timeStart <= :endTime " +
-        ") " +
-        "ORDER BY s.lastName, s.firstName")
-    List<Student> findFreeStudentsFromGroup(int groupId,
-                                            LocalDateTime startTime,
-                                            LocalDateTime endTime);
+//    @Query("SELECT s " +
+//        "FROM Student s " +
+//        "WHERE s.group.id = :groupId " +
+//        "AND s.group.active = TRUE " +
+//        "AND s.active = TRUE " +
+//        "AND s.id NOT IN " +
+//        "( " +
+//        "SELECT s2.id " +
+//        "FROM Student s2 " +
+//        "JOIN s2.lessons l " +
+//        "WHERE l.timeEnd >= :startTime " +
+//        "AND l.timeStart <= :endTime " +
+//        ") " +
+//        "ORDER BY s.lastName, s.firstName")
+//    List<Student> findFreeStudentsFromGroup(int groupId,
+//                                            LocalDateTime startTime,
+//                                            LocalDateTime endTime);
 
     List<Student> findAllByLessonsTimeEndGreaterThanEqualAndLessonsTimeStartLessThanEqual(LocalDateTime from,
                                                                                           LocalDateTime to);
 
     default List<Student> findAllBusyStudents(LocalDateTime from, LocalDateTime to) {
         return findAllByLessonsTimeEndGreaterThanEqualAndLessonsTimeStartLessThanEqual(from, to);
+    }
+
+    List<Student> findAllByIdNotInAndActiveIsTrueAndGroup_IdIsAndGroup_ActiveIsTrueOrderByLastNameAscFirstNameAsc(
+        Collection<Integer> studentIds, Integer groupId);
+
+    default List<Student> findAllFromGroupExcluded(Collection<Integer> studentIds,
+                                                   Integer groupId) {
+        return findAllByIdNotInAndActiveIsTrueAndGroup_IdIsAndGroup_ActiveIsTrueOrderByLastNameAscFirstNameAsc(
+            studentIds, groupId);
     }
 
 }

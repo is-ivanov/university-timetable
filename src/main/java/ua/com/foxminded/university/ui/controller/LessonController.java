@@ -162,7 +162,7 @@ public class LessonController {
 
     @DeleteMapping("/{id}/students")
     public String removeStudentFromLesson(@PathVariable("id") int lessonId,
-                                          @RequestParam int[] studentIds,
+                                          @RequestParam Integer[] studentIds,
                                           HttpServletRequest request) {
         if (studentIds.length == 1) {
             log.debug("Remove student id({}) from lesson id({})", studentIds, lessonId);

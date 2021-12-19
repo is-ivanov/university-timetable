@@ -195,6 +195,7 @@ public class TestObjects {
             .lastName(LAST_NAME_FIRST_STUDENT)
             .group(testGroup)
             .active(true)
+            .lessons(new HashSet<>())
             .build();
     }
 

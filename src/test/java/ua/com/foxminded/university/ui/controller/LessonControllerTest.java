@@ -405,7 +405,7 @@ class LessonControllerTest {
             int studentId1 = 15;
             int studentId2 = 42;
             int studentId3 = 1;
-            int[] studentIds = new int[] {studentId1, studentId2, studentId3};
+            Integer[] studentIds = new Integer[] {studentId1, studentId2, studentId3};
             mockMvc.perform(delete(URI_LESSONS_ID_STUDENTS, lessonId)
                     .param("studentIds", String.valueOf(studentId1),
                         String.valueOf(studentId2), String.valueOf(studentId3)))

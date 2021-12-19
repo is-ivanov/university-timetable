@@ -13,6 +13,7 @@ import ua.com.foxminded.university.domain.service.interfaces.RoomService;
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -60,7 +61,10 @@ public class RoomServiceImpl implements RoomService {
     public List<Room> getFreeRoomsOnLessonTime(LocalDateTime startTime,
                                                LocalDateTime endTime) {
         log.debug("Getting free rooms from {} to {}", startTime, endTime);
-        List<Room> freeRooms = roomRepo.findFreeRoomsOnLessonTime(startTime, endTime);
+        List<Room> busyRooms = findBusyRoomsOnTime(startTime, endTime);
+        List<Integer> busyRoomIds = getIdsFromRooms(busyRooms);
+        List<Room> freeRooms =
+            roomRepo.findByIdNotInOrderByBuildingAscNumberAsc(busyRoomIds);
         log.debug("Found {} free rooms", freeRooms.size());
         return freeRooms;
     }
@@ -73,4 +77,16 @@ public class RoomServiceImpl implements RoomService {
             pageRooms.getNumber());
         return pageRooms;
     }
+
+    private List<Room> findBusyRoomsOnTime(LocalDateTime from, LocalDateTime to) {
+        log.debug("Getting busy rooms from {} to {}", from, to);
+        return roomRepo.findBusyRoomsOnTime(from, to);
+    }
+
+    private List<Integer> getIdsFromRooms(List<Room> rooms) {
+        return rooms.stream()
+            .map(Room::getId)
+            .collect(Collectors.toList());
+    }
+
 }
