@@ -135,7 +135,7 @@ public class GroupServiceImpl implements GroupService {
         List<Integer> busyStudentIds = studentService.getIdsFromStudents(busyStudents);
         List<Group> groups;
         if (busyStudentIds.isEmpty()) {
-            groups = groupRepo.findAllByActiveTrue();
+            groups = groupRepo.findAllByActiveTrueAndFaculty_IdOrderByNameAsc(facultyId);
         } else {
             groups = groupRepo.findAllActiveWithoutStudentsByFaculty(busyStudentIds,
                 facultyId);

@@ -24,5 +24,5 @@ logging:
     root: WARN
     web: INFO
     sql: DEBUG
-    ua.com.foxminded.university: INFO
+    ua.com.foxminded.university: DEBUG
     org.hibernate.type.descriptor.sql: TRACE

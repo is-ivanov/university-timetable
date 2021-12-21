@@ -26,7 +26,7 @@ public class LessonDto {
     private String teacherFullName;
     private int roomId;
     private String buildingAndRoom;
-    private Set<StudentDto> students = new HashSet<>();
+    private Set<StudentDto> students;
 
     @DateTimeFormat(pattern = DATE_TIME_PATTERN)
     @JsonFormat(pattern = DATE_TIME_PATTERN)

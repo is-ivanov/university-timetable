@@ -1,8 +1,6 @@
 package ua.com.foxminded.university.domain.mapper;
 
-import org.mapstruct.InheritInverseConfiguration;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.mapstruct.*;
 import ua.com.foxminded.university.domain.dto.LessonDto;
 import ua.com.foxminded.university.domain.entity.Lesson;
 
@@ -26,5 +24,8 @@ public interface LessonDtoMapper {
     List<LessonDto> toLessonDtos(List<Lesson> lessons);
 
     List<LessonDto> toLessonDtos(Iterable<Lesson> lessons);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateLessonFromDto(LessonDto lessonDto, @MappingTarget Lesson lesson);
 
 }

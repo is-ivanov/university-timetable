@@ -12,7 +12,6 @@ public interface GroupRepository extends JpaRepository<Group, Integer> {
 
     List<Group> findAllByFacultyId(int facultyId);
 
-
 //    @Query("SELECT DISTINCT g " +
 //        "FROM Group g " +
 //        "LEFT JOIN Student s ON s.group = g " +
@@ -34,6 +33,10 @@ public interface GroupRepository extends JpaRepository<Group, Integer> {
 //                                                    LocalDateTime endTime);
 
     List<Group> findAllByActiveTrue();
+
+    List<Group> findAllByActiveTrueAndFaculty_IdOrderByNameAsc(Integer facultyId);
+
+
 
     @Query("SELECT DISTINCT g " +
            "FROM Group g " +
