@@ -9,8 +9,6 @@ import java.util.List;
 
 public interface LessonService extends Service<Lesson, LessonDto> {
 
-    void update(LessonDto lessonDto);
-
     void addStudentToLesson(int lessonId, int studentId);
 
     void addStudentsFromGroupToLesson(int groupId, int lessonId);

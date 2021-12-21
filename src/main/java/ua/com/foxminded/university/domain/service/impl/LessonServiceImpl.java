@@ -71,17 +71,6 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public void update(LessonDto lessonDto) {
-        Lesson existingLesson = getLessonById(lessonDto.getId());
-        lessonDtoMapper.updateLessonFromDto(lessonDto, existingLesson);
-        log.debug("Check lesson id({}) before updating", existingLesson.getId());
-        checkLesson(existingLesson);
-        log.debug("Saving ({})", existingLesson);
-        lessonRepo.save(existingLesson);
-        log.debug("{} saved successfully", existingLesson);
-    }
-
-    @Override
     public void delete(int id) {
         log.debug("Start deleting lesson id({})", id);
         log.debug("Deleting all students from lesson id({})", id);
@@ -100,7 +89,6 @@ public class LessonServiceImpl implements LessonService {
                 String.format("Student id(%d) not found", studentId)));
         checkAndSaveStudentToLesson(lesson, student);
     }
-
 
     @Override
     public void addStudentsFromGroupToLesson(int groupId, int lessonId) {

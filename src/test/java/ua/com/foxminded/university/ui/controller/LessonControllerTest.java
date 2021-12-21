@@ -23,7 +23,6 @@ import ua.com.foxminded.university.domain.filter.LessonFilter;
 import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.*;
 
-import java.util.HashSet;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -279,7 +278,6 @@ class LessonControllerTest {
                 .roomId(ROOM_ID1)
                 .timeStart(DATE_START_FIRST_LESSON)
                 .timeEnd(DATE_END_FIRST_LESSON)
-                .students(new HashSet<>())
                 .build();
             Lesson lesson = createTestLesson(ID1);
 
@@ -359,7 +357,6 @@ class LessonControllerTest {
                 .roomId(ROOM_ID1)
                 .timeStart(DATE_START_FIRST_LESSON)
                 .timeEnd(DATE_END_FIRST_LESSON)
-                .students(new HashSet<>())
                 .build();
             Lesson testLesson = createTestLesson(lessonId);
             when(lessonDtoMapperMock.toLesson(testLessonDto)).thenReturn(testLesson);

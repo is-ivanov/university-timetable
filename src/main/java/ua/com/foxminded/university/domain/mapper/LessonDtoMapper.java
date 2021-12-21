@@ -1,6 +1,8 @@
 package ua.com.foxminded.university.domain.mapper;
 
-import org.mapstruct.*;
+import org.mapstruct.InheritInverseConfiguration;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import ua.com.foxminded.university.domain.dto.LessonDto;
 import ua.com.foxminded.university.domain.entity.Lesson;
 
@@ -14,8 +16,7 @@ public interface LessonDtoMapper {
     @Mapping(target = "teacherId", source = "teacher.id")
     @Mapping(target = "teacherFullName", source = "teacher.fullName")
     @Mapping(target = "roomId", source = "room.id")
-    @Mapping(target = "buildingAndRoom",
-        expression = "java(lesson.getRoom().getBuildingAndRoom())")
+    @Mapping(target = "buildingAndRoom", expression = "java(lesson.getRoom().getBuildingAndRoom())")
     LessonDto toLessonDto(Lesson lesson);
 
     @InheritInverseConfiguration(name = "toLessonDto")
@@ -24,8 +25,5 @@ public interface LessonDtoMapper {
     List<LessonDto> toLessonDtos(List<Lesson> lessons);
 
     List<LessonDto> toLessonDtos(Iterable<Lesson> lessons);
-
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateLessonFromDto(LessonDto lessonDto, @MappingTarget Lesson lesson);
 
 }
