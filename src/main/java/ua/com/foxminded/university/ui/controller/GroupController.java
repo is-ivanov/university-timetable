@@ -60,7 +60,7 @@ public class GroupController {
     public String createGroup(@ModelAttribute Group group,
                               HttpServletRequest request) {
         log.debug("Creating {}", group);
-        groupService.add(group);
+        groupService.save(group);
         log.debug("{} is created", group);
         return defineRedirect(request);
     }
@@ -79,7 +79,7 @@ public class GroupController {
                               @PathVariable("id") int groupId,
                               HttpServletRequest request) {
         log.debug("Updating group id({})", groupId);
-        groupService.update(group);
+        groupService.save(group);
         log.debug("Group id({}) is updated", groupId);
         return defineRedirect(request);
     }

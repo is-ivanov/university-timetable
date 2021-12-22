@@ -24,9 +24,9 @@
         sortDirection=${#strings.toLowerCase(page.sort.toList().get(0).direction)},
         sortClass='th-sort-' + ${sortDirection}">
         <th scope="col" class="col-1 th-sort sort-server" id="room_id"
-            th:classappend="${sortProperty eq 'room_id'}? ${sortClass} : ''"
+            th:classappend="${sortProperty eq 'id'}? ${sortClass} : ''"
             th:data-href="@{${uri}(size=${page.size}, page=${page.number},
-              sort='room_id,' + (${sortProperty eq 'room_id' and sortDirection eq 'asc'}? 'desc' : 'asc'))}">
+              sort='id,' + (${sortProperty eq 'id' and sortDirection eq 'asc'}? 'desc' : 'asc'))}">
           id
         </th>
         <th scope="col" class="col th-sort sort-server" id="building"
@@ -36,9 +36,9 @@
           Building
         </th>
         <th scope="col" class="col th-sort sort-server" id="room_number"
-            th:classappend="${sortProperty eq 'room_number'}? ${sortClass} : ''"
+            th:classappend="${sortProperty eq 'number'}? ${sortClass} : ''"
             th:data-href="@{${uri}(size=${page.size}, page=${page.number},
-              sort='room_number,' + (${sortProperty eq 'room_number' and sortDirection eq 'asc'}? 'desc' : 'asc'))}">
+              sort='number,' + (${sortProperty eq 'number' and sortDirection eq 'asc'}? 'desc' : 'asc'))}">
           Room Number
         </th>
         <th scope="col" class="col">Action</th>

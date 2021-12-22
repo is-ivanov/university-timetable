@@ -77,7 +77,7 @@ public class StudentController {
                                 HttpServletRequest request) {
         log.debug("Creating student [{} {} {}]", studentDto.getFirstName(),
             studentDto.getPatronymic(), studentDto.getLastName());
-        studentService.add(studentDtoMapper.toStudent(studentDto));
+        studentService.save(studentDtoMapper.toStudent(studentDto));
         log.debug("Student [{}, {}, {}] is created", studentDto.getFirstName(),
             studentDto.getPatronymic(), studentDto.getLastName());
         return defineRedirect(request);
@@ -98,7 +98,7 @@ public class StudentController {
                                 @PathVariable("id") int studentId,
                                 HttpServletRequest request) {
         log.debug("Updating student id({})", studentId);
-        studentService.update(studentDtoMapper.toStudent(studentDto));
+        studentService.save(studentDtoMapper.toStudent(studentDto));
         log.debug("Student id({}) is updated", studentId);
         return defineRedirect(request);
     }

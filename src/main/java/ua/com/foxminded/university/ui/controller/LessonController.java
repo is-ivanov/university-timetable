@@ -122,7 +122,7 @@ public class LessonController {
     public String createLesson(@ModelAttribute LessonDto lessonDto,
                                HttpServletRequest request) {
         log.debug("Creating lesson {}", lessonDto);
-        lessonService.add(lessonDtoMapper.toLesson(lessonDto));
+        lessonService.save(lessonDtoMapper.toLesson(lessonDto));
         log.debug("Lesson {} is created", lessonDto);
         return defineRedirect(request);
     }
@@ -155,14 +155,14 @@ public class LessonController {
                                HttpServletRequest request) {
         log.debug("Updating lesson id({})", lessonId);
         lessonDto.setId(lessonId);
-        lessonService.update(lessonDtoMapper.toLesson(lessonDto));
+        lessonService.update(lessonDto);
         log.debug("Lesson id({}) updated successfully", lessonId);
         return defineRedirect(request);
     }
 
     @DeleteMapping("/{id}/students")
     public String removeStudentFromLesson(@PathVariable("id") int lessonId,
-                                          @RequestParam int[] studentIds,
+                                          @RequestParam Integer[] studentIds,
                                           HttpServletRequest request) {
         if (studentIds.length == 1) {
             log.debug("Remove student id({}) from lesson id({})", studentIds, lessonId);

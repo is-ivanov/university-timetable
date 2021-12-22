@@ -45,7 +45,7 @@ class FacultyControllerTest {
     public static final String URI_FACULTIES_ID_DEPARTMENTS = "/faculties/{id}/departments";
     public static final String URI_FACULTIES_ID_TEACHERS = "/faculties/{id}/teachers";
     public static final String URI_FACULTIES_ID_GROUPS_FREE = "/faculties/{id}/groups/free";
-    public static final String FACULTY_NAME = "faculty_name";
+    public static final String FACULTY_NAME = "name";
     public static final String TIME_START = "time_start";
     public static final String TIME_END = "time_end";
     @Captor
@@ -184,7 +184,7 @@ class FacultyControllerTest {
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
 
-            verify(facultyServiceMock, times(1)).add(facultyCaptor.capture());
+            verify(facultyServiceMock, times(1)).save(facultyCaptor.capture());
             assertThat(facultyCaptor.getValue().getName(), is(equalTo(NAME_FIRST_FACULTY)));
         }
     }
@@ -230,7 +230,7 @@ class FacultyControllerTest {
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
 
-            verify(facultyServiceMock, times(1)).update(faculty);
+            verify(facultyServiceMock, times(1)).save(faculty);
         }
     }
 

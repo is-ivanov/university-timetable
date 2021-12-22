@@ -138,7 +138,7 @@ class DepartmentControllerTest {
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
 
-            verify(departmentServiceMock).add(departmentCaptor.capture());
+            verify(departmentServiceMock).save(departmentCaptor.capture());
 
             Department expectedCreatedDepartment = departmentCaptor.getValue();
             assertThat(expectedCreatedDepartment.getName(), is(NAME_FIRST_DEPARTMENT));
@@ -188,7 +188,7 @@ class DepartmentControllerTest {
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
 
-            verify(departmentServiceMock).update(departmentCaptor.capture());
+            verify(departmentServiceMock).save(departmentCaptor.capture());
 
             Department expectedCreatedDepartment = departmentCaptor.getValue();
             assertThat(expectedCreatedDepartment.getName(), is(NAME_FIRST_DEPARTMENT));

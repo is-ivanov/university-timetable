@@ -1,11 +1,16 @@
 INSERT INTO faculties (faculty_id, faculty_name)
-VALUES (1, 'IT faculty');
+VALUES (10, 'IT faculty');
+INSERT INTO faculties (faculty_id, faculty_name)
+VALUES (4, 'Chemistry faculty');
+
 
 INSERT INTO departments (department_id, department_name, faculty_id)
-VALUES (1, 'Java department', 1);
+VALUES (8, 'Java department', 10);
 
 INSERT INTO departments (department_id, department_name, faculty_id)
-VALUES (2, 'C# department', 1);
+VALUES (54, 'C# department', 10);
 
-SELECT SETVAL('hibernate_sequence',
-              (SELECT MAX(department_id) FROM departments));
+INSERT INTO departments (department_id, department_name, faculty_id)
+VALUES (24, 'JavaScript department', 4);
+
+SELECT SETVAL('hibernate_sequence', 100);

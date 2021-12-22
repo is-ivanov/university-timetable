@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ua.com.foxminded.university.dao.interfaces.FacultyRepository;
+import ua.com.foxminded.university.dao.FacultyRepository;
 import ua.com.foxminded.university.domain.entity.Faculty;
 
 import javax.persistence.EntityNotFoundException;
@@ -18,6 +18,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -32,19 +33,19 @@ class FacultyServiceImplTest {
     private FacultyServiceImpl facultyService;
 
     @Mock
-    private FacultyRepository facultyRepositoryMock;
+    private FacultyRepository facultyRepoMock;
 
     @BeforeEach
     void setUp() {
-        facultyService = new FacultyServiceImpl(facultyRepositoryMock);
+        facultyService = new FacultyServiceImpl(facultyRepoMock);
     }
 
     @Test
-    @DisplayName("test 'add' when call add method then should call Repository once")
-    void testAdd_CallDaoOnce() {
+    @DisplayName("test 'save' when call add method then should call Repository once")
+    void testSave_CallDaoOnce() {
         Faculty faculty = new Faculty();
-        facultyService.add(faculty);
-        verify(facultyRepositoryMock).add(faculty);
+        facultyService.save(faculty);
+        verify(facultyRepoMock).save(faculty);
     }
 
     @Nested
@@ -58,7 +59,7 @@ class FacultyServiceImplTest {
             Faculty expectedFaculty = new Faculty();
             expectedFaculty.setId(ID1);
             expectedFaculty.setName(FIRST_FACULTY_NAME);
-            when(facultyRepositoryMock.getById(ID1))
+            when(facultyRepoMock.findById(ID1))
                 .thenReturn(Optional.of(expectedFaculty));
             assertEquals(expectedFaculty, facultyService.getById(ID1));
         }
@@ -67,7 +68,7 @@ class FacultyServiceImplTest {
         @DisplayName("when Repository return empty Optional then method should throw" +
             " new EntityNotFoundException")
         void testReturnEmptyFaculty() {
-            when(facultyRepositoryMock.getById(ID1)).thenReturn(Optional.empty());
+            when(facultyRepoMock.findById(ID1)).thenReturn(Optional.empty());
             assertThatThrownBy(() -> facultyService.getById(ID1))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining("Faculty id(1) not found");
@@ -85,26 +86,17 @@ class FacultyServiceImplTest {
         List<Faculty> expectedFaculties = new ArrayList<>();
         expectedFaculties.add(faculty1);
         expectedFaculties.add(faculty2);
-        when(facultyRepositoryMock.getAll()).thenReturn(expectedFaculties);
+        when(facultyRepoMock.findAll()).thenReturn(expectedFaculties);
         assertEquals(expectedFaculties, facultyService.getAll());
-    }
-
-    @Test
-    @DisplayName("test 'update' when call update method then should call " +
-        "facultyDao once")
-    void testUpdate_CallDaoOnce() {
-        Faculty faculty = new Faculty();
-        facultyService.update(faculty);
-        verify(facultyRepositoryMock).update(faculty);
     }
 
     @Test
     @DisplayName("test 'delete' when call delete method then should call " +
         "facultyDao once")
     void testDelete_CallDaoOnce() {
-        Faculty faculty = new Faculty();
-        facultyService.delete(faculty);
-        verify(facultyRepositoryMock).delete(faculty);
+       int facultyId = anyInt();
+        facultyService.delete(facultyId);
+        verify(facultyRepoMock).deleteById(facultyId);
     }
 
     @Test
@@ -116,7 +108,7 @@ class FacultyServiceImplTest {
         LinkedList<Faculty> facultiesFromDao = new LinkedList<>();
         facultiesFromDao.add(firstFaculty);
         facultiesFromDao.add(secondFaculty);
-        when(facultyRepositoryMock.getAllSortedByNameAsc()).thenReturn(facultiesFromDao);
+        when(facultyRepoMock.findAllByOrderByNameAsc()).thenReturn(facultiesFromDao);
         assertEquals(facultiesFromDao, facultyService.getAllSortedByNameAsc());
     }
 }

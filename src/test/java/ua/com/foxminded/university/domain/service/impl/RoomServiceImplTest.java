@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ua.com.foxminded.university.dao.interfaces.RoomRepository;
+import ua.com.foxminded.university.dao.RoomRepository;
 import ua.com.foxminded.university.domain.entity.Room;
 
 import javax.persistence.EntityNotFoundException;
@@ -31,19 +31,19 @@ class RoomServiceImplTest {
     private RoomServiceImpl roomService;
 
     @Mock
-    private RoomRepository roomRepositoryMock;
+    private RoomRepository roomRepoMock;
 
     @BeforeEach
     void setUp(){
-        roomService = new RoomServiceImpl(roomRepositoryMock);
+        roomService = new RoomServiceImpl(roomRepoMock);
     }
 
     @Test
-    @DisplayName("test 'add' when call method then should call Repository once")
-    void testAdd_CallDaoOnce() {
+    @DisplayName("test 'save' when call method then should call Repository once")
+    void testSave_CallDaoOnce() {
         Room room = new Room();
-        roomService.add(room);
-        verify(roomRepositoryMock).add(room);
+        roomService.save(room);
+        verify(roomRepoMock).save(room);
     }
 
     @Nested
@@ -59,7 +59,7 @@ class RoomServiceImplTest {
             expectedRoom.setId(ID1);
             expectedRoom.setNumber(NUMBER_ROOM);
             expectedRoom.setBuilding(BUILDING);
-            when(roomRepositoryMock.getById(ID1)).thenReturn(Optional.of(expectedRoom));
+            when(roomRepoMock.findById(ID1)).thenReturn(Optional.of(expectedRoom));
             assertEquals(expectedRoom, roomService.getById(ID1));
         }
 
@@ -67,7 +67,7 @@ class RoomServiceImplTest {
         @DisplayName("when Repository return empty Optional then method should " +
             "return empty Room")
         void testReturnEmptyRoom() {
-            when(roomRepositoryMock.getById(ID1)).thenReturn(Optional.empty());
+            when(roomRepoMock.findById(ID1)).thenReturn(Optional.empty());
             assertThatThrownBy(() -> roomService.getById(ID1))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining("Room id(1) not found");
@@ -85,25 +85,8 @@ class RoomServiceImplTest {
         List<Room> expectedRooms = new ArrayList<>();
         expectedRooms.add(room1);
         expectedRooms.add(room2);
-        when(roomRepositoryMock.getAll()).thenReturn(expectedRooms);
+        when(roomRepoMock.findAll()).thenReturn(expectedRooms);
         assertEquals(expectedRooms, roomService.getAll());
     }
 
-    @Test
-    @DisplayName("test 'update' when call update method then should call " +
-        "roomDao once")
-    void testUpdate_CallDaoOnce() {
-        Room room = new Room();
-        roomService.update(room);
-        verify(roomRepositoryMock).update(room);
-    }
-
-    @Test
-    @DisplayName("test 'delete' when call delete method then should call " +
-        "roomDao once")
-    void testDelete_CallDaoOnce() {
-        Room room = new Room();
-        roomService.delete(room);
-        verify(roomRepositoryMock).delete(room);
-    }
 }

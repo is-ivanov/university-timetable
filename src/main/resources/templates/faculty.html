@@ -24,15 +24,15 @@
         sortDirection=${#strings.toLowerCase(page.sort.toList().get(0).direction)},
         sortClass='th-sort-' + ${sortDirection}">
         <th scope="col" class="col-1 th-sort sort-server" id="faculty_id"
-            th:classappend="${sortProperty eq 'faculty_id'}? ${sortClass} : ''"
+            th:classappend="${sortProperty eq 'id'}? ${sortClass} : ''"
             th:data-href="@{${uri}(size=${page.size}, page=${page.number},
-              sort='faculty_id,' + (${sortProperty eq 'faculty_id' and sortDirection eq 'asc'}? 'desc' : 'asc'))}">
+              sort='id,' + (${sortProperty eq 'id' and sortDirection eq 'asc'}? 'desc' : 'asc'))}">
           id
         </th>
         <th scope="col" class="col th-sort sort-server" id="faculty_name"
-            th:classappend="${sortProperty eq 'faculty_name'} ? ${sortClass} : ''"
+            th:classappend="${sortProperty eq 'name'} ? ${sortClass} : ''"
             th:data-href="@{${uri}(size=${page.size}, page=${page.number},
-              sort='faculty_name,' + (${sortProperty eq 'faculty_name' and sortDirection eq 'asc'}? 'desc' : 'asc'))}">
+              sort='name,' + (${sortProperty eq 'name' and sortDirection eq 'asc'}? 'desc' : 'asc'))}">
           Faculty Name
         </th>
         <th scope="col" class="col">Action</th>

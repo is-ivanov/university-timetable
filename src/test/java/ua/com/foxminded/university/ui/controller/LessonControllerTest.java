@@ -23,7 +23,6 @@ import ua.com.foxminded.university.domain.filter.LessonFilter;
 import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.*;
 
-import java.util.HashSet;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -279,7 +278,6 @@ class LessonControllerTest {
                 .roomId(ROOM_ID1)
                 .timeStart(DATE_START_FIRST_LESSON)
                 .timeEnd(DATE_END_FIRST_LESSON)
-                .students(new HashSet<>())
                 .build();
             Lesson lesson = createTestLesson(ID1);
 
@@ -296,7 +294,7 @@ class LessonControllerTest {
 
             verify(lessonDtoMapperMock, times(1))
                 .toLesson(lessonDto);
-            verify(lessonServiceMock, times(1)).add(lesson);
+            verify(lessonServiceMock, times(1)).save(lesson);
         }
     }
 
@@ -359,7 +357,6 @@ class LessonControllerTest {
                 .roomId(ROOM_ID1)
                 .timeStart(DATE_START_FIRST_LESSON)
                 .timeEnd(DATE_END_FIRST_LESSON)
-                .students(new HashSet<>())
                 .build();
             Lesson testLesson = createTestLesson(lessonId);
             when(lessonDtoMapperMock.toLesson(testLessonDto)).thenReturn(testLesson);
@@ -373,7 +370,7 @@ class LessonControllerTest {
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
 
-            verify(lessonServiceMock, times(1)).update(testLesson);
+            verify(lessonServiceMock, times(1)).save(testLesson);
         }
     }
 
@@ -405,7 +402,7 @@ class LessonControllerTest {
             int studentId1 = 15;
             int studentId2 = 42;
             int studentId3 = 1;
-            int[] studentIds = new int[] {studentId1, studentId2, studentId3};
+            Integer[] studentIds = new Integer[] {studentId1, studentId2, studentId3};
             mockMvc.perform(delete(URI_LESSONS_ID_STUDENTS, lessonId)
                     .param("studentIds", String.valueOf(studentId1),
                         String.valueOf(studentId2), String.valueOf(studentId3)))

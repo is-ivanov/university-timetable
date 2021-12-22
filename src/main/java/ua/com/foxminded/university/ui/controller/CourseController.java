@@ -29,7 +29,7 @@ public class  CourseController {
 
     @GetMapping
     public String showCourses(Model model,
-                              @PageableDefault(sort = "course_name") Pageable pageable) {
+                              @PageableDefault(sort = "name") Pageable pageable) {
         log.debug("Getting data for course.html");
         Page<Course> pageCourses = courseService.getAllSortedPaginated(pageable);
         model.addAttribute("courses", pageCourses.getContent());
@@ -47,7 +47,7 @@ public class  CourseController {
     public String createCourse(@ModelAttribute Course course,
                                HttpServletRequest request) {
         log.debug("Creating {}", course);
-        courseService.add(course);
+        courseService.save(course);
         log.debug("{} is created", course);
         return defineRedirect(request);
     }
@@ -66,7 +66,7 @@ public class  CourseController {
                                @PathVariable("id") int courseId,
                                HttpServletRequest request) {
         log.debug("Updating course id({})", courseId);
-        courseService.update(course);
+        courseService.save(course);
         log.debug("Course id({}) is updated", courseId);
         return defineRedirect(request);
     }

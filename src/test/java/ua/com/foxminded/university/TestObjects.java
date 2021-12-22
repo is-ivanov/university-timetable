@@ -18,6 +18,7 @@ public class TestObjects {
     public static final int FACULTY_ID2 = 4;
     public static final int DEPARTMENT_ID1 = 8;
     public static final int DEPARTMENT_ID2 = 54;
+    public static final int DEPARTMENT_ID3 = 24;
     public static final int TEACHER_ID1 = 7;
     public static final int TEACHER_ID2 = 78;
     public static final int TEACHER_ID3 = 12;
@@ -194,6 +195,7 @@ public class TestObjects {
             .lastName(LAST_NAME_FIRST_STUDENT)
             .group(testGroup)
             .active(true)
+            .lessons(new HashSet<>())
             .build();
     }
 

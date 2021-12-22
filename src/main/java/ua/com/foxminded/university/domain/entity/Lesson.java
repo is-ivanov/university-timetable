@@ -1,5 +1,7 @@
 package ua.com.foxminded.university.domain.entity;
 
+import com.querydsl.core.annotations.Config;
+import com.querydsl.core.annotations.QueryInit;
 import lombok.*;
 import org.hibernate.Hibernate;
 
@@ -9,6 +11,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+//@Config(entityAccessors=true)
 @Getter
 @Setter
 @ToString
@@ -40,6 +43,7 @@ public class Lesson {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "teacher_id", nullable = false,
         foreignKey = @ForeignKey(name = "fk_teacher"))
+    @QueryInit("department.faculty")
     private Teacher teacher;
 
     @ToString.Exclude

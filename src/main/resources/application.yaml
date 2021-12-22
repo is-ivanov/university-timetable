@@ -6,21 +6,23 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: validate
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQL10Dialect
         format_sql: true
         highlight_sql: true
     open-in-view: false
+    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
   mvc:
     hiddenmethod:
       filter:
         enabled: true
-#logging:
-#  level:
-#    web: debug
-#    org.hibernate.SQL: debug
-#    ua.com.foxminded.university: debug
+logging:
+  level:
+    root: WARN
+    web: INFO
+    sql: DEBUG
+    ua.com.foxminded.university: DEBUG
+    org.hibernate.type.descriptor.sql: TRACE

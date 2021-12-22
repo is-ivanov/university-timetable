@@ -4,13 +4,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.com.foxminded.university.dao.interfaces.GroupRepository;
-import ua.com.foxminded.university.dao.interfaces.StudentRepository;
+import ua.com.foxminded.university.dao.GroupRepository;
+import ua.com.foxminded.university.dao.StudentRepository;
 import ua.com.foxminded.university.domain.dto.GroupDto;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
+import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.domain.mapper.GroupDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
+import ua.com.foxminded.university.domain.service.interfaces.StudentService;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
@@ -25,21 +27,22 @@ public class GroupServiceImpl implements GroupService {
 
     public static final String FOUND_GROUPS = "Found {} groups";
 
-    private final GroupRepository groupRepository;
-    private final StudentRepository studentRepository;
+    private final GroupRepository groupRepo;
+    private final StudentRepository studentRepo;
     private final GroupDtoMapper groupDtoMapper;
+    private final StudentService studentService;
 
     @Override
-    public void add(Group group) {
-        log.debug("Adding {}", group);
-        groupRepository.add(group);
-        log.debug("{} added successfully", group);
+    public void save(Group group) {
+        log.debug("Saving {}", group);
+        groupRepo.save(group);
+        log.debug("{} saved successfully", group);
     }
 
     @Override
     public GroupDto getById(int id) {
         log.debug("Getting group by id({})", id);
-        Group group = groupRepository.getById(id)
+        Group group = groupRepo.findById(id)
             .orElseThrow(() -> new EntityNotFoundException(
                 String.format("Group id(%d) not found", id)));
         log.debug("Found {}", group);
@@ -49,29 +52,15 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public List<GroupDto> getAll() {
         log.debug("Getting all groups");
-        List<Group> groups = groupRepository.getAll();
+        List<Group> groups = groupRepo.findAll();
         log.debug(FOUND_GROUPS, groups.size());
         return groupDtoMapper.toGroupDtos(groups);
     }
 
     @Override
-    public void update(Group group) {
-        log.debug("Updating {}", group);
-        groupRepository.update(group);
-        log.debug("Update {}", group);
-    }
-
-    @Override
-    public void delete(Group group) {
-        log.debug("Deleting {}", group);
-        groupRepository.delete(group);
-        log.debug("Delete {}", group);
-    }
-
-    @Override
     public void delete(int id) {
         log.debug("Deleting group id({})", id);
-        groupRepository.delete(id);
+        groupRepo.deleteById(id);
         log.debug("Delete group id({})", id);
     }
 
@@ -79,7 +68,7 @@ public class GroupServiceImpl implements GroupService {
     public void deactivateGroup(Group group) {
         log.debug("Deactivating {}", group);
         group.setActive(false);
-        groupRepository.update(group);
+        groupRepo.save(group);
         log.debug("Deactivate {}", group);
     }
 
@@ -95,13 +84,13 @@ public class GroupServiceImpl implements GroupService {
         newGroup.setFaculty(facultyNewGroup);
         newGroup.setActive(true);
         log.debug("Saving new {} in DB", newGroup);
-        groupRepository.add(newGroup);
+        groupRepo.save(newGroup);
         log.debug("Replace all students from groups id ({}) into new {}",
             groupsId, newGroup);
         groups.forEach(group -> {
-            studentRepository.getStudentsByGroup(group).forEach(student -> {
+            studentRepo.findAllByGroup(group).forEach(student -> {
                 student.setGroup(newGroup);
-                studentRepository.update(student);
+                studentRepo.save(student);
             });
             log.debug("Deactivating former {}", group);
             deactivateGroup(group);
@@ -113,37 +102,54 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public List<GroupDto> getAllByFacultyId(int facultyId) {
         log.debug("Getting all groups by faculty id({})", facultyId);
-        List<Group> groups = groupRepository.getAllByFacultyId(facultyId);
+        List<Group> groups = groupRepo.findAllByFacultyId(facultyId);
         log.debug(FOUND_GROUPS, groups.size());
         return groupDtoMapper.toGroupDtos(groups);
     }
 
     @Override
     public List<GroupDto> getFreeGroupsOnLessonTime(LocalDateTime startTime,
-                                                 LocalDateTime endTime) {
+                                                    LocalDateTime endTime) {
         log.debug("Getting groups free from {} to {}", startTime, endTime);
-        List<Group> groups = groupRepository.getFreeGroupsOnLessonTime(startTime, endTime);
+        List<Student> busyStudents =
+            studentService.findAllBusyStudents(startTime, endTime);
+        List<Integer> busyStudentIds = studentService.getIdsFromStudents(busyStudents);
+        List<Group> groups;
+        if (busyStudentIds.isEmpty()) {
+            groups = groupRepo.findAllByActiveTrue();
+        } else {
+            groups = groupRepo.findAllActiveWithoutStudents(busyStudentIds);
+        }
         log.debug(FOUND_GROUPS, groups.size());
         return groupDtoMapper.toGroupDtos(groups);
     }
 
     @Override
     public List<GroupDto> getFreeGroupsByFacultyOnLessonTime(int facultyId,
-                                                          LocalDateTime startTime,
-                                                          LocalDateTime endTime) {
+                                                             LocalDateTime startTime,
+                                                             LocalDateTime endTime) {
         log.debug("Getting active groups from faculty id({}) free from {} to {}",
             facultyId, startTime, endTime);
-        List<Group> freeGroups = groupRepository
-            .getFreeGroupsByFacultyOnLessonTime(facultyId, startTime, endTime);
-        log.debug(FOUND_GROUPS, freeGroups.size());
-        return groupDtoMapper.toGroupDtos(freeGroups);
+        List<Student> busyStudents =
+            studentService.findAllBusyStudents(startTime, endTime);
+        List<Integer> busyStudentIds = studentService.getIdsFromStudents(busyStudents);
+        List<Group> groups;
+        if (busyStudentIds.isEmpty()) {
+            groups = groupRepo.findAllByActiveTrueAndFaculty_IdOrderByNameAsc(facultyId);
+        } else {
+            groups = groupRepo.findAllActiveWithoutStudentsByFaculty(busyStudentIds,
+                facultyId);
+        }
+        log.debug(FOUND_GROUPS, groups.size());
+        return groupDtoMapper.toGroupDtos(groups);
     }
 
     @Override
     public List<Group> getActiveGroups() {
         log.debug("Getting all active groups");
-        List<Group> groups = groupRepository.getActiveGroups();
+        List<Group> groups = groupRepo.findAllByActiveTrue();
         log.debug(FOUND_GROUPS, groups.size());
         return groups;
     }
+
 }

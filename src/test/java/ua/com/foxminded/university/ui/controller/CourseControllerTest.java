@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
@@ -31,6 +30,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static ua.com.foxminded.university.domain.entity.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 class CourseControllerTest {
@@ -74,7 +74,7 @@ class CourseControllerTest {
         void getRequestWithoutParameters() throws Exception {
             int totalPages = 1;
             int currentPage = 0;
-            Pageable pageable = PageRequest.of(currentPage, 10, Sort.by("course_name"));
+            Pageable pageable = PageRequest.of(currentPage, 10, Sort.by("name"));
             Course firstCourse = new Course(ID1, NAME_FIRST_COURSE);
             Course secondCourse = new Course(ID2, NAME_SECOND_COURSE);
 
@@ -107,7 +107,7 @@ class CourseControllerTest {
         void getRequestWithPage2() throws Exception {
             int page = 2;
 
-            Pageable pageable = PageRequest.of(page, 10, Sort.by("course_name"));
+            Pageable pageable = PageRequest.of(page, 10, Sort.by("name"));
             Course firstCourse = new Course(ID1, NAME_FIRST_COURSE);
             Course secondCourse = new Course(ID2, NAME_SECOND_COURSE);
 
@@ -173,10 +173,10 @@ class CourseControllerTest {
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
 
-            verify(courseServiceMock).add(courseCaptor.capture());
+            verify(courseServiceMock).save(courseCaptor.capture());
             Course expectedCourse = courseCaptor.getValue();
-            assertThat(expectedCourse.getId()).isNull();
-            assertThat(expectedCourse.getName()).isEqualTo(NAME_FIRST_COURSE);
+            assertThat(expectedCourse).hasId(null);
+            assertThat(expectedCourse).hasName(NAME_FIRST_COURSE);
         }
     }
 
@@ -219,7 +219,7 @@ class CourseControllerTest {
                 .andExpect(status().is3xxRedirection());
 
             Course updatedCourse = new Course(courseId, NAME_FIRST_COURSE);
-            verify(courseServiceMock).update(updatedCourse);
+            verify(courseServiceMock).save(updatedCourse);
         }
     }
 

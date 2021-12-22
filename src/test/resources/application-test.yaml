@@ -1,0 +1,15 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        highlight_sql: true
+        generate_statistics: true
+    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+  output:
+    ansi:
+      enabled: ALWAYS
+  liquibase:
+    enabled: false

@@ -90,7 +90,7 @@ public class TeacherController {
                                 HttpServletRequest request) {
         log.debug("Creating teacher [{} {} {}]", teacherDto.getFirstName(),
             teacherDto.getPatronymic(), teacherDto.getLastName());
-        teacherService.add(teacherMapper.toTeacher(teacherDto));
+        teacherService.save(teacherMapper.toTeacher(teacherDto));
         log.debug("Teacher [{}, {}, {}] is created", teacherDto.getFirstName(),
             teacherDto.getPatronymic(), teacherDto.getLastName());
         return defineRedirect(request);
@@ -111,7 +111,7 @@ public class TeacherController {
                                 @PathVariable("id") int teacherId,
                                 HttpServletRequest request) {
         log.debug("Updating teacher id({})", teacherId);
-        teacherService.update(teacherMapper.toTeacher(teacherDto));
+        teacherService.save(teacherMapper.toTeacher(teacherDto));
         log.debug("Teacher id({}) is updated", teacherId);
         return defineRedirect(request);
     }

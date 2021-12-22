@@ -37,7 +37,7 @@ public class RoomController {
 
     @GetMapping
     public String showRooms(Model model,
-                            @PageableDefault(sort = "room_number") Pageable pageable) {
+                            @PageableDefault(sort = "number") Pageable pageable) {
         log.debug("Getting data for room.html");
         Page<Room> pageRooms = roomService.getAllSortedPaginated(pageable);
         model.addAttribute("rooms", pageRooms.getContent());
@@ -78,7 +78,7 @@ public class RoomController {
     public String createRoom(@ModelAttribute Room room,
                              HttpServletRequest request) {
         log.debug("Creating {}", room);
-        roomService.add(room);
+        roomService.save(room);
         log.debug("{} is created", room);
         return defineRedirect(request);
     }
@@ -88,7 +88,7 @@ public class RoomController {
                              @PathVariable("id") int roomId,
                              HttpServletRequest request) {
         log.debug("Updating room id({})", roomId);
-        roomService.update(room);
+        roomService.save(room);
         log.debug("Room id({}) is updated", roomId);
         return defineRedirect(request);
     }

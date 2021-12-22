@@ -16,13 +16,14 @@ public interface LessonDtoMapper {
     @Mapping(target = "teacherId", source = "teacher.id")
     @Mapping(target = "teacherFullName", source = "teacher.fullName")
     @Mapping(target = "roomId", source = "room.id")
-    @Mapping(target = "buildingAndRoom",
-        expression = "java(lesson.getRoom().getBuildingAndRoom())")
+    @Mapping(target = "buildingAndRoom", expression = "java(lesson.getRoom().getBuildingAndRoom())")
     LessonDto toLessonDto(Lesson lesson);
 
     @InheritInverseConfiguration(name = "toLessonDto")
     Lesson toLesson(LessonDto lessonDto);
 
     List<LessonDto> toLessonDtos(List<Lesson> lessons);
+
+    List<LessonDto> toLessonDtos(Iterable<Lesson> lessons);
 
 }

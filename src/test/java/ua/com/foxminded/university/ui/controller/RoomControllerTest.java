@@ -38,7 +38,7 @@ import static ua.com.foxminded.university.ui.controller.RoomController.URI_ROOMS
 class RoomControllerTest {
 
     public static final String URI_ROOMS_ID = "/rooms/{id}";
-    public static final String ROOM_NUMBER = "room_number";
+    public static final String ROOM_NUMBER = "number";
     public static final String URI_ROOMS_ROOM_ID_TIMETABLE = "/rooms/{id}/timetable";
     public static final String URI_ROOMS_FREE = "/rooms/free";
     public static final LocalDateTime START_TIME_TIMETABLE =
@@ -217,7 +217,7 @@ class RoomControllerTest {
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
             verify(roomServiceMock, times(1))
-                .add(roomCaptor.capture());
+                .save(roomCaptor.capture());
             Room expectedRoom = roomCaptor.getValue();
             assertThat(expectedRoom.getBuilding(), is(BUILDING_FIRST_ROOM));
             assertThat(expectedRoom.getNumber(), is(NUMBER_FIRST_ROOM));
@@ -238,7 +238,7 @@ class RoomControllerTest {
                     .param("number", NUMBER_FIRST_ROOM))
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
-            verify(roomServiceMock, times(1)).update(roomCaptor.capture());
+            verify(roomServiceMock, times(1)).save(roomCaptor.capture());
             Room newRoom = roomCaptor.getValue();
             assertThat(newRoom.getBuilding(), is(equalTo(BUILDING_FIRST_ROOM)));
             assertThat(newRoom.getNumber(), is(equalTo(NUMBER_FIRST_ROOM)));
