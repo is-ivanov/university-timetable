@@ -88,27 +88,6 @@ class LessonRepositoryTest extends BaseRepositoryIT {
         }
     }
 
-//    @Nested
-//    @DisplayName("test 'deleteStudentFromLesson' method")
-//    class DeleteStudentFromLessonTest {
-//
-//        @Test
-//        @DisplayName("after delete student_id1 from lesson_id1 Set students " +
-//            "from lesson should must be one less than it was")
-//        void testDeleteStudentFromLesson() {
-//            int expectedNumberStudents = 1;
-//
-//            repo.deleteStudentFromLesson(LESSON_ID1, STUDENT_ID1);
-//
-//            Lesson lessonAfter = repo.findById(LESSON_ID1).get();
-//            Set<Student> studentsAfter = lessonAfter.getStudents();
-//
-//            assertThat(studentsAfter).hasSize(expectedNumberStudents);
-//            assertThat(studentsAfter).extracting(Student::getId)
-//                .doesNotContain(STUDENT_ID1);
-//        }
-//    }
-
     @Nested
     @DisplayName("test 'getAllForStudentForTimePeriod' method")
     class GetAllForStudentForTimePeriodTest {

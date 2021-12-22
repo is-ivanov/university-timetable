@@ -70,42 +70,4 @@ class TeacherRepositoryTest extends BaseRepositoryIT {
         }
     }
 
-//    @Nested
-//    @DisplayName("test 'findFreeTeachersOnLessonTime' method")
-//    class FindFreeTeachersOnLessonTimeTest {
-//
-//        @Test
-//        @DisplayName("when new lesson starts at 14:30 12-09-2021 then return " +
-//            "list with one teacher (id3)")
-//        void testReturnEmptyList() {
-//            LocalDateTime startTime = LocalDateTime.of(2021, 9, 12, 14, 30);
-//            LocalDateTime endTime = startTime.plusMinutes(90);
-//
-//            List<Teacher> actualTeachers =
-//                repo.findFreeTeachersOnLessonTime(startTime, endTime);
-//
-//            assertThat(actualTeachers).hasSize(1);
-//            Teacher freeTeacher = actualTeachers.get(0);
-//            assertThat(freeTeacher.getId()).isEqualTo(TEACHER_ID3);
-//            assertThat(freeTeacher.getFirstName()).isEqualTo(NAME_THIRD_TEACHER);
-//        }
-//
-//        @Test
-//        @DisplayName("when new lesson starts at 15:45 12-09-2021 then return " +
-//            "list with two teachers (id1 and id3)")
-//        void testReturnOneTeacher() {
-//            LocalDateTime startTime = LocalDateTime.of(2021, 9, 12, 15, 45);
-//            LocalDateTime endTime = startTime.plusMinutes(90);
-//
-//            List<Teacher> actualTeachers =
-//                repo.findFreeTeachersOnLessonTime(startTime, endTime);
-//
-//            assertThat(actualTeachers).hasSize(2);
-//            assertThat(actualTeachers).extracting(Teacher::getId)
-//                .containsOnly(TEACHER_ID1, TEACHER_ID3)
-//                .doesNotContain(TEACHER_ID2);
-//
-//        }
-//    }
-
 }

@@ -155,7 +155,7 @@ public class LessonController {
                                HttpServletRequest request) {
         log.debug("Updating lesson id({})", lessonId);
         lessonDto.setId(lessonId);
-        lessonService.save(lessonDtoMapper.toLesson(lessonDto));
+        lessonService.update(lessonDto);
         log.debug("Lesson id({}) updated successfully", lessonId);
         return defineRedirect(request);
     }

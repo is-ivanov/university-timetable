@@ -5,13 +5,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.com.foxminded.university.dao.LessonRepository;
-import ua.com.foxminded.university.dao.StudentRepository;
+import ua.com.foxminded.university.dao.*;
 import ua.com.foxminded.university.domain.dto.LessonDto;
-import ua.com.foxminded.university.domain.entity.Lesson;
-import ua.com.foxminded.university.domain.entity.Room;
-import ua.com.foxminded.university.domain.entity.Student;
-import ua.com.foxminded.university.domain.entity.Teacher;
+import ua.com.foxminded.university.domain.entity.*;
 import ua.com.foxminded.university.domain.filter.LessonFilter;
 import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.LessonService;
@@ -42,6 +38,9 @@ public class LessonServiceImpl implements LessonService {
     private final LessonDtoMapper lessonDtoMapper;
     private final StudentRepository studentRepo;
     private final StudentService studentService;
+    private final CourseRepository courseRepo;
+    private final TeacherRepository teacherRepo;
+    private final RoomRepository roomRepo;
 
     @Override
     public void save(Lesson lesson) throws ServiceException {
@@ -71,6 +70,17 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
+    public void update(LessonDto lessonDto) {
+        Lesson existingLesson = getLessonById(lessonDto.getId());
+        updateCourse(lessonDto.getCourseId(), existingLesson);
+        updateTeacher(lessonDto.getTeacherId(), existingLesson);
+        updateRoom(lessonDto.getRoomId(), existingLesson);
+        existingLesson.setTimeStart(lessonDto.getTimeStart());
+        existingLesson.setTimeEnd(lessonDto.getTimeEnd());
+        lessonRepo.save(existingLesson);
+    }
+
+    @Override
     public void delete(int id) {
         log.debug("Start deleting lesson id({})", id);
         log.debug("Deleting all students from lesson id({})", id);
@@ -97,9 +107,14 @@ public class LessonServiceImpl implements LessonService {
         log.debug("Getting active students from group id({})", groupId);
         List<Student> busyStudents =
             studentService.findAllBusyStudents(lesson.getTimeStart(), lesson.getTimeEnd());
-        List<Integer> busyStudentIds = studentService.getIdsFromStudents(busyStudents);
-        List<Student> freeStudentsFromGroup =
-            studentRepo.findAllFromGroupExcluded(busyStudentIds, groupId);
+        List<Student> freeStudentsFromGroup;
+        if (busyStudents.size() != 0) {
+            List<Integer> busyStudentIds = studentService.getIdsFromStudents(busyStudents);
+            freeStudentsFromGroup =
+                studentRepo.findAllFromGroupExcluded(busyStudentIds, groupId);
+        } else {
+            freeStudentsFromGroup = studentRepo.findAllByActiveTrueAndGroup_Id(groupId);
+        }
         for (Student student : freeStudentsFromGroup) {
             checkAndSaveStudentToLesson(lesson, student);
         }
@@ -170,7 +185,6 @@ public class LessonServiceImpl implements LessonService {
         Student student = studentRepo.getById(studentId);
         Lesson lesson = lessonRepo.getById(lessonId);
         lesson.removeStudent(student);
-//        lessonRepo.deleteStudentFromLesson(lessonId, studentId);
         log.debug("Student id({}) successfully removed from lesson id({})",
             studentId, lessonId);
     }
@@ -298,5 +312,34 @@ public class LessonServiceImpl implements LessonService {
             .orElseThrow(() -> new EntityNotFoundException(
                 String.format(MESSAGE_LESSON_NOT_FOUND, id)));
     }
+
+
+    private void updateCourse(Integer newCourseId, Lesson lesson) {
+        if (newCourseId != null) {
+            if (!lesson.getCourse().getId().equals(newCourseId)) {
+                Course newCourse = courseRepo.getById(newCourseId);
+                lesson.setCourse(newCourse);
+            }
+        }
+    }
+
+    private void updateTeacher(Integer newTeacherId, Lesson lesson) {
+        if (newTeacherId != null) {
+            if (!lesson.getTeacher().getId().equals(newTeacherId)) {
+                Teacher newTeacher = teacherRepo.getById(newTeacherId);
+                lesson.setTeacher(newTeacher);
+            }
+        }
+    }
+
+    private void updateRoom(Integer newRoomId, Lesson lesson) {
+        if (newRoomId != null) {
+            if (!lesson.getRoom().getId().equals(newRoomId)) {
+                Room newRoom = roomRepo.getById(newRoomId);
+                lesson.setRoom(newRoom);
+            }
+        }
+    }
+
 
 }
