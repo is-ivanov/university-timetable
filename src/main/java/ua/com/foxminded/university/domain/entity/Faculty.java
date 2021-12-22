@@ -4,6 +4,7 @@ import lombok.*;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 
 @Getter
@@ -22,6 +23,7 @@ public class Faculty {
     @Column(name = "faculty_id")
     private Integer id;
 
+    @NotBlank(message = "Name is mandatory")
     @Column(name = "faculty_name", nullable = false, unique = true)
     private String name;
 
