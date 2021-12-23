@@ -2,7 +2,6 @@ package ua.com.foxminded.university.ui.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.context.properties.bind.BindResult;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -26,9 +25,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
-import static ua.com.foxminded.university.ui.Util.DATE_TIME_PATTERN;
-import static ua.com.foxminded.university.ui.Util.defineRedirect;
+import static ua.com.foxminded.university.ui.Util.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -45,8 +44,9 @@ public class FacultyController {
     private final PageSequenceCreator pageSequenceCreator;
 
     @GetMapping
-    public String showFaculties(Model model,
-                                @PageableDefault(sort = "name") Pageable pageable) {
+    public String showFaculties(@ModelAttribute("test") Model model,
+                                @PageableDefault(sort = "name") Pageable pageable,
+                                BindingResult result) {
         log.debug("Getting data for faculty.html");
         Page<Faculty> pageFaculties = facultyService.getAllSortedPaginated(pageable);
         model.addAttribute("faculties", pageFaculties.getContent());
@@ -66,14 +66,19 @@ public class FacultyController {
                                 RedirectAttributes attributes,
                                 HttpServletRequest request) {
         if (result.hasErrors()) {
-            attributes.addAttribute("hasErrors", true);
-            return "faculty";
+            Map<String, String> errorsMap = getErrors(result);
+//            model.mergeAttributes(errorsMap);
+            //https://www.baeldung.com/spring-web-flash-attributes
+            //https://stackoverflow.com/questions/49122495/how-to-pass-model-data-from-one-controller-to-another-controller-spring
+            attributes.addFlashAttribute("test", errorsMap);
+            return defineRedirect(request);
         }
         log.debug("Creating {}", faculty);
         facultyService.save(faculty);
         log.debug("{} is created", faculty);
         return defineRedirect(request);
     }
+
 
     @GetMapping("/{id}")
     @ResponseBody
