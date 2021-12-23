@@ -2,13 +2,16 @@ package ua.com.foxminded.university.ui.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.properties.bind.BindResult;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ua.com.foxminded.university.domain.dto.DepartmentDto;
 import ua.com.foxminded.university.domain.dto.GroupDto;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
@@ -20,6 +23,7 @@ import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
 import ua.com.foxminded.university.ui.PageSequenceCreator;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -57,8 +61,14 @@ public class FacultyController {
     }
 
     @PostMapping
-    public String createFaculty(@ModelAttribute Faculty faculty,
+    public String createFaculty(@ModelAttribute @Valid Faculty faculty,
+                                BindingResult result,
+                                RedirectAttributes attributes,
                                 HttpServletRequest request) {
+        if (result.hasErrors()) {
+            attributes.addAttribute("hasErrors", true);
+            return "faculty";
+        }
         log.debug("Creating {}", faculty);
         facultyService.save(faculty);
         log.debug("{} is created", faculty);

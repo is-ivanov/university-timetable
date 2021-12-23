@@ -21,7 +21,7 @@ spring:
         enabled: true
 logging:
   level:
-    root: WARN
+#    root: WARN
     web: INFO
     sql: DEBUG
     ua.com.foxminded.university: DEBUG

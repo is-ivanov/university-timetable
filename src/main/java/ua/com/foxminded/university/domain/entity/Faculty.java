@@ -23,7 +23,7 @@ public class Faculty {
     @Column(name = "faculty_id")
     private Integer id;
 
-    @NotBlank(message = "Name is mandatory")
+    @NotBlank(message = "{faculty.name.not.blank}")
     @Column(name = "faculty_name", nullable = false, unique = true)
     private String name;
 

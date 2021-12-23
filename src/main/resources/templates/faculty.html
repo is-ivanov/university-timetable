@@ -83,6 +83,9 @@
   <!--  Create Modal-->
   <div id="newFacultyModal" class="modal fade" data-bs-backdrop="static"
        tabindex="-1" aria-labelledby="newFacultyModalLabel" aria-hidden="true">
+    <script th:inline="javascript" th:if="${#fields.hasErrors('${newFaculty}')}">
+      $("#newFacultyModal").show();
+    </script>
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <form action="#" th:action="@{/faculties}" method="post" th:object="${newFaculty}">
@@ -95,6 +98,7 @@
               <label for="newFacultyNameInput" class="form-label">Faculty name</label>
               <input type="text" class="form-control" id="newFacultyNameInput"
                      placeholder="Enter new faculty name" th:field="*{name}" required>
+              <div class="alert alert-warning" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
             </div>
           </div>
           <div class="modal-footer">
