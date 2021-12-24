@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.support.RequestContextUtils;
 import ua.com.foxminded.university.domain.dto.DepartmentDto;
 import ua.com.foxminded.university.domain.dto.GroupDto;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
@@ -24,6 +25,7 @@ import ua.com.foxminded.university.ui.PageSequenceCreator;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,10 +46,15 @@ public class FacultyController {
     private final PageSequenceCreator pageSequenceCreator;
 
     @GetMapping
-    public String showFaculties(@ModelAttribute("test") Model model,
+    public String showFaculties(Model model,
                                 @PageableDefault(sort = "name") Pageable pageable,
-                                BindingResult result) {
+                                HttpServletRequest request) {
         log.debug("Getting data for faculty.html");
+        Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);
+        if (inputFlashMap != null) {
+            Map<String, String> errors = (Map<String, String>) inputFlashMap.get("errors");
+            model.mergeAttributes(errors);
+        }
         Page<Faculty> pageFaculties = facultyService.getAllSortedPaginated(pageable);
         model.addAttribute("faculties", pageFaculties.getContent());
         model.addAttribute("page", pageFaculties);
@@ -67,10 +74,7 @@ public class FacultyController {
                                 HttpServletRequest request) {
         if (result.hasErrors()) {
             Map<String, String> errorsMap = getErrors(result);
-//            model.mergeAttributes(errorsMap);
-            //https://www.baeldung.com/spring-web-flash-attributes
-            //https://stackoverflow.com/questions/49122495/how-to-pass-model-data-from-one-controller-to-another-controller-spring
-            attributes.addFlashAttribute("test", errorsMap);
+            attributes.addFlashAttribute("errors", errorsMap);
             return defineRedirect(request);
         }
         log.debug("Creating {}", faculty);
