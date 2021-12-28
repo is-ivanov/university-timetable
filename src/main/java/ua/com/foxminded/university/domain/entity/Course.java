@@ -4,6 +4,8 @@ import lombok.*;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.util.Objects;
 
 @Getter
@@ -20,6 +22,8 @@ public class Course {
     @Column(name = "course_id", nullable = false)
     private Integer id;
 
+    @NotBlank(message = "{course.name.not.blank}")
+    @Pattern(regexp = "[A-Z].+", message = "{course.name.first.letter}")
     @Column(name = "course_name", nullable = false, unique = true)
     private String name;
 

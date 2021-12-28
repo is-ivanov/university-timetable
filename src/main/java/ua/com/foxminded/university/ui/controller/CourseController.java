@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +15,7 @@ import ua.com.foxminded.university.domain.service.interfaces.CourseService;
 import ua.com.foxminded.university.ui.PageSequenceCreator;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import static ua.com.foxminded.university.ui.Util.defineRedirect;
 
@@ -44,7 +47,7 @@ public class  CourseController {
     }
 
     @PostMapping
-    public String createCourse(@ModelAttribute Course course,
+    public String createCourse(@ModelAttribute @Valid Course course,
                                HttpServletRequest request) {
         log.debug("Creating {}", course);
         courseService.save(course);
@@ -62,7 +65,7 @@ public class  CourseController {
     }
 
     @PutMapping("/{id}")
-    public String updateCourse(@ModelAttribute Course course,
+    public String updateCourse(@ModelAttribute @Valid Course course,
                                @PathVariable("id") int courseId,
                                HttpServletRequest request) {
         log.debug("Updating course id({})", courseId);
@@ -78,5 +81,10 @@ public class  CourseController {
         courseService.delete(courseId);
         log.debug("Course id({}) is deleted", courseId);
         return defineRedirect(request);
+    }
+
+    @PostMapping("/validate")
+    public ResponseEntity<Object> validate(@ModelAttribute @Valid Course course) {
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

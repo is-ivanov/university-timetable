@@ -3,6 +3,8 @@ package ua.com.foxminded.university.ui.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +16,7 @@ import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 import ua.com.foxminded.university.domain.service.interfaces.StudentService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -57,7 +60,7 @@ public class GroupController {
     }
 
     @PostMapping
-    public String createGroup(@ModelAttribute Group group,
+    public String createGroup(@ModelAttribute @Valid Group group,
                               HttpServletRequest request) {
         log.debug("Creating {}", group);
         groupService.save(group);
@@ -75,7 +78,7 @@ public class GroupController {
     }
 
     @PutMapping("/{id}")
-    public String updateGroup(@ModelAttribute Group group,
+    public String updateGroup(@ModelAttribute @Valid Group group,
                               @PathVariable("id") int groupId,
                               HttpServletRequest request) {
         log.debug("Updating group id({})", groupId);
@@ -110,4 +113,8 @@ public class GroupController {
         return freeStudentsFromGroup;
     }
 
+    @PostMapping("/validate")
+    public ResponseEntity<Object> validate(@ModelAttribute @Valid Group group) {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

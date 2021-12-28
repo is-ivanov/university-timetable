@@ -8,6 +8,10 @@ spring:
     hibernate:
       ddl-auto: validate
     properties:
+#      javax:
+#        persistence:
+#          validation:
+#            mode: null
       hibernate:
         format_sql: true
         highlight_sql: true
@@ -21,8 +25,8 @@ spring:
         enabled: true
 logging:
   level:
-#    root: WARN
-    web: INFO
-    sql: DEBUG
+    #    root: WARN
+#    web: INFO
+#    sql: DEBUG
     ua.com.foxminded.university: DEBUG
-    org.hibernate.type.descriptor.sql: TRACE
+#    org.hibernate.type.descriptor.sql: TRACE

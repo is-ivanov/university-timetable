@@ -6,12 +6,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.support.RequestContextUtils;
 import ua.com.foxminded.university.domain.dto.DepartmentDto;
 import ua.com.foxminded.university.domain.dto.GroupDto;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
@@ -25,11 +25,10 @@ import ua.com.foxminded.university.ui.PageSequenceCreator;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import static ua.com.foxminded.university.ui.Util.*;
+import static ua.com.foxminded.university.ui.Util.DATE_TIME_PATTERN;
+import static ua.com.foxminded.university.ui.Util.defineRedirect;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -47,14 +46,8 @@ public class FacultyController {
 
     @GetMapping
     public String showFaculties(Model model,
-                                @PageableDefault(sort = "name") Pageable pageable,
-                                HttpServletRequest request) {
+                                @PageableDefault(sort = "name") Pageable pageable) {
         log.debug("Getting data for faculty.html");
-        Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);
-        if (inputFlashMap != null) {
-            Map<String, String> errors = (Map<String, String>) inputFlashMap.get("errors");
-            model.mergeAttributes(errors);
-        }
         Page<Faculty> pageFaculties = facultyService.getAllSortedPaginated(pageable);
         model.addAttribute("faculties", pageFaculties.getContent());
         model.addAttribute("page", pageFaculties);
@@ -69,20 +62,12 @@ public class FacultyController {
 
     @PostMapping
     public String createFaculty(@ModelAttribute @Valid Faculty faculty,
-                                BindingResult result,
-                                RedirectAttributes attributes,
                                 HttpServletRequest request) {
-        if (result.hasErrors()) {
-            Map<String, String> errorsMap = getErrors(result);
-            attributes.addFlashAttribute("errors", errorsMap);
-            return defineRedirect(request);
-        }
         log.debug("Creating {}", faculty);
         facultyService.save(faculty);
         log.debug("{} is created", faculty);
         return defineRedirect(request);
     }
-
 
     @GetMapping("/{id}")
     @ResponseBody
@@ -94,7 +79,8 @@ public class FacultyController {
     }
 
     @PutMapping("/{id}")
-    public String updateFaculty(@ModelAttribute Faculty faculty,
+    public String updateFaculty(@ModelAttribute @Valid Faculty faculty,
+                                BindingResult result,
                                 @PathVariable("id") int facultyId,
                                 HttpServletRequest request) {
         log.debug("Updating faculty with id({})", faculty);
@@ -160,6 +146,11 @@ public class FacultyController {
         List<TeacherDto> teachers = teacherService.getAllByFaculty(facultyId);
         log.debug("Found {} teachers", teachers.size());
         return teachers;
+    }
+
+    @PostMapping("/validate")
+    public ResponseEntity<Object> validate(@ModelAttribute @Valid Faculty faculty) {
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

@@ -4,6 +4,9 @@ import lombok.*;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.Objects;
 
 @Getter
@@ -23,9 +26,12 @@ public class Department {
     @Column(name = "department_id")
     private Integer id;
 
+    @NotBlank(message = "{department.name.not.blank}")
+    @Pattern(regexp = "[A-Z].+", message = "{department.name.first.letter}")
     @Column(name = "department_name", nullable = false)
     private String name;
 
+    @NotNull
     @ToString.Exclude
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "faculty_id", nullable = false,

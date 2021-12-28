@@ -2,8 +2,11 @@ package ua.com.foxminded.university.domain.entity;
 
 import lombok.*;
 import org.hibernate.Hibernate;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 @Getter
@@ -24,15 +27,19 @@ public class Group {
     @Column(name = "group_id")
     private Integer id;
 
+    @Length(message = "{group.name.size}", max = 15)
+    @NotBlank(message = "{group.name.not.blank}")
     @Column(name = "group_name", nullable = false, unique = true, length = 15)
     private String name;
 
+    @NotNull
     @ToString.Exclude
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "faculty_id", nullable = false,
         foreignKey = @ForeignKey(name = "fk_faculty"))
     private Faculty faculty;
 
+    @NotNull
     @Column(name = "group_active", nullable = false)
     private boolean active;
 

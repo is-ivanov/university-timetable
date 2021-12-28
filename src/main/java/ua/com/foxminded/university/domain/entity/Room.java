@@ -4,6 +4,7 @@ import lombok.*;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 
 @Getter
@@ -23,9 +24,11 @@ public class Room {
     @Column(name = "room_id")
     private Integer id;
 
+    @NotBlank(message = "{room.building.not.blank}")
     @Column(name = "building", nullable = false, length = 100)
     private String building;
 
+    @NotBlank(message = "{room.number.not.blank}")
     @Column(name = "room_number", nullable = false, length = 20)
     private String number;
 

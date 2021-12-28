@@ -2,6 +2,8 @@ package ua.com.foxminded.university.ui.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +16,7 @@ import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.List;
 
 import static ua.com.foxminded.university.ui.Util.defineRedirect;
@@ -56,7 +59,7 @@ public class DepartmentController {
     }
 
     @PostMapping
-    public String createDepartment(@ModelAttribute Department department,
+    public String createDepartment(@ModelAttribute @Valid Department department,
                                    HttpServletRequest request) {
         log.debug("Creating {}", department);
         departmentService.save(department);
@@ -74,7 +77,7 @@ public class DepartmentController {
     }
 
     @PutMapping("/{id}")
-    public String updateDepartment(@ModelAttribute Department department,
+    public String updateDepartment(@ModelAttribute @Valid Department department,
                                    @PathVariable("id") int departmentId,
                                    HttpServletRequest request) {
         log.debug("Updating department id({})", departmentId);
@@ -99,5 +102,10 @@ public class DepartmentController {
         List<TeacherDto> teachers = teacherService.getAllByDepartment(departmentId);
         log.debug("Found {} teachers", teachers.size());
         return teachers;
+    }
+
+    @PostMapping("/validate")
+    public ResponseEntity<Object> validate(@ModelAttribute @Valid Department department) {
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

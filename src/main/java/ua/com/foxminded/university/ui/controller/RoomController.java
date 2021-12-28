@@ -6,6 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,7 @@ import ua.com.foxminded.university.domain.service.interfaces.RoomService;
 import ua.com.foxminded.university.ui.PageSequenceCreator;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -75,7 +78,7 @@ public class RoomController {
     }
 
     @PostMapping
-    public String createRoom(@ModelAttribute Room room,
+    public String createRoom(@ModelAttribute @Valid Room room,
                              HttpServletRequest request) {
         log.debug("Creating {}", room);
         roomService.save(room);
@@ -84,7 +87,7 @@ public class RoomController {
     }
 
     @PutMapping("/{id}")
-    public String updateRoom(@ModelAttribute Room room,
+    public String updateRoom(@ModelAttribute @Valid Room room,
                              @PathVariable("id") int roomId,
                              HttpServletRequest request) {
         log.debug("Updating room id({})", roomId);
@@ -118,5 +121,10 @@ public class RoomController {
                 startTime.toLocalDateTime(), endTime.toLocalDateTime());
         log.debug("Found {} lessons", lessonsForTeacher.size());
         return lessonsForTeacher;
+    }
+
+    @PostMapping("/validate")
+    public ResponseEntity<Object> validate(@ModelAttribute @Valid Room room) {
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -95,7 +95,7 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <form action="#" th:action="@{/groups}" method="post"
-              th:object="${newGroup}">
+              th:object="${newGroup}" data-validate="/groups/validate">
           <div class="modal-header">
             <h5 class="modal-title" id="newGroupModalLabel">New Group</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -104,21 +104,21 @@
           <div class="modal-body">
             <div class="mb-3">
               <label for="newGroupNameInput" class="form-label">Name</label>
-              <input type="text" class="form-control" id="newGroupNameInput"
+              <input type="text" class="form-control validated-field"
                      placeholder="Enter new group name"
-                     th:field="*{name}" required>
+                     id="newGroupNameInput" th:field="*{name}" required>
             </div>
 
             <div class="col-auto form-check form-switch mb-3">
-              <input class="form-check-input" type="checkbox" id="switchActiveNewGroup"
-                     th:field="*{active}">
+              <input class="form-check-input validated-field" type="checkbox"
+                     id="switchActiveNewGroup" th:field="*{active}">
               <label class="form-check-label" for="switchActiveNewGroup">Active group</label>
             </div>
 
             <div class="mb-3">
               <label for="selectFacultyNewGroup" class="form-label">Faculty</label>
               <select name="faculty.id" id="selectFacultyNewGroup"
-                      class="form-select" required>
+                      class="form-select validated-field" required>
                 <option value="" disabled selected>Please select faculty...
                 </option>
                 <option th:each="faculty : ${faculties}"
@@ -145,7 +145,7 @@
        tabindex="-1" aria-labelledby="editGroupModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <form id="formEdit" th:method="put">
+        <form id="formEdit" th:method="put" data-validate="/groups/validate">
           <div class="modal-header">
             <h5 class="modal-title" id="editGroupModalLabel">Update Group</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -154,19 +154,20 @@
           <div class="modal-body">
             <div class="mb-3">
               <label for="editGroupNameInput" class="form-label">Name</label>
-              <input type="text" class="form-control" id="editGroupNameInput"
-                     name="name" value="" required>
+              <input type="text" class="form-control validated-field"
+                     id="editGroupNameInput" name="name" value="" required>
             </div>
 
             <div class="col-auto form-check form-switch mb-3">
-              <input class="form-check-input" type="checkbox" id="switchActiveEditGroup"
-                     name="active">
+              <input class="form-check-input validated-field" type="checkbox"
+                     id="switchActiveEditGroup" name="active">
               <label class="form-check-label" for="switchActiveEditGroup">Active group</label>
             </div>
 
             <div class="mb-3">
               <label for="editGroupFacultySelect" class="form-label">Faculty</label>
-              <select name="faculty.id" id="editGroupFacultySelect" class="form-select" required>
+              <select name="faculty.id" id="editGroupFacultySelect"
+                      class="form-select validated-field" required>
                 <option value="" disabled selected>Please select faculty...
                 </option>
                 <option th:each="faculty : ${faculties}"
