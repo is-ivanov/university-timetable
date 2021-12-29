@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,12 +17,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import static ua.com.foxminded.university.ui.Util.defineRedirect;
+import static ua.com.foxminded.university.ui.Util.getResponseEntityWithRedirectUrl;
 
 @Slf4j
 @RequiredArgsConstructor
 @Controller
 @RequestMapping("/courses")
-public class  CourseController {
+public class CourseController {
 
     public static final String URI_COURSES = "/courses";
 
@@ -47,12 +47,12 @@ public class  CourseController {
     }
 
     @PostMapping
-    public String createCourse(@ModelAttribute @Valid Course course,
-                               HttpServletRequest request) {
+    public ResponseEntity<String> createCourse(@ModelAttribute @Valid Course course,
+                                               HttpServletRequest request) {
         log.debug("Creating {}", course);
         courseService.save(course);
         log.debug("{} is created", course);
-        return defineRedirect(request);
+        return getResponseEntityWithRedirectUrl(request);
     }
 
     @GetMapping("/{id}")
@@ -65,13 +65,13 @@ public class  CourseController {
     }
 
     @PutMapping("/{id}")
-    public String updateCourse(@ModelAttribute @Valid Course course,
-                               @PathVariable("id") int courseId,
-                               HttpServletRequest request) {
+    public ResponseEntity<String> updateCourse(@ModelAttribute @Valid Course course,
+                                               @PathVariable("id") int courseId,
+                                               HttpServletRequest request) {
         log.debug("Updating course id({})", courseId);
         courseService.save(course);
         log.debug("Course id({}) is updated", courseId);
-        return defineRedirect(request);
+        return getResponseEntityWithRedirectUrl(request);
     }
 
     @DeleteMapping("/{id}")
@@ -83,8 +83,4 @@ public class  CourseController {
         return defineRedirect(request);
     }
 
-    @PostMapping("/validate")
-    public ResponseEntity<Object> validate(@ModelAttribute @Valid Course course) {
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
 }

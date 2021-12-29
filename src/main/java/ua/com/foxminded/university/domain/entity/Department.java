@@ -2,11 +2,11 @@ package ua.com.foxminded.university.domain.entity;
 
 import lombok.*;
 import org.hibernate.Hibernate;
+import ua.com.foxminded.university.domain.validator.CapitalLetter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import java.util.Objects;
 
 @Getter
@@ -27,7 +27,7 @@ public class Department {
     private Integer id;
 
     @NotBlank(message = "{department.name.not.blank}")
-    @Pattern(regexp = "[A-Z].+", message = "{department.name.first.letter}")
+    @CapitalLetter
     @Column(name = "department_name", nullable = false)
     private String name;
 

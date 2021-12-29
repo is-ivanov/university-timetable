@@ -95,7 +95,7 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <form action="#" th:action="@{/groups}" method="post"
-              th:object="${newGroup}" data-validate="/groups/validate">
+              th:object="${newGroup}" data-validate="yes">
           <div class="modal-header">
             <h5 class="modal-title" id="newGroupModalLabel">New Group</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -145,7 +145,7 @@
        tabindex="-1" aria-labelledby="editGroupModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <form id="formEdit" th:method="put" data-validate="/groups/validate">
+        <form id="formEdit" th:method="put" data-validate="yes">
           <div class="modal-header">
             <h5 class="modal-title" id="editGroupModalLabel">Update Group</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"

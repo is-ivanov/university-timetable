@@ -5,6 +5,7 @@ import lombok.experimental.SuperBuilder;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 @Getter
@@ -17,6 +18,7 @@ import java.util.Objects;
 @Table(name = "teachers")
 public class Teacher extends Person {
 
+    @NotNull
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id", nullable = false,
         foreignKey = @ForeignKey(name = "fk_department"))

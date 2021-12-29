@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import javax.validation.ConstraintViolationException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -36,10 +37,25 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     ValidationErrorResponse onBindException(BindException ex) {
-        log.warn("Validation error. Check 'violations' field for details. BindException");
+        log.warn("Validation error. Check 'violations' field for details");
 
         List<Violation> listViolations = ex.getBindingResult().getFieldErrors().stream()
             .map(error -> new Violation(error.getField(), error.getDefaultMessage()))
+            .collect(Collectors.toList());
+        return new ValidationErrorResponse(listViolations,
+            BAD_REQUEST,
+            ZonedDateTime.now(ZoneId.of("+3")));
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    ValidationErrorResponse onConstraintViolationException(ConstraintViolationException ex) {
+        log.warn("Validation error. Check 'violations' field for details");
+
+        List<Violation> listViolations = ex.getConstraintViolations().stream()
+            .map(error -> new Violation(error.getPropertyPath().toString(),
+                error.getMessage()))
             .collect(Collectors.toList());
         return new ValidationErrorResponse(listViolations,
             BAD_REQUEST,

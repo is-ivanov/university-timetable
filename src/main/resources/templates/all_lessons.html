@@ -240,7 +240,7 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <form action="#" th:action="@{/lessons}" method="post"
-              th:object="${newLesson}">
+              th:object="${newLesson}" data-validate="yes">
           <div class="modal-header">
             <h5 class="modal-title" id="newLessonModalLabel">New Lesson</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -253,7 +253,7 @@
             <div class="mb-3">
               <label for="selectCourseNewLesson" class="form-label">Course</label>
               <select name="courseId" id="selectCourseNewLesson"
-                      class="form-select" required>
+                      class="form-select validated-field" required>
                 <option value="" disabled selected>Please select course...
                 </option>
                 <option th:each="course : ${courses}"
@@ -267,7 +267,7 @@
             <div class="mb-3">
               <label for="selectTeacherNewLesson" class="form-label">Teacher</label>
               <select name="teacherId" id="selectTeacherNewLesson"
-                      class="form-select" required>
+                      class="form-select validated-field" required>
                 <option value="" disabled selected>Please select teacher...
                 </option>
                 <option th:each="teacherDto : ${teachers}"
@@ -283,7 +283,7 @@
             <div class="mb-3">
               <label for="selectRoomNewLesson" class="form-label">Room</label>
               <select name="roomId" id="selectRoomNewLesson"
-                      class="form-select" required>
+                      class="form-select validated-field" required>
                 <option value="" disabled selected>Please select room...
                 </option>
                 <option th:each="room : ${rooms}"
@@ -297,9 +297,9 @@
             <!--Date start-->
             <div class="mb-3">
               <label for="dateStartPickerNewLesson" class="form-label">Time start</label>
-              <div class="input-group date" id="dateStartPickerNewLesson" data-target-input="nearest">
+              <div class="input-group date has-validation" id="dateStartPickerNewLesson" data-target-input="nearest">
                 <label class="visually-hidden" for="timeStart"></label>
-                <input type="text" class="form-control datetimepicker-input"
+                <input type="text" class="form-control datetimepicker-input validated-field"
                        data-target="#dateStartPickerNewLesson"
                        id="timeStart" name="timeStart" required/>
                 <div data-target="#dateStartPickerNewLesson" data-toggle="datetimepicker">
@@ -310,9 +310,9 @@
             <!--Date end-->
             <div class="mb-3">
               <label for="dateEndPickerNewLesson" class="form-label">Time end</label>
-              <div class="input-group date" id="dateEndPickerNewLesson" data-target-input="nearest">
+              <div class="input-group date has-validation" id="dateEndPickerNewLesson" data-target-input="nearest">
                 <label class="visually-hidden" for="timeEnd"></label>
-                <input type="text" class="form-control datetimepicker-input"
+                <input type="text" class="form-control datetimepicker-input validated-field"
                        data-target="#dateEndPickerNewLesson"
                        id="timeEnd" name="timeEnd" required/>
                 <div data-target="#dateEndPickerNewLesson" data-toggle="datetimepicker">
@@ -338,7 +338,7 @@
        tabindex="-1" aria-labelledby="editLessonModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <form id="formEdit" th:method="put">
+        <form id="formEdit" th:method="put" data-validate="yes">
           <div class="modal-header">
             <h5 class="modal-title" id="editLessonModalLabel">Update Lesson</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -349,7 +349,7 @@
             <div class="mb-3">
               <label for="selectCourseEditLesson" class="form-label">Course</label>
               <select name="courseId" id="selectCourseEditLesson"
-                      class="form-select" required>
+                      class="form-select validated-field" required>
                 <option value="" disabled selected>Please select course...
                 </option>
                 <option th:each="course : ${courses}"
@@ -363,7 +363,7 @@
             <div class="mb-3">
               <label for="selectTeacherEditLesson" class="form-label">Teacher</label>
               <select name="teacherId" id="selectTeacherEditLesson"
-                      class="form-select" required>
+                      class="form-select validated-field" required>
                 <option value="" disabled selected>Please select teacher...</option>
                 <option th:each="teacherDto : ${teachers}"
                         th:value="${teacherDto.id}"
@@ -378,7 +378,7 @@
             <div class="mb-3">
               <label for="selectRoomEditLesson" class="form-label">Room</label>
               <select name="roomId" id="selectRoomEditLesson"
-                      class="form-select" required>
+                      class="form-select validated-field" required>
                 <option value="" disabled selected>Please select room...
                 </option>
                 <option th:each="room : ${rooms}"
@@ -392,9 +392,9 @@
             <!--Date start-->
             <div class="mb-3">
               <label for="dateStartPickerEditLesson" class="form-label">Time start</label>
-              <div class="input-group date" id="dateStartPickerEditLesson" data-target-input="nearest">
+              <div class="input-group date has-validation" id="dateStartPickerEditLesson" data-target-input="nearest">
                 <label class="visually-hidden" for="timeStartEditModal"></label>
-                <input type="text" class="form-control datetimepicker-input"
+                <input type="text" class="form-control datetimepicker-input validated-field"
                        data-target="#dateStartPickerEditLesson"
                        id="timeStartEditModal" name="timeStart" required/>
                 <div data-target="#dateStartPickerEditLesson" data-toggle="datetimepicker">
@@ -405,9 +405,9 @@
             <!--Date end-->
             <div class="mb-3">
               <label for="dateEndPickerEditLesson" class="form-label">Time end</label>
-              <div class="input-group date" id="dateEndPickerEditLesson" data-target-input="nearest">
+              <div class="input-group date has-validation" id="dateEndPickerEditLesson" data-target-input="nearest">
                 <label class="visually-hidden" for="timeEndEditModal"></label>
-                <input type="text" class="form-control datetimepicker-input"
+                <input type="text" class="form-control datetimepicker-input validated-field"
                        data-target="#dateEndPickerEditLesson"
                        id="timeEndEditModal" name="timeEnd" required/>
                 <div data-target="#dateEndPickerEditLesson" data-toggle="datetimepicker">

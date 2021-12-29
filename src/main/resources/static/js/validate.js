@@ -1,27 +1,3 @@
-// // $('#formNew').submit(function() {
-// //   console.log($(this).serializeArray());
-// //   return false;
-// // });
-//
-// /**
-//  * Validate form on server-side (send post request to server)
-//  *
-//  * @param {HTMLFormElement} form - Form for validate
-//  * @param {String} url - url for validating request
-//  */
-// function validateForm (form, url) {
-//   let dataRequest = form.serializeArray();
-//
-//   let posting = $.post(url, dataRequest);
-//
-//   posting.done(function (data) {
-//     return true;
-//   });
-//   posting.fail(function (data) {
-//     alert(data);
-//   });
-//
-// }
 
 /**
  * Validates form per AJAX. To be called as onSubmit handler.
@@ -33,7 +9,8 @@ function ajaxFormValidation (event) {
   _removeValidationErrors();
   let _form = $(event.target);
   let _formData = _form.serialize(true);
-  _formData = _formData.replace('_method=put&', '');
+  let _formMethod = _form.attr('method');
+  // _formData = _formData.replace('_method=put&', '');
   // // prepare visual feedback
   // // you may want to use other elements here
   // let originalButton = _form.find('.btn-primary');
@@ -50,18 +27,26 @@ function ajaxFormValidation (event) {
   let settings = {
     data: _formData,
     processData: false,
-    type: 'POST',
+    // type: 'POST',
+    type: _formMethod,
     // success: function (response, statusText, xhr) {
-    success: function () {
-      $('form[data-validate]').unbind('submit');
-      _form.submit();
-
-      // if (response.location) {
-      //   // no validation errors
-      //   // action has been executed and sent a redirect URL wrapped as JSON
-      //   // cannot use a normal http-redirect (status-code 3xx) as this would be followed by browsers and would not be available here
-      //   // follow JSON-redirect
-      //   window.location.href = response.location;
+    success: function (response) {
+      // $("html").html(response);
+      // let value = $(response).text();
+      // document.open();
+      // document.write(response);
+      // document.close();
+      // $('html').html($('html', response).html());
+      // $('form[data-validate]').unbind('submit');
+      // _form.submit();
+      let responseText = JSON.parse(response);
+      if (responseText.location) {
+        // no validation errors
+        // action has been executed and sent a redirect URL wrapped as JSON
+        // cannot use a normal http-redirect (status-code 3xx) as this would be followed by browsers and would not be available here
+        // follow JSON-redirect
+        window.location.href = responseText.location;
+      }
       // } else {
       //   if (restoreFunction) {
       //     restoreFunction();
@@ -85,11 +70,11 @@ function ajaxFormValidation (event) {
   };
   // send request, after delay to make sure everybody notices the visual feedback :)
   // window.setTimeout(function () {
-  //   // let url = _form[0].action;
+  let url = _form[0].action;
   //   let url = _form.attr('data-validate');
   //   jQuery.ajax(url, settings);
   // }, 1000);
-  let url = _form.attr('data-validate');
+  // let url = _form.attr('data-validate');
   $.ajax(url, settings);
 }
 
@@ -132,11 +117,11 @@ function _handleValidationResult (form, errors) {
           let div = $('<div class="invalid-feedback"></div>');
           div.text(error.message); // use text() for security reasons
           div.insertAfter(element);
-          counter ++;
+          counter++;
         }
       });
       if (counter === 0) {
-          $(element).addClass('is-valid');
+        $(element).addClass('is-valid');
       }
     });
   }

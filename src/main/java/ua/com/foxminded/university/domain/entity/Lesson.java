@@ -1,11 +1,12 @@
 package ua.com.foxminded.university.domain.entity;
 
-import com.querydsl.core.annotations.Config;
 import com.querydsl.core.annotations.QueryInit;
 import lombok.*;
 import org.hibernate.Hibernate;
+import ua.com.foxminded.university.domain.validator.LessonsTime;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
@@ -33,12 +34,14 @@ public class Lesson {
     @Column(name = "lesson_id")
     private Integer id;
 
+    @NotNull
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "course_id", nullable = false,
         foreignKey = @ForeignKey(name = "fk_course"))
     private Course course;
 
+    @NotNull
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "teacher_id", nullable = false,
@@ -46,15 +49,18 @@ public class Lesson {
     @QueryInit("department.faculty")
     private Teacher teacher;
 
+    @NotNull
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "room_id", nullable = false,
         foreignKey = @ForeignKey(name = "fk_room"))
     private Room room;
 
+    @LessonsTime(from = "07:30", to = "19:00")
     @Column(name = "time_start")
     private LocalDateTime timeStart;
 
+    @LessonsTime(from = "09:00", to = "20:30")
     @Column(name = "time_end")
     private LocalDateTime timeEnd;
 

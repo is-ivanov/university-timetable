@@ -3,6 +3,7 @@ package ua.com.foxminded.university.ui.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,12 +17,12 @@ import ua.com.foxminded.university.domain.service.interfaces.LessonService;
 import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-import static ua.com.foxminded.university.ui.Util.DATE_TIME_PATTERN;
-import static ua.com.foxminded.university.ui.Util.defineRedirect;
+import static ua.com.foxminded.university.ui.Util.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -49,11 +50,11 @@ public class TeacherController {
         if (departmentId != null && departmentId > 0) {
             log.debug("Get teachers by departmentId ({})", departmentId);
             model.addAttribute("teachers",
-                    teacherService.getAllByDepartment(departmentId));
+                teacherService.getAllByDepartment(departmentId));
         } else if (facultyId != null && facultyId > 0) {
             log.debug("Get teachers by facultyId ({})", facultyId);
             model.addAttribute("teachers",
-                    teacherService.getAllByFaculty(facultyId));
+                teacherService.getAllByFaculty(facultyId));
         }
         if (facultyId != null && facultyId > 0) {
             log.debug("Get departments for selector by facultyId ({})", facultyId);
@@ -86,14 +87,14 @@ public class TeacherController {
     }
 
     @PostMapping
-    public String createTeacher(@ModelAttribute TeacherDto teacherDto,
-                                HttpServletRequest request) {
+    public ResponseEntity<String> createTeacher(@ModelAttribute @Valid TeacherDto teacherDto,
+                                                HttpServletRequest request) {
         log.debug("Creating teacher [{} {} {}]", teacherDto.getFirstName(),
             teacherDto.getPatronymic(), teacherDto.getLastName());
         teacherService.save(teacherMapper.toTeacher(teacherDto));
         log.debug("Teacher [{}, {}, {}] is created", teacherDto.getFirstName(),
             teacherDto.getPatronymic(), teacherDto.getLastName());
-        return defineRedirect(request);
+        return getResponseEntityWithRedirectUrl(request);
     }
 
     @GetMapping("/{id}")
@@ -107,13 +108,13 @@ public class TeacherController {
     }
 
     @PutMapping("/{id}")
-    public String updateTeacher(@ModelAttribute TeacherDto teacherDto,
-                                @PathVariable("id") int teacherId,
-                                HttpServletRequest request) {
+    public ResponseEntity<String> updateTeacher(@ModelAttribute @Valid TeacherDto teacherDto,
+                                                @PathVariable("id") int teacherId,
+                                                HttpServletRequest request) {
         log.debug("Updating teacher id({})", teacherId);
         teacherService.save(teacherMapper.toTeacher(teacherDto));
         log.debug("Teacher id({}) is updated", teacherId);
-        return defineRedirect(request);
+        return getResponseEntityWithRedirectUrl(request);
     }
 
     @DeleteMapping("/{id}")

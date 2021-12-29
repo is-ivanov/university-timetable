@@ -6,9 +6,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import ua.com.foxminded.university.domain.validator.LessonsTime;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
 
 import static ua.com.foxminded.university.ui.Util.DATE_TIME_PATTERN;
@@ -20,18 +21,29 @@ import static ua.com.foxminded.university.ui.Util.DATE_TIME_PATTERN;
 public class LessonDto {
 
     private Integer id;
+
+    @NotNull
     private int courseId;
+
     private String courseName;
+
+    @NotNull
     private int teacherId;
+
     private String teacherFullName;
+
+    @NotNull
     private int roomId;
+
     private String buildingAndRoom;
     private Set<StudentDto> students;
 
+    @LessonsTime(from = "07:30", to = "19:00")
     @DateTimeFormat(pattern = DATE_TIME_PATTERN)
     @JsonFormat(pattern = DATE_TIME_PATTERN)
     private LocalDateTime timeStart;
 
+    @LessonsTime(from = "09:00", to = "20:30")
     @DateTimeFormat(pattern = DATE_TIME_PATTERN)
     @JsonFormat(pattern = DATE_TIME_PATTERN)
     private LocalDateTime timeEnd;

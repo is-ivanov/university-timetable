@@ -3,8 +3,12 @@ package ua.com.foxminded.university.domain.entity;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.Hibernate;
+import ua.com.foxminded.university.domain.validator.CapitalLetter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Objects;
 
 @Getter
@@ -23,15 +27,23 @@ public abstract class Person {
     @GeneratedValue
     private Integer id;
 
+    @Size(max = 100)
+    @NotBlank(message = "{person.name.not.blank}")
+    @CapitalLetter
     @Column(name = "first_name", nullable = false, length = 100)
     private String firstName;
 
+    @Size(max = 100)
     @Column(name = "patronymic", length = 100)
     private String patronymic;
 
+    @Size(max = 100)
+    @NotBlank(message = "{person.name.not.blank}")
+    @CapitalLetter
     @Column(name = "last_name", nullable = false, length = 100)
     private String lastName;
 
+    @NotNull
     @Column(nullable = false)
     private boolean active;
 

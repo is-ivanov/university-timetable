@@ -137,7 +137,7 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <form action="#" th:action="@{/students}" method="post"
-              th:object="${newStudent}">
+              th:object="${newStudent}" data-validate="yes">
           <div class="modal-header">
             <h5 class="modal-title" id="newStudentModalLabel">New Student</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -145,28 +145,32 @@
           </div>
           <div class="modal-body">
             <div class="form-floating mb-3">
-              <input type="text" class="form-control" id="newStudentFirstNameInput"
+              <input type="text" class="form-control validated-field"
+                     id="newStudentFirstNameInput"
                      placeholder="First name"
                      th:field="*{firstName}" required>
               <label for="newStudentFirstNameInput">First Name</label>
             </div>
 
             <div class="form-floating mb-3">
-              <input type="text" class="form-control" id="newStudentPatronymicInput"
+              <input type="text" class="form-control validated-field"
+                     id="newStudentPatronymicInput"
                      placeholder="Patronymic"
                      th:field="*{patronymic}">
               <label for="newStudentPatronymicInput">Patronymic</label>
             </div>
 
             <div class="form-floating mb-3">
-              <input type="text" class="form-control" id="newStudentLastNameInput"
+              <input type="text" class="form-control validated-field"
+                     id="newStudentLastNameInput"
                      placeholder="Last Name"
                      th:field="*{lastName}" required>
               <label for="newStudentLastNameInput">Last Name</label>
             </div>
 
             <div class="col-auto form-check form-switch mb-3">
-              <input class="form-check-input" type="checkbox" id="switchActiveNewStudent"
+              <input class="form-check-input validated-field" type="checkbox"
+                     id="switchActiveNewStudent"
                      th:field="*{active}">
               <label class="form-check-label" for="switchActiveNewStudent">Active student</label>
             </div>
@@ -174,7 +178,7 @@
             <div class="mb-3">
               <label for="selectGroupNewStudent" class="form-label">Group</label>
               <select name="groupId" id="selectGroupNewStudent"
-                      class="form-select" required>
+                      class="form-select validated-field" required>
                 <option value="" disabled selected>Please select group...
                 </option>
                 <option th:each="group : ${groups}"
@@ -201,7 +205,7 @@
        tabindex="-1" aria-labelledby="editStudentModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <form id="formEdit" th:method="put">
+        <form id="formEdit" th:method="put" data-validate="yes">
           <div class="modal-header">
             <h5 class="modal-title" id="editStudentModalLabel">Update Student</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -209,32 +213,37 @@
           </div>
           <div class="modal-body">
             <div class="form-floating mb-3">
-              <input type="text" class="form-control" id="editStudentFirstNameInput"
+              <input type="text" class="form-control validated-field"
+                     id="editStudentFirstNameInput"
                      name="firstName" value="" required>
               <label for="editStudentFirstNameInput" class="form-label">First Name</label>
             </div>
 
             <div class="form-floating mb-3">
-              <input type="text" class="form-control" id="editStudentPatronymicInput"
+              <input type="text" class="form-control validated-field"
+                     id="editStudentPatronymicInput"
                      name="patronymic" value="">
               <label for="editStudentPatronymicInput" class="form-label">Patronymic</label>
             </div>
 
             <div class="form-floating mb-3">
-              <input type="text" class="form-control" id="editStudentLastNameInput"
+              <input type="text" class="form-control validated-field"
+                     id="editStudentLastNameInput"
                      name="lastName" value="" required>
               <label for="editStudentLastNameInput" class="form-label">Last Name</label>
             </div>
 
             <div class="col-auto form-check form-switch mb-3">
-              <input class="form-check-input" type="checkbox" id="switchActiveEditStudent"
+              <input class="form-check-input validated-field" type="checkbox"
+                     id="switchActiveEditStudent"
                      name="active">
               <label class="form-check-label" for="switchActiveEditStudent">Active student</label>
             </div>
 
             <div class="mb-3">
               <label for="editStudentGroupSelect" class="form-label">Group</label>
-              <select name="groupId" id="editStudentGroupSelect" class="form-select" required>
+              <select name="groupId" id="editStudentGroupSelect"
+                      class="form-select validated-field" required>
                 <option value="" disabled selected>Please select department...
                 </option>
                 <option th:each="group : ${groups}"

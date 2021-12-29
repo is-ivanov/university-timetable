@@ -2,7 +2,6 @@ package ua.com.foxminded.university.ui.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +19,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 import static ua.com.foxminded.university.ui.Util.defineRedirect;
+import static ua.com.foxminded.university.ui.Util.getResponseEntityWithRedirectUrl;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -59,12 +59,12 @@ public class DepartmentController {
     }
 
     @PostMapping
-    public String createDepartment(@ModelAttribute @Valid Department department,
-                                   HttpServletRequest request) {
+    public ResponseEntity<String> createDepartment(@ModelAttribute @Valid Department department,
+                                                   HttpServletRequest request) {
         log.debug("Creating {}", department);
         departmentService.save(department);
         log.debug("{} is created", department);
-        return defineRedirect(request);
+        return getResponseEntityWithRedirectUrl(request);
     }
 
     @GetMapping("/{id}")
@@ -77,13 +77,13 @@ public class DepartmentController {
     }
 
     @PutMapping("/{id}")
-    public String updateDepartment(@ModelAttribute @Valid Department department,
+    public ResponseEntity<String> updateDepartment(@ModelAttribute @Valid Department department,
                                    @PathVariable("id") int departmentId,
                                    HttpServletRequest request) {
         log.debug("Updating department id({})", departmentId);
         departmentService.save(department);
         log.debug("Department id({}) is updated", departmentId);
-        return defineRedirect(request);
+        return getResponseEntityWithRedirectUrl(request);
     }
 
     @DeleteMapping("/{id}")
@@ -102,10 +102,5 @@ public class DepartmentController {
         List<TeacherDto> teachers = teacherService.getAllByDepartment(departmentId);
         log.debug("Found {} teachers", teachers.size());
         return teachers;
-    }
-
-    @PostMapping("/validate")
-    public ResponseEntity<Object> validate(@ModelAttribute @Valid Department department) {
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
