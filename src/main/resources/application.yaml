@@ -8,15 +8,12 @@ spring:
     hibernate:
       ddl-auto: validate
     properties:
-#      javax:
-#        persistence:
-#          validation:
-#            mode: null
       hibernate:
         format_sql: true
         highlight_sql: true
     open-in-view: false
     database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+    show-sql: true
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
   mvc:
@@ -25,8 +22,4 @@ spring:
         enabled: true
 logging:
   level:
-    #    root: WARN
-#    web: INFO
-#    sql: DEBUG
     ua.com.foxminded.university: DEBUG
-#    org.hibernate.type.descriptor.sql: TRACE

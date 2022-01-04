@@ -88,7 +88,7 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <form action="#" th:action="@{/rooms}" method="post"
-              th:object="${newRoom}" data-validate="/rooms/validate">
+              th:object="${newRoom}" data-validate="yes">
           <div class="modal-header">
             <h5 class="modal-title" id="newRoomModalLabel">New Room</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -126,7 +126,7 @@
        tabindex="-1" aria-labelledby="editRoomModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <form id="formEdit" th:method="put" data-validate="/rooms/validate">
+        <form id="formEdit" th:method="put" data-validate="yes">
           <div class="modal-header">
             <h5 class="modal-title" id="editRoomModalLabel">Update Room</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"

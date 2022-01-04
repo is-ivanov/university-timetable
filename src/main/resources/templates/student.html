@@ -104,7 +104,7 @@
             <div class="col-auto">
               <a href="#" th:href="@{/timetable/students/{id}(id = ${studentDto.id})}"
                  class="btn btn-info btn-sm">
-              <i class="bi-calendar3"></i> Timetable
+                <i class="bi-calendar3"></i> Timetable
               </a>
             </div>
             <div class="col-auto">
@@ -178,7 +178,8 @@
             <div class="mb-3">
               <label for="selectGroupNewStudent" class="form-label">Group</label>
               <select name="groupId" id="selectGroupNewStudent"
-                      class="form-select validated-field" required>
+                      class="form-select validated-field" required
+                      data-validate-field="students">
                 <option value="" disabled selected>Please select group...
                 </option>
                 <option th:each="group : ${groups}"

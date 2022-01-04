@@ -20,6 +20,11 @@ import static ua.com.foxminded.university.ui.Util.DATE_TIME_PATTERN;
 @Builder
 public class LessonDto {
 
+    private static final String TIME_START_FROM = "07:30";
+    private static final String TIME_START_TO = "19:00";
+    private static final String TIME_END_FROM = "09:00";
+    private static final String TIME_END_TO = "20:30";
+
     private Integer id;
 
     @NotNull
@@ -38,12 +43,12 @@ public class LessonDto {
     private String buildingAndRoom;
     private Set<StudentDto> students;
 
-    @LessonsTime(from = "07:30", to = "19:00")
+    @LessonsTime(from = TIME_START_FROM, to = TIME_START_TO)
     @DateTimeFormat(pattern = DATE_TIME_PATTERN)
     @JsonFormat(pattern = DATE_TIME_PATTERN)
     private LocalDateTime timeStart;
 
-    @LessonsTime(from = "09:00", to = "20:30")
+    @LessonsTime(from = TIME_END_FROM, to = TIME_END_TO)
     @DateTimeFormat(pattern = DATE_TIME_PATTERN)
     @JsonFormat(pattern = DATE_TIME_PATTERN)
     private LocalDateTime timeEnd;

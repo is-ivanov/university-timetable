@@ -203,7 +203,7 @@ class TeacherControllerTest {
                     .param("active", ON)
                     .param("departmentId", String.valueOf(DEPARTMENT_ID1)))
                 .andDo(print())
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().is2xxSuccessful());
 
             verify(teacherMapperMock, times(1))
                 .toTeacher(teacherDtoCaptor.capture());
@@ -249,7 +249,7 @@ class TeacherControllerTest {
     class UpdateTeacherTest {
         @Test
         @DisplayName("when PUT request with all required parameters then should " +
-            "call teacherDtoMapper and redirect")
+            "call teacherDtoMapper")
         void putRequestWithAllParametersShouldCallTeacherMapperAndRedirect() throws Exception {
             mockMvc.perform(put(URI_TEACHERS_ID, TEACHER_ID1)
                     .param("firstName", NAME_FIRST_TEACHER)
@@ -258,7 +258,7 @@ class TeacherControllerTest {
                     .param("active", ON)
                     .param("departmentId", String.valueOf(DEPARTMENT_ID1)))
                 .andDo(print())
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().is2xxSuccessful());
             verify(teacherMapperMock, times(1))
                 .toTeacher(teacherDtoCaptor.capture());
 

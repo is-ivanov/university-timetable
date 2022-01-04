@@ -299,12 +299,12 @@
               <label for="dateStartPickerNewLesson" class="form-label">Time start</label>
               <div class="input-group date has-validation" id="dateStartPickerNewLesson" data-target-input="nearest">
                 <label class="visually-hidden" for="timeStart"></label>
-                <input type="text" class="form-control datetimepicker-input validated-field"
-                       data-target="#dateStartPickerNewLesson"
-                       id="timeStart" name="timeStart" required/>
                 <div data-target="#dateStartPickerNewLesson" data-toggle="datetimepicker">
                   <div class="input-group-text"><i class="bi bi-calendar3"></i></div>
                 </div>
+                <input type="text" class="form-control datetimepicker-input validated-field"
+                       data-target="#dateStartPickerNewLesson"
+                       id="timeStart" name="timeStart" required/>
               </div>
             </div>
             <!--Date end-->
@@ -312,12 +312,12 @@
               <label for="dateEndPickerNewLesson" class="form-label">Time end</label>
               <div class="input-group date has-validation" id="dateEndPickerNewLesson" data-target-input="nearest">
                 <label class="visually-hidden" for="timeEnd"></label>
-                <input type="text" class="form-control datetimepicker-input validated-field"
-                       data-target="#dateEndPickerNewLesson"
-                       id="timeEnd" name="timeEnd" required/>
                 <div data-target="#dateEndPickerNewLesson" data-toggle="datetimepicker">
                   <div class="input-group-text"><i class="bi bi-calendar3"></i></div>
                 </div>
+                <input type="text" class="form-control datetimepicker-input validated-field"
+                       data-target="#dateEndPickerNewLesson"
+                       id="timeEnd" name="timeEnd" required/>
               </div>
             </div>
           </div>
@@ -394,12 +394,12 @@
               <label for="dateStartPickerEditLesson" class="form-label">Time start</label>
               <div class="input-group date has-validation" id="dateStartPickerEditLesson" data-target-input="nearest">
                 <label class="visually-hidden" for="timeStartEditModal"></label>
-                <input type="text" class="form-control datetimepicker-input validated-field"
-                       data-target="#dateStartPickerEditLesson"
-                       id="timeStartEditModal" name="timeStart" required/>
                 <div data-target="#dateStartPickerEditLesson" data-toggle="datetimepicker">
                   <div class="input-group-text"><i class="bi bi-calendar3"></i></div>
                 </div>
+                <input type="text" class="form-control datetimepicker-input validated-field"
+                       data-target="#dateStartPickerEditLesson"
+                       id="timeStartEditModal" name="timeStart" required/>
               </div>
             </div>
             <!--Date end-->
@@ -407,12 +407,12 @@
               <label for="dateEndPickerEditLesson" class="form-label">Time end</label>
               <div class="input-group date has-validation" id="dateEndPickerEditLesson" data-target-input="nearest">
                 <label class="visually-hidden" for="timeEndEditModal"></label>
-                <input type="text" class="form-control datetimepicker-input validated-field"
-                       data-target="#dateEndPickerEditLesson"
-                       id="timeEndEditModal" name="timeEnd" required/>
                 <div data-target="#dateEndPickerEditLesson" data-toggle="datetimepicker">
                   <div class="input-group-text"><i class="bi bi-calendar3"></i></div>
                 </div>
+                <input type="text" class="form-control datetimepicker-input validated-field"
+                       data-target="#dateEndPickerEditLesson"
+                       id="timeEndEditModal" name="timeEnd" required/>
               </div>
             </div>
 
@@ -552,6 +552,9 @@
 
   // NEW MODAL
   $(function () {
+    $('#newLessonModal').on('show.bs.modal', function () {
+      removeValidationErrors();
+    });
     $('#newLessonModal').on('shown.bs.modal', function () {
       $('#selectCourseNewLesson').focus();
     });
@@ -573,6 +576,10 @@
   });
 
   $(function () {
+    $('#editLessonModal').on('show.bs.modal', function () {
+      removeValidationErrors();
+    });
+
     $('#editLessonModal').on('shown.bs.modal', function () {
       $('#selectCourseEditLesson').focus();
     });

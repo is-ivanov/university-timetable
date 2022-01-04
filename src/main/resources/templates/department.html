@@ -87,7 +87,7 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <form action="#" th:action="@{/departments}" method="post"
-              th:object="${newDepartment}" data-validate="/departments/validate">
+              th:object="${newDepartment}" data-validate="yes">
           <div class="modal-header">
             <h5 class="modal-title" id="newDepartmentModalLabel">New Department</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -132,7 +132,7 @@
        tabindex="-1" aria-labelledby="editDepartmentModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <form id="formEdit" th:method="put" data-validate="/departments/validate">
+        <form id="formEdit" th:method="put" data-validate="yes">
           <div class="modal-header">
             <h5 class="modal-title" id="editDepartmentModalLabel">Update Department</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"

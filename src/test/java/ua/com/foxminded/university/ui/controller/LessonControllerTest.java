@@ -270,7 +270,7 @@ class LessonControllerTest {
 
         @Test
         @DisplayName("when POST request with all required parameters then should " +
-            "call lessonService.add once and redirect")
+            "call lessonService.add once")
         void postRequestWithParametersThenShouldCallServiceAndRedirect() throws Exception {
             LessonDto lessonDto = LessonDto.builder()
                 .courseId(COURSE_ID1)
@@ -290,7 +290,7 @@ class LessonControllerTest {
                     .param("timeStart", TEXT_DATE_START_FIRST_LESSON)
                     .param("timeEnd", TEXT_DATE_END_FIRST_LESSON))
                 .andDo(print())
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().is2xxSuccessful());
 
             verify(lessonDtoMapperMock, times(1))
                 .toLesson(lessonDto);
@@ -347,7 +347,7 @@ class LessonControllerTest {
 
         @Test
         @DisplayName("when PUT request with all required parameters then should " +
-            "call lessonService.update and redirect")
+            "call lessonService.update")
         void putRequestWithAllParametersShouldCallLessonServiceAndRedirect() throws Exception {
             int lessonId = 45;
             LessonDto testLessonDto = LessonDto.builder()
@@ -358,8 +358,6 @@ class LessonControllerTest {
                 .timeStart(DATE_START_FIRST_LESSON)
                 .timeEnd(DATE_END_FIRST_LESSON)
                 .build();
-            Lesson testLesson = createTestLesson(lessonId);
-            when(lessonDtoMapperMock.toLesson(testLessonDto)).thenReturn(testLesson);
 
             mockMvc.perform(put(URI_LESSONS_ID, lessonId)
                     .param("courseId", String.valueOf(COURSE_ID1))
@@ -368,9 +366,9 @@ class LessonControllerTest {
                     .param("timeStart", TEXT_DATE_START_FIRST_LESSON)
                     .param("timeEnd", TEXT_DATE_END_FIRST_LESSON))
                 .andDo(print())
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().is2xxSuccessful());
 
-            verify(lessonServiceMock, times(1)).save(testLesson);
+            verify(lessonServiceMock, times(1)).update(testLessonDto);
         }
     }
 

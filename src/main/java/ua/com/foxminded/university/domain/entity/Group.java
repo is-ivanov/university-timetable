@@ -7,7 +7,9 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -15,6 +17,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Builder
 @Table(name = "groups", indexes = {
     @Index(name = "idx_group_group_name", columnList = "group_name", unique = true),
     @Index(name = "idx_group_group_active", columnList = "group_active"),
@@ -43,10 +46,32 @@ public class Group {
     @Column(name = "group_active", nullable = false)
     private boolean active;
 
+    @Size(max = 25, message = "{group.students.size}")
+    @OneToMany(mappedBy = "group", orphanRemoval = true)
+    @ToString.Exclude
+    private Set<Student> students = new HashSet<>();
+
     public Group(String name, Faculty faculty, boolean active) {
         this.name = name;
         this.faculty = faculty;
         this.active = active;
+    }
+
+    public Group(Integer id, String name, Faculty faculty, boolean active) {
+        this.id = id;
+        this.name = name;
+        this.faculty = faculty;
+        this.active = active;
+    }
+
+    public void addStudent(Student student) {
+        students.add(student);
+        student.setGroup(this);
+    }
+
+    public void removeStudent(Student student) {
+        students.remove(student);
+        student.setGroup(null);
     }
 
     @Override

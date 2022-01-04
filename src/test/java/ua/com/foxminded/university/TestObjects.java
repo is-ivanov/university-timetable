@@ -35,12 +35,14 @@ public class TestObjects {
     public static final int GROUP_ID1 = 2;
     public static final int GROUP_ID2 = 14;
     public static final String NAME_FIRST_FACULTY = "IT faculty";
+    public static final String FAIL_NAME_FIRST_FACULTY = "it faculty";
     public static final String NAME_SECOND_FACULTY = "Chemistry faculty";
     public static final String NAME_THIRD_FACULTY = "Faculty name";
     public static final String NAME_FIRST_GROUP = "99XT-1";
     public static final String NAME_SECOND_GROUP = "56FDS";
     public static final String NAME_THIRD_GROUP = "21Ger-1";
     public static final String NAME_FIRST_DEPARTMENT = "Java department";
+    public static final String FAIL_NAME_FIRST_DEPARTMENT = "java department";
     public static final String NAME_SECOND_DEPARTMENT = "C# department";
     public static final String NAME_THIRD_DEPARTMENT = "JavaScript department";
     public static final String NAME_FIRST_COURSE = "Java";
@@ -90,6 +92,8 @@ public class TestObjects {
     public static final String TEXT_DATE_FROM = "2021-08-10 08:00";
     public static final LocalDateTime DATE_TO = LocalDateTime.of(2021, 9, 15, 23, 0);
     public static final String TEXT_DATE_TO = "2021-09-15 23:00";
+    public static final String MESSAGE_FIRST_CAPITAL_LETTER = "The first letter must be capital letter";
+
 
     public static Faculty createTestFaculty() {
         return new Faculty(FACULTY_ID1, NAME_FIRST_FACULTY);

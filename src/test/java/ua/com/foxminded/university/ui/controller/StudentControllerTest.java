@@ -156,7 +156,7 @@ class StudentControllerTest {
     class CreateStudentTest {
         @Test
         @DisplayName("when POST request with all required parameters then should " +
-            "call studentDtoMapper once and redirect")
+            "call studentDtoMapper once")
         void postRequestWithParametersShouldCallStudentMapperAndRedirect() throws Exception {
             String firstName = NAME_FIRST_STUDENT;
             String patronymic = PATRONYMIC_FIRST_STUDENT;
@@ -170,7 +170,7 @@ class StudentControllerTest {
                     .param("active", ON)
                     .param("groupId", String.valueOf(groupId)))
                 .andDo(print())
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().is2xxSuccessful());
 
             verify(studentDtoMapperMock, times(1))
                 .toStudent(studentDtoCaptor.capture());
@@ -217,7 +217,7 @@ class StudentControllerTest {
     class UpdateStudentTest {
         @Test
         @DisplayName("when PUT request with all required parameters then should " +
-            "call studentDtoMapper and redirect")
+            "call studentDtoMapper")
         void putRequestWithParametersShouldCallStudentDtoMapper() throws Exception {
             mockMvc.perform(put(URI_STUDENTS_ID, STUDENT_ID1)
                     .param("firstName", NAME_FIRST_STUDENT)
@@ -226,7 +226,7 @@ class StudentControllerTest {
                     .param("active", ON)
                     .param("groupId", String.valueOf(GROUP_ID1)))
                 .andDo(print())
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().is2xxSuccessful());
 
             verify(studentDtoMapperMock, times(1))
                 .toStudent(studentDtoCaptor.capture());

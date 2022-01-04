@@ -8,6 +8,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import ua.com.foxminded.university.dao.GroupRepository;
 import ua.com.foxminded.university.dao.StudentRepository;
 import ua.com.foxminded.university.domain.dto.StudentDto;
 import ua.com.foxminded.university.domain.entity.Faculty;
@@ -16,12 +17,17 @@ import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.domain.mapper.StudentDtoMapper;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static ua.com.foxminded.university.TestObjects.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -33,20 +39,43 @@ class StudentServiceImplTest {
     private StudentRepository studentRepoMock;
 
     @Mock
+    private GroupRepository groupRepoMock;
+
+    @Mock
     private StudentDtoMapper mapperMock;
+
+    @Mock
+    private Validator validatorMock;
 
     @InjectMocks
     private StudentServiceImpl studentService;
 
-    @Test
-    @DisplayName("test 'save' when call add method then should call Repository once")
-    void testSave_CallDaoOnce() {
-        Student student = new Student();
-        Group group = new Group();
-        group.setName(anyString());
-        student.setGroup(group);
-        studentService.save(student);
-        verify(studentRepoMock).save(student);
+    @Nested
+    @DisplayName("test 'save' method")
+    class SaveTest {
+
+        @Test
+        @DisplayName("when validator return empty set without violations then method " +
+            "should call Repository once")
+        void testSaveWithoutViolations_CallDaoOnce() {
+            Student student = Student.builder()
+                .firstName(NAME_FIRST_STUDENT)
+                .lastName(LAST_NAME_FIRST_STUDENT)
+                .active(true)
+                .build();
+            Group groupInStudent = Group.builder().id(GROUP_ID1).build();
+            student.setGroup(groupInStudent);
+
+            Group groupFromDb = createTestGroup();
+            Set<ConstraintViolation<Group>> emptyViolations = new HashSet<>();
+
+            when(groupRepoMock.findById(GROUP_ID1)).thenReturn(Optional.of(groupFromDb));
+            when(validatorMock.validate(groupFromDb)).thenReturn(emptyViolations);
+
+            studentService.save(student);
+
+            verify(studentRepoMock).save(student);
+        }
     }
 
     @Test

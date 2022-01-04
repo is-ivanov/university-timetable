@@ -3,7 +3,6 @@ package ua.com.foxminded.university.domain.entity;
 import com.querydsl.core.annotations.QueryInit;
 import lombok.*;
 import org.hibernate.Hibernate;
-import ua.com.foxminded.university.domain.validator.LessonsTime;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -12,7 +11,6 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-//@Config(entityAccessors=true)
 @Getter
 @Setter
 @ToString
@@ -56,11 +54,9 @@ public class Lesson {
         foreignKey = @ForeignKey(name = "fk_room"))
     private Room room;
 
-    @LessonsTime(from = "07:30", to = "19:00")
     @Column(name = "time_start")
     private LocalDateTime timeStart;
 
-    @LessonsTime(from = "09:00", to = "20:30")
     @Column(name = "time_end")
     private LocalDateTime timeEnd;
 

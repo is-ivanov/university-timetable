@@ -130,14 +130,14 @@ class GroupControllerTest {
 
         @Test
         @DisplayName("when POST request with parameters 'name', 'active' and " +
-            "'faculty.id' then should call groupService.add once and redirect")
+            "'faculty.id' then should call groupService.add once")
         void postRequestWithParametersNameActiveFacultyId() throws Exception {
             mockMvc.perform(post(URI_GROUPS)
                     .param("name", NAME_FIRST_GROUP)
                     .param("active", ON)
                     .param("faculty.id", String.valueOf(ID1)))
                 .andDo(print())
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().is2xxSuccessful());
 
             verify(groupServiceMock, times(1)).save(groupCaptor.capture());
             Group expectedGroup = groupCaptor.getValue();
@@ -181,7 +181,7 @@ class GroupControllerTest {
 
         @Test
         @DisplayName("when PUT request with parameters 'id', 'name', 'active' and " +
-            "'faculty.id' then should call groupService.update once and redirect")
+            "'faculty.id' then should call groupService.update once")
         void putRequestWithParameters() throws Exception {
             int groupId = anyInt();
             mockMvc.perform(put(URI_GROUPS_ID, groupId)
@@ -189,7 +189,7 @@ class GroupControllerTest {
                     .param("active", ON)
                     .param("faculty.id", String.valueOf(ID2)))
                 .andDo(print())
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().is2xxSuccessful());
 
             verify(groupServiceMock, times(1)).save(groupCaptor.capture());
             Group expectedGroup = groupCaptor.getValue();
