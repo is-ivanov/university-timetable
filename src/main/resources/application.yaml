@@ -23,3 +23,14 @@ spring:
 logging:
   level:
     ua.com.foxminded.university: DEBUG
+
+validation:
+  time:
+    start:
+      from: 07:30
+      to: 19:00
+    end:
+      from: 15:00
+      to: 20:30
+  group:
+    max-number-students: 25
