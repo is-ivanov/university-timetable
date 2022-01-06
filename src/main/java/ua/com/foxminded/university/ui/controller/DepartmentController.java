@@ -2,6 +2,7 @@ package ua.com.foxminded.university.ui.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -14,9 +15,11 @@ import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.List;
 
 import static ua.com.foxminded.university.ui.Util.defineRedirect;
+import static ua.com.foxminded.university.ui.Util.getResponseEntityWithRedirectUrl;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -56,12 +59,12 @@ public class DepartmentController {
     }
 
     @PostMapping
-    public String createDepartment(@ModelAttribute Department department,
-                                   HttpServletRequest request) {
+    public ResponseEntity<String> createDepartment(@ModelAttribute @Valid Department department,
+                                                   HttpServletRequest request) {
         log.debug("Creating {}", department);
         departmentService.save(department);
         log.debug("{} is created", department);
-        return defineRedirect(request);
+        return getResponseEntityWithRedirectUrl(request);
     }
 
     @GetMapping("/{id}")
@@ -74,13 +77,13 @@ public class DepartmentController {
     }
 
     @PutMapping("/{id}")
-    public String updateDepartment(@ModelAttribute Department department,
+    public ResponseEntity<String> updateDepartment(@ModelAttribute @Valid Department department,
                                    @PathVariable("id") int departmentId,
                                    HttpServletRequest request) {
         log.debug("Updating department id({})", departmentId);
         departmentService.save(department);
         log.debug("Department id({}) is updated", departmentId);
-        return defineRedirect(request);
+        return getResponseEntityWithRedirectUrl(request);
     }
 
     @DeleteMapping("/{id}")

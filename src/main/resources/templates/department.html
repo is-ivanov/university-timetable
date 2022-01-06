@@ -87,24 +87,24 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <form action="#" th:action="@{/departments}" method="post"
-              th:object="${newDepartment}">
+              th:object="${newDepartment}" data-validate="yes">
           <div class="modal-header">
-            <h5 class="modal-title" id="newDepartmentModalLabel">New
-              Department</h5>
+            <h5 class="modal-title" id="newDepartmentModalLabel">New Department</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"
                     aria-label="Close"></button>
           </div>
           <div class="modal-body">
             <div class="mb-3">
               <label for="newDepartmentNameInput" class="form-label">Name</label>
-              <input type="text" class="form-control" id="newDepartmentNameInput"
+              <input type="text" class="form-control validated-field"
+                     id="newDepartmentNameInput"
                      placeholder="Enter new department name"
                      th:field="*{name}" required>
             </div>
             <div class="mb-3">
               <label for="selectFacultyNewDepartment" class="form-label">Faculty</label>
               <select name="faculty.id" id="selectFacultyNewDepartment"
-                      class="form-select" required>
+                      class="form-select validated-field" required>
                 <option value="" disabled selected>Please select faculty...
                 </option>
                 <option th:each="faculty : ${faculties}"
@@ -132,7 +132,7 @@
        tabindex="-1" aria-labelledby="editDepartmentModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <form id="formEdit" th:method="put">
+        <form id="formEdit" th:method="put" data-validate="yes">
           <div class="modal-header">
             <h5 class="modal-title" id="editDepartmentModalLabel">Update Department</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -141,12 +141,13 @@
           <div class="modal-body">
             <div class="mb-3">
               <label for="editDepartmentNameInput" class="form-label">Name</label>
-              <input type="text" class="form-control" id="editDepartmentNameInput"
-                     name="name" value="" required>
+              <input type="text" class="form-control validated-field"
+                     id="editDepartmentNameInput" name="name" value="" required>
             </div>
             <div class="mb-3">
               <label for="editDepartmentFacultySelect" class="form-label">Faculty</label>
-              <select name="faculty.id" id="editDepartmentFacultySelect" class="form-select" required>
+              <select name="faculty.id" id="editDepartmentFacultySelect"
+                      class="form-select validated-field" required>
                 <option value="" disabled selected>Please select faculty...
                 </option>
                 <option th:each="faculty : ${faculties}"

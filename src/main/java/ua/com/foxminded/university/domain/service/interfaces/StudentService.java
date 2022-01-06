@@ -17,7 +17,7 @@ public interface StudentService extends Service<Student, StudentDto> {
 
     List<StudentDto> getStudentsByGroup(Group group);
 
-    List<StudentDto> getStudentsByGroup(int id);
+    List<StudentDto> getStudentsByGroup(int groupId);
 
     List<StudentDto> getStudentsByFaculty(int facultyId);
 

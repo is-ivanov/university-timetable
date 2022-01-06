@@ -2,8 +2,10 @@ package ua.com.foxminded.university.domain.entity;
 
 import lombok.*;
 import org.hibernate.Hibernate;
+import ua.com.foxminded.university.domain.validator.CapitalLetter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 
 @Getter
@@ -20,6 +22,8 @@ public class Course {
     @Column(name = "course_id", nullable = false)
     private Integer id;
 
+    @NotBlank(message = "{course.name.not.blank}")
+    @CapitalLetter
     @Column(name = "course_name", nullable = false, unique = true)
     private String name;
 

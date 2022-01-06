@@ -2,6 +2,7 @@ package ua.com.foxminded.university.ui.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,10 +17,12 @@ import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static ua.com.foxminded.university.ui.Util.defineRedirect;
+import static ua.com.foxminded.university.ui.Util.getResponseEntityWithRedirectUrl;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -66,7 +69,7 @@ public class LessonController {
 
         log.debug("Get filtered lessons");
         model.addAttribute("lessons",
-                lessonService.getAllWithFilter(lessonFilter));
+            lessonService.getAllWithFilter(lessonFilter));
         model.addAttribute("newLesson", new LessonDto());
         log.debug("The required data is loaded into the model");
         return LESSONS;
@@ -119,12 +122,12 @@ public class LessonController {
     }
 
     @PostMapping
-    public String createLesson(@ModelAttribute LessonDto lessonDto,
-                               HttpServletRequest request) {
+    public ResponseEntity<String> createLesson(@ModelAttribute @Valid LessonDto lessonDto,
+                                               HttpServletRequest request) {
         log.debug("Creating lesson {}", lessonDto);
         lessonService.save(lessonDtoMapper.toLesson(lessonDto));
         log.debug("Lesson {} is created", lessonDto);
-        return defineRedirect(request);
+        return getResponseEntityWithRedirectUrl(request);
     }
 
     @PostMapping("/{id}/students")
@@ -150,14 +153,14 @@ public class LessonController {
     }
 
     @PutMapping("/{id}")
-    public String updateLesson(@ModelAttribute LessonDto lessonDto,
-                               @PathVariable("id") int lessonId,
-                               HttpServletRequest request) {
+    public ResponseEntity<String> updateLesson(@ModelAttribute @Valid LessonDto lessonDto,
+                                               @PathVariable("id") int lessonId,
+                                               HttpServletRequest request) {
         log.debug("Updating lesson id({})", lessonId);
         lessonDto.setId(lessonId);
         lessonService.update(lessonDto);
         log.debug("Lesson id({}) updated successfully", lessonId);
-        return defineRedirect(request);
+        return getResponseEntityWithRedirectUrl(request);
     }
 
     @DeleteMapping("/{id}/students")

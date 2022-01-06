@@ -1,5 +1,8 @@
 package ua.com.foxminded.university.ui;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
 import javax.servlet.http.HttpServletRequest;
 
 public class Util {
@@ -15,6 +18,15 @@ public class Util {
     }
 
     public static String defineRedirect(HttpServletRequest request) {
-        return REDIRECT + request.getHeader("referer");
+        return REDIRECT + getRedirectUrl(request);
+    }
+
+    public static ResponseEntity<String> getResponseEntityWithRedirectUrl(HttpServletRequest request) {
+        return new ResponseEntity<>("{\"location\": \"" + getRedirectUrl(request) + "\"}",
+            HttpStatus.OK);
+    }
+
+    private static String getRedirectUrl(HttpServletRequest request) {
+        return request.getHeader("referer");
     }
 }

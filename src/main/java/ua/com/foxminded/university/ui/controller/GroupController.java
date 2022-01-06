@@ -3,6 +3,7 @@ package ua.com.foxminded.university.ui.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -14,11 +15,11 @@ import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 import ua.com.foxminded.university.domain.service.interfaces.StudentService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static ua.com.foxminded.university.ui.Util.DATE_TIME_PATTERN;
-import static ua.com.foxminded.university.ui.Util.defineRedirect;
+import static ua.com.foxminded.university.ui.Util.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -57,12 +58,12 @@ public class GroupController {
     }
 
     @PostMapping
-    public String createGroup(@ModelAttribute Group group,
-                              HttpServletRequest request) {
+    public ResponseEntity<String> createGroup(@ModelAttribute @Valid Group group,
+                                              HttpServletRequest request) {
         log.debug("Creating {}", group);
         groupService.save(group);
         log.debug("{} is created", group);
-        return defineRedirect(request);
+        return getResponseEntityWithRedirectUrl(request);
     }
 
     @GetMapping("/{id}")
@@ -75,13 +76,13 @@ public class GroupController {
     }
 
     @PutMapping("/{id}")
-    public String updateGroup(@ModelAttribute Group group,
-                              @PathVariable("id") int groupId,
-                              HttpServletRequest request) {
+    public ResponseEntity<String> updateGroup(@ModelAttribute @Valid Group group,
+                                              @PathVariable("id") int groupId,
+                                              HttpServletRequest request) {
         log.debug("Updating group id({})", groupId);
         groupService.save(group);
         log.debug("Group id({}) is updated", groupId);
-        return defineRedirect(request);
+        return getResponseEntityWithRedirectUrl(request);
     }
 
     @DeleteMapping("/{id}")

@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
+import ua.com.foxminded.university.dao.GroupRepository;
 import ua.com.foxminded.university.dao.StudentRepository;
 import ua.com.foxminded.university.domain.dto.StudentDto;
 import ua.com.foxminded.university.domain.entity.Faculty;
@@ -13,23 +15,42 @@ import ua.com.foxminded.university.domain.mapper.StudentDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.StudentService;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
 @Transactional
+@Validated
 public class StudentServiceImpl implements StudentService {
 
     private final StudentRepository studentRepo;
     private final StudentDtoMapper studentDtoMapper;
+    private final GroupRepository groupRepo;
+
+    private final Validator validator;
 
     @Override
     public void save(Student student) {
         log.debug("Saving student {}", student);
+        Integer groupId = student.getGroup().getId();
+        Group group = groupRepo.findById(groupId)
+            .orElseThrow(() ->
+                new EntityNotFoundException(
+                    String.format("Group id(%d) not found", groupId)));
+        group.addStudent(student);
+        Set<ConstraintViolation<Group>> violations = validator.validate(group);
+        if (!violations.isEmpty()){
+            throw new ConstraintViolationException(violations);
+        }
         studentRepo.save(student);
+
         log.debug("Student [{} {} {}, active={}, group {}] saved successfully",
             student.getFirstName(), student.getPatronymic(),
             student.getLastName(), student.isActive(),

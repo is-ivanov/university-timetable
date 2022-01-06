@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,12 +17,12 @@ import ua.com.foxminded.university.domain.service.interfaces.RoomService;
 import ua.com.foxminded.university.ui.PageSequenceCreator;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-import static ua.com.foxminded.university.ui.Util.DATE_TIME_PATTERN;
-import static ua.com.foxminded.university.ui.Util.defineRedirect;
+import static ua.com.foxminded.university.ui.Util.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -75,22 +76,22 @@ public class RoomController {
     }
 
     @PostMapping
-    public String createRoom(@ModelAttribute Room room,
-                             HttpServletRequest request) {
+    public ResponseEntity<String> createRoom(@ModelAttribute @Valid Room room,
+                                             HttpServletRequest request) {
         log.debug("Creating {}", room);
         roomService.save(room);
         log.debug("{} is created", room);
-        return defineRedirect(request);
+        return getResponseEntityWithRedirectUrl(request);
     }
 
     @PutMapping("/{id}")
-    public String updateRoom(@ModelAttribute Room room,
-                             @PathVariable("id") int roomId,
-                             HttpServletRequest request) {
+    public ResponseEntity<String> updateRoom(@ModelAttribute @Valid Room room,
+                                             @PathVariable("id") int roomId,
+                                             HttpServletRequest request) {
         log.debug("Updating room id({})", roomId);
         roomService.save(room);
         log.debug("Room id({}) is updated", roomId);
-        return defineRedirect(request);
+        return getResponseEntityWithRedirectUrl(request);
     }
 
     @DeleteMapping("/{id}")
@@ -119,4 +120,5 @@ public class RoomController {
         log.debug("Found {} lessons", lessonsForTeacher.size());
         return lessonsForTeacher;
     }
+
 }

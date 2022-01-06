@@ -23,13 +23,16 @@ import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
+import ua.com.foxminded.university.exception.GlobalExceptionHandler;
 import ua.com.foxminded.university.ui.PageSequenceCreator;
 
 import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -48,6 +51,7 @@ class FacultyControllerTest {
     public static final String FACULTY_NAME = "name";
     public static final String TIME_START = "time_start";
     public static final String TIME_END = "time_end";
+
     @Captor
     ArgumentCaptor<Faculty> facultyCaptor;
 
@@ -76,6 +80,7 @@ class FacultyControllerTest {
         mockMvc = MockMvcBuilders
             .standaloneSetup(facultyController)
             .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
+            .setControllerAdvice(new GlobalExceptionHandler())
             .build();
     }
 
@@ -177,15 +182,29 @@ class FacultyControllerTest {
 
         @Test
         @DisplayName("when POST request with parameter name then should call " +
-            "facultyService.add once and redirect")
+            "facultyService.add once")
         void postRequestWithParameterName() throws Exception {
             mockMvc.perform(post(URI_FACULTIES)
                     .param("name", NAME_FIRST_FACULTY))
                 .andDo(print())
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().is2xxSuccessful());
 
             verify(facultyServiceMock, times(1)).save(facultyCaptor.capture());
             assertThat(facultyCaptor.getValue().getName(), is(equalTo(NAME_FIRST_FACULTY)));
+        }
+
+        @Test
+        @DisplayName("when POST request with fail parameter (name with first " +
+            "letter lower case) then should return error 400.BAD_REQUEST")
+        void whenPostRequestWithFailParameter() throws Exception {
+            mockMvc.perform(post(URI_FACULTIES)
+                    .param("name", FAIL_NAME_FIRST_FACULTY))
+                .andDo(print())
+                .andExpectAll(
+                    status().isBadRequest(),
+                    content().contentType(MediaType.APPLICATION_JSON),
+                    jsonPath("$.violations[0].field", is("name")),
+                    jsonPath("$.violations[0].message", is(MESSAGE_FIRST_CAPITAL_LETTER)));
         }
     }
 
@@ -220,7 +239,7 @@ class FacultyControllerTest {
 
         @Test
         @DisplayName("when PUT request with parameters 'id' and 'name' then should " +
-            "call facultyService.update call and redirect")
+            "call facultyService.update call")
         void putRequestWithIdAndName() throws Exception {
             int facultyId = anyInt();
             Faculty faculty = new Faculty(facultyId, NAME_FIRST_FACULTY);
@@ -228,7 +247,7 @@ class FacultyControllerTest {
             mockMvc.perform(put(URI_FACULTIES_ID, facultyId)
                     .param("name", NAME_FIRST_FACULTY))
                 .andDo(print())
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().is2xxSuccessful());
 
             verify(facultyServiceMock, times(1)).save(faculty);
         }

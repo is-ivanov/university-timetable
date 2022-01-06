@@ -88,7 +88,7 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <form action="#" th:action="@{/rooms}" method="post"
-              th:object="${newRoom}">
+              th:object="${newRoom}" data-validate="yes">
           <div class="modal-header">
             <h5 class="modal-title" id="newRoomModalLabel">New Room</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -98,16 +98,16 @@
             <div class="mb-3">
               <label for="newRoomBuildingInput"
                      class="form-label">Building</label>
-              <input type="text" class="form-control" id="newRoomBuildingInput"
+              <input type="text" class="form-control validated-field"
+                     id="newRoomBuildingInput"
                      placeholder="Enter new room building"
                      th:field="*{building}" required>
             </div>
             <div class="mb-3">
-              <label for="newRoomNumberInput" class="form-label">Room
-                number</label>
-              <input type="text" class="form-control" id="newRoomNumberInput"
-                     placeholder="Enter new room number" th:field="*{number}"
-                     required>
+              <label for="newRoomNumberInput" class="form-label">Room number</label>
+              <input type="text" class="form-control validated-field"
+                     id="newRoomNumberInput" placeholder="Enter new room number"
+                     th:field="*{number}" required>
             </div>
           </div>
           <div class="modal-footer">
@@ -126,7 +126,7 @@
        tabindex="-1" aria-labelledby="editRoomModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <form id="formEdit" th:method="put">
+        <form id="formEdit" th:method="put" data-validate="yes">
           <div class="modal-header">
             <h5 class="modal-title" id="editRoomModalLabel">Update Room</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -135,13 +135,13 @@
           <div class="modal-body">
             <div>
               <label for="editRoomBuildingInput" class="form-label">Building</label>
-              <input type="text" class="form-control" id="editRoomBuildingInput"
-                     name="building" value="" required>
+              <input type="text" class="form-control validated-field"
+                     id="editRoomBuildingInput" name="building" value="" required>
             </div>
             <div>
               <label for="editRoomNumberInput" class="form-label">Room number</label>
-              <input type="text" class="form-control" id="editRoomNumberInput"
-                     name="number" value="" required>
+              <input type="text" class="form-control validated-field"
+                     id="editRoomNumberInput" name="number" value="" required>
             </div>
           </div>
           <div class="modal-footer">

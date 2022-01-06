@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,11 +21,11 @@ import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
 import ua.com.foxminded.university.ui.PageSequenceCreator;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static ua.com.foxminded.university.ui.Util.DATE_TIME_PATTERN;
-import static ua.com.foxminded.university.ui.Util.defineRedirect;
+import static ua.com.foxminded.university.ui.Util.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -57,12 +58,12 @@ public class FacultyController {
     }
 
     @PostMapping
-    public String createFaculty(@ModelAttribute Faculty faculty,
-                                HttpServletRequest request) {
+    public ResponseEntity<String> createFaculty(@ModelAttribute @Valid Faculty faculty,
+                                                HttpServletRequest request) {
         log.debug("Creating {}", faculty);
         facultyService.save(faculty);
         log.debug("{} is created", faculty);
-        return defineRedirect(request);
+        return getResponseEntityWithRedirectUrl(request);
     }
 
     @GetMapping("/{id}")
@@ -75,13 +76,13 @@ public class FacultyController {
     }
 
     @PutMapping("/{id}")
-    public String updateFaculty(@ModelAttribute Faculty faculty,
-                                @PathVariable("id") int facultyId,
-                                HttpServletRequest request) {
+    public ResponseEntity<String> updateFaculty(@ModelAttribute @Valid Faculty faculty,
+                                                @PathVariable("id") int facultyId,
+                                                HttpServletRequest request) {
         log.debug("Updating faculty with id({})", faculty);
         facultyService.save(faculty);
         log.debug("Faculty id({}) is updated", facultyId);
-        return defineRedirect(request);
+        return getResponseEntityWithRedirectUrl(request);
     }
 
     @DeleteMapping("/{id}")

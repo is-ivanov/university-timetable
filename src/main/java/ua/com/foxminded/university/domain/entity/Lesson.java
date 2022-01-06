@@ -1,17 +1,16 @@
 package ua.com.foxminded.university.domain.entity;
 
-import com.querydsl.core.annotations.Config;
 import com.querydsl.core.annotations.QueryInit;
 import lombok.*;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-//@Config(entityAccessors=true)
 @Getter
 @Setter
 @ToString
@@ -33,12 +32,14 @@ public class Lesson {
     @Column(name = "lesson_id")
     private Integer id;
 
+    @NotNull
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "course_id", nullable = false,
         foreignKey = @ForeignKey(name = "fk_course"))
     private Course course;
 
+    @NotNull
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "teacher_id", nullable = false,
@@ -46,6 +47,7 @@ public class Lesson {
     @QueryInit("department.faculty")
     private Teacher teacher;
 
+    @NotNull
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "room_id", nullable = false,

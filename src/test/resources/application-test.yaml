@@ -8,6 +8,7 @@ spring:
         highlight_sql: true
         generate_statistics: true
     database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+    show-sql: true
   output:
     ansi:
       enabled: ALWAYS

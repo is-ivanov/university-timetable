@@ -209,13 +209,13 @@ class RoomControllerTest {
     class CreateRoomTest {
         @Test
         @DisplayName("when POST request with parameters then should call " +
-            "roomService.add and redirect")
+            "roomService.add")
         void postRequestWithParametersThenShouldCallRoomService() throws Exception {
             mockMvc.perform(post(URI_ROOMS)
                     .param("building", BUILDING_FIRST_ROOM)
                     .param("number", NUMBER_FIRST_ROOM))
                 .andDo(print())
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().is2xxSuccessful());
             verify(roomServiceMock, times(1))
                 .save(roomCaptor.capture());
             Room expectedRoom = roomCaptor.getValue();
@@ -230,14 +230,14 @@ class RoomControllerTest {
     class UpdateRoomTest {
         @Test
         @DisplayName("when PUT request with all required parameters then should " +
-            "call roomService.update and redirect")
+            "call roomService.update")
         void putRequestWithAllParametersShouldCallRoomServiceAndRedirect() throws Exception {
             Room testRoom = createTestRoom();
             mockMvc.perform(put(URI_ROOMS_ID, testRoom.getId())
                     .param("building", BUILDING_FIRST_ROOM)
                     .param("number", NUMBER_FIRST_ROOM))
                 .andDo(print())
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().is2xxSuccessful());
             verify(roomServiceMock, times(1)).save(roomCaptor.capture());
             Room newRoom = roomCaptor.getValue();
             assertThat(newRoom.getBuilding(), is(equalTo(BUILDING_FIRST_ROOM)));

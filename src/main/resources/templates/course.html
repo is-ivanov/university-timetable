@@ -75,7 +75,7 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <form action="#" th:action="@{/courses}" method="post"
-              th:object="${newCourse}">
+              th:object="${newCourse}" data-validate="yes">
           <div class="modal-header">
             <h5 class="modal-title" id="newCourseModalLabel">New Course</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -84,9 +84,9 @@
           <div class="modal-body">
             <div class="mb-3">
               <label for="newCourseNameInput" class="form-label">Name</label>
-              <input type="text" class="form-control" id="newCourseNameInput"
+              <input type="text" class="form-control validated-field"
                      placeholder="Enter new course name"
-                     th:field="*{name}" required>
+                     id="newCourseNameInput" th:field="*{name}" required>
             </div>
           </div>
           <div class="modal-footer">
@@ -105,7 +105,7 @@
        tabindex="-1" aria-labelledby="editCourseModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <form id="formEdit" th:method="put">
+        <form id="formEdit" th:method="put" data-validate="yes">
           <div class="modal-header">
             <h5 class="modal-title" id="editCourseModalLabel">Update Course</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -114,7 +114,8 @@
           <div class="modal-body">
             <div class="mb-3">
               <label for="editCourseNameInput" class="form-label">Name</label>
-              <input type="text" class="form-control" id="editCourseNameInput"
+              <input type="text" class="form-control validated-field"
+                     id="editCourseNameInput"
                      name="name" value="" required>
             </div>
           </div>

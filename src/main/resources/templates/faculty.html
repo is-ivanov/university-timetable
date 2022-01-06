@@ -83,22 +83,28 @@
   <!--  Create Modal-->
   <div id="newFacultyModal" class="modal fade" data-bs-backdrop="static"
        tabindex="-1" aria-labelledby="newFacultyModalLabel" aria-hidden="true">
+
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <form action="#" th:action="@{/faculties}" method="post" th:object="${newFaculty}">
+        <form action="#" th:action="@{/faculties}" method="post"
+              th:object="${newFaculty}" data-validate="yes">
           <div class="modal-header">
             <h5 class="modal-title" id="newFacultyModalLabel">New Faculty</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
           </div>
           <div class="modal-body">
             <div>
               <label for="newFacultyNameInput" class="form-label">Faculty name</label>
-              <input type="text" class="form-control" id="newFacultyNameInput"
-                     placeholder="Enter new faculty name" th:field="*{name}" required>
+              <input type="text" class="form-control validated-field"
+                     id="newFacultyNameInput" placeholder="Enter new faculty name"
+                     th:field="*{name}" required>
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-secondary btn-sm"
+                    data-bs-dismiss="modal">Cancel
+            </button>
             <input type="submit" class="btn btn-primary btn-sm" value="Create Faculty">
           </div>
         </form>
@@ -111,7 +117,7 @@
        tabindex="-1" aria-labelledby="editFacultyModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <form id="formEdit" th:method="put">
+        <form id="formEdit" th:method="put" data-validate="yes">
           <div class="modal-header">
             <h5 class="modal-title" id="editFacultyModalLabel">Update Faculty</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -119,7 +125,7 @@
           <div class="modal-body">
             <div>
               <label for="editFacultyNameInput" class="form-label">Faculty name</label>
-              <input type="text" class="form-control" id="editFacultyNameInput"
+              <input type="text" class="form-control validated-field" id="editFacultyNameInput"
                      name="name" value="" required>
             </div>
           </div>
@@ -156,6 +162,11 @@
       </div>
     </div>
   </div>
+  <script th:inline="javascript" th:if="${#fields.hasErrors('${newFaculty.*}')}">
+    $(document).ready(function () {
+      $('#newFacultyModal').modal('show');
+    });
+  </script>
 </div>
 
 <script layout:fragment="script">
@@ -191,6 +202,7 @@
       $('#formDelete').attr('action', '/faculties/' + id);
     });
   });
+
 
 </script>
 </body>

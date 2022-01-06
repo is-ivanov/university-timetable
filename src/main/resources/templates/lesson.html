@@ -11,7 +11,8 @@
     <h1>Lesson</h1>
     <!--    Lesson Properties-->
     <div class="col-8 border">
-      <form id="lesson properties" th:method="put" th:action="${'/lessons/' + lesson.id}">
+      <form id="lesson properties" th:method="put" th:action="${'/lessons/' + lesson.id}"
+            data-validate="yes">
         <fieldset id="main_properties" disabled>
           <input type="hidden" id="lessonId" th:value="${lesson.id}">
           <legend class="visually-hidden">lesson properties</legend>
@@ -21,29 +22,31 @@
               <!--Date start-->
               <div class="col">
                 <label for="dateStartPickerLesson" class="form-label">Time start</label>
-                <div class="input-group date"  data-target-input="nearest" id="dateStartPickerLesson">
-                  <input type="text" class="form-control datetimepicker-input"
-                         data-target="#dateStartPickerLesson"
-                         th:value="${#temporals.format(lesson.timeStart, 'yyyy-MM-dd HH:mm')}"
-                         name="timeStart" required disabled/>
-                  <div class="input-group-text" data-target="#dateStartPickerLesson"
+                <div class="input-group date has-validation" data-target-input="nearest"
+                     id="dateStartPickerLesson">
+                  <span class="input-group-text" data-target="#dateStartPickerLesson"
                        data-toggle="datetimepicker">
                     <i class="bi bi-calendar3"></i>
-                  </div>
+                  </span>
+                  <input type="text" data-target="#dateStartPickerLesson"
+                         class="form-control datetimepicker-input validated-field"
+                         th:value="${#temporals.format(lesson.timeStart, 'yyyy-MM-dd HH:mm')}"
+                         name="timeStart" required disabled/>
                 </div>
               </div>
               <!--Date end-->
               <div class="col">
                 <label for="dateEndPickerLesson" class="form-label">Time end</label>
-                <div class="input-group date" data-target-input="nearest" id="dateEndPickerLesson">
-                  <input type="text" class="form-control datetimepicker-input"
+                <div class="input-group date has-validation" data-target-input="nearest"
+                     id="dateEndPickerLesson">
+                  <span class="input-group-text" data-target="#dateEndPickerLesson"
+                        data-toggle="datetimepicker">
+                    <i class="bi bi-calendar3"></i>
+                  </span>
+                  <input type="text" class="form-control datetimepicker-input validated-field"
                          data-target="#dateEndPickerLesson"
                          th:value="${#temporals.format(lesson.timeEnd, 'yyyy-MM-dd HH:mm')}"
                          name="timeEnd" required disabled/>
-                  <div class="input-group-text" data-target="#dateEndPickerLesson"
-                       data-toggle="datetimepicker">
-                    <i class="bi bi-calendar3"></i>
-                  </div>
                 </div>
               </div>
             </div>
@@ -52,7 +55,7 @@
             <div class="mb-3">
               <label for="selectCourseEditLesson" class="form-label">Course</label>
               <select name="courseId" id="selectCourseEditLesson"
-                      class="form-select" required>
+                      class="form-select validated-field" required>
                 <option value="" disabled selected>Please select course...
                 </option>
                 <option th:each="course : ${courses}"
@@ -68,7 +71,7 @@
               <div class="col">
                 <label for="selectTeacherEditLesson" class="form-label">Teacher</label>
                 <select name="teacherId" id="selectTeacherEditLesson"
-                        class="form-select" required>
+                        class="form-select validated-field" required>
                   <option value="" disabled selected>Please select teacher...
                   </option>
                   <option th:each="teacherDto : ${teachers}"
@@ -83,7 +86,7 @@
               <div class="col">
                 <label for="selectRoomEditLesson" class="form-label">Room</label>
                 <select name="roomId" id="selectRoomEditLesson"
-                        class="form-select" required>
+                        class="form-select validated-field" required>
                   <option value="" disabled selected>Please select room...
                   </option>
                   <option th:each="room : ${rooms}"
@@ -275,18 +278,6 @@
   </div>
 
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
-        th:src="@{/webjars/jquery/jquery.min.js}"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/js/bootstrap.bundle.min.js"
-        th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
-        th:src="@{/webjars/momentjs/moment.js}"></script>
-<script
-  src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.min.js"
-  th:src="@{/webjars/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
-<script src="../resources/js/sort_table.js" th:src="@{/js/sort_table.js}"></script>
-<script src="../resources/js/show_inactive.js" th:src="@{/js/show_inactive.js}"></script>
-<script src="../resources/js/fill_select.js" th:src="@{/js/fill_select.js}"></script>
 
 <script layout:fragment="script">
 
@@ -373,7 +364,7 @@
   // Remove selected students
   $(function () {
     $('#removeSelectedStudents').on('click', function () {
-      let selectedRows = $('tr.selected')
+      let selectedRows = $('tr.selected');
       let lessonId = $('#lessonId').val();
       let course = $('#selectCourseEditLesson > option:selected').text();
       let timeStart = $('#dateStartPickerLesson > input').val();
@@ -394,7 +385,7 @@
 
   //  DateTimePicker
   $(function () {
-    let dateStartPickerLesson = $('#dateStartPickerLesson')
+    let dateStartPickerLesson = $('#dateStartPickerLesson');
     let dateEndPickerLesson = $('#dateEndPickerLesson');
 
     dateStartPickerLesson.on('hide.datetimepicker', function (e) {
