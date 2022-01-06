@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import ua.com.foxminded.university.domain.validator.LessonsTime;
 
@@ -21,10 +20,9 @@ import static ua.com.foxminded.university.ui.Util.DATE_TIME_PATTERN;
 @Builder
 public class LessonDto {
 
-    @Value("${validation.time.end.from}")
+    private static final String TIME_START_FROM = "07:30";
+    private static final String TIME_START_TO = "19:00";
     private static final String TIME_END_FROM = "09:00";
-
-    @Value("${validation.time.end.to}")
     private static final String TIME_END_TO = "20:30";
 
     private Integer id;
@@ -45,7 +43,7 @@ public class LessonDto {
     private String buildingAndRoom;
     private Set<StudentDto> students;
 
-    @LessonsTime(from = "07:30", to = "19:00")
+    @LessonsTime(from = TIME_START_FROM, to = TIME_START_TO)
     @DateTimeFormat(pattern = DATE_TIME_PATTERN)
     @JsonFormat(pattern = DATE_TIME_PATTERN)
     private LocalDateTime timeStart;
