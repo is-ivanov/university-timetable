@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface Service<T, T1> {
 
-    void save(T t) throws ServiceException;
+    T save(T t) throws ServiceException;
 
     T1 getById(int id) throws ServiceException;
 

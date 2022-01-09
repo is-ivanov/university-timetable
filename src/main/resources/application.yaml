@@ -20,6 +20,9 @@ spring:
     hiddenmethod:
       filter:
         enabled: true
+  jackson:
+    serialization:
+      INDENT_OUTPUT: true
 logging:
   level:
     ua.com.foxminded.university: DEBUG

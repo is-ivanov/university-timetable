@@ -66,14 +66,14 @@ public class FacultyController {
         return getResponseEntityWithRedirectUrl(request);
     }
 
-    @GetMapping("/{id}")
-    @ResponseBody
-    public Faculty getFaculty(@PathVariable("id") int facultyId) {
-        log.debug("Getting faculty by id({})", facultyId);
-        Faculty faculty = facultyService.getById(facultyId);
-        log.debug("Found {}", faculty);
-        return faculty;
-    }
+//    @GetMapping("/{id}")
+//    @ResponseBody
+//    public Faculty getFaculty(@PathVariable("id") int facultyId) {
+//        log.debug("Getting faculty by id({})", facultyId);
+//        Faculty faculty = facultyService.getById(facultyId);
+//        log.debug("Found {}", faculty);
+//        return faculty;
+//    }
 
     @PutMapping("/{id}")
     public ResponseEntity<String> updateFaculty(@ModelAttribute @Valid Faculty faculty,

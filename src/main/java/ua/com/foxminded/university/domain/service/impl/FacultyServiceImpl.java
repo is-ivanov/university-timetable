@@ -24,10 +24,10 @@ public class FacultyServiceImpl implements FacultyService {
     private final FacultyRepository facultyRepo;
 
     @Override
-    public void save(Faculty faculty) {
+    public Faculty save(Faculty faculty) {
         log.debug("Saving {}", faculty);
-        facultyRepo.save(faculty);
-        log.debug("{} saved successfully", faculty);
+        return facultyRepo.save(faculty);
+//        log.debug("{} saved successfully", faculty);
     }
 
     @Override
