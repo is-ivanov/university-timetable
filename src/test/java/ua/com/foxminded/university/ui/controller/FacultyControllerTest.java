@@ -25,6 +25,7 @@ import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
 import ua.com.foxminded.university.exception.GlobalExceptionHandler;
 import ua.com.foxminded.university.ui.PageSequenceCreator;
+import ua.com.foxminded.university.ui.util.Mappings;
 
 import java.util.Collections;
 import java.util.List;
@@ -38,7 +39,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ua.com.foxminded.university.TestObjects.*;
-import static ua.com.foxminded.university.ui.controller.FacultyController.URI_FACULTIES;
 
 @ExtendWith(MockitoExtension.class)
 class FacultyControllerTest {
@@ -106,7 +106,7 @@ class FacultyControllerTest {
             when(pageSequenceCreatorMock.createPageSequence(totalPages, currentPage + 1))
                 .thenReturn(pages);
 
-            mockMvc.perform(get(URI_FACULTIES))
+            mockMvc.perform(get(Mappings.FACULTIES))
                 .andDo(print())
                 .andExpectAll(
                     status().isOk(),
@@ -134,7 +134,7 @@ class FacultyControllerTest {
             when(facultyServiceMock.getAllSortedPaginated(pageable))
                 .thenReturn(pageFaculties);
 
-            mockMvc.perform(get(URI_FACULTIES)
+            mockMvc.perform(get(Mappings.FACULTIES)
                     .param("page", String.valueOf(currentPage)))
                 .andDo(print())
                 .andExpectAll(
@@ -163,7 +163,7 @@ class FacultyControllerTest {
             when(facultyServiceMock.getAllSortedPaginated(pageable))
                 .thenReturn(pageFaculties);
 
-            mockMvc.perform(get(URI_FACULTIES)
+            mockMvc.perform(get(Mappings.FACULTIES)
                     .param("page", String.valueOf(page))
                     .param("size", String.valueOf(size))
                     .param("sort", sort))
@@ -184,7 +184,7 @@ class FacultyControllerTest {
         @DisplayName("when POST request with parameter name then should call " +
             "facultyService.add once")
         void postRequestWithParameterName() throws Exception {
-            mockMvc.perform(post(URI_FACULTIES)
+            mockMvc.perform(post(Mappings.FACULTIES)
                     .param("name", NAME_FIRST_FACULTY))
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful());
@@ -197,7 +197,7 @@ class FacultyControllerTest {
         @DisplayName("when POST request with fail parameter (name with first " +
             "letter lower case) then should return error 400.BAD_REQUEST")
         void whenPostRequestWithFailParameter() throws Exception {
-            mockMvc.perform(post(URI_FACULTIES)
+            mockMvc.perform(post(Mappings.FACULTIES)
                     .param("name", FAIL_NAME_FIRST_FACULTY))
                 .andDo(print())
                 .andExpectAll(

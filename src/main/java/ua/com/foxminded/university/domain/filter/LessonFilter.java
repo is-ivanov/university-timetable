@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ua.com.foxminded.university.ui.Util.DATE_TIME_PATTERN;
+import static ua.com.foxminded.university.ui.util.Util.DATE_TIME_PATTERN;
 
 @Slf4j
 @Data

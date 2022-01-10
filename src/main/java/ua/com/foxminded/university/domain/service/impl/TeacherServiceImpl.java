@@ -28,13 +28,9 @@ public class TeacherServiceImpl implements TeacherService {
     private final TeacherDtoMapper teacherDtoMapper;
 
     @Override
-    public void save(Teacher teacher) {
+    public Teacher save(Teacher teacher) {
         log.debug("Saving teacher {}", teacher);
-        teacherRepo.save(teacher);
-        log.debug("Teacher [{} {} {}, active={}, department {}] saving " +
-                "successfully", teacher.getFirstName(), teacher.getPatronymic(),
-            teacher.getLastName(), teacher.isActive(),
-            teacher.getDepartment().getName());
+        return teacherRepo.save(teacher);
     }
 
     @Override

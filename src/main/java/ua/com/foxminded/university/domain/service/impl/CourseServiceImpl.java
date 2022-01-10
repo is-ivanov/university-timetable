@@ -24,10 +24,9 @@ public class CourseServiceImpl implements CourseService {
     private final CourseRepository courseRepo;
 
     @Override
-    public void save(Course course) {
+    public Course save(Course course) {
         log.debug("Saving {}", course);
-        courseRepo.save(course);
-        log.debug("{} saved successfully", course);
+        return courseRepo.save(course);
     }
 
     @Override

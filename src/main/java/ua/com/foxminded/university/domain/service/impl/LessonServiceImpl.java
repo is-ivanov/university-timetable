@@ -43,12 +43,11 @@ public class LessonServiceImpl implements LessonService {
     private final RoomRepository roomRepo;
 
     @Override
-    public void save(Lesson lesson) throws ServiceException {
+    public Lesson save(Lesson lesson) throws ServiceException {
         log.debug("Check lesson id({}) before adding", lesson.getId());
         checkLesson(lesson);
         log.debug("Saving ({})", lesson);
-        lessonRepo.save(lesson);
-        log.debug("{} saved successfully", lesson);
+        return lessonRepo.save(lesson);
     }
 
     @Override
@@ -108,7 +107,7 @@ public class LessonServiceImpl implements LessonService {
         List<Student> busyStudents =
             studentService.findAllBusyStudents(lesson.getTimeStart(), lesson.getTimeEnd());
         List<Student> freeStudentsFromGroup;
-        if (busyStudents.size() != 0) {
+        if (!busyStudents.isEmpty()) {
             List<Integer> busyStudentIds = studentService.getIdsFromStudents(busyStudents);
             freeStudentsFromGroup =
                 studentRepo.findAllFromGroupExcluded(busyStudentIds, groupId);
@@ -315,29 +314,23 @@ public class LessonServiceImpl implements LessonService {
 
 
     private void updateCourse(Integer newCourseId, Lesson lesson) {
-        if (newCourseId != null) {
-            if (!lesson.getCourse().getId().equals(newCourseId)) {
-                Course newCourse = courseRepo.getById(newCourseId);
-                lesson.setCourse(newCourse);
-            }
+        if (newCourseId != null && !lesson.getCourse().getId().equals(newCourseId)) {
+            Course newCourse = courseRepo.getById(newCourseId);
+            lesson.setCourse(newCourse);
         }
     }
 
     private void updateTeacher(Integer newTeacherId, Lesson lesson) {
-        if (newTeacherId != null) {
-            if (!lesson.getTeacher().getId().equals(newTeacherId)) {
-                Teacher newTeacher = teacherRepo.getById(newTeacherId);
-                lesson.setTeacher(newTeacher);
-            }
+        if (newTeacherId != null && !lesson.getTeacher().getId().equals(newTeacherId)) {
+            Teacher newTeacher = teacherRepo.getById(newTeacherId);
+            lesson.setTeacher(newTeacher);
         }
     }
 
     private void updateRoom(Integer newRoomId, Lesson lesson) {
-        if (newRoomId != null) {
-            if (!lesson.getRoom().getId().equals(newRoomId)) {
-                Room newRoom = roomRepo.getById(newRoomId);
-                lesson.setRoom(newRoom);
-            }
+        if (newRoomId != null && !lesson.getRoom().getId().equals(newRoomId)) {
+            Room newRoom = roomRepo.getById(newRoomId);
+            lesson.setRoom(newRoom);
         }
     }
 

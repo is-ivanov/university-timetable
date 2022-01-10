@@ -26,10 +26,9 @@ public class RoomServiceImpl implements RoomService {
     private final RoomRepository roomRepo;
 
     @Override
-    public void save(Room room) {
+    public Room save(Room room) {
         log.debug("Saving {}", room);
-        roomRepo.save(room);
-        log.debug("{} saved successfully", room);
+        return roomRepo.save(room);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package ua.com.foxminded.university.ui;
+package ua.com.foxminded.university.ui.util;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

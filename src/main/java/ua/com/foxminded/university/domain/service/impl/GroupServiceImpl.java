@@ -33,10 +33,9 @@ public class GroupServiceImpl implements GroupService {
     private final StudentService studentService;
 
     @Override
-    public void save(Group group) {
+    public Group save(Group group) {
         log.debug("Saving {}", group);
-        groupRepo.save(group);
-        log.debug("{} saved successfully", group);
+        return groupRepo.save(group);
     }
 
     @Override

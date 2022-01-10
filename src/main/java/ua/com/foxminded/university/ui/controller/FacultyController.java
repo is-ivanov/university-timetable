@@ -19,21 +19,21 @@ import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
 import ua.com.foxminded.university.ui.PageSequenceCreator;
+import ua.com.foxminded.university.ui.util.Mappings;
+import ua.com.foxminded.university.ui.util.Util;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static ua.com.foxminded.university.ui.Util.*;
+import static ua.com.foxminded.university.ui.util.Util.*;
 
 @Slf4j
 @RequiredArgsConstructor
 @Controller
-@RequestMapping("/faculties")
+@RequestMapping(Mappings.FACULTIES)
 public class FacultyController {
-
-    public static final String URI_FACULTIES = "/faculties";
 
     private final FacultyService facultyService;
     private final GroupService groupService;
@@ -48,7 +48,7 @@ public class FacultyController {
         Page<Faculty> pageFaculties = facultyService.getAllSortedPaginated(pageable);
         model.addAttribute("faculties", pageFaculties.getContent());
         model.addAttribute("page", pageFaculties);
-        model.addAttribute("uri", URI_FACULTIES);
+        model.addAttribute("uri", Mappings.FACULTIES);
         model.addAttribute("newFaculty", new Faculty());
         model.addAttribute("pages", pageSequenceCreator
             .createPageSequence(pageFaculties.getTotalPages(),

@@ -30,6 +30,8 @@ import java.util.stream.Collectors;
 @Validated
 public class StudentServiceImpl implements StudentService {
 
+    public static final String LOG_FOUND_STUDENTS = "Found {} students";
+
     private final StudentRepository studentRepo;
     private final StudentDtoMapper studentDtoMapper;
     private final GroupRepository groupRepo;
@@ -37,7 +39,7 @@ public class StudentServiceImpl implements StudentService {
     private final Validator validator;
 
     @Override
-    public void save(Student student) {
+    public Student save(Student student) {
         log.debug("Saving student {}", student);
         Integer groupId = student.getGroup().getId();
         Group group = groupRepo.findById(groupId)
@@ -46,15 +48,10 @@ public class StudentServiceImpl implements StudentService {
                     String.format("Group id(%d) not found", groupId)));
         group.addStudent(student);
         Set<ConstraintViolation<Group>> violations = validator.validate(group);
-        if (!violations.isEmpty()){
+        if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
         }
-        studentRepo.save(student);
-
-        log.debug("Student [{} {} {}, active={}, group {}] saved successfully",
-            student.getFirstName(), student.getPatronymic(),
-            student.getLastName(), student.isActive(),
-            student.getGroup().getName());
+        return studentRepo.save(student);
     }
 
     @Override
@@ -71,7 +68,7 @@ public class StudentServiceImpl implements StudentService {
     public List<StudentDto> getAll() {
         log.debug("Getting all students");
         List<Student> students = studentRepo.findAll();
-        log.debug("Found {} students", students.size());
+        log.debug(LOG_FOUND_STUDENTS, students.size());
         return studentDtoMapper.toStudentDtos(students);
 
     }
@@ -144,7 +141,7 @@ public class StudentServiceImpl implements StudentService {
     public List<Student> getAllActiveStudents() {
         log.debug("Getting all active students");
         List<Student> students = studentRepo.findAllByActiveTrue();
-        log.debug("Found {} students", students.size());
+        log.debug(LOG_FOUND_STUDENTS, students.size());
         return students;
     }
 
@@ -168,12 +165,12 @@ public class StudentServiceImpl implements StudentService {
                                              LocalDateTime to) {
         log.debug("Getting all students free from {} to {}", from, to);
         List<Student> busyStudents = studentRepo.findAllBusyStudents(from, to);
-        log.debug("Found {} students", busyStudents.size());
+        log.debug(LOG_FOUND_STUDENTS, busyStudents.size());
         return busyStudents;
     }
 
     @Override
-    public List<Integer> getIdsFromStudents(List<Student> students){
+    public List<Integer> getIdsFromStudents(List<Student> students) {
         return students.stream()
             .map(Student::getId)
             .collect(Collectors.toList());

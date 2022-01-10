@@ -6,9 +6,9 @@ import java.util.List;
 
 public interface Service<T, T1> {
 
-    T save(T t) throws ServiceException;
+    T save(T t);
 
-    T1 getById(int id) throws ServiceException;
+    T1 getById(int id);
 
     List<T1> getAll();
 

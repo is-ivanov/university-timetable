@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-import static ua.com.foxminded.university.ui.Util.*;
+import static ua.com.foxminded.university.ui.util.Util.*;
 
 @Slf4j
 @RequiredArgsConstructor

@@ -27,7 +27,6 @@ public class FacultyServiceImpl implements FacultyService {
     public Faculty save(Faculty faculty) {
         log.debug("Saving {}", faculty);
         return facultyRepo.save(faculty);
-//        log.debug("{} saved successfully", faculty);
     }
 
     @Override
