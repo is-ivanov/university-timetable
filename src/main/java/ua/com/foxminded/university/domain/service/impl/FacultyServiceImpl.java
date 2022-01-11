@@ -6,11 +6,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import ua.com.foxminded.university.dao.FacultyRepository;
+import ua.com.foxminded.university.domain.dto.FacultyDto;
 import ua.com.foxminded.university.domain.entity.Faculty;
+import ua.com.foxminded.university.domain.mapper.FacultyDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
+import ua.com.foxminded.university.exception.MyEntityNotFoundException;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Slf4j
@@ -19,9 +22,8 @@ import java.util.List;
 @Transactional
 public class FacultyServiceImpl implements FacultyService {
 
-    private static final String MESSAGE_FACULTY_NOT_FOUND = "Faculty id(%d) not found";
-
     private final FacultyRepository facultyRepo;
+    private final FacultyDtoMapper facultyMapper;
 
     @Override
     public Faculty save(Faculty faculty) {
@@ -30,21 +32,21 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
     @Override
-    public Faculty getById(int id) {
+    public FacultyDto getById(int id) {
         log.debug("Getting faculty by id({})", id);
         Faculty faculty = facultyRepo.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException(
-                String.format(MESSAGE_FACULTY_NOT_FOUND, id)));
+            .orElseThrow(() -> new MyEntityNotFoundException(
+                "faculty", "id", id));
         log.debug("Found {}", faculty);
-        return faculty;
+        return facultyMapper.toFacultyDto(faculty);
     }
 
     @Override
-    public List<Faculty> getAll() {
+    public List<FacultyDto> getAll() {
         log.debug("Getting all faculties");
         List<Faculty> faculties = facultyRepo.findAll();
         log.debug("Found {} faculties", faculties.size());
-        return faculties;
+        return facultyMapper.toFacultyDtos(faculties);
     }
 
     @Override

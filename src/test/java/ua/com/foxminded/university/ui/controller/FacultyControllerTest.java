@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ua.com.foxminded.university.domain.dto.DepartmentDto;
+import ua.com.foxminded.university.domain.dto.FacultyDto;
 import ua.com.foxminded.university.domain.dto.GroupDto;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.Faculty;
@@ -218,8 +219,9 @@ class FacultyControllerTest {
         void getRequestWithId() throws Exception {
             int facultyId = anyInt();
             Faculty testFaculty = createTestFaculty(facultyId);
+            FacultyDto testFacultyDto = createTestFacultyDto(facultyId);
 
-            when(facultyServiceMock.getById(facultyId)).thenReturn(testFaculty);
+            when(facultyServiceMock.getById(facultyId)).thenReturn(testFacultyDto);
 
             mockMvc.perform(get(URI_FACULTIES_ID, facultyId))
                 .andDo(print())

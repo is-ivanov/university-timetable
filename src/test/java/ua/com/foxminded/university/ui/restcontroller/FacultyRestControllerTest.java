@@ -12,9 +12,11 @@ import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import ua.com.foxminded.university.domain.dto.FacultyDto;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.exception.GlobalExceptionHandler;
+import ua.com.foxminded.university.ui.util.Mappings;
 
 import java.util.List;
 
@@ -23,7 +25,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static ua.com.foxminded.university.TestObjects.createTestFaculties;
+import static ua.com.foxminded.university.TestObjects.*;
 
 @ExtendWith(MockitoExtension.class)
 class FacultyRestControllerTest {
@@ -62,11 +64,11 @@ class FacultyRestControllerTest {
         @DisplayName("when GET request without parameters then should return " +
             "all faculties with status OK")
         void getRequestWithoutParameters() throws Exception {
-            List<Faculty> faculties = createTestFaculties();
+            List<FacultyDto> faculties = createTestFacultyDtos();
 
             when(facultyServiceMock.getAll()).thenReturn(faculties);
 
-            mockMvc.perform(get("/api/faculties"))
+            mockMvc.perform(get(Mappings.API_FACULTIES))
                 .andDo(print())
                 .andExpectAll(
                     status().isOk(),

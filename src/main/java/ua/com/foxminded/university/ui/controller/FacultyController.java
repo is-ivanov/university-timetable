@@ -9,25 +9,29 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ua.com.foxminded.university.domain.dto.DepartmentDto;
+import ua.com.foxminded.university.domain.dto.FacultyDto;
 import ua.com.foxminded.university.domain.dto.GroupDto;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.Faculty;
+import ua.com.foxminded.university.domain.mapper.FacultyDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
+import ua.com.foxminded.university.domain.validator.OnCreate;
+import ua.com.foxminded.university.domain.validator.OnUpdate;
 import ua.com.foxminded.university.ui.PageSequenceCreator;
 import ua.com.foxminded.university.ui.util.Mappings;
-import ua.com.foxminded.university.ui.util.Util;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static ua.com.foxminded.university.ui.util.Util.*;
+import static ua.com.foxminded.university.ui.util.ResponseUtil.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -40,6 +44,7 @@ public class FacultyController {
     private final DepartmentService departmentService;
     private final TeacherService teacherService;
     private final PageSequenceCreator pageSequenceCreator;
+    private final FacultyDtoMapper mapper;
 
     @GetMapping
     public String showFaculties(Model model,
@@ -57,14 +62,15 @@ public class FacultyController {
         return "faculty";
     }
 
-    @PostMapping
-    public ResponseEntity<String> createFaculty(@ModelAttribute @Valid Faculty faculty,
-                                                HttpServletRequest request) {
-        log.debug("Creating {}", faculty);
-        facultyService.save(faculty);
-        log.debug("{} is created", faculty);
-        return getResponseEntityWithRedirectUrl(request);
-    }
+//    @PostMapping
+//    @Validated(OnCreate.class)
+//    public ResponseEntity<String> createFaculty(@ModelAttribute @Valid FacultyDto faculty,
+//                                                HttpServletRequest request) {
+//        log.debug("Creating {}", faculty);
+//        facultyService.save(mapper.toFaculty(faculty));
+//        log.debug("{} is created", faculty);
+//        return getResponseEntityWithRedirectUrl(request);
+//    }
 
 //    @GetMapping("/{id}")
 //    @ResponseBody
@@ -76,11 +82,12 @@ public class FacultyController {
 //    }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateFaculty(@ModelAttribute @Valid Faculty faculty,
+    @Validated(OnUpdate.class)
+    public ResponseEntity<String> updateFaculty(@ModelAttribute @Valid FacultyDto faculty,
                                                 @PathVariable("id") int facultyId,
                                                 HttpServletRequest request) {
         log.debug("Updating faculty with id({})", faculty);
-        facultyService.save(faculty);
+        facultyService.save(mapper.toFaculty(faculty));
         log.debug("Faculty id({}) is updated", facultyId);
         return getResponseEntityWithRedirectUrl(request);
     }

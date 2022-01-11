@@ -2,15 +2,17 @@ package ua.com.foxminded.university.ui.util;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.URI;
 
-public class Util {
+public class ResponseUtil {
 
     public static final String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm";
     private static final String REDIRECT = "redirect:";
 
-    private Util() {
+    private ResponseUtil() {
     }
 
     public static String defineRedirect(String uri) {
@@ -22,8 +24,17 @@ public class Util {
     }
 
     public static ResponseEntity<String> getResponseEntityWithRedirectUrl(HttpServletRequest request) {
-        return new ResponseEntity<>("{\"location\": \"" + getRedirectUrl(request) + "\"}",
+        return new ResponseEntity<>("{\"redirect\": \"" + getRedirectUrl(request) + "\"}",
             HttpStatus.OK);
+    }
+
+    public static ResponseEntity<Object> getPostResponseRedirectUrl(HttpServletRequest request,
+                                                                    String path,
+                                                                    UriComponentsBuilder builder,
+                                                                    long id) {
+        URI location = builder.path(path).buildAndExpand(id).toUri();
+        String redirect = "{\"redirect\": \"" + getRedirectUrl(request) + "\"}";
+        return ResponseEntity.created(location).body(redirect);
     }
 
     private static String getRedirectUrl(HttpServletRequest request) {

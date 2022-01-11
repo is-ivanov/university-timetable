@@ -5,10 +5,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.foxminded.university.dao.FacultyRepository;
 import ua.com.foxminded.university.domain.entity.Faculty;
+import ua.com.foxminded.university.domain.mapper.FacultyDtoMapper;
+import ua.com.foxminded.university.exception.MyEntityNotFoundException;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
@@ -30,15 +33,14 @@ class FacultyServiceImplTest {
     public static final int ID1 = 1;
     public static final int ID2 = 2;
 
-    private FacultyServiceImpl facultyService;
-
     @Mock
     private FacultyRepository facultyRepoMock;
 
-    @BeforeEach
-    void setUp() {
-        facultyService = new FacultyServiceImpl(facultyRepoMock);
-    }
+    @Mock
+    private FacultyDtoMapper mapperMock;
+
+    @InjectMocks
+    private FacultyServiceImpl facultyService;
 
     @Test
     @DisplayName("test 'save' when call add method then should call Repository once")
@@ -59,6 +61,7 @@ class FacultyServiceImplTest {
             Faculty expectedFaculty = new Faculty();
             expectedFaculty.setId(ID1);
             expectedFaculty.setName(FIRST_FACULTY_NAME);
+
             when(facultyRepoMock.findById(ID1))
                 .thenReturn(Optional.of(expectedFaculty));
             assertEquals(expectedFaculty, facultyService.getById(ID1));
@@ -70,7 +73,7 @@ class FacultyServiceImplTest {
         void testReturnEmptyFaculty() {
             when(facultyRepoMock.findById(ID1)).thenReturn(Optional.empty());
             assertThatThrownBy(() -> facultyService.getById(ID1))
-                .isInstanceOf(EntityNotFoundException.class)
+                .isInstanceOf(MyEntityNotFoundException.class)
                 .hasMessageContaining("Faculty id(1) not found");
         }
     }

@@ -21,8 +21,8 @@ import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static ua.com.foxminded.university.ui.util.Util.defineRedirect;
-import static ua.com.foxminded.university.ui.util.Util.getResponseEntityWithRedirectUrl;
+import static ua.com.foxminded.university.ui.util.ResponseUtil.defineRedirect;
+import static ua.com.foxminded.university.ui.util.ResponseUtil.getResponseEntityWithRedirectUrl;
 
 @Slf4j
 @RequiredArgsConstructor

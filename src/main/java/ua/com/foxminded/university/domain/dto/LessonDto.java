@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-import static ua.com.foxminded.university.ui.util.Util.DATE_TIME_PATTERN;
+import static ua.com.foxminded.university.ui.util.ResponseUtil.DATE_TIME_PATTERN;
 
 @Data
 @NoArgsConstructor

@@ -107,9 +107,19 @@ public class TestObjects {
         return new Faculty(facultyId, NAME_FIRST_FACULTY);
     }
 
+    public static FacultyDto createTestFacultyDto(int facultyId) {
+        return new FacultyDto(facultyId, NAME_FIRST_FACULTY);
+    }
+
     public static List<Faculty> createTestFaculties() {
         Faculty faculty1 = new Faculty(FACULTY_ID1, NAME_FIRST_FACULTY);
         Faculty faculty2 = new Faculty(FACULTY_ID2, NAME_SECOND_FACULTY);
+        return new ArrayList<>(Arrays.asList(faculty1, faculty2));
+    }
+
+    public static List<FacultyDto> createTestFacultyDtos() {
+        FacultyDto faculty1 = new FacultyDto(FACULTY_ID1, NAME_FIRST_FACULTY);
+        FacultyDto faculty2 = new FacultyDto(FACULTY_ID2, NAME_SECOND_FACULTY);
         return new ArrayList<>(Arrays.asList(faculty1, faculty2));
     }
 
