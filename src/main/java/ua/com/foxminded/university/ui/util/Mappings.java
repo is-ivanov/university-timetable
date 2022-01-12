@@ -9,6 +9,7 @@ public final class Mappings {
     public static final String API_FACULTIES = API + FACULTIES;
     public static final String API_FACULTY = API + FACULTIES + ID;
     public static final String API_GROUPS = API + GROUPS;
+    public static final String ID_GROUPS = ID + GROUPS;
 
 
     private Mappings() {

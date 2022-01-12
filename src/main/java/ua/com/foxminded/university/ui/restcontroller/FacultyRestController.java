@@ -16,14 +16,10 @@ import ua.com.foxminded.university.domain.dto.GroupDto;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.mapper.FacultyDtoMapper;
-import ua.com.foxminded.university.domain.service.impl.DepartmentServiceImpl;
-import ua.com.foxminded.university.domain.service.impl.GroupServiceImpl;
 import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
-import ua.com.foxminded.university.domain.validator.OnCreate;
-import ua.com.foxminded.university.domain.validator.OnUpdate;
 import ua.com.foxminded.university.ui.restcontroller.link.FacultyModelAssembler;
 import ua.com.foxminded.university.ui.util.Mappings;
 import ua.com.foxminded.university.ui.util.ResponseUtil;
@@ -71,7 +67,7 @@ public class FacultyRestController {
     }
 
     @PostMapping
-    @Validated(OnCreate.class)
+//    @Validated(OnCreate.class)
     public ResponseEntity<EntityModel<FacultyDto>> createFaculty(@Valid @RequestBody
                                                                      FacultyDto faculty,
                                                                  HttpServletRequest request) {
@@ -86,7 +82,7 @@ public class FacultyRestController {
     }
 
     @PutMapping(Mappings.ID)
-    @Validated(OnUpdate.class)
+//    @Validated(OnUpdate.class)
     public ResponseEntity<Object> updateFaculty(@Valid @RequestBody
                                                     FacultyDto facultyDto,
                                                 @PathVariable("id") int facultyId,
@@ -109,7 +105,7 @@ public class FacultyRestController {
     }
 
     //TODO update methods
-    @GetMapping("/{id}/groups")
+    @GetMapping(Mappings.ID_GROUPS)
     public List<GroupDto> getGroupsByFaculty(@PathVariable("id") int facultyId) {
         if (facultyId == 0) {
             log.debug("Get all groups");

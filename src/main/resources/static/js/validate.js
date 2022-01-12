@@ -15,13 +15,13 @@ function ajaxFormValidation (event) {
     type: _formMethod,
     contentType: 'application/json; charset=UTF-8',
     success: function (response) {
-      let responseText = JSON.parse(response);
-      if (responseText._links.redirect) {
+      // let responseText = JSON.parse(response);
+      if (response._links.redirect.href) {
         // no validation errors
         // action has been executed and sent a redirect URL wrapped as JSON
         // cannot use a normal http-redirect (status-code 3xx) as this would be followed by browsers and would not be available here
         // follow JSON-redirect
-        window.location.href = responseText._links.redirect;
+        window.location.href = response._links.redirect.href;
       }
     },
     error: function (xhr) {
