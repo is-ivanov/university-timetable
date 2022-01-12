@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 import ua.com.foxminded.university.dao.FacultyRepository;
 import ua.com.foxminded.university.domain.dto.FacultyDto;
 import ua.com.foxminded.university.domain.entity.Faculty;
@@ -23,12 +22,12 @@ import java.util.List;
 public class FacultyServiceImpl implements FacultyService {
 
     private final FacultyRepository facultyRepo;
-    private final FacultyDtoMapper facultyMapper;
+    private final FacultyDtoMapper mapper;
 
     @Override
-    public Faculty save(Faculty faculty) {
+    public FacultyDto save(Faculty faculty) {
         log.debug("Saving {}", faculty);
-        return facultyRepo.save(faculty);
+        return mapper.toFacultyDto(facultyRepo.save(faculty));
     }
 
     @Override
@@ -38,7 +37,7 @@ public class FacultyServiceImpl implements FacultyService {
             .orElseThrow(() -> new MyEntityNotFoundException(
                 "faculty", "id", id));
         log.debug("Found {}", faculty);
-        return facultyMapper.toFacultyDto(faculty);
+        return mapper.toFacultyDto(faculty);
     }
 
     @Override
@@ -46,7 +45,7 @@ public class FacultyServiceImpl implements FacultyService {
         log.debug("Getting all faculties");
         List<Faculty> faculties = facultyRepo.findAll();
         log.debug("Found {} faculties", faculties.size());
-        return facultyMapper.toFacultyDtos(faculties);
+        return mapper.toFacultyDtos(faculties);
     }
 
     @Override

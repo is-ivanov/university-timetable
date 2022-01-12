@@ -2,6 +2,7 @@ package ua.com.foxminded.university.domain.entity;
 
 import lombok.*;
 import org.hibernate.Hibernate;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import java.util.Objects;

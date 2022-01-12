@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
         ConstraintViolationException.class,
         MethodArgumentNotValidException.class})
     @ResponseBody
-    public ValidationErrorResponse handleValidationExceptions(Exception ex) {
+    public ResponseEntity<ValidationErrorResponse> handleValidationExceptions(Exception ex) {
         log.warn("Validation error. Check 'violations' field for details");
         List<Violation> listViolations = new ArrayList<>();
         if (ex instanceof BindException) {
@@ -38,9 +38,10 @@ public class GlobalExceptionHandler {
             listViolations = getViolationsFromConstraintViolationException(
                 (ConstraintViolationException) ex);
         }
-        return new ValidationErrorResponse(VALIDATION_ERROR_MESSAGE,
+        return ResponseEntity.badRequest()
+            .body(new ValidationErrorResponse(VALIDATION_ERROR_MESSAGE,
             BAD_REQUEST.value(), BAD_REQUEST.getReasonPhrase(),
-            getNow(), listViolations);
+            getNow(), listViolations));
     }
 
     @ExceptionHandler(MyEntityNotFoundException.class)

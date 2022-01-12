@@ -37,7 +37,7 @@ public class ResponseUtil {
         return ResponseEntity.created(location).body(redirect);
     }
 
-    private static String getRedirectUrl(HttpServletRequest request) {
+    public static String getRedirectUrl(HttpServletRequest request) {
         return request.getHeader("referer");
     }
 }

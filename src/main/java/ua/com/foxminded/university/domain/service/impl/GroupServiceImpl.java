@@ -33,9 +33,9 @@ public class GroupServiceImpl implements GroupService {
     private final StudentService studentService;
 
     @Override
-    public Group save(Group group) {
+    public GroupDto save(Group group) {
         log.debug("Saving {}", group);
-        return groupRepo.save(group);
+        return groupDtoMapper.toGroupDto(groupRepo.save(group));
     }
 
     @Override

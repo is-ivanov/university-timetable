@@ -43,11 +43,11 @@ public class LessonServiceImpl implements LessonService {
     private final RoomRepository roomRepo;
 
     @Override
-    public Lesson save(Lesson lesson) throws ServiceException {
+    public LessonDto save(Lesson lesson) throws ServiceException {
         log.debug("Check lesson id({}) before adding", lesson.getId());
         checkLesson(lesson);
         log.debug("Saving ({})", lesson);
-        return lessonRepo.save(lesson);
+        return lessonDtoMapper.toLessonDto(lessonRepo.save(lesson));
     }
 
     @Override

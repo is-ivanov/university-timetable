@@ -39,7 +39,7 @@ public class StudentServiceImpl implements StudentService {
     private final Validator validator;
 
     @Override
-    public Student save(Student student) {
+    public StudentDto save(Student student) {
         log.debug("Saving student {}", student);
         Integer groupId = student.getGroup().getId();
         Group group = groupRepo.findById(groupId)
@@ -51,7 +51,7 @@ public class StudentServiceImpl implements StudentService {
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
         }
-        return studentRepo.save(student);
+        return studentDtoMapper.toStudentDto(studentRepo.save(student));
     }
 
     @Override

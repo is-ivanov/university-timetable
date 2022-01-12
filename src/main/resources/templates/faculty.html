@@ -86,7 +86,7 @@
 
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <form action="#" th:action="@{/faculties}" method="post"
+        <form action="#" th:action="@{/api/faculties}" method="post"
               th:object="${newFaculty}" data-validate="yes">
           <div class="modal-header">
             <h5 class="modal-title" id="newFacultyModalLabel">New Faculty</h5>
@@ -180,7 +180,7 @@
   // EDIT MODAL
   $(function () {
     $('.editButton').on('click', function () {
-      let href = '/faculties/' + $(this).attr('data-bs-id');
+      let href = 'api/faculties/' + $(this).attr('data-bs-id');
       $('#formEdit').attr('action', href);
       $.get(href, function (faculty) {
         $('#editFacultyNameInput').val(faculty.name);

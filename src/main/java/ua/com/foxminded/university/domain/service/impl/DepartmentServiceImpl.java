@@ -26,9 +26,9 @@ public class DepartmentServiceImpl implements DepartmentService {
     private final DepartmentDtoMapper departmentDtoMapper;
 
     @Override
-    public Department save(Department department) {
+    public DepartmentDto save(Department department) {
         log.debug("Saving {}", department);
-        return departmentRepo.save(department);
+        return departmentDtoMapper.toDepartmentDto(departmentRepo.save(department));
     }
 
     @Override

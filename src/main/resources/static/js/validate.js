@@ -6,21 +6,22 @@
 function ajaxFormValidation (event) {
   event.preventDefault();
   removeValidationErrors();
-  let _form = $(event.target);
-  let _formData = _form.serialize(true);
-  let _formMethod = _form.attr('method');
+  const _form = $(event.target);
+  const _formData = getFormData(_form);
+  const _formMethod = _form.attr('method');
   let settings = {
-    data: _formData,
+    data: JSON.stringify(_formData),
     processData: false,
     type: _formMethod,
+    contentType: 'application/json; charset=UTF-8',
     success: function (response) {
       let responseText = JSON.parse(response);
-      if (responseText.redirect) {
+      if (responseText._links.redirect) {
         // no validation errors
         // action has been executed and sent a redirect URL wrapped as JSON
         // cannot use a normal http-redirect (status-code 3xx) as this would be followed by browsers and would not be available here
         // follow JSON-redirect
-        window.location.href = responseText.redirect;
+        window.location.href = responseText._links.redirect;
       }
     },
     error: function (xhr) {
@@ -62,7 +63,8 @@ function _handleValidationResult (form, errors) {
     form.find('.validated-field').each(function (index, element) {
       let counter = 0;
       $.each(errors.violations, function (indexError, error) {
-        if (element.name === error.field || $(element).attr('data-validate-field') === error.field) {
+        if (element.name === error.field ||
+          $(element).attr('data-validate-field') === error.field) {
           $(element).addClass('is-invalid');
           let div = $('<div class="invalid-feedback"></div>');
           div.text(error.message); // use text() for security reasons
@@ -81,3 +83,15 @@ function _handleValidationResult (form, errors) {
 $(window).bind('load', function () {
   $('form[data-validate]').bind('submit', ajaxFormValidation);
 });
+
+
+function getFormData($form){
+  let array = $form.serializeArray();
+  let indexed_array = {};
+
+  $.map(array, function(n, i){
+    indexed_array[n['name']] = n['value'];
+  });
+
+  return indexed_array;
+}
