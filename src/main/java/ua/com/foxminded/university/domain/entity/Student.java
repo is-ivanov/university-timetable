@@ -1,5 +1,6 @@
 package ua.com.foxminded.university.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.Hibernate;
@@ -30,6 +31,7 @@ public class Student extends Person {
 
     @ToString.Exclude
     @ManyToMany(mappedBy = "students")
+    @JsonIgnore
     private Set<Lesson> lessons = new HashSet<>();
 
     @Override

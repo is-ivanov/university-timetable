@@ -1,5 +1,6 @@
 package ua.com.foxminded.university.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,6 +54,7 @@ public class Group {
     @Size(max = 25, message = "{group.students.size}")
     @OneToMany(mappedBy = "group", orphanRemoval = true)
     @ToString.Exclude
+    @JsonIgnore
     private Set<Student> students = new HashSet<>();
 
     public Group(String name, Faculty faculty, boolean active) {

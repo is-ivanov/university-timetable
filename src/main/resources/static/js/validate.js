@@ -89,7 +89,7 @@ function getFormData($form){
   let array = $form.serializeArray();
   let indexed_array = {};
 
-  $.map(array, function(n, i){
+  $.map(array, function(n){
     indexed_array[n['name']] = n['value'];
   });
 

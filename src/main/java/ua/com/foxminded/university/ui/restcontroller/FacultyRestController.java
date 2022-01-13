@@ -53,7 +53,7 @@ public class FacultyRestController {
         List<FacultyDto> faculties = facultyService.getAll();
         CollectionModel<EntityModel<FacultyDto>> entityModels =
             assembler.toCollectionModel(faculties);
-       entityModels.add(linkTo(FacultyRestController.class).withSelfRel());
+        entityModels.add(linkTo(FacultyRestController.class).withSelfRel());
         return ResponseEntity.ok(entityModels);
     }
 
@@ -67,7 +67,6 @@ public class FacultyRestController {
     }
 
     @PostMapping
-//    @Validated(OnCreate.class)
     public ResponseEntity<EntityModel<FacultyDto>> createFaculty(@Valid @RequestBody
                                                                      FacultyDto faculty,
                                                                  HttpServletRequest request) {
@@ -82,7 +81,6 @@ public class FacultyRestController {
     }
 
     @PutMapping(Mappings.ID)
-//    @Validated(OnUpdate.class)
     public ResponseEntity<Object> updateFaculty(@Valid @RequestBody
                                                     FacultyDto facultyDto,
                                                 @PathVariable("id") int facultyId,
@@ -116,7 +114,7 @@ public class FacultyRestController {
         }
     }
 
-    @GetMapping("/{id}/groups/free")
+    @GetMapping(Mappings.ID_GROUPS_FREE)
     public List<GroupDto> getFreeGroupsByFaculty(@PathVariable("id") int facultyId,
                                                  @RequestParam("time_start")
                                                  @DateTimeFormat(pattern = DATE_TIME_PATTERN)
@@ -132,8 +130,7 @@ public class FacultyRestController {
         return freeGroups;
     }
 
-    @GetMapping("/{id}/departments")
-    @ResponseBody
+    @GetMapping(Mappings.ID_DEPARTMENTS)
     public List<DepartmentDto> getDepartmentsByFaculty(@PathVariable("id") int facultyId) {
         if (facultyId == 0) {
             log.debug("Getting all departments");
@@ -144,15 +141,13 @@ public class FacultyRestController {
         }
     }
 
-    @GetMapping("/{id}/teachers")
-    @ResponseBody
+    @GetMapping(Mappings.ID_TEACHERS)
     public List<TeacherDto> getTeachersByFaculty(@PathVariable("id") int facultyId) {
         log.debug("Getting teacherDtos by faculty id({})", facultyId);
         List<TeacherDto> teachers = teacherService.getAllByFaculty(facultyId);
         log.debug("Found {} teachers", teachers.size());
         return teachers;
     }
-
 
 
     private EntityModel<FacultyDto> getEntityModel(FacultyDto result,

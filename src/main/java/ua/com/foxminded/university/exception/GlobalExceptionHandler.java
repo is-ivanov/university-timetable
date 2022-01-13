@@ -4,9 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.validation.ConstraintViolationException;
 import java.time.ZoneId;
@@ -19,7 +19,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Slf4j
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
     private static final String VALIDATION_ERROR_MESSAGE = "Validation error";
@@ -28,7 +28,6 @@ public class GlobalExceptionHandler {
         BindException.class,
         ConstraintViolationException.class,
         MethodArgumentNotValidException.class})
-    @ResponseBody
     public ResponseEntity<ValidationErrorResponse> handleValidationExceptions(Exception ex) {
         log.warn("Validation error. Check 'violations' field for details");
         List<Violation> listViolations = new ArrayList<>();
