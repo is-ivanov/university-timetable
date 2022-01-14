@@ -20,7 +20,7 @@ import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
-import ua.com.foxminded.university.ui.restcontroller.link.FacultyModelAssembler;
+import ua.com.foxminded.university.ui.restcontroller.link.FacultyDtoAssembler;
 import ua.com.foxminded.university.ui.util.Mappings;
 import ua.com.foxminded.university.ui.util.ResponseUtil;
 
@@ -42,26 +42,26 @@ public class FacultyRestController {
 
     private final FacultyService facultyService;
     private final FacultyDtoMapper mapper;
-    private final FacultyModelAssembler assembler;
+    private final FacultyDtoAssembler assembler;
     private final GroupService groupService;
     private final DepartmentService departmentService;
     private final TeacherService teacherService;
 
     @GetMapping
-    public ResponseEntity<CollectionModel<EntityModel<FacultyDto>>> getFaculties() {
+    public ResponseEntity<CollectionModel<FacultyDto>> getFaculties() {
         log.debug("Getting all faculties");
-        List<FacultyDto> faculties = facultyService.getAll();
-        CollectionModel<EntityModel<FacultyDto>> entityModels =
+        List<Faculty> faculties = facultyService.getAll();
+        CollectionModel<FacultyDto> entityModels =
             assembler.toCollectionModel(faculties);
         entityModels.add(linkTo(FacultyRestController.class).withSelfRel());
         return ResponseEntity.ok(entityModels);
     }
 
     @GetMapping(Mappings.ID)
-    public ResponseEntity<EntityModel<FacultyDto>> getFaculty(@PathVariable("id")
+    public ResponseEntity<FacultyDto> getFaculty(@PathVariable("id")
                                                                   int facultyId) {
         log.debug("Getting faculty by id({})", facultyId);
-        FacultyDto faculty = facultyService.getById(facultyId);
+        Faculty faculty = facultyService.getById(facultyId);
 
         return ResponseEntity.ok(assembler.toModel(faculty));
     }
@@ -71,13 +71,14 @@ public class FacultyRestController {
                                                                      FacultyDto faculty,
                                                                  HttpServletRequest request) {
 
-        FacultyDto result = facultyService.save(mapper.toFaculty(faculty));
+        Faculty result = facultyService.save(mapper.toFaculty(faculty));
         log.debug("{} is created", faculty);
 
-        EntityModel<FacultyDto> facultyModel = getEntityModel(result, request);
-        URI location = facultyModel.getRequiredLink(IanaLinkRelations.SELF).toUri();
+//        EntityModel<FacultyDto> facultyModel = getEntityModel(result, request);
+//        URI location = facultyModel.getRequiredLink(IanaLinkRelations.SELF).toUri();
 
-        return ResponseEntity.created(location).body(facultyModel);
+//        return ResponseEntity.created(location).body(facultyModel);
+        return ResponseEntity.created(null).body(null);
     }
 
     @PutMapping(Mappings.ID)
@@ -88,11 +89,12 @@ public class FacultyRestController {
 
         Faculty faculty = mapper.toFaculty(facultyDto);
         faculty.setId(facultyId);
-        FacultyDto result = facultyService.save(faculty);
+        Faculty result = facultyService.save(faculty);
         log.debug("Faculty id({}) is updated", facultyId);
 
-        EntityModel<FacultyDto> facultyModel = getEntityModel(result, request);
-        return ResponseEntity.ok(facultyModel);
+//        EntityModel<FacultyDto> facultyModel = getEntityModel(result, request);
+//        return ResponseEntity.ok(facultyModel);
+        return ResponseEntity.ok(null);
     }
 
     @DeleteMapping(Mappings.ID)
@@ -102,17 +104,17 @@ public class FacultyRestController {
         return ResponseEntity.noContent().build();
     }
 
-    //TODO update methods
-    @GetMapping(Mappings.ID_GROUPS)
-    public List<GroupDto> getGroupsByFaculty(@PathVariable("id") int facultyId) {
-        if (facultyId == 0) {
-            log.debug("Get all groups");
-            return groupService.getAll();
-        } else {
-            log.debug("Getting groups by faculty id({})", facultyId);
-            return groupService.getAllByFacultyId(facultyId);
-        }
-    }
+//    //TODO update methods
+//    @GetMapping(Mappings.ID_GROUPS)
+//    public List<GroupDto> getGroupsByFaculty(@PathVariable("id") int facultyId) {
+//        if (facultyId == 0) {
+//            log.debug("Get all groups");
+//            return groupService.getAll();
+//        } else {
+//            log.debug("Getting groups by faculty id({})", facultyId);
+//            return groupService.getAllByFacultyId(facultyId);
+//        }
+//    }
 
     @GetMapping(Mappings.ID_GROUPS_FREE)
     public List<GroupDto> getFreeGroupsByFaculty(@PathVariable("id") int facultyId,
@@ -130,16 +132,16 @@ public class FacultyRestController {
         return freeGroups;
     }
 
-    @GetMapping(Mappings.ID_DEPARTMENTS)
-    public List<DepartmentDto> getDepartmentsByFaculty(@PathVariable("id") int facultyId) {
-        if (facultyId == 0) {
-            log.debug("Getting all departments");
-            return departmentService.getAll();
-        } else {
-            log.debug("Getting departments by facultyId ({})", facultyId);
-            return departmentService.getAllByFaculty(facultyId);
-        }
-    }
+//    @GetMapping(Mappings.ID_DEPARTMENTS)
+//    public List<DepartmentDto> getDepartmentsByFaculty(@PathVariable("id") int facultyId) {
+//        if (facultyId == 0) {
+//            log.debug("Getting all departments");
+//            return departmentService.getAll();
+//        } else {
+//            log.debug("Getting departments by facultyId ({})", facultyId);
+//            return departmentService.getAllByFaculty(facultyId);
+//        }
+//    }
 
     @GetMapping(Mappings.ID_TEACHERS)
     public List<TeacherDto> getTeachersByFaculty(@PathVariable("id") int facultyId) {
@@ -150,12 +152,12 @@ public class FacultyRestController {
     }
 
 
-    private EntityModel<FacultyDto> getEntityModel(FacultyDto result,
-                                                   HttpServletRequest request) {
-        EntityModel<FacultyDto> facultyModel = assembler.toModel(result);
-        addRedirectUrl(request, facultyModel);
-        return facultyModel;
-    }
+//    private EntityModel<FacultyDto> getEntityModel(FacultyDto result,
+//                                                   HttpServletRequest request) {
+//        EntityModel<FacultyDto> facultyModel = assembler.toModel(result);
+//        addRedirectUrl(request, facultyModel);
+//        return facultyModel;
+//    }
 
     private void addRedirectUrl(HttpServletRequest request,
                                 EntityModel<FacultyDto> facultyModel) {

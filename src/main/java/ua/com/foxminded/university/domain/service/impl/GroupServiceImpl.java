@@ -33,27 +33,27 @@ public class GroupServiceImpl implements GroupService {
     private final StudentService studentService;
 
     @Override
-    public GroupDto save(Group group) {
+    public Group save(Group group) {
         log.debug("Saving {}", group);
-        return groupDtoMapper.toGroupDto(groupRepo.save(group));
+        return groupRepo.save(group);
     }
 
     @Override
-    public GroupDto getById(int id) {
+    public Group getById(int id) {
         log.debug("Getting group by id({})", id);
         Group group = groupRepo.findById(id)
             .orElseThrow(() -> new EntityNotFoundException(
                 String.format("Group id(%d) not found", id)));
         log.debug("Found {}", group);
-        return groupDtoMapper.toGroupDto(group);
+        return group;
     }
 
     @Override
-    public List<GroupDto> getAll() {
+    public List<Group> getAll() {
         log.debug("Getting all groups");
         List<Group> groups = groupRepo.findAll();
         log.debug(FOUND_GROUPS, groups.size());
-        return groupDtoMapper.toGroupDtos(groups);
+        return groups;
     }
 
     @Override

@@ -26,28 +26,28 @@ public class DepartmentServiceImpl implements DepartmentService {
     private final DepartmentDtoMapper departmentDtoMapper;
 
     @Override
-    public DepartmentDto save(Department department) {
+    public Department save(Department department) {
         log.debug("Saving {}", department);
-        return departmentDtoMapper.toDepartmentDto(departmentRepo.save(department));
+        return departmentRepo.save(department);
     }
 
     @Override
-    public DepartmentDto getById(int id) {
+    public Department getById(int id) {
         log.debug("Getting department by id({})", id);
         Department department = departmentRepo.findById(id)
             .orElseThrow(() -> new EntityNotFoundException(
                 String.format(MESSAGE_DEPARTMENT_NOT_FOUND, id)));
         log.debug("Found {}", department);
-        return departmentDtoMapper.toDepartmentDto(department);
+        return department;
     }
 
 
     @Override
-    public List<DepartmentDto> getAll() {
+    public List<Department> getAll() {
         log.debug("Getting all departments");
         List<Department> departments = departmentRepo.findAll();
         log.debug("Found {} departments", departments.size());
-        return departmentDtoMapper.toDepartmentDtos(departments);
+        return departments;
     }
 
     @Override

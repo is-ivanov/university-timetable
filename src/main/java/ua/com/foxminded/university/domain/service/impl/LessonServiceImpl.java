@@ -43,29 +43,29 @@ public class LessonServiceImpl implements LessonService {
     private final RoomRepository roomRepo;
 
     @Override
-    public LessonDto save(Lesson lesson) throws ServiceException {
+    public Lesson save(Lesson lesson) throws ServiceException {
         log.debug("Check lesson id({}) before adding", lesson.getId());
         checkLesson(lesson);
         log.debug("Saving ({})", lesson);
-        return lessonDtoMapper.toLessonDto(lessonRepo.save(lesson));
+        return lessonRepo.save(lesson);
     }
 
     @Override
-    public LessonDto getById(int id) {
+    public Lesson getById(int id) {
         log.debug("Getting lesson by id({})", id);
         Lesson lesson = getLessonById(id);
         log.debug("Found lesson [teacher {}, course {}, room {}]",
             lesson.getTeacher().getFullName(), lesson.getCourse().getName(),
             lesson.getRoom().getNumber());
-        return lessonDtoMapper.toLessonDto(lesson);
+        return lesson;
     }
 
     @Override
-    public List<LessonDto> getAll() {
+    public List<Lesson> getAll() {
         log.debug("Getting all lessons");
         List<Lesson> lessons = lessonRepo.findAll();
         log.debug(FOUND_LESSONS, lessons.size());
-        return lessonDtoMapper.toLessonDtos(lessons);
+        return lessons;
     }
 
     @Override

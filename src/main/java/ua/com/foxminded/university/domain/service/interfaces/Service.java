@@ -2,13 +2,13 @@ package ua.com.foxminded.university.domain.service.interfaces;
 
 import java.util.List;
 
-public interface Service<T, T1> {
+public interface Service<T> {
 
-    T1 save(T t);
+    T save(T t);
 
-    T1 getById(int id);
+    T getById(int id);
 
-    List<T1> getAll();
+    List<T> getAll();
 
     void delete(int id);
 }

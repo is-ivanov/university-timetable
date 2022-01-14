@@ -1,15 +1,18 @@
 package ua.com.foxminded.university.domain.dto;
 
+import lombok.EqualsAndHashCode;
 import lombok.Value;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
 import ua.com.foxminded.university.domain.validator.CapitalLetter;
 
 import javax.validation.constraints.NotBlank;
 
 @Value
-public class FacultyDto {
+@EqualsAndHashCode(callSuper = false)
+@Relation(itemRelation = "faculty", collectionRelation = "faculties")
+public class FacultyDto extends RepresentationModel<FacultyDto> {
 
-//    @Null(groups = OnCreate.class)
-//    @NotNull(groups = OnUpdate.class)
     Integer id;
 
     @NotBlank(message = "{faculty.name.not.blank}")

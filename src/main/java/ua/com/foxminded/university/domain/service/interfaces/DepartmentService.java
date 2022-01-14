@@ -5,7 +5,7 @@ import ua.com.foxminded.university.domain.entity.Department;
 
 import java.util.List;
 
-public interface DepartmentService extends Service<Department, DepartmentDto> {
+public interface DepartmentService extends Service<Department> {
 
     List<DepartmentDto> getAllByFaculty(int facultyId);
 }

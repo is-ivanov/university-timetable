@@ -79,7 +79,7 @@ public class LessonController {
     @ResponseBody
     public LessonDto getLessonWithStudents(@PathVariable("id") int lessonId) {
         log.debug("Getting lesson id({})", lessonId);
-        LessonDto lessonDto = lessonService.getById(lessonId);
+        LessonDto lessonDto = lessonDtoMapper.toLessonDto(lessonService.getById(lessonId));
         log.debug("Found lesson [teacher {}, course {}, room {}]",
             lessonDto.getTeacherFullName(), lessonDto.getCourseName(),
             lessonDto.getBuildingAndRoom());
@@ -90,7 +90,7 @@ public class LessonController {
     public String showLessonWithStudents(@PathVariable("id") int lessonId,
                                          Model model) {
         log.debug("Getting data for lesson.html for lesson id({})", lessonId);
-        LessonDto lesson = lessonService.getById(lessonId);
+        LessonDto lesson = lessonDtoMapper.toLessonDto(lessonService.getById(lessonId));
         model.addAttribute("lesson", lesson);
 
         LocalDateTime timeStart = lesson.getTimeStart();

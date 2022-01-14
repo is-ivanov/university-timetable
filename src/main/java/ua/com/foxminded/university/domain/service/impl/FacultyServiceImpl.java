@@ -25,27 +25,27 @@ public class FacultyServiceImpl implements FacultyService {
     private final FacultyDtoMapper mapper;
 
     @Override
-    public FacultyDto save(Faculty faculty) {
+    public Faculty save(Faculty faculty) {
         log.debug("Saving {}", faculty);
-        return mapper.toFacultyDto(facultyRepo.save(faculty));
+        return facultyRepo.save(faculty);
     }
 
     @Override
-    public FacultyDto getById(int id) {
+    public Faculty getById(int id) {
         log.debug("Getting faculty by id({})", id);
         Faculty faculty = facultyRepo.findById(id)
             .orElseThrow(() -> new MyEntityNotFoundException(
                 "faculty", "id", id));
         log.debug("Found {}", faculty);
-        return mapper.toFacultyDto(faculty);
+        return faculty;
     }
 
     @Override
-    public List<FacultyDto> getAll() {
+    public List<Faculty> getAll() {
         log.debug("Getting all faculties");
         List<Faculty> faculties = facultyRepo.findAll();
         log.debug("Found {} faculties", faculties.size());
-        return mapper.toFacultyDtos(faculties);
+        return faculties;
     }
 
     @Override

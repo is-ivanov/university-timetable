@@ -7,7 +7,7 @@ import ua.com.foxminded.university.domain.entity.Group;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface GroupService extends Service<Group, GroupDto> {
+public interface GroupService extends Service<Group> {
 
     void deactivateGroup(Group group);
 

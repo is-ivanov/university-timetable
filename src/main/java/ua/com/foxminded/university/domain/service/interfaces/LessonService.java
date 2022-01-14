@@ -7,7 +7,7 @@ import ua.com.foxminded.university.domain.filter.LessonFilter;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface LessonService extends Service<Lesson, LessonDto> {
+public interface LessonService extends Service<Lesson> {
 
     void update(LessonDto lessonDto);
 

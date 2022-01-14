@@ -7,7 +7,7 @@ import ua.com.foxminded.university.domain.entity.Teacher;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface TeacherService extends Service<Teacher, TeacherDto> {
+public interface TeacherService extends Service<Teacher> {
 
     void deactivateTeacher(Teacher teacher);
 
