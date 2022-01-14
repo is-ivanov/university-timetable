@@ -1,12 +1,15 @@
 package ua.com.foxminded.university.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.validation.ConstraintViolationException;
 import java.time.ZoneId;
@@ -19,16 +22,31 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Slf4j
+@SuppressWarnings("NullableProblems")
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     private static final String VALIDATION_ERROR_MESSAGE = "Validation error";
 
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+        MethodArgumentNotValidException ex, HttpHeaders headers,
+        HttpStatus status, WebRequest request) {
+        return handleValidationExceptions(ex);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleBindException(BindException ex,
+                                                         HttpHeaders headers,
+                                                         HttpStatus status,
+                                                         WebRequest request) {
+        return handleValidationExceptions(ex);
+    }
+
     @ExceptionHandler({
-        BindException.class,
-        ConstraintViolationException.class,
-        MethodArgumentNotValidException.class})
-    public ResponseEntity<ValidationErrorResponse> handleValidationExceptions(Exception ex) {
+        ConstraintViolationException.class
+    })
+    public ResponseEntity<Object> handleValidationExceptions(Exception ex) {
         log.warn("Validation error. Check 'violations' field for details");
         List<Violation> listViolations = new ArrayList<>();
         if (ex instanceof BindException) {
@@ -39,12 +57,12 @@ public class GlobalExceptionHandler {
         }
         return ResponseEntity.badRequest()
             .body(new ValidationErrorResponse(VALIDATION_ERROR_MESSAGE,
-            BAD_REQUEST.value(), BAD_REQUEST.getReasonPhrase(),
-            getNow(), listViolations));
+                BAD_REQUEST.value(), BAD_REQUEST.getReasonPhrase(),
+                getNow(), listViolations));
     }
 
     @ExceptionHandler(MyEntityNotFoundException.class)
-    ResponseEntity<ErrorResponse> onEntityNotFoundException(MyEntityNotFoundException ex) {
+    ResponseEntity<Object> onEntityNotFoundException(MyEntityNotFoundException ex) {
         ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(),
             NOT_FOUND.value(), NOT_FOUND.getReasonPhrase(), getNow());
         return new ResponseEntity<>(errorResponse, NOT_FOUND);

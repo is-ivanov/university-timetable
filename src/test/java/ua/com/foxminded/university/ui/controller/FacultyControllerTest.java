@@ -218,7 +218,6 @@ class FacultyControllerTest {
             "JSON with expected faculty")
         void getRequestWithId() throws Exception {
             int facultyId = anyInt();
-            Faculty testFaculty = createTestFaculty(facultyId);
             FacultyDto testFacultyDto = createTestFacultyDto(facultyId);
 
             when(facultyServiceMock.getById(facultyId)).thenReturn(testFacultyDto);
