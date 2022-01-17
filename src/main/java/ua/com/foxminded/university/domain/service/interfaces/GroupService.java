@@ -1,6 +1,5 @@
 package ua.com.foxminded.university.domain.service.interfaces;
 
-import ua.com.foxminded.university.domain.dto.GroupDto;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
 
@@ -14,12 +13,12 @@ public interface GroupService extends Service<Group> {
     Group joinGroups(List<Group> groups, String nameNewGroup,
                      Faculty facultyNewGroup);
 
-    List<GroupDto> getAllByFacultyId(int facultyId);
+    List<Group> getAllByFacultyId(int facultyId);
 
-    List<GroupDto> getFreeGroupsOnLessonTime(LocalDateTime startTime,
+    List<Group> getFreeGroupsOnLessonTime(LocalDateTime startTime,
                                           LocalDateTime endTime);
 
-    List<GroupDto> getFreeGroupsByFacultyOnLessonTime(int facultyId,
+    List<Group> getFreeGroupsByFacultyOnLessonTime(int facultyId,
                                                    LocalDateTime startTime,
                                                    LocalDateTime endTime);
 

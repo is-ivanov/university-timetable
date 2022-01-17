@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ua.com.foxminded.university.domain.entity.Room;
 import ua.com.foxminded.university.domain.service.interfaces.RoomService;
 import ua.com.foxminded.university.ui.restcontroller.link.RoomModelAssembler;
-import ua.com.foxminded.university.ui.util.Mappings;
+import ua.com.foxminded.university.ui.util.MappingConstants;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(Mappings.API_ROOMS)
+@RequestMapping(MappingConstants.API_ROOMS)
 @Validated
 public class RoomRestController {
 

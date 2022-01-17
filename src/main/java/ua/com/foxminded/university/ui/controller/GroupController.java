@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ua.com.foxminded.university.domain.dto.GroupDto;
 import ua.com.foxminded.university.domain.dto.StudentDto;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
@@ -41,7 +40,7 @@ public class GroupController {
         }
         log.debug("Get faculties for selector");
         model.addAttribute("faculties", facultyService.getAllSortedByNameAsc());
-        List<GroupDto> groups;
+        List<Group> groups;
         if (facultyId != null && facultyId > 0) {
             log.debug("get groups by facultyId ({})", facultyId);
             groups = groupService.getAllByFacultyId(facultyId);
@@ -68,9 +67,9 @@ public class GroupController {
 
     @GetMapping("/{id}")
     @ResponseBody
-    public GroupDto getGroup(@PathVariable("id") int groupId) {
+    public Group getGroup(@PathVariable("id") int groupId) {
         log.debug("Getting group id({})", groupId);
-        GroupDto group = groupService.getById(groupId);
+        Group group = groupService.getById(groupId);
         log.debug("Found {}", group);
         return group;
     }

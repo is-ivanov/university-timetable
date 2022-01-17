@@ -6,10 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ua.com.foxminded.university.domain.dto.DepartmentDto;
-import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
+import ua.com.foxminded.university.domain.entity.Teacher;
 import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
@@ -38,7 +37,7 @@ public class DepartmentController {
         List<Faculty> allFaculties = facultyService.getAllSortedByNameAsc();
         model.addAttribute("faculties", allFaculties);
         Faculty facultySelected = null;
-        List<DepartmentDto> departments;
+        List<Department> departments;
         if (facultyId != null && facultyId > 0) {
             log.debug("get departments by facultyId ({})", facultyId);
             departments = departmentService.getAllByFaculty(facultyId);
@@ -69,9 +68,9 @@ public class DepartmentController {
 
     @GetMapping("/{id}")
     @ResponseBody
-    public DepartmentDto getDepartment(@PathVariable("id") int departmentId) {
+    public Department getDepartment(@PathVariable("id") int departmentId) {
         log.debug("Getting department id({})", departmentId);
-        DepartmentDto department = departmentService.getById(departmentId);
+        Department department = departmentService.getById(departmentId);
         log.debug("Found {}", department);
         return department;
     }
@@ -97,9 +96,9 @@ public class DepartmentController {
 
     @GetMapping("/{id}/teachers")
     @ResponseBody
-    public List<TeacherDto> getTeachersByDepartment(@PathVariable("id") int departmentId) {
+    public List<Teacher> getTeachersByDepartment(@PathVariable("id") int departmentId) {
         log.debug("Getting teacherDtos by department id({})", departmentId);
-        List<TeacherDto> teachers = teacherService.getAllByDepartment(departmentId);
+        List<Teacher> teachers = teacherService.getAllByDepartment(departmentId);
         log.debug("Found {} teachers", teachers.size());
         return teachers;
     }

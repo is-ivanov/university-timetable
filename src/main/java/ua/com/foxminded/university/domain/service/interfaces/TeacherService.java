@@ -1,6 +1,5 @@
 package ua.com.foxminded.university.domain.service.interfaces;
 
-import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Teacher;
 
@@ -15,10 +14,10 @@ public interface TeacherService extends Service<Teacher> {
 
     Teacher transferTeacherToDepartment(Teacher teacher, Department department);
 
-    List<TeacherDto> getAllByDepartment(int departmentId);
+    List<Teacher> getAllByDepartment(int departmentId);
 
-    List<TeacherDto> getAllByFaculty(int facultyId);
+    List<Teacher> getAllByFaculty(int facultyId);
 
-    List<TeacherDto> getFreeTeachersOnLessonTime(LocalDateTime startTime,
+    List<Teacher> getFreeTeachersOnLessonTime(LocalDateTime startTime,
                                               LocalDateTime endTime);
 }

@@ -7,8 +7,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import ua.com.foxminded.university.domain.dto.StudentDto;
-import ua.com.foxminded.university.domain.dto.TeacherDto;
+import ua.com.foxminded.university.domain.entity.Student;
+import ua.com.foxminded.university.domain.entity.Teacher;
 import ua.com.foxminded.university.domain.service.interfaces.RoomService;
 import ua.com.foxminded.university.domain.service.interfaces.StudentService;
 import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
@@ -29,7 +29,7 @@ public class TimetableController {
     @GetMapping("/students/{id}")
     public String showStudentTimetable(@PathVariable("id") int studentId,
                                        Model model) {
-        StudentDto studentDto = studentService.getById(studentId);
+        Student studentDto = studentService.getById(studentId);
         model.addAttribute(OBJECT, studentDto);
         addTypeInModel(model, "students");
         return TIMETABLE_TEMPLATE;
@@ -38,7 +38,7 @@ public class TimetableController {
     @GetMapping("/teachers/{id}")
     public String showTeacherTimetable(@PathVariable("id") int teacherId,
                                        Model model) {
-        TeacherDto teacherDto = teacherService.getById(teacherId);
+        Teacher teacherDto = teacherService.getById(teacherId);
         model.addAttribute(OBJECT, teacherDto);
         addTypeInModel(model, "teachers");
         return TIMETABLE_TEMPLATE;

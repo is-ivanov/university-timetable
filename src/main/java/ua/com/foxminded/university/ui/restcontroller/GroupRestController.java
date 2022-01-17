@@ -9,19 +9,17 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ua.com.foxminded.university.domain.dto.GroupDto;
+import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 import ua.com.foxminded.university.ui.restcontroller.link.GroupModelAssembler;
-import ua.com.foxminded.university.ui.util.Mappings;
+import ua.com.foxminded.university.ui.util.MappingConstants;
 
 import java.util.List;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(Mappings.API_GROUPS)
+@RequestMapping(MappingConstants.API_GROUPS)
 @Validated
 public class GroupRestController {
 
@@ -29,13 +27,14 @@ public class GroupRestController {
     private final GroupModelAssembler assembler;
 
     @GetMapping
-    public ResponseEntity<CollectionModel<EntityModel<GroupDto>>> getGroups() {
+    public ResponseEntity<CollectionModel<EntityModel<Group>>> getGroups() {
         log.debug("Getting all groups");
-        List<GroupDto> groups = groupService.getAll();
-        CollectionModel<EntityModel<GroupDto>> entityModels =
-            assembler.toCollectionModel(groups);
-        entityModels.add(linkTo(GroupRestController.class).withSelfRel());
-        return ResponseEntity.ok(entityModels);
+        List<Group> groups = groupService.getAll();
+//        CollectionModel<EntityModel<Group>> entityModels =
+//            assembler.toCollectionModel(groups);
+//        entityModels.add(linkTo(GroupRestController.class).withSelfRel());
+//        return ResponseEntity.ok(entityModels);
+        return ResponseEntity.ok(null);
     }
 
 

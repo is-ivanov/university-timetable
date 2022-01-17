@@ -6,12 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ua.com.foxminded.university.domain.dto.DepartmentDto;
 import ua.com.foxminded.university.domain.dto.LessonDto;
-import ua.com.foxminded.university.domain.dto.TeacherDto;
-import ua.com.foxminded.university.domain.entity.Course;
-import ua.com.foxminded.university.domain.entity.Faculty;
-import ua.com.foxminded.university.domain.entity.Room;
+import ua.com.foxminded.university.domain.entity.*;
 import ua.com.foxminded.university.domain.filter.LessonFilter;
 import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.*;
@@ -63,7 +59,7 @@ public class LessonController {
         }
         Integer departmentId = lessonFilter.getDepartmentId();
         Integer facultyId = lessonFilter.getFacultyId();
-        List<TeacherDto> teachers = getTeachersByFacultyOrDepartment(departmentId, facultyId);
+        List<Teacher> teachers = getTeachersByFacultyOrDepartment(departmentId, facultyId);
         model.addAttribute("teachers", teachers);
         model.addAttribute("departments", getDepartmentsByFaculty(facultyId));
 
@@ -96,14 +92,14 @@ public class LessonController {
         LocalDateTime timeStart = lesson.getTimeStart();
         LocalDateTime timeEnd = lesson.getTimeEnd();
         int teacherId = lesson.getTeacherId();
-        TeacherDto teacher = teacherService.getById(teacherId);
+//        TeacherDto teacher = teacherService.getById(teacherId);
         int roomId = lesson.getRoomId();
         Room room = roomService.getById(roomId);
 
         log.debug("Loading free teachers in model");
-        List<TeacherDto> freeTeachers = teacherService
+        List<Teacher> freeTeachers = teacherService
             .getFreeTeachersOnLessonTime(timeStart, timeEnd);
-        freeTeachers.add(teacher);
+//        freeTeachers.add(teacher);
         model.addAttribute("teachers", freeTeachers);
 
         log.debug("Loading free rooms in model");
@@ -195,13 +191,13 @@ public class LessonController {
     }
 
     @ModelAttribute("departments")
-    public List<DepartmentDto> getDepartments() {
+    public List<Department> getDepartments() {
         log.debug("Loading list departments for selector");
         return departmentService.getAll();
     }
 
     @ModelAttribute("teachers")
-    public List<TeacherDto> getTeachers() {
+    public List<Teacher> getTeachers() {
         log.debug("Loading list teachers for selector");
         return teacherService.getAll();
     }
@@ -218,7 +214,7 @@ public class LessonController {
         return roomService.getAll();
     }
 
-    private List<DepartmentDto> getDepartmentsByFaculty(Integer facultyId) {
+    private List<Department> getDepartmentsByFaculty(Integer facultyId) {
         if (facultyId != null && facultyId > 0) {
             log.debug("Get departments for selector by facultyId ({})", facultyId);
             return departmentService.getAllByFaculty(facultyId);
@@ -228,8 +224,8 @@ public class LessonController {
         }
     }
 
-    private List<TeacherDto> getTeachersByFacultyOrDepartment(Integer departmentId, Integer facultyId) {
-        List<TeacherDto> teachers;
+    private List<Teacher> getTeachersByFacultyOrDepartment(Integer departmentId, Integer facultyId) {
+        List<Teacher> teachers;
         if (departmentId != null && departmentId > 0) {
             log.debug("Get teachers for selector by departmentId ({})",
                 departmentId);

@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.com.foxminded.university.dao.DepartmentRepository;
-import ua.com.foxminded.university.domain.dto.DepartmentDto;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.mapper.DepartmentDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
@@ -58,11 +57,11 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public List<DepartmentDto> getAllByFaculty(int facultyId) {
+    public List<Department> getAllByFaculty(int facultyId) {
         log.debug("Getting all departments from faculty id({})", facultyId);
         List<Department> departments = departmentRepo.findAllByFacultyId(facultyId);
         log.debug("Found {} departments", departments.size());
-        return departmentDtoMapper.toDepartmentDtos(departments);
+        return departments;
     }
 
 }

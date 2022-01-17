@@ -7,7 +7,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 
-public class ResponseUtil {
+public final class ResponseUtil {
 
     public static final String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm";
     private static final String REDIRECT = "redirect:";

@@ -88,9 +88,9 @@ public class StudentController {
 
     @GetMapping("/{id}")
     @ResponseBody
-    public StudentDto getStudent(@PathVariable("id") int studentId) {
+    public Student getStudent(@PathVariable("id") int studentId) {
         log.debug("Getting student id({})", studentId);
-        StudentDto student = studentService.getById(studentId);
+        Student student = studentService.getById(studentId);
         log.debug("Found student [{} {} {}]", student.getFirstName(),
             student.getPatronymic(), student.getLastName());
         return student;

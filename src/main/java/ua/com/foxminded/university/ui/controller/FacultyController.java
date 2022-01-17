@@ -5,38 +5,29 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import ua.com.foxminded.university.domain.dto.DepartmentDto;
-import ua.com.foxminded.university.domain.dto.FacultyDto;
-import ua.com.foxminded.university.domain.dto.GroupDto;
-import ua.com.foxminded.university.domain.dto.TeacherDto;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.mapper.FacultyDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
-import ua.com.foxminded.university.domain.validator.OnCreate;
-import ua.com.foxminded.university.domain.validator.OnUpdate;
 import ua.com.foxminded.university.ui.PageSequenceCreator;
-import ua.com.foxminded.university.ui.util.Mappings;
+import ua.com.foxminded.university.ui.util.MappingConstants;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.time.LocalDateTime;
-import java.util.List;
 
-import static ua.com.foxminded.university.ui.util.ResponseUtil.*;
+import static ua.com.foxminded.university.ui.util.ResponseUtil.defineRedirect;
 
 @Slf4j
 @RequiredArgsConstructor
 @Controller
-@RequestMapping(Mappings.FACULTIES)
+@RequestMapping(MappingConstants.FACULTIES)
 public class FacultyController {
 
     private final FacultyService facultyService;
@@ -53,7 +44,7 @@ public class FacultyController {
         Page<Faculty> pageFaculties = facultyService.getAllSortedPaginated(pageable);
         model.addAttribute("faculties", pageFaculties.getContent());
         model.addAttribute("page", pageFaculties);
-        model.addAttribute("uri", Mappings.FACULTIES);
+        model.addAttribute("uri", MappingConstants.FACULTIES);
         model.addAttribute("newFaculty", new Faculty());
         model.addAttribute("pages", pageSequenceCreator
             .createPageSequence(pageFaculties.getTotalPages(),

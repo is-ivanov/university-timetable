@@ -1,6 +1,6 @@
 package ua.com.foxminded.university.ui.util;
 
-public final class Mappings {
+public final class MappingConstants {
 
     public static final String API = "/api";
     public static final String FACULTIES = "/faculties";
@@ -20,6 +20,6 @@ public final class Mappings {
     public static final String ID_GROUPS_FREE = ID + GROUPS + FREE;
 
 
-    private Mappings() {
+    private MappingConstants() {
     }
 }

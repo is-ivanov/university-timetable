@@ -1,6 +1,5 @@
 package ua.com.foxminded.university.exception;
 
-
 public class MyEntityNotFoundException extends RuntimeException {
 
     public MyEntityNotFoundException(String resourceName, String fieldName,

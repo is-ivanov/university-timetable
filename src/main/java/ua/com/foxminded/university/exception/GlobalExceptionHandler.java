@@ -62,10 +62,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(MyEntityNotFoundException.class)
-    ResponseEntity<Object> onEntityNotFoundException(MyEntityNotFoundException ex) {
-        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(),
-            NOT_FOUND.value(), NOT_FOUND.getReasonPhrase(), getNow());
+    public ResponseEntity<ErrorResponse> handleNotFoundExceptions(Exception ex) {
+        ErrorResponse errorResponse = createErrorResponse(ex, NOT_FOUND);
         return new ResponseEntity<>(errorResponse, NOT_FOUND);
+    }
+
+    @ExceptionHandler(MyPageNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleBadRequestExceptions(Exception ex) {
+        ErrorResponse errorResponse = createErrorResponse(ex, BAD_REQUEST);
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    private ErrorResponse createErrorResponse(Exception ex, HttpStatus status) {
+        return new ErrorResponse(ex.getMessage(),
+            status.value(), status.getReasonPhrase(), getNow());
     }
 
     private List<Violation> getViolationsFromBindException(BindException ex) {

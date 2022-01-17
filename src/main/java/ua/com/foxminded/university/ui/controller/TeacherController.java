@@ -73,14 +73,14 @@ public class TeacherController {
 
     @GetMapping("/free")
     @ResponseBody
-    public List<TeacherDto> getFreeTeachers(@RequestParam("time_start")
+    public List<Teacher> getFreeTeachers(@RequestParam("time_start")
                                             @DateTimeFormat(pattern = DATE_TIME_PATTERN)
                                                 LocalDateTime startTime,
                                             @RequestParam("time_end")
                                             @DateTimeFormat(pattern = DATE_TIME_PATTERN)
                                                 LocalDateTime endTime) {
         log.debug("Getting teachers free from {} to {}", startTime, endTime);
-        List<TeacherDto> freeTeachers =
+        List<Teacher> freeTeachers =
             teacherService.getFreeTeachersOnLessonTime(startTime, endTime);
         log.debug("Found {} active free teachers", freeTeachers.size());
         return freeTeachers;
@@ -99,9 +99,9 @@ public class TeacherController {
 
     @GetMapping("/{id}")
     @ResponseBody
-    public TeacherDto getTeacher(@PathVariable("id") int teacherId) {
+    public Teacher getTeacher(@PathVariable("id") int teacherId) {
         log.debug("Getting teacher id({})", teacherId);
-        TeacherDto teacher = teacherService.getById(teacherId);
+        Teacher teacher = teacherService.getById(teacherId);
         log.debug("Found teacher [{} {} {}]", teacher.getFirstName(),
             teacher.getPatronymic(), teacher.getLastName());
         return teacher;

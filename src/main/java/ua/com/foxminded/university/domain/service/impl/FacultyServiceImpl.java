@@ -7,9 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.com.foxminded.university.dao.FacultyRepository;
-import ua.com.foxminded.university.domain.dto.FacultyDto;
 import ua.com.foxminded.university.domain.entity.Faculty;
-import ua.com.foxminded.university.domain.mapper.FacultyDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.exception.MyEntityNotFoundException;
 
@@ -22,7 +20,6 @@ import java.util.List;
 public class FacultyServiceImpl implements FacultyService {
 
     private final FacultyRepository facultyRepo;
-    private final FacultyDtoMapper mapper;
 
     @Override
     public Faculty save(Faculty faculty) {

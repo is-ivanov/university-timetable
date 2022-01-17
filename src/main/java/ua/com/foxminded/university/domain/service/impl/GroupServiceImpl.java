@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.com.foxminded.university.dao.GroupRepository;
 import ua.com.foxminded.university.dao.StudentRepository;
-import ua.com.foxminded.university.domain.dto.GroupDto;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Student;
@@ -99,15 +98,15 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public List<GroupDto> getAllByFacultyId(int facultyId) {
+    public List<Group> getAllByFacultyId(int facultyId) {
         log.debug("Getting all groups by faculty id({})", facultyId);
         List<Group> groups = groupRepo.findAllByFacultyId(facultyId);
         log.debug(FOUND_GROUPS, groups.size());
-        return groupDtoMapper.toGroupDtos(groups);
+        return groups;
     }
 
     @Override
-    public List<GroupDto> getFreeGroupsOnLessonTime(LocalDateTime startTime,
+    public List<Group> getFreeGroupsOnLessonTime(LocalDateTime startTime,
                                                     LocalDateTime endTime) {
         log.debug("Getting groups free from {} to {}", startTime, endTime);
         List<Student> busyStudents =
@@ -120,11 +119,11 @@ public class GroupServiceImpl implements GroupService {
             groups = groupRepo.findAllActiveWithoutStudents(busyStudentIds);
         }
         log.debug(FOUND_GROUPS, groups.size());
-        return groupDtoMapper.toGroupDtos(groups);
+        return groups;
     }
 
     @Override
-    public List<GroupDto> getFreeGroupsByFacultyOnLessonTime(int facultyId,
+    public List<Group> getFreeGroupsByFacultyOnLessonTime(int facultyId,
                                                              LocalDateTime startTime,
                                                              LocalDateTime endTime) {
         log.debug("Getting active groups from faculty id({}) free from {} to {}",
@@ -140,7 +139,7 @@ public class GroupServiceImpl implements GroupService {
                 facultyId);
         }
         log.debug(FOUND_GROUPS, groups.size());
-        return groupDtoMapper.toGroupDtos(groups);
+        return groups;
     }
 
     @Override
