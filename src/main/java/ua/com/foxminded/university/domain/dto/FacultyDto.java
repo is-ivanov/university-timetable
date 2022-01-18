@@ -11,7 +11,7 @@ import javax.validation.constraints.NotBlank;
 @Value
 @EqualsAndHashCode(callSuper = false)
 @Relation(itemRelation = "faculty", collectionRelation = "faculties")
-public class FacultyDto extends RepresentationModel<FacultyDto> {
+public class FacultyDto extends RepresentationModel<FacultyDto> implements IDto {
 
     Integer id;
 

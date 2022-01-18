@@ -2,7 +2,6 @@ package ua.com.foxminded.university.domain.entity;
 
 import lombok.*;
 import org.hibernate.Hibernate;
-import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -16,7 +15,7 @@ import java.util.Objects;
 @Table(name = "faculties", indexes = {
     @Index(name = "idx_faculty_faculty_name", columnList = "faculty_name", unique = true)
 })
-public class Faculty {
+public class Faculty implements IEntity {
 
     @Id
     @GeneratedValue
@@ -43,4 +42,5 @@ public class Faculty {
     public int hashCode() {
         return getClass().hashCode();
     }
+
 }

@@ -118,6 +118,7 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <form id="formEdit" method="put" data-validate="yes">
+          <input type="hidden" name="id" id="editFacultyId">
           <div class="modal-header">
             <h5 class="modal-title" id="editFacultyModalLabel">Update Faculty</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -184,6 +185,7 @@
       $('#formEdit').attr('action', href);
       $.get(href, function (faculty) {
         $('#editFacultyNameInput').val(faculty.name);
+        $('#editFacultyId').val(faculty.id);
       });
     });
   });
