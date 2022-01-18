@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.com.foxminded.university.dao.CourseRepository;
 import ua.com.foxminded.university.domain.entity.Course;
-import ua.com.foxminded.university.domain.service.interfaces.CourseService;
+import ua.com.foxminded.university.domain.service.interfaces.CourseOldService;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 @Transactional
-public class CourseServiceImpl implements CourseService {
+public class CourseServiceImpl implements CourseOldService {
 
     private static final String MESSAGE_COURSE_NOT_FOUND = "Course id(%d) not found";
 

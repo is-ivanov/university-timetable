@@ -4,5 +4,6 @@ public interface IWithId {
 
     Integer getId();
 
-    void setId(final Integer id);
+    void setId(Integer id);
+
 }

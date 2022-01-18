@@ -1,8 +1,10 @@
 package ua.com.foxminded.university.ui.util;
 
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
+import ua.com.foxminded.university.domain.dto.FacultyDto;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -39,5 +41,13 @@ public final class ResponseUtil {
 
     public static String getRedirectUrl(HttpServletRequest request) {
         return request.getHeader("referer");
+    }
+
+    public static void addRedirectUrl(HttpServletRequest request,
+                                      FacultyDto facultyModel) {
+        String redirectUrl = ResponseUtil.getRedirectUrl(request);
+        if (redirectUrl != null) {
+            facultyModel.add(Link.of(redirectUrl, "redirect"));
+        }
     }
 }

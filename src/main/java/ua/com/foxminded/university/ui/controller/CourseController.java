@@ -10,7 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ua.com.foxminded.university.domain.entity.Course;
-import ua.com.foxminded.university.domain.service.interfaces.CourseService;
+import ua.com.foxminded.university.domain.service.interfaces.CourseOldService;
 import ua.com.foxminded.university.ui.PageSequenceCreator;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,7 +27,7 @@ public class CourseController {
 
     public static final String URI_COURSES = "/courses";
 
-    private final CourseService courseService;
+    private final CourseOldService courseService;
     private final PageSequenceCreator pageSequenceCreator;
 
     @GetMapping

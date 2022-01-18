@@ -8,7 +8,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +31,7 @@ import ua.com.foxminded.university.ui.util.ResponseUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -54,7 +55,7 @@ public class FacultyRestController {
     @GetMapping
     public ResponseEntity<CollectionModel<FacultyDto>> getFaculties() {
         log.debug("Getting all faculties");
-        List<Faculty> faculties = facultyService.getAll();
+        List<Faculty> faculties = facultyService.findAll();
         CollectionModel<FacultyDto> entityModels = assembler.toCollectionModel(faculties);
         return ResponseEntity.ok(entityModels);
     }
@@ -79,13 +80,13 @@ public class FacultyRestController {
     public ResponseEntity<FacultyDto> getFaculty(@PathVariable("id")
                                                                   int facultyId) {
         log.debug("Getting faculty by id({})", facultyId);
-        Faculty faculty = facultyService.getById(facultyId);
+        Faculty faculty = facultyService.findById(facultyId);
 
         return ResponseEntity.ok(assembler.toModel(faculty));
     }
 
     private ResponseEntity<PagedModel<FacultyDto>> getPaginatedResponse(Pageable pageable) {
-        Page<Faculty> pageOfFaculties = facultyService.getAllSortedPaginated(pageable);
+        Page<Faculty> pageOfFaculties = facultyService.findAllSortedAndPaginated(pageable);
         int requestPageNumber = pageable.getPageNumber() + 1;
         if (requestPageNumber > pageOfFaculties.getTotalPages()) {
             throw new MyPageNotFoundException(requestPageNumber,
@@ -96,18 +97,16 @@ public class FacultyRestController {
     }
 
     @PostMapping
-    public ResponseEntity<EntityModel<FacultyDto>> createFaculty(@Valid @RequestBody
+    public ResponseEntity<FacultyDto> createFaculty(@Valid @RequestBody
                                                                      FacultyDto faculty,
                                                                  HttpServletRequest request) {
 
-        Faculty result = facultyService.save(mapper.toFaculty(faculty));
-        log.debug("{} is created", faculty);
-
-//        EntityModel<FacultyDto> facultyModel = getEntityModel(result, request);
-//        URI location = facultyModel.getRequiredLink(IanaLinkRelations.SELF).toUri();
-
-//        return ResponseEntity.created(location).body(facultyModel);
-        return ResponseEntity.created(null).body(null);
+        Faculty result = facultyService.create(mapper.toFaculty(faculty));
+        log.debug("{} is created", result);
+        FacultyDto resultModel = assembler.toModel(result);
+        URI location = resultModel.getRequiredLink(IanaLinkRelations.SELF).toUri();
+        addRedirectUrl(request, resultModel);
+        return ResponseEntity.created(location).body(resultModel);
     }
 
     @PutMapping(MappingConstants.ID)
@@ -118,7 +117,7 @@ public class FacultyRestController {
 
         Faculty faculty = mapper.toFaculty(facultyDto);
         faculty.setId(facultyId);
-        Faculty result = facultyService.save(faculty);
+        Faculty result = facultyService.update(facultyId, faculty);
         log.debug("Faculty id({}) is updated", facultyId);
 
 //        EntityModel<FacultyDto> facultyModel = getEntityModel(result, request);
@@ -189,7 +188,7 @@ public class FacultyRestController {
 //    }
 
     private void addRedirectUrl(HttpServletRequest request,
-                                EntityModel<FacultyDto> facultyModel) {
+                                FacultyDto facultyModel) {
         String redirectUrl = ResponseUtil.getRedirectUrl(request);
         if (redirectUrl != null) {
             facultyModel.add(Link.of(redirectUrl, "redirect"));

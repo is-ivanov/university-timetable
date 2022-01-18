@@ -41,7 +41,7 @@ public class FacultyController {
     public String showFaculties(Model model,
                                 @PageableDefault(sort = "name") Pageable pageable) {
         log.debug("Getting data for faculty.html");
-        Page<Faculty> pageFaculties = facultyService.getAllSortedPaginated(pageable);
+        Page<Faculty> pageFaculties = facultyService.findAllSortedAndPaginated(pageable);
         model.addAttribute("faculties", pageFaculties.getContent());
         model.addAttribute("page", pageFaculties);
         model.addAttribute("uri", MappingConstants.FACULTIES);

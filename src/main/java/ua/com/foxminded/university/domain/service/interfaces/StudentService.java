@@ -7,7 +7,7 @@ import ua.com.foxminded.university.domain.entity.Student;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface StudentService extends Service<Student> {
+public interface StudentService extends OldService<Student> {
 
     void deactivateStudent(Student student);
 

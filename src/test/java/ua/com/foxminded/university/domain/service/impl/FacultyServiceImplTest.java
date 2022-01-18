@@ -1,6 +1,5 @@
 package ua.com.foxminded.university.domain.service.impl;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -13,7 +12,6 @@ import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.mapper.FacultyDtoMapper;
 import ua.com.foxminded.university.exception.MyEntityNotFoundException;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,7 +44,7 @@ class FacultyServiceImplTest {
     @DisplayName("test 'save' when call add method then should call Repository once")
     void testSave_CallDaoOnce() {
         Faculty faculty = new Faculty();
-        facultyService.save(faculty);
+        facultyService.create(faculty);
         verify(facultyRepoMock).save(faculty);
     }
 
@@ -64,7 +62,7 @@ class FacultyServiceImplTest {
 
             when(facultyRepoMock.findById(ID1))
                 .thenReturn(Optional.of(expectedFaculty));
-            assertEquals(expectedFaculty, facultyService.getById(ID1));
+            assertEquals(expectedFaculty, facultyService.findById(ID1));
         }
 
         @Test
@@ -72,7 +70,7 @@ class FacultyServiceImplTest {
             " new EntityNotFoundException")
         void testReturnEmptyFaculty() {
             when(facultyRepoMock.findById(ID1)).thenReturn(Optional.empty());
-            assertThatThrownBy(() -> facultyService.getById(ID1))
+            assertThatThrownBy(() -> facultyService.findById(ID1))
                 .isInstanceOf(MyEntityNotFoundException.class)
                 .hasMessageContaining("Faculty id(1) not found");
         }
@@ -90,7 +88,7 @@ class FacultyServiceImplTest {
         expectedFaculties.add(faculty1);
         expectedFaculties.add(faculty2);
         when(facultyRepoMock.findAll()).thenReturn(expectedFaculties);
-        assertEquals(expectedFaculties, facultyService.getAll());
+        assertEquals(expectedFaculties, facultyService.findAll());
     }
 
     @Test

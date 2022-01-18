@@ -33,7 +33,7 @@ public class LessonController {
     private final FacultyService facultyService;
     private final TeacherService teacherService;
     private final DepartmentService departmentService;
-    private final CourseService courseService;
+    private final CourseOldService courseService;
     private final RoomService roomService;
     private final GroupService groupService;
     private final LessonDtoMapper lessonDtoMapper;

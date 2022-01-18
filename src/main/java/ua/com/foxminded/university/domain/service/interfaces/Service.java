@@ -1,14 +1,7 @@
 package ua.com.foxminded.university.domain.service.interfaces;
 
-import java.util.List;
+import ua.com.foxminded.university.common.Operations;
+import ua.com.foxminded.university.domain.entity.IEntity;
 
-public interface Service<T> {
-
-    T save(T t);
-
-    T getById(int id);
-
-    List<T> getAll();
-
-    void delete(int id);
+public interface Service<T extends IEntity> extends Operations<T> {
 }

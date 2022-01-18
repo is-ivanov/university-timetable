@@ -58,7 +58,7 @@
 //    private DepartmentService departmentServiceMock;
 //
 //    @Mock
-//    private CourseService courseServiceMock;
+//    private CourseOldService courseServiceMock;
 //
 //    @Mock
 //    private RoomService roomServiceMock;
