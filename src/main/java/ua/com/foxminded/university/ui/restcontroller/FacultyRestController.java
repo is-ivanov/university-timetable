@@ -2,15 +2,13 @@ package ua.com.foxminded.university.ui.restcontroller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.IanaLinkRelations;
-import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -18,12 +16,9 @@ import ua.com.foxminded.university.domain.dto.FacultyDto;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Teacher;
+import ua.com.foxminded.university.domain.mapper.DtoMapper;
 import ua.com.foxminded.university.domain.mapper.FacultyDtoMapper;
-import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
-import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
-import ua.com.foxminded.university.domain.service.interfaces.GroupService;
-import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
-import ua.com.foxminded.university.exception.MyPageNotFoundException;
+import ua.com.foxminded.university.domain.service.interfaces.*;
 import ua.com.foxminded.university.ui.restcontroller.link.FacultyDtoAssembler;
 import ua.com.foxminded.university.ui.util.MappingConstants;
 import ua.com.foxminded.university.ui.util.QueryConstants;
@@ -31,18 +26,18 @@ import ua.com.foxminded.university.ui.util.ResponseUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static ua.com.foxminded.university.ui.util.ResponseUtil.DATE_TIME_PATTERN;
 
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(MappingConstants.API_FACULTIES)
 @Validated
-public class FacultyRestController {
+@RequestMapping(MappingConstants.API_FACULTIES)
+public class FacultyRestController extends AbstractController<FacultyDto, Faculty> {
+
+    public static final String LOG_PAGE_FACULTIES = "Getting all faculties with {}";
 
     private final FacultyService facultyService;
     private final FacultyDtoMapper mapper;
@@ -55,74 +50,47 @@ public class FacultyRestController {
     @GetMapping
     public ResponseEntity<CollectionModel<FacultyDto>> getFaculties() {
         log.debug("Getting all faculties");
-        List<Faculty> faculties = facultyService.findAll();
-        CollectionModel<FacultyDto> entityModels = assembler.toCollectionModel(faculties);
-        return ResponseEntity.ok(entityModels);
+        return ResponseEntity.ok(getAll());
     }
 
-    @GetMapping(params = {QueryConstants.PAGE, QueryConstants.SIZE, QueryConstants.SORT_BY})
+    @GetMapping(params = {QueryConstants.PAGE, QueryConstants.SIZE, QueryConstants.SORT})
     public ResponseEntity<PagedModel<FacultyDto>> getAllPaginatedAndSorted(Pageable pageable) {
-        return getPaginatedResponse(pageable);
+        log.debug(LOG_PAGE_FACULTIES, pageable);
+        return ResponseEntity.ok(getAllSortedAndPaginated(pageable));
     }
 
     @GetMapping(params = {QueryConstants.PAGE, QueryConstants.SIZE})
     public ResponseEntity<PagedModel<FacultyDto>> getAllPaginated(@PageableDefault(sort = "name")
-                                                                          Pageable pageable) {
-        return getPaginatedResponse(pageable);
+                                                                      Pageable pageable) {
+        log.debug(LOG_PAGE_FACULTIES, pageable);
+        return ResponseEntity.ok(getAllSortedAndPaginated(pageable));
     }
 
-    @GetMapping(params = {QueryConstants.SORT_BY})
+    @GetMapping(params = {QueryConstants.SORT})
     public ResponseEntity<PagedModel<FacultyDto>> getAllSorted(Pageable pageable) {
-        return getPaginatedResponse(pageable);
+        log.debug(LOG_PAGE_FACULTIES, pageable);
+        return ResponseEntity.ok(getAllSortedAndPaginated(pageable));
     }
 
     @GetMapping(MappingConstants.ID)
-    public ResponseEntity<FacultyDto> getFaculty(@PathVariable("id")
-                                                                  int facultyId) {
+    public ResponseEntity<FacultyDto> getFaculty(@PathVariable("id") int facultyId) {
         log.debug("Getting faculty by id({})", facultyId);
-        Faculty faculty = facultyService.findById(facultyId);
-
-        return ResponseEntity.ok(assembler.toModel(faculty));
-    }
-
-    private ResponseEntity<PagedModel<FacultyDto>> getPaginatedResponse(Pageable pageable) {
-        Page<Faculty> pageOfFaculties = facultyService.findAllSortedAndPaginated(pageable);
-        int requestPageNumber = pageable.getPageNumber() + 1;
-        if (requestPageNumber > pageOfFaculties.getTotalPages()) {
-            throw new MyPageNotFoundException(requestPageNumber,
-                pageOfFaculties.getTotalPages(), pageable.getPageSize());
-        }
-        PagedModel<FacultyDto> facultyDtos = pagedAssembler.toModel(pageOfFaculties, assembler);
-        return ResponseEntity.ok(facultyDtos);
+        return ResponseEntity.ok(getById(facultyId));
     }
 
     @PostMapping
-    public ResponseEntity<FacultyDto> createFaculty(@Valid @RequestBody
-                                                                     FacultyDto faculty,
-                                                                 HttpServletRequest request) {
-
-        Faculty result = facultyService.create(mapper.toFaculty(faculty));
-        log.debug("{} is created", result);
-        FacultyDto resultModel = assembler.toModel(result);
-        URI location = resultModel.getRequiredLink(IanaLinkRelations.SELF).toUri();
-        addRedirectUrl(request, resultModel);
-        return ResponseEntity.created(location).body(resultModel);
+    public ResponseEntity<FacultyDto> createFaculty(@Valid @RequestBody FacultyDto facultyDto,
+                                                    HttpServletRequest request) {
+        log.debug("Creating {}", facultyDto);
+        return create(facultyDto, request);
     }
 
     @PutMapping(MappingConstants.ID)
-    public ResponseEntity<Object> updateFaculty(@Valid @RequestBody
-                                                    FacultyDto facultyDto,
-                                                @PathVariable("id") int facultyId,
-                                                HttpServletRequest request) {
-
-        Faculty faculty = mapper.toFaculty(facultyDto);
-        faculty.setId(facultyId);
-        Faculty result = facultyService.update(facultyId, faculty);
+    public ResponseEntity<Object> updateFaculty(@Valid @RequestBody FacultyDto facultyDto,
+                                                @PathVariable("id") int facultyId) {
+        FacultyDto updatedFacultyDto = update(facultyId, facultyDto);
         log.debug("Faculty id({}) is updated", facultyId);
-
-//        EntityModel<FacultyDto> facultyModel = getEntityModel(result, request);
-//        return ResponseEntity.ok(facultyModel);
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok(updatedFacultyDto);
     }
 
     @DeleteMapping(MappingConstants.ID)
@@ -146,12 +114,12 @@ public class FacultyRestController {
 
     @GetMapping(MappingConstants.ID_GROUPS_FREE)
     public List<Group> getFreeGroupsByFaculty(@PathVariable("id") int facultyId,
-                                                 @RequestParam("time_start")
-                                                 @DateTimeFormat(pattern = DATE_TIME_PATTERN)
-                                                     LocalDateTime startTime,
-                                                 @RequestParam("time_end")
-                                                 @DateTimeFormat(pattern = DATE_TIME_PATTERN)
-                                                     LocalDateTime endTime) {
+                                              @RequestParam("time_start")
+                                              @DateTimeFormat(pattern = ResponseUtil.DATE_TIME_PATTERN)
+                                                  LocalDateTime startTime,
+                                              @RequestParam("time_end")
+                                              @DateTimeFormat(pattern = ResponseUtil.DATE_TIME_PATTERN)
+                                                  LocalDateTime endTime) {
         log.debug("Getting active groups by faculty id({}) free from {} to {}",
             facultyId, startTime, endTime);
         List<Group> freeGroups = groupService
@@ -179,6 +147,26 @@ public class FacultyRestController {
         return teachers;
     }
 
+    @Override
+    protected Service<Faculty> getService() {
+        return facultyService;
+    }
+
+    @Override
+    protected RepresentationModelAssembler<Faculty, FacultyDto> getAssembler() {
+        return assembler;
+    }
+
+    @Override
+    protected PagedResourcesAssembler<Faculty> getPagedAssembler() {
+        return pagedAssembler;
+    }
+
+    @Override
+    protected DtoMapper<Faculty, FacultyDto> getMapper() {
+        return mapper;
+    }
+
 
 //    private EntityModel<FacultyDto> getEntityModel(FacultyDto result,
 //                                                   HttpServletRequest request) {
@@ -187,11 +175,11 @@ public class FacultyRestController {
 //        return facultyModel;
 //    }
 
-    private void addRedirectUrl(HttpServletRequest request,
-                                FacultyDto facultyModel) {
-        String redirectUrl = ResponseUtil.getRedirectUrl(request);
-        if (redirectUrl != null) {
-            facultyModel.add(Link.of(redirectUrl, "redirect"));
-        }
-    }
+//    private void addRedirectUrl(HttpServletRequest request,
+//                                FacultyDto facultyModel) {
+//        String redirectUrl = ResponseUtil.getRedirectUrl(request);
+//        if (redirectUrl != null) {
+//            facultyModel.add(Link.of(redirectUrl, "redirect"));
+//        }
+//    }
 }

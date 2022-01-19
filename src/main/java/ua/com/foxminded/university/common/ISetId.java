@@ -1,9 +1,6 @@
 package ua.com.foxminded.university.common;
 
-public interface IWithId {
-
-    Integer getId();
+public interface ISetId {
 
     void setId(Integer id);
-
 }

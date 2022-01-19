@@ -43,11 +43,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return handleValidationExceptions(ex);
     }
 
-    @ExceptionHandler({
-        ConstraintViolationException.class
-    })
+    @ExceptionHandler({ConstraintViolationException.class})
     public ResponseEntity<Object> handleValidationExceptions(Exception ex) {
-        log.warn("Validation error. Check 'violations' field for details");
+        log.warn("Validation error caught: {}", ex.getMessage(), ex);
         List<Violation> listViolations = new ArrayList<>();
         if (ex instanceof BindException) {
             listViolations = getViolationsFromBindException((BindException) ex);
@@ -55,27 +53,25 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             listViolations = getViolationsFromConstraintViolationException(
                 (ConstraintViolationException) ex);
         }
-        return ResponseEntity.badRequest()
-            .body(new ValidationErrorResponse(VALIDATION_ERROR_MESSAGE,
-                BAD_REQUEST.value(), BAD_REQUEST.getReasonPhrase(),
-                getNow(), listViolations));
+
+        ValidationErrorResponse errorResponseBody =
+            new ValidationErrorResponse(VALIDATION_ERROR_MESSAGE,
+            BAD_REQUEST.value(), BAD_REQUEST.getReasonPhrase(),
+            getNow(), listViolations);
+        return createResponse(errorResponseBody, BAD_REQUEST);
     }
 
     @ExceptionHandler(MyEntityNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFoundExceptions(Exception ex) {
-        ErrorResponse errorResponse = createErrorResponse(ex, NOT_FOUND);
-        return new ResponseEntity<>(errorResponse, NOT_FOUND);
+        return createErrorResponse(ex, NOT_FOUND);
     }
 
-    @ExceptionHandler(MyPageNotFoundException.class)
+    @ExceptionHandler({
+            MyPageNotFoundException.class,
+            IllegalArgumentException.class
+        })
     public ResponseEntity<ErrorResponse> handleBadRequestExceptions(Exception ex) {
-        ErrorResponse errorResponse = createErrorResponse(ex, BAD_REQUEST);
-        return ResponseEntity.badRequest().body(errorResponse);
-    }
-
-    private ErrorResponse createErrorResponse(Exception ex, HttpStatus status) {
-        return new ErrorResponse(ex.getMessage(),
-            status.value(), status.getReasonPhrase(), getNow());
+        return createErrorResponse(ex, BAD_REQUEST);
     }
 
     private List<Violation> getViolationsFromBindException(BindException ex) {
@@ -90,6 +86,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             .map(error -> new Violation(error.getPropertyPath().toString(),
                 error.getMessage()))
             .collect(Collectors.toList());
+    }
+
+    private ResponseEntity<ErrorResponse> createErrorResponse(Exception ex, HttpStatus status){
+        log.warn("error caught: {}", ex.getMessage(), ex);
+        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(),
+            status.value(), status.getReasonPhrase(), getNow());
+        return createResponse(errorResponse, status);
+    }
+
+    private <T> ResponseEntity<T> createResponse(T body, HttpStatus status) {
+        log.debug("Responding with a status of {}", status);
+        return new ResponseEntity<>(body, status);
     }
 
     private ZonedDateTime getNow() {

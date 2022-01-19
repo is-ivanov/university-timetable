@@ -44,21 +44,23 @@ public abstract class AbstractService<T extends IEntity> implements Service<T> {
     @Override
     public T update(int id, T entity) {
         Preconditions.checkNotNull(entity);
-        entity.setId(id);
+        if (!getRepo().existsById(id)) {
+            throw new MyEntityNotFoundException(getEntityName(), "id", id);
+        }
         return getRepo().save(entity);
     }
 
     @Override
     public void delete(int id) {
-        if (!getRepo().existsById(id)) {
-            throw new MyEntityNotFoundException(getEntityName(), "id", id);
-        }
+//        if (!getRepo().existsById(id)) {
+//            throw new MyEntityNotFoundException(getEntityName(), "id", id);
+//        }
         getRepo().deleteById(id);
     }
 
     protected abstract JpaRepository<T, Integer> getRepo();
 
-    private String getEntityName(){
+    private String getEntityName() {
         return ((Class<T>) ((ParameterizedType) getClass()
             .getGenericSuperclass()).getActualTypeArguments()[0]).getSimpleName();
     }

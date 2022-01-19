@@ -19,11 +19,11 @@ public class FacultyServiceImpl extends AbstractService<Faculty> implements Facu
 
     private final FacultyRepository facultyRepo;
 
-    @Override
-    public Faculty findById(int id) {
-        log.debug("Getting faculty by id({})", id);
-        return super.findById(id);
-    }
+//    @Override
+//    public Faculty findById(int id) {
+//        log.debug("Getting faculty by id({})", id);
+//        return super.findById(id);
+//    }
 
     //    @Override
 //    public Faculty save(Faculty faculty) {

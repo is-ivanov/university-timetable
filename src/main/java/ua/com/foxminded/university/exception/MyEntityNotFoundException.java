@@ -7,4 +7,10 @@ public class MyEntityNotFoundException extends RuntimeException {
         super(String.format("%s with %s(%s) not found",
             resourceName, fieldName, fieldValue));
     }
+
+    public MyEntityNotFoundException(String resourceName, String fieldName,
+                                     Object fieldValue, Exception ex) {
+        super(String.format("%s with %s(%s) not found",
+            resourceName, fieldName, fieldValue), ex);
+    }
 }

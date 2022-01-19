@@ -25,7 +25,7 @@ public class FacultyDtoAssembler implements RepresentationModelAssembler<Faculty
     @Override
     public FacultyDto toModel(Faculty faculty) {
 
-        FacultyDto facultyDto = mapper.toFacultyDto(faculty);
+        FacultyDto facultyDto = mapper.toDto(faculty);
 
         facultyDto.add(
             linkTo(methodOn(FacultyRestController.class).getFaculty(faculty.getId())).withSelfRel(),
