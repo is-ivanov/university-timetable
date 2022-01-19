@@ -96,7 +96,7 @@ public class FacultyRestController extends AbstractController<FacultyDto, Facult
     @DeleteMapping(MappingConstants.ID)
     public ResponseEntity<Object> deleteFaculty(@PathVariable("id") int facultyId) {
         log.debug("Deleting faculty with id({})", facultyId);
-        facultyService.delete(facultyId);
+        delete(facultyId);
         return ResponseEntity.noContent().build();
     }
 

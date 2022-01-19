@@ -52,9 +52,6 @@ public abstract class AbstractService<T extends IEntity> implements Service<T> {
 
     @Override
     public void delete(int id) {
-//        if (!getRepo().existsById(id)) {
-//            throw new MyEntityNotFoundException(getEntityName(), "id", id);
-//        }
         getRepo().deleteById(id);
     }
 

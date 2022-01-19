@@ -25,7 +25,7 @@ import java.util.Set;
     @Index(name = "idx_group_group_active", columnList = "group_active"),
     @Index(name = "idx_group_faculty_id", columnList = "faculty_id")
 })
-public class Group {
+public class Group implements IEntity {
 
     @Value("${application.validation.group.max-number-students}")
     private static final int MAX_NUMBER_STUDENTS = 10;

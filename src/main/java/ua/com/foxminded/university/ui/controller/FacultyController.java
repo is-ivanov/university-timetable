@@ -54,7 +54,6 @@ public class FacultyController {
     }
 
 //    @PostMapping
-//    @Validated(OnCreate.class)
 //    public ResponseEntity<String> createFaculty(@ModelAttribute @Valid FacultyDto faculty,
 //                                                HttpServletRequest request) {
 //        log.debug("Creating {}", faculty);
@@ -73,7 +72,6 @@ public class FacultyController {
 //    }
 
 //    @PutMapping("/{id}")
-//    @Validated(OnUpdate.class)
 //    public ResponseEntity<String> updateFaculty(@ModelAttribute @Valid FacultyDto faculty,
 //                                                @PathVariable("id") int facultyId,
 //                                                HttpServletRequest request) {

@@ -2,6 +2,7 @@ package ua.com.foxminded.university.domain.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.com.foxminded.university.dao.TeacherRepository;
@@ -19,42 +20,47 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 @Transactional
-public class TeacherServiceImpl implements TeacherService {
+public class TeacherServiceImpl  extends AbstractService<Teacher> implements TeacherService {
 
     private static final String MESSAGE_TEACHER_NOT_FOUND = "Teacher id(%d) not found";
 
     private final TeacherRepository teacherRepo;
     private final TeacherDtoMapper teacherDtoMapper;
 
-    @Override
-    public Teacher save(Teacher teacher) {
-        log.debug("Saving teacher {}", teacher);
-        return teacherRepo.save(teacher);
-    }
+//    @Override
+//    public Teacher save(Teacher teacher) {
+//        log.debug("Saving teacher {}", teacher);
+//        return teacherRepo.save(teacher);
+//    }
+//
+//    @Override
+//    public Teacher getById(int id) {
+//        log.debug("Getting teacher by id({})", id);
+//        Teacher teacher = teacherRepo.findById(id)
+//            .orElseThrow(() -> new EntityNotFoundException(
+//                String.format(MESSAGE_TEACHER_NOT_FOUND, id)));
+//        log.debug("Found {}", teacher);
+//        return teacher;
+//    }
+//
+//    @Override
+//    public List<Teacher> getAll() {
+//        log.debug("Getting all teachers");
+//        List<Teacher> teachers = teacherRepo.findAll();
+//        log.debug("Found {} teachers", teachers.size());
+//        return teachers;
+//    }
+//
+//    @Override
+//    public void delete(int id) {
+//        log.debug("Deleting teacher id({})", id);
+//        teacherRepo.deleteById(id);
+//        log.debug("Delete teacher id({})", id);
+//    }
 
     @Override
-    public Teacher getById(int id) {
-        log.debug("Getting teacher by id({})", id);
-        Teacher teacher = teacherRepo.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException(
-                String.format(MESSAGE_TEACHER_NOT_FOUND, id)));
-        log.debug("Found {}", teacher);
-        return teacher;
-    }
-
-    @Override
-    public List<Teacher> getAll() {
-        log.debug("Getting all teachers");
-        List<Teacher> teachers = teacherRepo.findAll();
-        log.debug("Found {} teachers", teachers.size());
-        return teachers;
-    }
-
-    @Override
-    public void delete(int id) {
-        log.debug("Deleting teacher id({})", id);
-        teacherRepo.deleteById(id);
-        log.debug("Delete teacher id({})", id);
+    protected JpaRepository<Teacher, Integer> getRepo() {
+        return teacherRepo;
     }
 
     @Override

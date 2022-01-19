@@ -3,6 +3,7 @@ package ua.com.foxminded.university.domain.service.impl;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.com.foxminded.university.dao.*;
@@ -24,7 +25,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Service
 @Transactional
-public class LessonServiceImpl implements LessonService {
+public class LessonServiceImpl  extends AbstractService<Lesson> implements LessonService {
 
     public static final String FOUND_LESSONS = "Found {} lessons";
     public static final String MESSAGE_FILTER_NOT_SELECT = "Select at least one filter";
@@ -42,51 +43,56 @@ public class LessonServiceImpl implements LessonService {
     private final TeacherRepository teacherRepo;
     private final RoomRepository roomRepo;
 
-    @Override
-    public Lesson save(Lesson lesson) throws ServiceException {
-        log.debug("Check lesson id({}) before adding", lesson.getId());
-        checkLesson(lesson);
-        log.debug("Saving ({})", lesson);
-        return lessonRepo.save(lesson);
-    }
+//    @Override
+//    public Lesson save(Lesson lesson) throws ServiceException {
+//        log.debug("Check lesson id({}) before adding", lesson.getId());
+//        checkLesson(lesson);
+//        log.debug("Saving ({})", lesson);
+//        return lessonRepo.save(lesson);
+//    }
+//
+//    @Override
+//    public Lesson getById(int id) {
+//        log.debug("Getting lesson by id({})", id);
+//        Lesson lesson = getLessonById(id);
+//        log.debug("Found lesson [teacher {}, course {}, room {}]",
+//            lesson.getTeacher().getFullName(), lesson.getCourse().getName(),
+//            lesson.getRoom().getNumber());
+//        return lesson;
+//    }
+//
+//    @Override
+//    public List<Lesson> getAll() {
+//        log.debug("Getting all lessons");
+//        List<Lesson> lessons = lessonRepo.findAll();
+//        log.debug(FOUND_LESSONS, lessons.size());
+//        return lessons;
+//    }
+//
+//    @Override
+//    public void update(LessonDto lessonDto) {
+//        Lesson existingLesson = getLessonById(lessonDto.getId());
+//        updateCourse(lessonDto.getCourseId(), existingLesson);
+//        updateTeacher(lessonDto.getTeacherId(), existingLesson);
+//        updateRoom(lessonDto.getRoomId(), existingLesson);
+//        existingLesson.setTimeStart(lessonDto.getTimeStart());
+//        existingLesson.setTimeEnd(lessonDto.getTimeEnd());
+//        lessonRepo.save(existingLesson);
+//    }
+//
+//    @Override
+//    public void delete(int id) {
+//        log.debug("Start deleting lesson id({})", id);
+//        log.debug("Deleting all students from lesson id({})", id);
+//        lessonRepo.deleteAllStudentsFromLesson(id);
+//        log.debug("Deleting lesson id({})", id);
+//        lessonRepo.deleteById(id);
+//        log.debug("Lesson id({}) deleted successfully", id);
+//    }
 
     @Override
-    public Lesson getById(int id) {
-        log.debug("Getting lesson by id({})", id);
-        Lesson lesson = getLessonById(id);
-        log.debug("Found lesson [teacher {}, course {}, room {}]",
-            lesson.getTeacher().getFullName(), lesson.getCourse().getName(),
-            lesson.getRoom().getNumber());
-        return lesson;
-    }
-
-    @Override
-    public List<Lesson> getAll() {
-        log.debug("Getting all lessons");
-        List<Lesson> lessons = lessonRepo.findAll();
-        log.debug(FOUND_LESSONS, lessons.size());
-        return lessons;
-    }
-
-    @Override
-    public void update(LessonDto lessonDto) {
-        Lesson existingLesson = getLessonById(lessonDto.getId());
-        updateCourse(lessonDto.getCourseId(), existingLesson);
-        updateTeacher(lessonDto.getTeacherId(), existingLesson);
-        updateRoom(lessonDto.getRoomId(), existingLesson);
-        existingLesson.setTimeStart(lessonDto.getTimeStart());
-        existingLesson.setTimeEnd(lessonDto.getTimeEnd());
-        lessonRepo.save(existingLesson);
-    }
-
-    @Override
-    public void delete(int id) {
-        log.debug("Start deleting lesson id({})", id);
-        log.debug("Deleting all students from lesson id({})", id);
-        lessonRepo.deleteAllStudentsFromLesson(id);
-        log.debug("Deleting lesson id({})", id);
-        lessonRepo.deleteById(id);
-        log.debug("Lesson id({}) deleted successfully", id);
+    protected JpaRepository<Lesson, Integer> getRepo() {
+        return lessonRepo;
     }
 
     @Override

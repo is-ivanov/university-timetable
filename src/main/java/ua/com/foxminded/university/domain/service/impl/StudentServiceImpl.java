@@ -2,12 +2,14 @@ package ua.com.foxminded.university.domain.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import ua.com.foxminded.university.dao.GroupRepository;
 import ua.com.foxminded.university.dao.StudentRepository;
 import ua.com.foxminded.university.domain.dto.StudentDto;
+import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Student;
@@ -28,7 +30,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @Validated
-public class StudentServiceImpl implements StudentService {
+public class StudentServiceImpl  extends AbstractService<Student> implements StudentService {
 
     public static final String LOG_FOUND_STUDENTS = "Found {} students";
 
@@ -38,46 +40,51 @@ public class StudentServiceImpl implements StudentService {
 
     private final Validator validator;
 
-    @Override
-    public Student save(Student student) {
-        log.debug("Saving student {}", student);
-        Integer groupId = student.getGroup().getId();
-        Group group = groupRepo.findById(groupId)
-            .orElseThrow(() ->
-                new EntityNotFoundException(
-                    String.format("Group id(%d) not found", groupId)));
-        group.addStudent(student);
-        Set<ConstraintViolation<Group>> violations = validator.validate(group);
-        if (!violations.isEmpty()) {
-            throw new ConstraintViolationException(violations);
-        }
-        return studentRepo.save(student);
-    }
+//    @Override
+//    public Student save(Student student) {
+//        log.debug("Saving student {}", student);
+//        Integer groupId = student.getGroup().getId();
+//        Group group = groupRepo.findById(groupId)
+//            .orElseThrow(() ->
+//                new EntityNotFoundException(
+//                    String.format("Group id(%d) not found", groupId)));
+//        group.addStudent(student);
+//        Set<ConstraintViolation<Group>> violations = validator.validate(group);
+//        if (!violations.isEmpty()) {
+//            throw new ConstraintViolationException(violations);
+//        }
+//        return studentRepo.save(student);
+//    }
+//
+//    @Override
+//    public Student getById(int id) {
+//        log.debug("Getting student by id({})", id);
+//        Student student = studentRepo.findById(id)
+//            .orElseThrow(() -> new EntityNotFoundException(
+//                String.format("Student id(%d) not found", id)));
+//        log.debug("Found {}", student);
+//        return student;
+//    }
+//
+//    @Override
+//    public List<Student> getAll() {
+//        log.debug("Getting all students");
+//        List<Student> students = studentRepo.findAll();
+//        log.debug(LOG_FOUND_STUDENTS, students.size());
+//        return students;
+//
+//    }
+//
+//    @Override
+//    public void delete(int id) {
+//        log.debug("Deleting student id({})", id);
+//        studentRepo.deleteById(id);
+//        log.debug("Delete student id({})", id);
+//    }
 
     @Override
-    public Student getById(int id) {
-        log.debug("Getting student by id({})", id);
-        Student student = studentRepo.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException(
-                String.format("Student id(%d) not found", id)));
-        log.debug("Found {}", student);
-        return student;
-    }
-
-    @Override
-    public List<Student> getAll() {
-        log.debug("Getting all students");
-        List<Student> students = studentRepo.findAll();
-        log.debug(LOG_FOUND_STUDENTS, students.size());
-        return students;
-
-    }
-
-    @Override
-    public void delete(int id) {
-        log.debug("Deleting student id({})", id);
-        studentRepo.deleteById(id);
-        log.debug("Delete student id({})", id);
+    protected JpaRepository<Student, Integer> getRepo() {
+        return studentRepo;
     }
 
     @Override

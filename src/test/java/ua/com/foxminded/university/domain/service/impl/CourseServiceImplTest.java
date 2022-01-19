@@ -22,7 +22,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class CourseOldServiceImplTest {
+class CourseServiceImplTest {
 
     public static final String COURSE_NAME = "Course name";
     public static final int ID1 = 1;

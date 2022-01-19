@@ -52,7 +52,7 @@ public abstract class AbstractController<T extends AbstractDto<T>, D extends IEn
         return ResponseEntity.created(location).body(savedModel);
     }
 
-    public T update(int id, T dto) {
+    protected T update(int id, T dto) {
         if (dto.getId() != id) {
             throw new IllegalArgumentException(
                 "ID in body request have to be equal ID in URI");
@@ -62,7 +62,7 @@ public abstract class AbstractController<T extends AbstractDto<T>, D extends IEn
         return getAssembler().toModel(updatedEntity);
     }
 
-    public void delete(int id) {
+    protected void delete(int id) {
         if (id == 0) {
             throw new IllegalArgumentException("illegal ID");
         }

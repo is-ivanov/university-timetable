@@ -2,10 +2,12 @@ package ua.com.foxminded.university.domain.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.com.foxminded.university.dao.GroupRepository;
 import ua.com.foxminded.university.dao.StudentRepository;
+import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Student;
@@ -22,7 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 @Transactional
-public class GroupServiceImpl implements GroupService {
+public class GroupServiceImpl extends AbstractService<Group> implements GroupService {
 
     public static final String FOUND_GROUPS = "Found {} groups";
 
@@ -31,35 +33,40 @@ public class GroupServiceImpl implements GroupService {
     private final GroupDtoMapper groupDtoMapper;
     private final StudentService studentService;
 
-    @Override
-    public Group save(Group group) {
-        log.debug("Saving {}", group);
-        return groupRepo.save(group);
-    }
+//    @Override
+//    public Group save(Group group) {
+//        log.debug("Saving {}", group);
+//        return groupRepo.save(group);
+//    }
+//
+//    @Override
+//    public Group getById(int id) {
+//        log.debug("Getting group by id({})", id);
+//        Group group = groupRepo.findById(id)
+//            .orElseThrow(() -> new EntityNotFoundException(
+//                String.format("Group id(%d) not found", id)));
+//        log.debug("Found {}", group);
+//        return group;
+//    }
+//
+//    @Override
+//    public List<Group> getAll() {
+//        log.debug("Getting all groups");
+//        List<Group> groups = groupRepo.findAll();
+//        log.debug(FOUND_GROUPS, groups.size());
+//        return groups;
+//    }
+//
+//    @Override
+//    public void delete(int id) {
+//        log.debug("Deleting group id({})", id);
+//        groupRepo.deleteById(id);
+//        log.debug("Delete group id({})", id);
+//    }
 
     @Override
-    public Group getById(int id) {
-        log.debug("Getting group by id({})", id);
-        Group group = groupRepo.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException(
-                String.format("Group id(%d) not found", id)));
-        log.debug("Found {}", group);
-        return group;
-    }
-
-    @Override
-    public List<Group> getAll() {
-        log.debug("Getting all groups");
-        List<Group> groups = groupRepo.findAll();
-        log.debug(FOUND_GROUPS, groups.size());
-        return groups;
-    }
-
-    @Override
-    public void delete(int id) {
-        log.debug("Deleting group id({})", id);
-        groupRepo.deleteById(id);
-        log.debug("Delete group id({})", id);
+    protected JpaRepository<Group, Integer> getRepo() {
+        return groupRepo;
     }
 
     @Override

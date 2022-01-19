@@ -15,7 +15,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @Entity
 @Table(name = "courses")
-public class Course {
+public class Course implements IEntity {
 
     @Id
     @GeneratedValue

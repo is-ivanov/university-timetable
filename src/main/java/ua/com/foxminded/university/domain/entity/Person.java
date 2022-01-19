@@ -19,7 +19,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public abstract class Person {
+public abstract class Person implements IEntity {
 
     public static final String MASK_FULL_NAME = "%s, %.1s.%.1s.";
 

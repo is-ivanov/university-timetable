@@ -16,7 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ua.com.foxminded.university.domain.entity.Course;
-import ua.com.foxminded.university.domain.service.interfaces.CourseOldService;
+import ua.com.foxminded.university.domain.service.interfaces.CourseService;
 import ua.com.foxminded.university.exception.GlobalExceptionHandler;
 import ua.com.foxminded.university.ui.PageSequenceCreator;
 
@@ -53,7 +53,7 @@ class CourseControllerTest {
     ArgumentCaptor<Course> courseCaptor;
 
     @Mock
-    private CourseOldService courseServiceMock;
+    private CourseService courseServiceMock;
 
     @Mock
     private PageSequenceCreator pageSequenceCreatorMock;

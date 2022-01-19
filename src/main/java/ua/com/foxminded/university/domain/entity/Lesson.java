@@ -25,7 +25,7 @@ import java.util.Set;
     @Index(name = "idx_lesson_time_start", columnList = "time_start"),
     @Index(name = "idx_lesson_time_end", columnList = "time_end")
 })
-public class Lesson {
+public class Lesson implements IEntity {
 
     @Id
     @GeneratedValue

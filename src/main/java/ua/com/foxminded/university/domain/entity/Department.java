@@ -19,7 +19,7 @@ import java.util.Objects;
     @Index(name = "idx_department", columnList = "department_name"),
     @Index(name = "idx_department_faculty_id", columnList = "faculty_id")
 })
-public class Department {
+public class Department implements IEntity {
 
     @Id
     @GeneratedValue

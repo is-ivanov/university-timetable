@@ -4,9 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.com.foxminded.university.dao.RoomRepository;
+import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Room;
 import ua.com.foxminded.university.domain.service.interfaces.RoomService;
 
@@ -19,41 +21,46 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 @Transactional
-public class RoomServiceImpl implements RoomService {
+public class RoomServiceImpl  extends AbstractService<Room> implements RoomService {
 
     private static final String MESSAGE_ROOM_NOT_FOUND = "Room id(%d) not found";
 
     private final RoomRepository roomRepo;
 
-    @Override
-    public Room save(Room room) {
-        log.debug("Saving {}", room);
-        return roomRepo.save(room);
-    }
+//    @Override
+//    public Room save(Room room) {
+//        log.debug("Saving {}", room);
+//        return roomRepo.save(room);
+//    }
+//
+//    @Override
+//    public Room getById(int id) {
+//        log.debug("Getting room by id({})", id);
+//        Room room = roomRepo.findById(id)
+//            .orElseThrow(() -> new EntityNotFoundException(
+//                String.format(MESSAGE_ROOM_NOT_FOUND, id)));
+//        log.debug("Found {}", room);
+//        return room;
+//    }
+//
+//    @Override
+//    public List<Room> getAll() {
+//        log.debug("Getting all rooms");
+//        List<Room> rooms = roomRepo.findAll();
+//        log.debug("Found {} rooms", rooms.size());
+//        return rooms;
+//    }
+//
+//    @Override
+//    public void delete(int id) {
+//        log.debug("Deleting room id({})", id);
+//        roomRepo.deleteById(id);
+//        log.debug("Delete room id({})", id);
+//    }
 
     @Override
-    public Room getById(int id) {
-        log.debug("Getting room by id({})", id);
-        Room room = roomRepo.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException(
-                String.format(MESSAGE_ROOM_NOT_FOUND, id)));
-        log.debug("Found {}", room);
-        return room;
-    }
-
-    @Override
-    public List<Room> getAll() {
-        log.debug("Getting all rooms");
-        List<Room> rooms = roomRepo.findAll();
-        log.debug("Found {} rooms", rooms.size());
-        return rooms;
-    }
-
-    @Override
-    public void delete(int id) {
-        log.debug("Deleting room id({})", id);
-        roomRepo.deleteById(id);
-        log.debug("Delete room id({})", id);
+    protected JpaRepository<Room, Integer> getRepo() {
+        return roomRepo;
     }
 
     @Override
@@ -68,14 +75,14 @@ public class RoomServiceImpl implements RoomService {
         return freeRooms;
     }
 
-    @Override
-    public Page<Room> getAllSortedPaginated(Pageable pageable) {
-        log.debug("Getting sorted page {} from list of rooms", pageable.getPageNumber());
-        Page<Room> pageRooms = roomRepo.findAll(pageable);
-        log.debug("Found {} rooms on page {}", pageRooms.getContent().size(),
-            pageRooms.getNumber());
-        return pageRooms;
-    }
+//    @Override
+//    public Page<Room> getAllSortedPaginated(Pageable pageable) {
+//        log.debug("Getting sorted page {} from list of rooms", pageable.getPageNumber());
+//        Page<Room> pageRooms = roomRepo.findAll(pageable);
+//        log.debug("Found {} rooms on page {}", pageRooms.getContent().size(),
+//            pageRooms.getNumber());
+//        return pageRooms;
+//    }
 
     private List<Room> findBusyRoomsOnTime(LocalDateTime from, LocalDateTime to) {
         log.debug("Getting busy rooms from {} to {}", from, to);

@@ -18,7 +18,7 @@ import java.util.Objects;
     @Index(name = "idx_room_building", columnList = "building"),
     @Index(name = "idx_room_room_number", columnList = "room_number")
 })
-public class Room {
+public class Room implements IEntity {
 
     @Id
     @GeneratedValue
