@@ -33,7 +33,7 @@ class LessonDtoMapperTest {
         void testExpectedLessonDto() {
             Lesson lesson = createTestLesson();
 
-            LessonDto lessonDto = mapper.toLessonDto(lesson);
+            LessonDto lessonDto = mapper.toDto(lesson);
 
             assertThat(lessonDto.getId()).isEqualTo(lesson.getId());
             assertThat(lessonDto.getCourseId()).isEqualTo(lesson.getCourse().getId());
@@ -64,7 +64,7 @@ class LessonDtoMapperTest {
 
             LessonDto lessonDto = createTestLessonDto(LESSON_ID1);
 
-            Lesson lesson = mapper.toLesson(lessonDto);
+            Lesson lesson = mapper.toEntity(lessonDto);
 
             assertThat(lesson.getId()).isEqualTo(lessonDto.getId());
             assertThat(lesson.getCourse().getId()).isEqualTo(lessonDto.getCourseId());
@@ -89,7 +89,7 @@ class LessonDtoMapperTest {
         void ifListLessonHasSize2_ReturnListWithSize2() {
             List<Lesson> lessons = createTestLessons();
 
-            List<LessonDto> lessonDtos = mapper.toLessonDtos(lessons);
+            List<LessonDto> lessonDtos = mapper.toDtos(lessons);
 
             assertThat(lessonDtos).hasSize(2);
             assertThat(lessonDtos).extracting(LessonDto::getId)

@@ -96,6 +96,11 @@ public class LessonServiceImpl  extends AbstractService<Lesson> implements Lesso
     }
 
     @Override
+    protected String getEntityName() {
+        return Lesson.class.getSimpleName();
+    }
+
+    @Override
     public void addStudentToLesson(int lessonId, int studentId) {
         log.debug("Getting lessonId({}) and studentId({})", lessonId, studentId);
         Lesson lesson = getLessonById(lessonId);
@@ -110,19 +115,17 @@ public class LessonServiceImpl  extends AbstractService<Lesson> implements Lesso
         log.debug("Getting lesson by lessonId({})", lessonId);
         Lesson lesson = getLessonById(lessonId);
         log.debug("Getting active students from group id({})", groupId);
-        List<Student> busyStudents =
-            studentService.findAllBusyStudents(lesson.getTimeStart(), lesson.getTimeEnd());
+        List<Integer> busyStudentIds =
+            studentService.findIdsOfBusyStudentsOnTime(lesson.getTimeStart(), lesson.getTimeEnd());
         List<Student> freeStudentsFromGroup;
-        if (!busyStudents.isEmpty()) {
-            List<Integer> busyStudentIds = studentService.getIdsFromStudents(busyStudents);
+        if (!busyStudentIds.isEmpty()) {
             freeStudentsFromGroup =
                 studentRepo.findAllFromGroupExcluded(busyStudentIds, groupId);
         } else {
             freeStudentsFromGroup = studentRepo.findAllByActiveTrueAndGroup_Id(groupId);
         }
-        for (Student student : freeStudentsFromGroup) {
-            checkAndSaveStudentToLesson(lesson, student);
-        }
+
+        freeStudentsFromGroup.forEach(student -> checkAndSaveStudentToLesson(lesson, student));
         log.debug("{} students is added successfully", freeStudentsFromGroup.size());
     }
 
@@ -138,7 +141,7 @@ public class LessonServiceImpl  extends AbstractService<Lesson> implements Lesso
 
             Predicate predicate = filter.getPredicate();
             Iterable<Lesson> filteredLessons = lessonRepo.findAll(predicate);
-            return lessonDtoMapper.toLessonDtos(filteredLessons);
+            return lessonDtoMapper.toDtos(filteredLessons);
         } else {
             log.warn("Filter is empty");
             throw new ServiceException(MESSAGE_FILTER_NOT_SELECT);
@@ -155,7 +158,7 @@ public class LessonServiceImpl  extends AbstractService<Lesson> implements Lesso
             .findByStudents_IdAndTimeStartGreaterThanEqualAndTimeEndLessThanEqual(
                 studentId, startTime, endTime);
         log.debug(FOUND_LESSONS, lessonsForStudent.size());
-        return lessonDtoMapper.toLessonDtos(lessonsForStudent);
+        return lessonDtoMapper.toDtos(lessonsForStudent);
     }
 
     @Override
@@ -168,7 +171,7 @@ public class LessonServiceImpl  extends AbstractService<Lesson> implements Lesso
             lessonRepo.findByTeacher_IdAndTimeStartGreaterThanEqualAndTimeEndLessThanEqual(
                 teacherId, startTime, endTime);
         log.debug(FOUND_LESSONS, lessonsForTeacher.size());
-        return lessonDtoMapper.toLessonDtos(lessonsForTeacher);
+        return lessonDtoMapper.toDtos(lessonsForTeacher);
     }
 
     @Override
@@ -181,7 +184,7 @@ public class LessonServiceImpl  extends AbstractService<Lesson> implements Lesso
             lessonRepo.findByRoom_IdAndTimeStartGreaterThanEqualAndTimeEndLessThanEqual(
                 roomId, startTime, endTime);
         log.debug(FOUND_LESSONS, lessonsForRoom.size());
-        return lessonDtoMapper.toLessonDtos(lessonsForRoom);
+        return lessonDtoMapper.toDtos(lessonsForRoom);
     }
 
     @Override

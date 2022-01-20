@@ -65,7 +65,7 @@ public class StudentController {
             model.addAttribute("groups", groupService.getAllByFacultyId(facultyId));
         } else {
             log.debug("Get all groups for selector");
-            model.addAttribute("groups", groupService.getAll());
+            model.addAttribute("groups", groupService.findAll());
         }
         log.debug("adding selected faculty and group into model");
         model.addAttribute("facultyIdSelect", facultyId);
@@ -80,7 +80,7 @@ public class StudentController {
                                                 HttpServletRequest request) {
         log.debug("Creating student [{} {} {}]", studentDto.getFirstName(),
             studentDto.getPatronymic(), studentDto.getLastName());
-        studentService.save(studentDtoMapper.toStudent(studentDto));
+//        studentService.save(studentDtoMapper.toStudent(studentDto));
         log.debug("Student [{}, {}, {}] is created", studentDto.getFirstName(),
             studentDto.getPatronymic(), studentDto.getLastName());
         return getResponseEntityWithRedirectUrl(request);
@@ -90,7 +90,7 @@ public class StudentController {
     @ResponseBody
     public Student getStudent(@PathVariable("id") int studentId) {
         log.debug("Getting student id({})", studentId);
-        Student student = studentService.getById(studentId);
+        Student student = studentService.findById(studentId);
         log.debug("Found student [{} {} {}]", student.getFirstName(),
             student.getPatronymic(), student.getLastName());
         return student;
@@ -101,7 +101,7 @@ public class StudentController {
                                                 @PathVariable("id") int studentId,
                                                 HttpServletRequest request) {
         log.debug("Updating student id({})", studentId);
-        studentService.save(studentDtoMapper.toStudent(studentDto));
+//        studentService.save(studentDtoMapper.toStudent(studentDto));
         log.debug("Student id({}) is updated", studentId);
         return getResponseEntityWithRedirectUrl(request);
     }

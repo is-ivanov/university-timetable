@@ -27,8 +27,10 @@ public interface StudentService extends Service<Student> {
                                            LocalDateTime startTime,
                                            LocalDateTime endTime);
 
-    List<Student> findAllBusyStudents(LocalDateTime startTime,
-                                      LocalDateTime endTime);
+    List<Integer> findIdsOfBusyStudentsOnTime(LocalDateTime startTime,
+                                              LocalDateTime endTime);
 
-    List<Integer> getIdsFromStudents(List<Student> students);
+
+
+//    List<Integer> getIdsFromStudents(List<Student> students);
 }

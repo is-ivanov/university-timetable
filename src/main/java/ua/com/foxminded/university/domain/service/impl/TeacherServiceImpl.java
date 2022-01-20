@@ -10,11 +10,10 @@ import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Teacher;
 import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
+import ua.com.foxminded.university.domain.util.EntityUtil;
 
-import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -61,6 +60,11 @@ public class TeacherServiceImpl  extends AbstractService<Teacher> implements Tea
     @Override
     protected JpaRepository<Teacher, Integer> getRepo() {
         return teacherRepo;
+    }
+
+    @Override
+    protected String getEntityName() {
+        return Teacher.class.getSimpleName();
     }
 
     @Override
@@ -115,17 +119,17 @@ public class TeacherServiceImpl  extends AbstractService<Teacher> implements Tea
         log.debug("Getting active teachers free from {} to {}", startTime, endTime);
         List<Teacher> busyTeachers =
             teacherRepo.findBusyTeachersOnTime(startTime, endTime);
-        List<Integer> busyTeacherIds = getIdsFromTeachers(busyTeachers);
+        List<Integer> busyTeacherIds = EntityUtil.extractIdsFromEntities(busyTeachers);
         List<Teacher> freeTeachers =
             teacherRepo.findByActiveIsTrueAndIdNotInOrderByLastNameAscFirstNameAsc(busyTeacherIds);
         log.debug("Found {} active free teachers", freeTeachers.size());
         return freeTeachers;
     }
 
-    private List<Integer> getIdsFromTeachers(List<Teacher> teachers) {
-        return teachers.stream()
-            .map(Teacher::getId)
-            .collect(Collectors.toList());
-    }
+//    private List<Integer> getIdsFromTeachers(List<Teacher> teachers) {
+//        return teachers.stream()
+//            .map(Teacher::getId)
+//            .collect(Collectors.toList());
+//    }
 
 }

@@ -95,7 +95,7 @@ class RoomControllerTest {
             Page<Room> pageRooms = new PageImpl<>(testRooms, pageable, totalPages);
             List<Integer> pages = Collections.singletonList(1);
 
-            when(roomServiceMock.getAllSortedPaginated(pageable))
+            when(roomServiceMock.findAll(pageable))
                 .thenReturn(pageRooms);
             when(pageSequenceCreatorMock.createPageSequence(totalPages, defaultPage + 1))
                 .thenReturn(pages);
@@ -127,7 +127,7 @@ class RoomControllerTest {
                 defaultSort);
             List<Room> testRooms = createTestRooms();
             Page<Room> pageRooms = new PageImpl<>(testRooms, pageable, totalPages);
-            when(roomServiceMock.getAllSortedPaginated(pageable))
+            when(roomServiceMock.findAll(pageable))
                 .thenReturn(pageRooms);
 
             mockMvc.perform(get(URI_ROOMS)
@@ -140,7 +140,7 @@ class RoomControllerTest {
                 );
 
             verify(roomServiceMock, times(1))
-                .getAllSortedPaginated(pageableCaptor.capture());
+                .findAll(pageableCaptor.capture());
 
             Pageable pageableCaptured = pageableCaptor.getValue();
 
@@ -160,7 +160,7 @@ class RoomControllerTest {
             int roomId = ROOM_ID1;
             Room testRoom = createTestRoom();
 
-            when(roomServiceMock.getById(roomId)).thenReturn(testRoom);
+            when(roomServiceMock.findById(roomId)).thenReturn(testRoom);
             mockMvc.perform(get(URI_ROOMS_ID, roomId))
                 .andDo(print())
                 .andExpectAll(
@@ -217,7 +217,7 @@ class RoomControllerTest {
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful());
             verify(roomServiceMock, times(1))
-                .save(roomCaptor.capture());
+                .create(roomCaptor.capture());
             Room expectedRoom = roomCaptor.getValue();
             assertThat(expectedRoom.getBuilding(), is(BUILDING_FIRST_ROOM));
             assertThat(expectedRoom.getNumber(), is(NUMBER_FIRST_ROOM));
@@ -238,7 +238,7 @@ class RoomControllerTest {
                     .param("number", NUMBER_FIRST_ROOM))
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful());
-            verify(roomServiceMock, times(1)).save(roomCaptor.capture());
+            verify(roomServiceMock, times(1)).create(roomCaptor.capture());
             Room newRoom = roomCaptor.getValue();
             assertThat(newRoom.getBuilding(), is(equalTo(BUILDING_FIRST_ROOM)));
             assertThat(newRoom.getNumber(), is(equalTo(NUMBER_FIRST_ROOM)));

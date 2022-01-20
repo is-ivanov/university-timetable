@@ -80,7 +80,7 @@ class StudentRepositoryTest extends BaseRepositoryIT {
             LocalDateTime from = LocalDateTime.of(2021, 6 ,12, 0, 0);
             LocalDateTime to = LocalDateTime.of(2021, 6 ,13, 0, 0);
 
-            List<Student> students = repo.findAllBusyStudents(from, to);
+            List<Student> students = repo.findBusyStudentsOnTime(from, to);
 
             assertThat(students).hasSize(1);
             assertThat(students.get(0))

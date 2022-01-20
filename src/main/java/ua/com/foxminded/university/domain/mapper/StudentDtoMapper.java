@@ -7,21 +7,25 @@ import ua.com.foxminded.university.domain.entity.Student;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
-public interface StudentDtoMapper {
+@Mapper
+public interface StudentDtoMapper extends DtoMapper<Student, StudentDto> {
 
+    @Override
     @Mapping(target = "groupId", source = "group.id")
     @Mapping(target = "groupName", source = "group.name")
-    StudentDto toStudentDto(Student student);
+    StudentDto toDto(Student entity);
 
+    @Override
     @Mapping(target = "lessons", ignore = true)
     @Mapping(target = "group")
     @Mapping(target = "group.id", source = "groupId")
     @Mapping(target = "group.name", source = "groupName")
-    Student toStudent(StudentDto studentDto);
+    Student toEntity(StudentDto dto);
 
-    List<StudentDto> toStudentDtos(List<Student> students);
+    @Override
+    List<StudentDto> toDtos(Iterable<Student> entities);
 
-    List<Student> toStudents(List<StudentDto> studentDtos);
+    @Override
+    List<Student> toEntities(Iterable<StudentDto> dtos);
 
 }

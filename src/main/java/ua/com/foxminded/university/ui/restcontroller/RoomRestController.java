@@ -31,7 +31,7 @@ public class RoomRestController {
     @GetMapping
     public ResponseEntity<CollectionModel<EntityModel<Room>>> getRooms(){
         log.debug("Getting all rooms");
-        List<Room> rooms = roomService.getAll();
+        List<Room> rooms = roomService.findAll();
         CollectionModel<EntityModel<Room>> entityModels =
             assembler.toCollectionModel(rooms);
         entityModels.add(linkTo(RoomRestController.class).withSelfRel());

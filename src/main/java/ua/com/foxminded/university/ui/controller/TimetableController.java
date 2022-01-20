@@ -29,7 +29,7 @@ public class TimetableController {
     @GetMapping("/students/{id}")
     public String showStudentTimetable(@PathVariable("id") int studentId,
                                        Model model) {
-        Student studentDto = studentService.getById(studentId);
+        Student studentDto = studentService.findById(studentId);
         model.addAttribute(OBJECT, studentDto);
         addTypeInModel(model, "students");
         return TIMETABLE_TEMPLATE;
@@ -38,7 +38,7 @@ public class TimetableController {
     @GetMapping("/teachers/{id}")
     public String showTeacherTimetable(@PathVariable("id") int teacherId,
                                        Model model) {
-        Teacher teacherDto = teacherService.getById(teacherId);
+        Teacher teacherDto = teacherService.findById(teacherId);
         model.addAttribute(OBJECT, teacherDto);
         addTypeInModel(model, "teachers");
         return TIMETABLE_TEMPLATE;
@@ -46,7 +46,7 @@ public class TimetableController {
 
     @GetMapping("/rooms/{id}")
     public String showRoomTimetable(@PathVariable("id") int roomId, Model model) {
-        model.addAttribute(OBJECT, roomService.getById(roomId));
+        model.addAttribute(OBJECT, roomService.findById(roomId));
         addTypeInModel(model, "rooms");
         return TIMETABLE_TEMPLATE;
     }

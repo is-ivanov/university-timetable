@@ -4,12 +4,6 @@ import org.mapstruct.Mapper;
 import ua.com.foxminded.university.domain.dto.FacultyDto;
 import ua.com.foxminded.university.domain.entity.Faculty;
 
-@Mapper(componentModel = "spring")
-public interface FacultyDtoMapper extends DtoMapper<Faculty, FacultyDto>{
-
-//    FacultyDto toFacultyDto(Faculty faculty);
-//
-//    Faculty toFaculty(FacultyDto facultyDto);
-//
-//    List<FacultyDto> toFacultyDtos(List<Faculty> faculties);
+@Mapper
+public interface FacultyDtoMapper extends DtoMapper<Faculty, FacultyDto> {
 }

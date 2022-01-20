@@ -61,7 +61,7 @@ public class TeacherController {
             model.addAttribute("departments", departmentService.getAllByFaculty(facultyId));
         } else {
             log.debug("Get all departments for selector");
-            model.addAttribute("departments", departmentService.getAll());
+            model.addAttribute("departments", departmentService.findAll());
         }
         log.debug("adding selected faculty and department into model");
         model.addAttribute("facultyIdSelect", facultyId);
@@ -91,7 +91,7 @@ public class TeacherController {
                                                 HttpServletRequest request) {
         log.debug("Creating teacher [{} {} {}]", teacherDto.getFirstName(),
             teacherDto.getPatronymic(), teacherDto.getLastName());
-        teacherService.save(teacherMapper.toTeacher(teacherDto));
+        teacherService.create(teacherMapper.toTeacher(teacherDto));
         log.debug("Teacher [{}, {}, {}] is created", teacherDto.getFirstName(),
             teacherDto.getPatronymic(), teacherDto.getLastName());
         return getResponseEntityWithRedirectUrl(request);
@@ -101,7 +101,7 @@ public class TeacherController {
     @ResponseBody
     public Teacher getTeacher(@PathVariable("id") int teacherId) {
         log.debug("Getting teacher id({})", teacherId);
-        Teacher teacher = teacherService.getById(teacherId);
+        Teacher teacher = teacherService.findById(teacherId);
         log.debug("Found teacher [{} {} {}]", teacher.getFirstName(),
             teacher.getPatronymic(), teacher.getLastName());
         return teacher;
@@ -112,7 +112,7 @@ public class TeacherController {
                                                 @PathVariable("id") int teacherId,
                                                 HttpServletRequest request) {
         log.debug("Updating teacher id({})", teacherId);
-        teacherService.save(teacherMapper.toTeacher(teacherDto));
+//        teacherService.save(teacherMapper.toTeacher(teacherDto));
         log.debug("Teacher id({}) is updated", teacherId);
         return getResponseEntityWithRedirectUrl(request);
     }

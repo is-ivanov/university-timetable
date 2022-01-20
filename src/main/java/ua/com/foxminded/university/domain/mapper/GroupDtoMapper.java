@@ -8,15 +8,19 @@ import ua.com.foxminded.university.domain.entity.Group;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
-public interface GroupDtoMapper {
+@Mapper
+public interface GroupDtoMapper extends DtoMapper<Group, GroupDto> {
 
+    @Override
     @Mapping(target = "facultyId", source = "faculty.id")
     @Mapping(target = "facultyName", source = "faculty.name")
-    GroupDto toGroupDto(Group group);
+    GroupDto toDto(Group entity);
 
-    @InheritInverseConfiguration(name = "toGroupDto")
-    Group toGroup(GroupDto groupDto);
+    @Override
+    @InheritInverseConfiguration(name = "toDto")
+    Group toEntity(GroupDto dto);
 
-    List<GroupDto> toGroupDtos(List<Group> groups);
+    @Override
+    List<GroupDto> toDtos(Iterable<Group> entities);
+
 }

@@ -72,7 +72,7 @@ class StudentServiceImplTest {
             when(groupRepoMock.findById(GROUP_ID1)).thenReturn(Optional.of(groupFromDb));
             when(validatorMock.validate(groupFromDb)).thenReturn(emptyViolations);
 
-            studentService.save(student);
+            studentService.create(student);
 
             verify(studentRepoMock).save(student);
         }
@@ -88,7 +88,7 @@ class StudentServiceImplTest {
         when(studentRepoMock.findAll()).thenReturn(testStudents);
         when(mapperMock.toStudentDtos(testStudents)).thenReturn(testStudentDtos);
 
-        assertThat(studentService.getAll()).isEqualTo(testStudentDtos);
+        assertThat(studentService.findAll()).isEqualTo(testStudentDtos);
     }
 
     @Nested
@@ -103,9 +103,9 @@ class StudentServiceImplTest {
             StudentDto testStudentDto = createTestStudentDto();
 
             when(studentRepoMock.findById(ID1)).thenReturn(Optional.of(testStudent));
-            when(mapperMock.toStudentDto(testStudent)).thenReturn(testStudentDto);
+            when(mapperMock.toDto(testStudent)).thenReturn(testStudentDto);
 
-            assertThat(studentService.getById(ID1)).isEqualTo(testStudentDto);
+            assertThat(studentService.findById(ID1)).isEqualTo(testStudentDto);
         }
 
         @Test
@@ -115,7 +115,7 @@ class StudentServiceImplTest {
             Optional<Student> optional = Optional.empty();
             when(studentRepoMock.findById(STUDENT_ID2)).thenReturn(optional);
             EntityNotFoundException e = assertThrows(EntityNotFoundException.class,
-                () -> studentService.getById(STUDENT_ID2));
+                () -> studentService.findById(STUDENT_ID2));
             assertThat(e.getMessage()).isEqualTo(MESSAGE_STUDENT_NOT_FOUND);
         }
     }

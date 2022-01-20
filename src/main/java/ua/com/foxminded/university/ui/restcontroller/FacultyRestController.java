@@ -5,29 +5,24 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ua.com.foxminded.university.domain.dto.FacultyDto;
 import ua.com.foxminded.university.domain.entity.Faculty;
-import ua.com.foxminded.university.domain.entity.Group;
-import ua.com.foxminded.university.domain.entity.Teacher;
 import ua.com.foxminded.university.domain.mapper.DtoMapper;
 import ua.com.foxminded.university.domain.mapper.FacultyDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.*;
 import ua.com.foxminded.university.ui.restcontroller.link.FacultyDtoAssembler;
 import ua.com.foxminded.university.ui.util.MappingConstants;
 import ua.com.foxminded.university.ui.util.QueryConstants;
-import ua.com.foxminded.university.ui.util.ResponseUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.time.LocalDateTime;
-import java.util.List;
 
 
 @Slf4j
@@ -48,34 +43,39 @@ public class FacultyRestController extends AbstractController<FacultyDto, Facult
     private final PagedResourcesAssembler<Faculty> pagedAssembler;
 
     @GetMapping
-    public ResponseEntity<CollectionModel<FacultyDto>> getFaculties() {
+    @ResponseStatus(HttpStatus.OK)
+    public CollectionModel<FacultyDto> getFaculties() {
         log.debug("Getting all faculties");
-        return ResponseEntity.ok(getAll());
+        return getAll();
     }
 
     @GetMapping(params = {QueryConstants.PAGE, QueryConstants.SIZE, QueryConstants.SORT})
-    public ResponseEntity<PagedModel<FacultyDto>> getAllPaginatedAndSorted(Pageable pageable) {
+    @ResponseStatus(HttpStatus.OK)
+    public PagedModel<FacultyDto> getAllPaginatedAndSorted(Pageable pageable) {
         log.debug(LOG_PAGE_FACULTIES, pageable);
-        return ResponseEntity.ok(getAllSortedAndPaginated(pageable));
+        return getAllSortedAndPaginated(pageable);
     }
 
     @GetMapping(params = {QueryConstants.PAGE, QueryConstants.SIZE})
-    public ResponseEntity<PagedModel<FacultyDto>> getAllPaginated(@PageableDefault(sort = "name")
+    @ResponseStatus(HttpStatus.OK)
+    public PagedModel<FacultyDto> getAllPaginated(@PageableDefault(sort = "name")
                                                                       Pageable pageable) {
         log.debug(LOG_PAGE_FACULTIES, pageable);
-        return ResponseEntity.ok(getAllSortedAndPaginated(pageable));
+        return getAllSortedAndPaginated(pageable);
     }
 
     @GetMapping(params = {QueryConstants.SORT})
-    public ResponseEntity<PagedModel<FacultyDto>> getAllSorted(Pageable pageable) {
+    @ResponseStatus(HttpStatus.OK)
+    public PagedModel<FacultyDto> getAllSorted(Pageable pageable) {
         log.debug(LOG_PAGE_FACULTIES, pageable);
-        return ResponseEntity.ok(getAllSortedAndPaginated(pageable));
+        return getAllSortedAndPaginated(pageable);
     }
 
     @GetMapping(MappingConstants.ID)
-    public ResponseEntity<FacultyDto> getFaculty(@PathVariable("id") int facultyId) {
+    @ResponseStatus(HttpStatus.OK)
+    public FacultyDto getFaculty(@PathVariable("id") int facultyId) {
         log.debug("Getting faculty by id({})", facultyId);
-        return ResponseEntity.ok(getById(facultyId));
+        return getById(facultyId);
     }
 
     @PostMapping
@@ -86,21 +86,21 @@ public class FacultyRestController extends AbstractController<FacultyDto, Facult
     }
 
     @PutMapping(MappingConstants.ID)
-    public ResponseEntity<Object> updateFaculty(@Valid @RequestBody FacultyDto facultyDto,
+    @ResponseStatus(HttpStatus.OK)
+    public FacultyDto updateFaculty(@Valid @RequestBody FacultyDto facultyDto,
                                                 @PathVariable("id") int facultyId) {
         FacultyDto updatedFacultyDto = update(facultyId, facultyDto);
         log.debug("Faculty id({}) is updated", facultyId);
-        return ResponseEntity.ok(updatedFacultyDto);
+        return updatedFacultyDto;
     }
 
     @DeleteMapping(MappingConstants.ID)
-    public ResponseEntity<Object> deleteFaculty(@PathVariable("id") int facultyId) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteFaculty(@PathVariable("id") int facultyId) {
         log.debug("Deleting faculty with id({})", facultyId);
         delete(facultyId);
-        return ResponseEntity.noContent().build();
     }
 
-//    //TODO update methods
 //    @GetMapping(MappingConstants.ID_GROUPS)
 //    public List<GroupDto> getGroupsByFaculty(@PathVariable("id") int facultyId) {
 //        if (facultyId == 0) {
@@ -112,21 +112,21 @@ public class FacultyRestController extends AbstractController<FacultyDto, Facult
 //        }
 //    }
 
-    @GetMapping(MappingConstants.ID_GROUPS_FREE)
-    public List<Group> getFreeGroupsByFaculty(@PathVariable("id") int facultyId,
-                                              @RequestParam("time_start")
-                                              @DateTimeFormat(pattern = ResponseUtil.DATE_TIME_PATTERN)
-                                                  LocalDateTime startTime,
-                                              @RequestParam("time_end")
-                                              @DateTimeFormat(pattern = ResponseUtil.DATE_TIME_PATTERN)
-                                                  LocalDateTime endTime) {
-        log.debug("Getting active groups by faculty id({}) free from {} to {}",
-            facultyId, startTime, endTime);
-        List<Group> freeGroups = groupService
-            .getFreeGroupsByFacultyOnLessonTime(facultyId, startTime, endTime);
-        log.debug("Found {} groups", freeGroups.size());
-        return freeGroups;
-    }
+//    @GetMapping(MappingConstants.ID_GROUPS_FREE)
+//    public List<Group> getFreeGroupsByFaculty(@PathVariable("id") int facultyId,
+//                                              @RequestParam("time_start")
+//                                              @DateTimeFormat(pattern = ResponseUtil.DATE_TIME_PATTERN)
+//                                                  LocalDateTime startTime,
+//                                              @RequestParam("time_end")
+//                                              @DateTimeFormat(pattern = ResponseUtil.DATE_TIME_PATTERN)
+//                                                  LocalDateTime endTime) {
+//        log.debug("Getting active groups by faculty id({}) free from {} to {}",
+//            facultyId, startTime, endTime);
+//        List<Group> freeGroups = groupService
+//            .getFreeGroupsByFacultyOnLessonTime(facultyId, startTime, endTime);
+//        log.debug("Found {} groups", freeGroups.size());
+//        return freeGroups;
+//    }
 
 //    @GetMapping(MappingConstants.ID_DEPARTMENTS)
 //    public List<DepartmentDto> getDepartmentsByFaculty(@PathVariable("id") int facultyId) {
@@ -139,13 +139,13 @@ public class FacultyRestController extends AbstractController<FacultyDto, Facult
 //        }
 //    }
 
-    @GetMapping(MappingConstants.ID_TEACHERS)
-    public List<Teacher> getTeachersByFaculty(@PathVariable("id") int facultyId) {
-        log.debug("Getting teacherDtos by faculty id({})", facultyId);
-        List<Teacher> teachers = teacherService.getAllByFaculty(facultyId);
-        log.debug("Found {} teachers", teachers.size());
-        return teachers;
-    }
+//    @GetMapping(MappingConstants.ID_TEACHERS)
+//    public List<Teacher> getTeachersByFaculty(@PathVariable("id") int facultyId) {
+//        log.debug("Getting teacherDtos by faculty id({})", facultyId);
+//        List<Teacher> teachers = teacherService.getAllByFaculty(facultyId);
+//        log.debug("Found {} teachers", teachers.size());
+//        return teachers;
+//    }
 
     @Override
     protected Service<Faculty> getService() {
@@ -167,19 +167,4 @@ public class FacultyRestController extends AbstractController<FacultyDto, Facult
         return mapper;
     }
 
-
-//    private EntityModel<FacultyDto> getEntityModel(FacultyDto result,
-//                                                   HttpServletRequest request) {
-//        EntityModel<FacultyDto> facultyModel = assembler.toModel(result);
-//        addRedirectUrl(request, facultyModel);
-//        return facultyModel;
-//    }
-
-//    private void addRedirectUrl(HttpServletRequest request,
-//                                FacultyDto facultyModel) {
-//        String redirectUrl = ResponseUtil.getRedirectUrl(request);
-//        if (redirectUrl != null) {
-//            facultyModel.add(Link.of(redirectUrl, "redirect"));
-//        }
-//    }
 }

@@ -9,7 +9,6 @@ import ua.com.foxminded.university.domain.entity.IEntity;
 import ua.com.foxminded.university.domain.service.interfaces.Service;
 import ua.com.foxminded.university.exception.MyEntityNotFoundException;
 
-import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
 @Transactional
@@ -31,7 +30,7 @@ public abstract class AbstractService<T extends IEntity> implements Service<T> {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<T> findAllSortedAndPaginated(Pageable pageable) {
+    public Page<T> findAll(Pageable pageable) {
         return getRepo().findAll(pageable);
     }
 
@@ -57,8 +56,5 @@ public abstract class AbstractService<T extends IEntity> implements Service<T> {
 
     protected abstract JpaRepository<T, Integer> getRepo();
 
-    private String getEntityName() {
-        return ((Class<T>) ((ParameterizedType) getClass()
-            .getGenericSuperclass()).getActualTypeArguments()[0]).getSimpleName();
-    }
+    protected abstract String getEntityName();
 }

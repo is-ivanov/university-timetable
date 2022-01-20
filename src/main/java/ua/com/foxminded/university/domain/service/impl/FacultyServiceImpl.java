@@ -66,6 +66,11 @@ public class FacultyServiceImpl extends AbstractService<Faculty> implements Facu
     protected JpaRepository<Faculty, Integer> getRepo() {
         return facultyRepo;
     }
+
+    @Override
+    protected String getEntityName() {
+        return Faculty.class.getSimpleName();
+    }
 //
 //    @Override
 //    public Page<Faculty> getAllSortedPaginated(Pageable pageable) {

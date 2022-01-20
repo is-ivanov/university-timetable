@@ -56,9 +56,9 @@ class LessonServiceImplTest {
         List<LessonDto> lessonDtos = createTestLessonDtos();
 
         when(lessonRepoMock.findAll()).thenReturn(lessons);
-        when(mapperMock.toLessonDtos(lessons)).thenReturn(lessonDtos);
+        when(mapperMock.toDtos(lessons)).thenReturn(lessonDtos);
 
-        assertThat(lessonService.getAll()).isEqualTo(lessonDtos);
+        assertThat(lessonService.findAll()).isEqualTo(lessonDtos);
     }
 
 
@@ -104,7 +104,7 @@ class LessonServiceImplTest {
         void testAddCheckPassed_CallDaoOnce() {
             Lesson testLesson = createTestLesson(LESSON_ID1);
 
-            lessonService.save(testLesson);
+            lessonService.create(testLesson);
 
             verify(lessonRepoMock, times(1)).save(testLesson);
         }
@@ -126,7 +126,7 @@ class LessonServiceImplTest {
 
             when(lessonRepoMock.findAllByTeacherId(TEACHER_ID1)).thenReturn(lessonsThisTeacher);
 
-            assertThatThrownBy(() -> lessonService.save(testLesson))
+            assertThatThrownBy(() -> lessonService.create(testLesson))
                 .isInstanceOf(ServiceException.class)
                 .hasMessage(MESSAGE_TEACHER_NOT_AVAILABLE);
         }
@@ -148,7 +148,7 @@ class LessonServiceImplTest {
 
             when(lessonRepoMock.findAllByTeacherId(TEACHER_ID1)).thenReturn(lessonsThisTeacher);
 
-            assertThatThrownBy(() -> lessonService.save(testLesson))
+            assertThatThrownBy(() -> lessonService.create(testLesson))
                 .isInstanceOf(ServiceException.class)
                 .hasMessage(MESSAGE_TEACHER_NOT_AVAILABLE);
         }
@@ -170,7 +170,7 @@ class LessonServiceImplTest {
 
             when(lessonRepoMock.findAllByRoomId(ROOM_ID1)).thenReturn(lessonsThisRoom);
 
-            assertThatThrownBy(() -> lessonService.save(testLesson))
+            assertThatThrownBy(() -> lessonService.create(testLesson))
                 .isInstanceOf(ServiceException.class)
                 .hasMessage(MESSAGE_ROOM_NOT_AVAILABLE);
         }
@@ -193,7 +193,7 @@ class LessonServiceImplTest {
             when(lessonRepoMock.findAllByRoomId(ROOM_ID1)).thenReturn(lessonsThisRoom);
 
             ServiceException e = assertThrows(ServiceException.class,
-                () -> lessonService.save(testLesson));
+                () -> lessonService.create(testLesson));
             assertThat(e.getMessage()).isEqualTo(MESSAGE_ROOM_NOT_AVAILABLE);
         }
     }
@@ -210,9 +210,9 @@ class LessonServiceImplTest {
             LessonDto lessonDto = createTestLessonDto(LESSON_ID1);
 
             when(lessonRepoMock.findById(anyInt())).thenReturn(Optional.of(lesson));
-            when(mapperMock.toLessonDto(lesson)).thenReturn(lessonDto);
+            when(mapperMock.toDto(lesson)).thenReturn(lessonDto);
 
-            assertThat(lessonService.getById(anyInt())).isEqualTo(lessonDto);
+            assertThat(lessonService.findById(anyInt())).isEqualTo(lessonDto);
         }
 
         @Test
@@ -221,7 +221,7 @@ class LessonServiceImplTest {
         void testReturnEmptyLesson() {
             when(lessonRepoMock.findById(anyInt())).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> lessonService.getById(ID1))
+            assertThatThrownBy(() -> lessonService.findById(ID1))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining("Lesson id(1) not found");
         }

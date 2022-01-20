@@ -47,7 +47,7 @@ public class DepartmentController {
                 .findFirst().orElse(null);
         } else {
             log.debug("get all departments");
-            departments = departmentService.getAll();
+            departments = departmentService.findAll();
         }
         log.debug("adding departments and selected faculty into model");
         model.addAttribute("departments", departments);
@@ -61,7 +61,7 @@ public class DepartmentController {
     public ResponseEntity<String> createDepartment(@ModelAttribute @Valid Department department,
                                                    HttpServletRequest request) {
         log.debug("Creating {}", department);
-        departmentService.save(department);
+        departmentService.create(department);
         log.debug("{} is created", department);
         return getResponseEntityWithRedirectUrl(request);
     }
@@ -70,7 +70,7 @@ public class DepartmentController {
     @ResponseBody
     public Department getDepartment(@PathVariable("id") int departmentId) {
         log.debug("Getting department id({})", departmentId);
-        Department department = departmentService.getById(departmentId);
+        Department department = departmentService.findById(departmentId);
         log.debug("Found {}", department);
         return department;
     }
@@ -80,7 +80,7 @@ public class DepartmentController {
                                    @PathVariable("id") int departmentId,
                                    HttpServletRequest request) {
         log.debug("Updating department id({})", departmentId);
-        departmentService.save(department);
+        departmentService.update(departmentId, department);
         log.debug("Department id({}) is updated", departmentId);
         return getResponseEntityWithRedirectUrl(request);
     }

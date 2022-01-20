@@ -114,7 +114,7 @@ class StudentDtoMapperTest {
             Set<Lesson> lessons = new HashSet<>(Arrays.asList(lesson1, lesson2));
             student.setLessons(lessons);
 
-            StudentDto studentDto = mapper.toStudentDto(student);
+            StudentDto studentDto = mapper.toDto(student);
 
             assertThat(studentDto.getId(), is(equalTo(STUDENT_ID1)));
             assertThat(studentDto.getFirstName(), is(equalTo(FIRST_NAME)));
@@ -133,7 +133,7 @@ class StudentDtoMapperTest {
             Student student = new Student();
             student.setActive(false);
 
-            StudentDto studentDto = mapper.toStudentDto(student);
+            StudentDto studentDto = mapper.toDto(student);
 
             assertThat(studentDto.isActive(), is(false));
             assertThat(studentDto.getGroupId(), is(equalTo(0)));
@@ -160,7 +160,7 @@ class StudentDtoMapperTest {
                 .groupName(GROUP_NAME)
                 .build();
 
-            Student student = mapper.toStudent(studentDto);
+            Student student = mapper.toEntity(studentDto);
 
             assertThat(student.getId(), is(equalTo(ID1)));
             assertThat(student.getFirstName(), is(equalTo(FIRST_NAME)));

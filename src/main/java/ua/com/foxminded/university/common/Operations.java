@@ -12,7 +12,7 @@ public interface Operations<T extends Serializable> {
 
     List<T> findAll();
 
-    Page<T> findAllSortedAndPaginated(Pageable pageable);
+    Page<T> findAll(Pageable pageable);
 
     T create(final T entity);
 

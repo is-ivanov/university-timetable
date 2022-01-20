@@ -42,7 +42,7 @@ class CourseServiceImplTest {
     @DisplayName("test 'save' when call add method then should call courseDao once")
     void testSave_CallDaoOnce() {
         Course course = new Course();
-        courseService.save(course);
+        courseService.create(course);
         verify(courseRepoMock).save(course);
     }
 
@@ -59,7 +59,7 @@ class CourseServiceImplTest {
             Optional<Course> optionalCourse = Optional.of(expectedCourse);
             when(courseRepoMock.findById(ID1))
                     .thenReturn(optionalCourse);
-            assertEquals(expectedCourse, courseService.getById(ID1));
+            assertEquals(expectedCourse, courseService.findById(ID1));
         }
 
         @Test
@@ -67,7 +67,7 @@ class CourseServiceImplTest {
             "new EntityNotFoundException")
         void testReturnEmptyCourse() {
             when(courseRepoMock.findById(ID1)).thenReturn(Optional.empty());
-            assertThatThrownBy(() -> courseService.getById(ID1))
+            assertThatThrownBy(() -> courseService.findById(ID1))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining("Course id(1) not found");
         }
@@ -84,7 +84,7 @@ class CourseServiceImplTest {
         expectedCourses.add(course1);
         expectedCourses.add(course2);
         when(courseRepoMock.findAll()).thenReturn(expectedCourses);
-        assertEquals(expectedCourses, courseService.getAll());
+        assertEquals(expectedCourses, courseService.findAll());
     }
 
     @Test

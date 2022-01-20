@@ -26,7 +26,7 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
     List<Student> findAllByLessonsTimeEndGreaterThanEqualAndLessonsTimeStartLessThanEqual(LocalDateTime from,
                                                                                           LocalDateTime to);
 
-    default List<Student> findAllBusyStudents(LocalDateTime from, LocalDateTime to) {
+    default List<Student> findBusyStudentsOnTime(LocalDateTime from, LocalDateTime to) {
         return findAllByLessonsTimeEndGreaterThanEqualAndLessonsTimeStartLessThanEqual(from, to);
     }
 

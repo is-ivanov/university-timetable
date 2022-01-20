@@ -7,7 +7,7 @@ import ua.com.foxminded.university.domain.entity.Teacher;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper
 public interface TeacherDtoMapper {
 
     @Mapping(target = "departmentId", source = "department.id")

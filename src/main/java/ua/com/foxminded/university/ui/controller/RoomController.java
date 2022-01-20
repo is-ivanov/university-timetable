@@ -40,7 +40,7 @@ public class RoomController {
     public String showRooms(Model model,
                             @PageableDefault(sort = "number") Pageable pageable) {
         log.debug("Getting data for room.html");
-        Page<Room> pageRooms = roomService.getAllSortedPaginated(pageable);
+        Page<Room> pageRooms = roomService.findAll(pageable);
         model.addAttribute("rooms", pageRooms.getContent());
         model.addAttribute("page", pageRooms);
         model.addAttribute("uri", URI_ROOMS);
@@ -56,7 +56,7 @@ public class RoomController {
     @ResponseBody
     public Room showRoom(@PathVariable("id") int roomId) {
         log.debug("Getting room by id({})", roomId);
-        Room room = roomService.getById(roomId);
+        Room room = roomService.findById(roomId);
         log.debug("Found {}", room);
         return room;
     }
@@ -79,7 +79,7 @@ public class RoomController {
     public ResponseEntity<String> createRoom(@ModelAttribute @Valid Room room,
                                              HttpServletRequest request) {
         log.debug("Creating {}", room);
-        roomService.save(room);
+        roomService.create(room);
         log.debug("{} is created", room);
         return getResponseEntityWithRedirectUrl(request);
     }
@@ -89,7 +89,7 @@ public class RoomController {
                                              @PathVariable("id") int roomId,
                                              HttpServletRequest request) {
         log.debug("Updating room id({})", roomId);
-        roomService.save(room);
+//        roomService.save(room);
         log.debug("Room id({}) is updated", roomId);
         return getResponseEntityWithRedirectUrl(request);
     }

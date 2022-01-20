@@ -109,7 +109,7 @@ class TimetableControllerTest {
 
             Room testRoom = createTestRoom();
 
-            when(roomServiceMock.getById(roomId)).thenReturn(testRoom);
+            when(roomServiceMock.findById(roomId)).thenReturn(testRoom);
 
             mockMvc.perform(get(URI_TIMETABLE_ROOM, roomId))
                 .andDo(print())

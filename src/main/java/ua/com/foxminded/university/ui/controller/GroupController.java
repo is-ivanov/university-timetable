@@ -46,7 +46,7 @@ public class GroupController {
             groups = groupService.getAllByFacultyId(facultyId);
         } else {
             log.debug("get all groups");
-            groups = groupService.getAll();
+            groups = groupService.findAll();
         }
         log.debug("adding groups and selected faculty into model");
         model.addAttribute("groups", groups);
@@ -60,7 +60,7 @@ public class GroupController {
     public ResponseEntity<String> createGroup(@ModelAttribute @Valid Group group,
                                               HttpServletRequest request) {
         log.debug("Creating {}", group);
-        groupService.save(group);
+        groupService.create(group);
         log.debug("{} is created", group);
         return getResponseEntityWithRedirectUrl(request);
     }
@@ -69,7 +69,7 @@ public class GroupController {
     @ResponseBody
     public Group getGroup(@PathVariable("id") int groupId) {
         log.debug("Getting group id({})", groupId);
-        Group group = groupService.getById(groupId);
+        Group group = groupService.findById(groupId);
         log.debug("Found {}", group);
         return group;
     }
@@ -79,7 +79,7 @@ public class GroupController {
                                               @PathVariable("id") int groupId,
                                               HttpServletRequest request) {
         log.debug("Updating group id({})", groupId);
-        groupService.save(group);
+        groupService.update(groupId, group);
         log.debug("Group id({}) is updated", groupId);
         return getResponseEntityWithRedirectUrl(request);
     }

@@ -6,12 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.com.foxminded.university.dao.DepartmentRepository;
-import ua.com.foxminded.university.domain.entity.Course;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.mapper.DepartmentDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Slf4j
@@ -61,6 +59,11 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
     @Override
     protected JpaRepository<Department, Integer> getRepo() {
         return departmentRepo;
+    }
+
+    @Override
+    protected String getEntityName() {
+        return Department.class.getSimpleName();
     }
 
     @Override

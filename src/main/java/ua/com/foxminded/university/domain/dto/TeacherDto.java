@@ -1,6 +1,7 @@
 package ua.com.foxminded.university.domain.dto;
 
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Value;
 import ua.com.foxminded.university.domain.validator.CapitalLetter;
 
@@ -10,7 +11,8 @@ import javax.validation.constraints.Size;
 
 @Value
 @Builder
-public class TeacherDto {
+@EqualsAndHashCode(callSuper = false)
+public class TeacherDto extends AbstractDto<TeacherDto> {
 
     Integer id;
 

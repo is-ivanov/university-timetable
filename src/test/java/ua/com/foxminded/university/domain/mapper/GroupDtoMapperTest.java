@@ -30,7 +30,7 @@ class GroupDtoMapperTest {
         void whenGroupWithFullFields_ReturnGroupDtoWithFullFields() {
             Group group = createTestGroup();
 
-            GroupDto groupDto = mapper.toGroupDto(group);
+            GroupDto groupDto = mapper.toDto(group);
 
             assertThat(groupDto.getId()).isEqualTo(group.getId());
             assertThat(groupDto.getName()).isEqualTo(group.getName());
@@ -48,7 +48,7 @@ class GroupDtoMapperTest {
         void whenGroupDtoWithFullFields_ReturnGroupWithFullFields() {
             GroupDto groupDto = createTestGroupDto();
 
-            Group group = mapper.toGroup(groupDto);
+            Group group = mapper.toEntity(groupDto);
 
             assertThat(group.getId()).isEqualTo(groupDto.getId());
             assertThat(group.getName()).isEqualTo(groupDto.getName());
@@ -65,7 +65,7 @@ class GroupDtoMapperTest {
         void testConvertListGroupsToListDtos() {
             List<Group> groups = createTestGroups();
 
-            List<GroupDto> groupDtos = mapper.toGroupDtos(groups);
+            List<GroupDto> groupDtos = mapper.toDtos(groups);
 
             assertThat(groupDtos).hasSize(groups.size());
             assertThat(groupDtos).extracting(GroupDto::getId)

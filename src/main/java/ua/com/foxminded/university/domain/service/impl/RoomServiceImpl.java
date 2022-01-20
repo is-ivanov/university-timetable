@@ -2,20 +2,16 @@ package ua.com.foxminded.university.domain.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.com.foxminded.university.dao.RoomRepository;
-import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Room;
 import ua.com.foxminded.university.domain.service.interfaces.RoomService;
+import ua.com.foxminded.university.domain.util.EntityUtil;
 
-import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -64,11 +60,16 @@ public class RoomServiceImpl  extends AbstractService<Room> implements RoomServi
     }
 
     @Override
+    protected String getEntityName() {
+        return Room.class.getSimpleName();
+    }
+
+    @Override
     public List<Room> getFreeRoomsOnLessonTime(LocalDateTime startTime,
                                                LocalDateTime endTime) {
         log.debug("Getting free rooms from {} to {}", startTime, endTime);
         List<Room> busyRooms = findBusyRoomsOnTime(startTime, endTime);
-        List<Integer> busyRoomIds = getIdsFromRooms(busyRooms);
+        List<Integer> busyRoomIds = EntityUtil.extractIdsFromEntities(busyRooms);
         List<Room> freeRooms =
             roomRepo.findByIdNotInOrderByBuildingAscNumberAsc(busyRoomIds);
         log.debug("Found {} free rooms", freeRooms.size());
@@ -89,10 +90,10 @@ public class RoomServiceImpl  extends AbstractService<Room> implements RoomServi
         return roomRepo.findBusyRoomsOnTime(from, to);
     }
 
-    private List<Integer> getIdsFromRooms(List<Room> rooms) {
-        return rooms.stream()
-            .map(Room::getId)
-            .collect(Collectors.toList());
-    }
+//    private List<Integer> getIdsFromRooms(List<Room> rooms) {
+//        return rooms.stream()
+//            .map(Room::getId)
+//            .collect(Collectors.toList());
+//    }
 
 }

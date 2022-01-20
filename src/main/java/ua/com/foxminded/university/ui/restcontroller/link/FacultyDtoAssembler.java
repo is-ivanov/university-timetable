@@ -21,7 +21,6 @@ public class FacultyDtoAssembler implements RepresentationModelAssembler<Faculty
 
     private final FacultyDtoMapper mapper;
 
-
     @Override
     public FacultyDto toModel(Faculty faculty) {
 

@@ -26,7 +26,7 @@ public abstract class AbstractController<T extends AbstractDto<T>, D extends IEn
     }
 
     protected PagedModel<T> getAllSortedAndPaginated(Pageable pageable) {
-        Page<D> pageEntities = getService().findAllSortedAndPaginated(pageable);
+        Page<D> pageEntities = getService().findAll(pageable);
         int requestPageNumber = pageable.getPageNumber() + 1;
         if (requestPageNumber > pageEntities.getTotalPages()) {
             throw new MyPageNotFoundException(requestPageNumber,
@@ -63,7 +63,7 @@ public abstract class AbstractController<T extends AbstractDto<T>, D extends IEn
     }
 
     protected void delete(int id) {
-        if (id == 0) {
+        if (id < 1) {
             throw new IllegalArgumentException("illegal ID");
         }
         getService().delete(id);

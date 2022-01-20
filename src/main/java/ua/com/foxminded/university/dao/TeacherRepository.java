@@ -17,10 +17,10 @@ public interface TeacherRepository extends JpaRepository<Teacher, Integer> {
     List<Teacher> findByDepartment_Faculty_IdIs(int facultyId);
 
     @Query("SELECT t " +
-        "FROM Teacher t " +
-        "LEFT JOIN Lesson l ON t = l.teacher " +
-        "WHERE l.timeEnd >= :from " +
-        "AND l.timeStart <= :to ")
+           "FROM Teacher t " +
+               "LEFT JOIN Lesson l ON t = l.teacher " +
+           "WHERE l.timeEnd >= :from " +
+             "AND l.timeStart <= :to ")
     List<Teacher> findBusyTeachersOnTime(LocalDateTime from, LocalDateTime to);
 
     List<Teacher> findByActiveIsTrueAndIdNotInOrderByLastNameAscFirstNameAsc(Collection<Integer> ids);

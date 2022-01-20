@@ -42,7 +42,7 @@ class RoomServiceImplTest {
     @DisplayName("test 'save' when call method then should call Repository once")
     void testSave_CallDaoOnce() {
         Room room = new Room();
-        roomService.save(room);
+        roomService.create(room);
         verify(roomRepoMock).save(room);
     }
 
@@ -60,7 +60,7 @@ class RoomServiceImplTest {
             expectedRoom.setNumber(NUMBER_ROOM);
             expectedRoom.setBuilding(BUILDING);
             when(roomRepoMock.findById(ID1)).thenReturn(Optional.of(expectedRoom));
-            assertEquals(expectedRoom, roomService.getById(ID1));
+            assertEquals(expectedRoom, roomService.findById(ID1));
         }
 
         @Test
@@ -68,7 +68,7 @@ class RoomServiceImplTest {
             "return empty Room")
         void testReturnEmptyRoom() {
             when(roomRepoMock.findById(ID1)).thenReturn(Optional.empty());
-            assertThatThrownBy(() -> roomService.getById(ID1))
+            assertThatThrownBy(() -> roomService.findById(ID1))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining("Room id(1) not found");
         }
@@ -86,7 +86,7 @@ class RoomServiceImplTest {
         expectedRooms.add(room1);
         expectedRooms.add(room2);
         when(roomRepoMock.findAll()).thenReturn(expectedRooms);
-        assertEquals(expectedRooms, roomService.getAll());
+        assertEquals(expectedRooms, roomService.findAll());
     }
 
 }

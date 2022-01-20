@@ -7,15 +7,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.com.foxminded.university.dao.GroupRepository;
 import ua.com.foxminded.university.dao.StudentRepository;
-import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
-import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.domain.mapper.GroupDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 import ua.com.foxminded.university.domain.service.interfaces.StudentService;
 
-import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -70,6 +67,11 @@ public class GroupServiceImpl extends AbstractService<Group> implements GroupSer
     }
 
     @Override
+    protected String getEntityName() {
+        return Group.class.getSimpleName();
+    }
+
+    @Override
     public void deactivateGroup(Group group) {
         log.debug("Deactivating {}", group);
         group.setActive(false);
@@ -116,9 +118,8 @@ public class GroupServiceImpl extends AbstractService<Group> implements GroupSer
     public List<Group> getFreeGroupsOnLessonTime(LocalDateTime startTime,
                                                     LocalDateTime endTime) {
         log.debug("Getting groups free from {} to {}", startTime, endTime);
-        List<Student> busyStudents =
-            studentService.findAllBusyStudents(startTime, endTime);
-        List<Integer> busyStudentIds = studentService.getIdsFromStudents(busyStudents);
+        List<Integer> busyStudentIds =
+            studentService.findIdsOfBusyStudentsOnTime(startTime, endTime);
         List<Group> groups;
         if (busyStudentIds.isEmpty()) {
             groups = groupRepo.findAllByActiveTrue();
@@ -135,9 +136,8 @@ public class GroupServiceImpl extends AbstractService<Group> implements GroupSer
                                                              LocalDateTime endTime) {
         log.debug("Getting active groups from faculty id({}) free from {} to {}",
             facultyId, startTime, endTime);
-        List<Student> busyStudents =
-            studentService.findAllBusyStudents(startTime, endTime);
-        List<Integer> busyStudentIds = studentService.getIdsFromStudents(busyStudents);
+        List<Integer> busyStudentIds =
+            studentService.findIdsOfBusyStudentsOnTime(startTime, endTime);
         List<Group> groups;
         if (busyStudentIds.isEmpty()) {
             groups = groupRepo.findAllByActiveTrueAndFaculty_IdOrderByNameAsc(facultyId);

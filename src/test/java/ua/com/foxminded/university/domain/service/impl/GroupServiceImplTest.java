@@ -47,7 +47,7 @@ class GroupServiceImplTest {
     @DisplayName("test 'save' when call add method then should call Repository once")
     void testSave_CallDaoOnce() {
         Group group = new Group();
-        groupService.save(group);
+        groupService.create(group);
         verify(groupRepositoryMock).save(group);
     }
 
@@ -63,9 +63,9 @@ class GroupServiceImplTest {
             GroupDto groupDto = createTestGroupDto();
 
             when(groupRepositoryMock.findById(ID1)).thenReturn(Optional.of(group));
-            when(mapperMock.toGroupDto(group)).thenReturn(groupDto);
+            when(mapperMock.toDto(group)).thenReturn(groupDto);
 
-            assertThat(groupService.getById(ID1)).isEqualTo(groupDto);
+            assertThat(groupService.findById(ID1)).isEqualTo(groupDto);
         }
 
         @Test
@@ -74,7 +74,7 @@ class GroupServiceImplTest {
         void testReturnEmptyGroup() {
             when(groupRepositoryMock.findById(ID3)).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> groupService.getById(ID3))
+            assertThatThrownBy(() -> groupService.findById(ID3))
                 .isInstanceOf(EntityNotFoundException.class)
                     .hasMessage("Group id(3) not found");
         }
@@ -88,9 +88,9 @@ class GroupServiceImplTest {
         List<GroupDto> groupDtos = createTestGroupDtos(FACULTY_ID1);
 
         when(groupRepositoryMock.findAll()).thenReturn(groups);
-        when(mapperMock.toGroupDtos(groups)).thenReturn(groupDtos);
+        when(mapperMock.toDtos(groups)).thenReturn(groupDtos);
 
-        assertThat(groupService.getAll()).isEqualTo(groupDtos);
+        assertThat(groupService.findAll()).isEqualTo(groupDtos);
     }
 
     @Test
@@ -193,7 +193,7 @@ class GroupServiceImplTest {
         List<GroupDto> groupDtos = createTestGroupDtos(FACULTY_ID1);
 
         when(groupRepositoryMock.findAllByFacultyId(FACULTY_ID1)).thenReturn(groups);
-        when(mapperMock.toGroupDtos(groups)).thenReturn(groupDtos);
+        when(mapperMock.toDtos(groups)).thenReturn(groupDtos);
 
         assertThat(groupService.getAllByFacultyId(FACULTY_ID1)).isEqualTo(groupDtos);
 

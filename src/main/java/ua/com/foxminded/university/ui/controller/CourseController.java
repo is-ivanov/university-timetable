@@ -34,7 +34,7 @@ public class CourseController {
     public String showCourses(Model model,
                               @PageableDefault(sort = "name") Pageable pageable) {
         log.debug("Getting data for course.html");
-        Page<Course> pageCourses = courseService.getAllSortedPaginated(pageable);
+        Page<Course> pageCourses = courseService.findAll(pageable);
         model.addAttribute("courses", pageCourses.getContent());
         model.addAttribute("page", pageCourses);
         model.addAttribute("uri", URI_COURSES);
@@ -50,7 +50,7 @@ public class CourseController {
     public ResponseEntity<String> createCourse(@ModelAttribute @Valid Course course,
                                                HttpServletRequest request) {
         log.debug("Creating {}", course);
-        courseService.save(course);
+        courseService.create(course);
         log.debug("{} is created", course);
         return getResponseEntityWithRedirectUrl(request);
     }
@@ -59,7 +59,7 @@ public class CourseController {
     @ResponseBody
     public Course getCourse(@PathVariable("id") int courseId) {
         log.debug("Getting course id({}})", courseId);
-        Course course = courseService.getById(courseId);
+        Course course = courseService.findById(courseId);
         log.debug("Found {}", course);
         return course;
     }
@@ -69,7 +69,7 @@ public class CourseController {
                                                @PathVariable("id") int courseId,
                                                HttpServletRequest request) {
         log.debug("Updating course id({})", courseId);
-        courseService.save(course);
+        courseService.update(courseId, course);
         log.debug("Course id({}) is updated", courseId);
         return getResponseEntityWithRedirectUrl(request);
     }

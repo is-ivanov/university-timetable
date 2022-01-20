@@ -31,7 +31,7 @@ class DepartmentDtoMapperTest {
             int facultyId = 2;
             Department department = createTestDepartment(facultyId);
 
-            DepartmentDto departmentDto = mapper.toDepartmentDto(department);
+            DepartmentDto departmentDto = mapper.toDto(department);
 
             assertThat(departmentDto.getId()).isEqualTo(department.getId());
             assertThat(departmentDto.getName()).isEqualTo(department.getName());
@@ -48,7 +48,7 @@ class DepartmentDtoMapperTest {
         void whenDepartmentDtoWithFullFields_ReturnDepartmentWithFullFields() {
             DepartmentDto departmentDto = createTestDepartmentDto();
 
-            Department department = mapper.toDepartment(departmentDto);
+            Department department = mapper.toEntity(departmentDto);
 
             assertThat(department.getId()).isEqualTo(departmentDto.getId());
             assertThat(department.getName()).isEqualTo(departmentDto.getName());
@@ -64,7 +64,7 @@ class DepartmentDtoMapperTest {
         void testConvertListDepartmentsToListDtos() {
             List<Department> departments = createTestDepartments();
 
-            List<DepartmentDto> departmentDtos = mapper.toDepartmentDtos(departments);
+            List<DepartmentDto> departmentDtos = mapper.toDtos(departments);
 
             assertThat(departmentDtos).hasSize(departments.size());
             assertThat(departmentDtos).extracting(DepartmentDto::getId)

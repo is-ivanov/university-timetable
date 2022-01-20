@@ -66,7 +66,7 @@ public class LessonController {
         log.debug("Get filtered lessons");
         model.addAttribute("lessons",
             lessonService.getAllWithFilter(lessonFilter));
-        model.addAttribute("newLesson", new LessonDto());
+        model.addAttribute("newLesson", new Lesson());
         log.debug("The required data is loaded into the model");
         return LESSONS;
     }
@@ -75,7 +75,7 @@ public class LessonController {
     @ResponseBody
     public LessonDto getLessonWithStudents(@PathVariable("id") int lessonId) {
         log.debug("Getting lesson id({})", lessonId);
-        LessonDto lessonDto = lessonDtoMapper.toLessonDto(lessonService.getById(lessonId));
+        LessonDto lessonDto = lessonDtoMapper.toDto(lessonService.findById(lessonId));
         log.debug("Found lesson [teacher {}, course {}, room {}]",
             lessonDto.getTeacherFullName(), lessonDto.getCourseName(),
             lessonDto.getBuildingAndRoom());
@@ -86,7 +86,7 @@ public class LessonController {
     public String showLessonWithStudents(@PathVariable("id") int lessonId,
                                          Model model) {
         log.debug("Getting data for lesson.html for lesson id({})", lessonId);
-        LessonDto lesson = lessonDtoMapper.toLessonDto(lessonService.getById(lessonId));
+        LessonDto lesson = lessonDtoMapper.toDto(lessonService.findById(lessonId));
         model.addAttribute("lesson", lesson);
 
         LocalDateTime timeStart = lesson.getTimeStart();
@@ -94,7 +94,7 @@ public class LessonController {
         int teacherId = lesson.getTeacherId();
 //        TeacherDto teacher = teacherService.getById(teacherId);
         int roomId = lesson.getRoomId();
-        Room room = roomService.getById(roomId);
+        Room room = roomService.findById(roomId);
 
         log.debug("Loading free teachers in model");
         List<Teacher> freeTeachers = teacherService
@@ -121,7 +121,7 @@ public class LessonController {
     public ResponseEntity<String> createLesson(@ModelAttribute @Valid LessonDto lessonDto,
                                                HttpServletRequest request) {
         log.debug("Creating lesson {}", lessonDto);
-        lessonService.save(lessonDtoMapper.toLesson(lessonDto));
+        lessonService.create(lessonDtoMapper.toEntity(lessonDto));
         log.debug("Lesson {} is created", lessonDto);
         return getResponseEntityWithRedirectUrl(request);
     }
@@ -148,16 +148,17 @@ public class LessonController {
         return defineRedirect(request);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<String> updateLesson(@ModelAttribute @Valid LessonDto lessonDto,
-                                               @PathVariable("id") int lessonId,
-                                               HttpServletRequest request) {
-        log.debug("Updating lesson id({})", lessonId);
-        lessonDto.setId(lessonId);
-        lessonService.update(lessonDto);
-        log.debug("Lesson id({}) updated successfully", lessonId);
-        return getResponseEntityWithRedirectUrl(request);
-    }
+//    @PutMapping("/{id}")
+//    public ResponseEntity<String> updateLesson(@ModelAttribute @Valid LessonDto lessonDto,
+//                                               @PathVariable("id") int lessonId,
+//                                               HttpServletRequest request) {
+//        log.debug("Updating lesson id({})", lessonId);
+//        lessonDto.setId(lessonId);
+//        Lesson lesson = lessonDtoMapper.toLesson(lessonDto);
+//        lessonService.update(lessonId, lesson);
+//        log.debug("Lesson id({}) updated successfully", lessonId);
+//        return getResponseEntityWithRedirectUrl(request);
+//    }
 
     @DeleteMapping("/{id}/students")
     public String removeStudentFromLesson(@PathVariable("id") int lessonId,
@@ -193,25 +194,25 @@ public class LessonController {
     @ModelAttribute("departments")
     public List<Department> getDepartments() {
         log.debug("Loading list departments for selector");
-        return departmentService.getAll();
+        return departmentService.findAll();
     }
 
     @ModelAttribute("teachers")
     public List<Teacher> getTeachers() {
         log.debug("Loading list teachers for selector");
-        return teacherService.getAll();
+        return teacherService.findAll();
     }
 
     @ModelAttribute("courses")
     public List<Course> getCourses() {
         log.debug("Loading list courses for selector");
-        return courseService.getAll();
+        return courseService.findAll();
     }
 
     @ModelAttribute("rooms")
     public List<Room> getRooms() {
         log.debug("Loading list rooms for selector");
-        return roomService.getAll();
+        return roomService.findAll();
     }
 
     private List<Department> getDepartmentsByFaculty(Integer facultyId) {
@@ -220,7 +221,7 @@ public class LessonController {
             return departmentService.getAllByFaculty(facultyId);
         } else {
             log.debug("Get all departments for selector");
-            return departmentService.getAll();
+            return departmentService.findAll();
         }
     }
 
@@ -235,7 +236,7 @@ public class LessonController {
             teachers = teacherService.getAllByFaculty(facultyId);
         } else {
             log.debug(GET_ALL_TEACHERS_FOR_SELECTOR);
-            teachers = teacherService.getAll();
+            teachers = teacherService.findAll();
         }
         return teachers;
     }

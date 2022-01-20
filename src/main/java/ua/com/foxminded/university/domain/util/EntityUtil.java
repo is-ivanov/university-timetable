@@ -11,7 +11,7 @@ public final class EntityUtil {
     private EntityUtil() {
     }
 
-    public static List<Integer> extractIdsFromEntities(Iterable<IEntity> entities){
+    public static List<Integer> extractIdsFromEntities(Iterable<? extends IEntity> entities) {
         return StreamSupport.stream(entities.spliterator(), false)
             .map(IEntity::getId)
             .collect(Collectors.toList());

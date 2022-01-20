@@ -45,7 +45,7 @@ class TeacherServiceImplTest {
         Department department = new Department();
         department.setName(anyString());
         teacher.setDepartment(department);
-        teacherService.save(teacher);
+        teacherService.create(teacher);
         verify(teacherRepoMock).save(teacher);
     }
 
@@ -63,7 +63,7 @@ class TeacherServiceImplTest {
             when(teacherRepoMock.findById(ID1)).thenReturn(Optional.of(teacher));
             when(mapperMock.toTeacherDto(teacher)).thenReturn(teacherDto);
 
-            assertThat(teacherService.getById(ID1)).isEqualTo(teacherDto);
+            assertThat(teacherService.findById(ID1)).isEqualTo(teacherDto);
         }
 
         @Test
@@ -71,7 +71,7 @@ class TeacherServiceImplTest {
             "new EntityNotFoundException")
         void testReturnEmptyTeacher() {
             when(teacherRepoMock.findById(ID1)).thenReturn(Optional.empty());
-            assertThatThrownBy(() -> teacherService.getById(ID1))
+            assertThatThrownBy(() -> teacherService.findById(ID1))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining("Teacher id(1) not found");
         }
@@ -87,7 +87,7 @@ class TeacherServiceImplTest {
         when(teacherRepoMock.findAll()).thenReturn(teachers);
         when(mapperMock.toTeacherDtos(teachers)).thenReturn(teacherDtos);
 
-        assertThat(teacherService.getAll()).isEqualTo(teacherDtos);
+        assertThat(teacherService.findAll()).isEqualTo(teacherDtos);
     }
 
     @Nested

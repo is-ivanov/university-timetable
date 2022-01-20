@@ -88,7 +88,7 @@ class CourseControllerTest {
             Page<Course> pageCourses = new PageImpl<>(expectedCourses, pageable, totalPages);
             List<Integer> pages = Collections.singletonList(1);
 
-            when(courseServiceMock.getAllSortedPaginated(pageable)).thenReturn(pageCourses);
+            when(courseServiceMock.findAll(pageable)).thenReturn(pageCourses);
             when(pageSequenceCreatorMock.createPageSequence(totalPages, currentPage + 1))
                 .thenReturn(pages);
 
@@ -120,7 +120,7 @@ class CourseControllerTest {
             List<Course> expectedCourses = Arrays.asList(firstCourse, secondCourse);
             Page<Course> pageCourses = new PageImpl<>(expectedCourses, pageable, expectedCourses.size());
 
-            when(courseServiceMock.getAllSortedPaginated(pageable)).thenReturn(pageCourses);
+            when(courseServiceMock.findAll(pageable)).thenReturn(pageCourses);
 
             mockMvc.perform(get(URI_COURSES)
                     .param("page", String.valueOf(page)))
@@ -152,7 +152,7 @@ class CourseControllerTest {
             List<Course> expectedCourses = Arrays.asList(firstCourse, secondCourse);
             Page<Course> pageCourses = new PageImpl<>(expectedCourses, pageable, 5);
 
-            when(courseServiceMock.getAllSortedPaginated(pageable)).thenReturn(pageCourses);
+            when(courseServiceMock.findAll(pageable)).thenReturn(pageCourses);
 
             mockMvc.perform(get(URI_COURSES)
                     .param("page", String.valueOf(page))
@@ -179,7 +179,7 @@ class CourseControllerTest {
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful());
 
-            verify(courseServiceMock).save(courseCaptor.capture());
+            verify(courseServiceMock).create(courseCaptor.capture());
             Course expectedCourse = courseCaptor.getValue();
             assertThat(expectedCourse).hasId(null);
             assertThat(expectedCourse).hasName(NAME_FIRST_COURSE);
@@ -211,7 +211,7 @@ class CourseControllerTest {
             int courseId = anyInt();
             Course expectedCourse = new Course(courseId, NAME_FIRST_COURSE);
 
-            when(courseServiceMock.getById(courseId)).thenReturn(expectedCourse);
+            when(courseServiceMock.findById(courseId)).thenReturn(expectedCourse);
 
             mockMvc.perform(get(URI_COURSES_ID, courseId))
                 .andDo(print())
@@ -239,7 +239,7 @@ class CourseControllerTest {
                 .andExpect(status().is2xxSuccessful());
 
             Course updatedCourse = new Course(courseId, NAME_FIRST_COURSE);
-            verify(courseServiceMock).save(updatedCourse);
+            verify(courseServiceMock).create(updatedCourse);
         }
 
         @Test

@@ -5,21 +5,15 @@ import lombok.Value;
 import ua.com.foxminded.university.domain.validator.CapitalLetter;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Value
 @EqualsAndHashCode(callSuper = false)
-public class DepartmentDto extends AbstractDto<DepartmentDto> {
+public class CourseDto extends AbstractDto<CourseDto> {
 
     Integer id;
 
-    @NotBlank(message = "{department.name.not.blank}")
+    @NotBlank(message = "{course.name.not.blank}")
     @CapitalLetter
     String name;
-
-    @NotNull
-    Integer facultyId;
-
-    String facultyName;
 
 }

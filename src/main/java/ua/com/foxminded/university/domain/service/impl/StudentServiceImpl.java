@@ -9,21 +9,16 @@ import org.springframework.validation.annotation.Validated;
 import ua.com.foxminded.university.dao.GroupRepository;
 import ua.com.foxminded.university.dao.StudentRepository;
 import ua.com.foxminded.university.domain.dto.StudentDto;
-import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.domain.mapper.StudentDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.StudentService;
+import ua.com.foxminded.university.domain.util.EntityUtil;
 
-import javax.persistence.EntityNotFoundException;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -88,6 +83,11 @@ public class StudentServiceImpl  extends AbstractService<Student> implements Stu
     }
 
     @Override
+    protected String getEntityName() {
+        return Student.class.getSimpleName();
+    }
+
+    @Override
     public void deactivateStudent(Student student) {
         log.debug("Deactivating student [id={}, {} {} {}]", student.getId(),
             student.getFirstName(), student.getPatronymic(), student.getLastName());
@@ -122,7 +122,7 @@ public class StudentServiceImpl  extends AbstractService<Student> implements Stu
         log.debug("Getting all students from group ({})", group);
         List<Student> students = studentRepo.findAllByGroup(group);
         log.debug("Found {} students from group {}", students.size(), group);
-        return studentDtoMapper.toStudentDtos(students);
+        return studentDtoMapper.toDtos(students);
     }
 
     @Override
@@ -132,7 +132,7 @@ public class StudentServiceImpl  extends AbstractService<Student> implements Stu
         group.setId(groupId);
         List<Student> students = studentRepo.findAllByGroup(group);
         log.debug("Found {} students from group id({})", students.size(), groupId);
-        return studentDtoMapper.toStudentDtos(students);
+        return studentDtoMapper.toDtos(students);
     }
 
     @Override
@@ -141,7 +141,7 @@ public class StudentServiceImpl  extends AbstractService<Student> implements Stu
         Faculty faculty = new Faculty(facultyId, null);
         List<Student> students = studentRepo.findAllByFaculty(faculty);
         log.debug("Found {} student from faculty id({})", students.size(), facultyId);
-        return studentDtoMapper.toStudentDtos(students);
+        return studentDtoMapper.toDtos(students);
     }
 
     @Override
@@ -158,29 +158,21 @@ public class StudentServiceImpl  extends AbstractService<Student> implements Stu
                                                      LocalDateTime to) {
         log.debug("Getting active students from group id({}) free from {} to {}",
             groupId, from, to);
-        List<Student> busyStudents = findAllBusyStudents(from, to);
-        List<Integer> busyStudentIds = getIdsFromStudents(busyStudents);
+        List<Integer> busyStudentIds = findIdsOfBusyStudentsOnTime(from, to);
         List<Student> freeStudents =
             studentRepo.findAllFromGroupExcluded(busyStudentIds, groupId);
         log.debug("Found {} free student from group id({})", freeStudents.size(),
             groupId);
-        return studentDtoMapper.toStudentDtos(freeStudents);
+        return studentDtoMapper.toDtos(freeStudents);
     }
 
     @Override
-    public List<Student> findAllBusyStudents(LocalDateTime from,
-                                             LocalDateTime to) {
+    public List<Integer> findIdsOfBusyStudentsOnTime(LocalDateTime from,
+                                                     LocalDateTime to) {
         log.debug("Getting all students free from {} to {}", from, to);
-        List<Student> busyStudents = studentRepo.findAllBusyStudents(from, to);
+        List<Student> busyStudents = studentRepo.findBusyStudentsOnTime(from, to);
         log.debug(LOG_FOUND_STUDENTS, busyStudents.size());
-        return busyStudents;
-    }
-
-    @Override
-    public List<Integer> getIdsFromStudents(List<Student> students) {
-        return students.stream()
-            .map(Student::getId)
-            .collect(Collectors.toList());
+        return EntityUtil.extractIdsFromEntities(busyStudents);
     }
 
 }

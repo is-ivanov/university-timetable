@@ -8,22 +8,24 @@ import ua.com.foxminded.university.domain.entity.Lesson;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = StudentDtoMapper.class)
-public interface LessonDtoMapper {
+@Mapper(uses = StudentDtoMapper.class)
+public interface LessonDtoMapper extends DtoMapper<Lesson, LessonDto> {
 
+    @Override
     @Mapping(target = "courseId", source = "course.id")
     @Mapping(target = "courseName", source = "course.name")
     @Mapping(target = "teacherId", source = "teacher.id")
-    @Mapping(target = "teacherFullName", source = "teacher.fullName")
+    @Mapping(target = "teacherFullName", expression = "java(entity.getTeacher().getFullName())")
     @Mapping(target = "roomId", source = "room.id")
-    @Mapping(target = "buildingAndRoom", expression = "java(lesson.getRoom().getBuildingAndRoom())")
-    LessonDto toLessonDto(Lesson lesson);
+    @Mapping(target = "buildingAndRoom",
+        expression = "java(entity.getRoom().getBuildingAndRoom())")
+    LessonDto toDto(Lesson entity);
 
-    @InheritInverseConfiguration(name = "toLessonDto")
-    Lesson toLesson(LessonDto lessonDto);
+    @Override
+    @InheritInverseConfiguration(name = "toDto")
+    Lesson toEntity(LessonDto dto);
 
-    List<LessonDto> toLessonDtos(List<Lesson> lessons);
-
-    List<LessonDto> toLessonDtos(Iterable<Lesson> lessons);
+    @Override
+    List<LessonDto> toDtos(Iterable<Lesson> entities);
 
 }

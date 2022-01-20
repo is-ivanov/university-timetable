@@ -6,17 +6,16 @@ import org.mapstruct.Mapping;
 import ua.com.foxminded.university.domain.dto.DepartmentDto;
 import ua.com.foxminded.university.domain.entity.Department;
 
-import java.util.List;
+@Mapper
+public interface DepartmentDtoMapper extends DtoMapper<Department, DepartmentDto> {
 
-@Mapper(componentModel = "spring")
-public interface DepartmentDtoMapper {
-
+    @Override
     @Mapping(target = "facultyId", source = "faculty.id")
     @Mapping(target = "facultyName", source = "faculty.name")
-    DepartmentDto toDepartmentDto(Department department);
+    DepartmentDto toDto(Department entity);
 
-    @InheritInverseConfiguration(name = "toDepartmentDto")
-    Department toDepartment(DepartmentDto departmentDto);
+    @Override
+    @InheritInverseConfiguration(name = "toDto")
+    Department toEntity(DepartmentDto dto);
 
-    List<DepartmentDto> toDepartmentDtos(List<Department> departments);
 }
