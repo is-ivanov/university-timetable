@@ -20,12 +20,12 @@ import java.util.List;
 
 public abstract class AbstractController<T extends AbstractDto<T>, D extends IEntity> {
 
-    protected CollectionModel<T> getAll() {
+    protected CollectionModel<T> getAllInternal() {
         List<D> entities = getService().findAll();
         return getAssembler().toCollectionModel(entities);
     }
 
-    protected PagedModel<T> getAllSortedAndPaginated(Pageable pageable) {
+    protected PagedModel<T> getAllSortedAndPaginatedInternal(Pageable pageable) {
         Page<D> pageEntities = getService().findAll(pageable);
         int requestPageNumber = pageable.getPageNumber() + 1;
         if (requestPageNumber > pageEntities.getTotalPages()) {
@@ -35,12 +35,12 @@ public abstract class AbstractController<T extends AbstractDto<T>, D extends IEn
         return getPagedAssembler().toModel(pageEntities, getAssembler());
     }
 
-    protected T getById(int id) {
+    protected T getByIdInternal(int id) {
         D entity = getService().findById(id);
         return getAssembler().toModel(entity);
     }
 
-    protected ResponseEntity<T> create(T dto, HttpServletRequest request) {
+    protected ResponseEntity<T> createInternal(T dto, HttpServletRequest request) {
         if (dto.getId() != null) {
             throw new IllegalArgumentException("ID have to be null");
         }
@@ -52,7 +52,7 @@ public abstract class AbstractController<T extends AbstractDto<T>, D extends IEn
         return ResponseEntity.created(location).body(savedModel);
     }
 
-    protected T update(int id, T dto) {
+    protected T updateInternal(int id, T dto) {
         if (dto.getId() != id) {
             throw new IllegalArgumentException(
                 "ID in body request have to be equal ID in URI");
@@ -62,7 +62,7 @@ public abstract class AbstractController<T extends AbstractDto<T>, D extends IEn
         return getAssembler().toModel(updatedEntity);
     }
 
-    protected void delete(int id) {
+    protected void deleteInternal(int id) {
         if (id < 1) {
             throw new IllegalArgumentException("illegal ID");
         }

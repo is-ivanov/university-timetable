@@ -86,7 +86,7 @@ class StudentServiceImplTest {
         List<StudentDto> testStudentDtos = createTestStudentDtos(GROUP_ID1);
 
         when(studentRepoMock.findAll()).thenReturn(testStudents);
-        when(mapperMock.toStudentDtos(testStudents)).thenReturn(testStudentDtos);
+        when(mapperMock.toDtos(testStudents)).thenReturn(testStudentDtos);
 
         assertThat(studentService.findAll()).isEqualTo(testStudentDtos);
     }
@@ -208,7 +208,7 @@ class StudentServiceImplTest {
             group.setId(ID1);
 
             when(studentRepoMock.findAllByGroup(group)).thenReturn(students);
-            when(mapperMock.toStudentDtos(students)).thenReturn(studentDtos);
+            when(mapperMock.toDtos(students)).thenReturn(studentDtos);
 
             List<StudentDto> actualStudents = studentService.getStudentsByGroup(group);
             assertThat(actualStudents).isEqualTo(studentDtos);
@@ -224,7 +224,7 @@ class StudentServiceImplTest {
             group.setId(ID1);
 
             when(studentRepoMock.findAllByGroup(group)).thenReturn(students);
-            when(mapperMock.toStudentDtos(students)).thenReturn(studentDtos);
+            when(mapperMock.toDtos(students)).thenReturn(studentDtos);
 
             List<StudentDto> actualStudents = studentService.getStudentsByGroup(ID1);
 
@@ -244,7 +244,7 @@ class StudentServiceImplTest {
 
             when(studentRepoMock.findAllByFaculty(new Faculty(ID1, null)))
                 .thenReturn(students);
-            when(mapperMock.toStudentDtos(students)).thenReturn(studentDtos);
+            when(mapperMock.toDtos(students)).thenReturn(studentDtos);
 
             List<StudentDto> actualStudents = studentService.getStudentsByFaculty(ID1);
 

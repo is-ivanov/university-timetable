@@ -28,13 +28,15 @@ public class FacultyDtoAssembler implements RepresentationModelAssembler<Faculty
 
         facultyDto.add(
             linkTo(methodOn(FacultyRestController.class).getFaculty(faculty.getId())).withSelfRel(),
-            FACULTIES_LINK);
+            FACULTIES_LINK
+        );
 
         return facultyDto;
     }
 
     @Override
     public CollectionModel<FacultyDto> toCollectionModel(Iterable<? extends Faculty> entities) {
+
         CollectionModel<FacultyDto> facultyDtos =
             RepresentationModelAssembler.super.toCollectionModel(entities);
         facultyDtos.add(FACULTIES_SELF_LINK);

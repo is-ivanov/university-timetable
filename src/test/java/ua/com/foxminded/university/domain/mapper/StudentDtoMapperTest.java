@@ -46,7 +46,7 @@ class StudentDtoMapperTest {
         student.setGroup(group);
 
         List<Student> students = Collections.singletonList(student);
-        List<StudentDto> studentDtos = mapper.toStudentDtos(students);
+        List<StudentDto> studentDtos = mapper.toDtos(students);
 
         StudentDto studentDto = studentDtos.get(0);
 
@@ -75,7 +75,7 @@ class StudentDtoMapperTest {
             .build();
 
         List<StudentDto> studentDtos = Collections.singletonList(studentDto);
-        List<Student> students = mapper.toStudents(studentDtos);
+        List<Student> students = mapper.toEntities(studentDtos);
 
         Student student = students.get(0);
         assertThat(students, hasSize(1));

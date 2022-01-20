@@ -32,8 +32,6 @@ import javax.validation.Valid;
 @RequestMapping(MappingConstants.API_FACULTIES)
 public class FacultyRestController extends AbstractController<FacultyDto, Faculty> {
 
-    public static final String LOG_PAGE_FACULTIES = "Getting all faculties with {}";
-
     private final FacultyService facultyService;
     private final FacultyDtoMapper mapper;
     private final FacultyDtoAssembler assembler;
@@ -46,50 +44,48 @@ public class FacultyRestController extends AbstractController<FacultyDto, Facult
     @ResponseStatus(HttpStatus.OK)
     public CollectionModel<FacultyDto> getFaculties() {
         log.debug("Getting all faculties");
-        return getAll();
+        return getAllInternal();
     }
 
     @GetMapping(params = {QueryConstants.PAGE, QueryConstants.SIZE, QueryConstants.SORT})
     @ResponseStatus(HttpStatus.OK)
-    public PagedModel<FacultyDto> getAllPaginatedAndSorted(Pageable pageable) {
-        log.debug(LOG_PAGE_FACULTIES, pageable);
-        return getAllSortedAndPaginated(pageable);
+    public PagedModel<FacultyDto> getFacultiesPaginatedAndSorted(Pageable pageable) {
+        log.debug("Getting all faculties with {}", pageable);
+        return getAllSortedAndPaginatedInternal(pageable);
     }
 
     @GetMapping(params = {QueryConstants.PAGE, QueryConstants.SIZE})
     @ResponseStatus(HttpStatus.OK)
-    public PagedModel<FacultyDto> getAllPaginated(@PageableDefault(sort = "name")
-                                                                      Pageable pageable) {
-        log.debug(LOG_PAGE_FACULTIES, pageable);
-        return getAllSortedAndPaginated(pageable);
+    public PagedModel<FacultyDto> getFacultiesPaginated(@PageableDefault(sort = "name")
+                                                      Pageable pageable) {
+        return getFacultiesPaginatedAndSorted(pageable);
     }
 
     @GetMapping(params = {QueryConstants.SORT})
     @ResponseStatus(HttpStatus.OK)
-    public PagedModel<FacultyDto> getAllSorted(Pageable pageable) {
-        log.debug(LOG_PAGE_FACULTIES, pageable);
-        return getAllSortedAndPaginated(pageable);
+    public PagedModel<FacultyDto> getFacultiesSorted(Pageable pageable) {
+        return getFacultiesPaginatedAndSorted(pageable);
     }
 
     @GetMapping(MappingConstants.ID)
     @ResponseStatus(HttpStatus.OK)
     public FacultyDto getFaculty(@PathVariable("id") int facultyId) {
         log.debug("Getting faculty by id({})", facultyId);
-        return getById(facultyId);
+        return getByIdInternal(facultyId);
     }
 
     @PostMapping
     public ResponseEntity<FacultyDto> createFaculty(@Valid @RequestBody FacultyDto facultyDto,
                                                     HttpServletRequest request) {
         log.debug("Creating {}", facultyDto);
-        return create(facultyDto, request);
+        return createInternal(facultyDto, request);
     }
 
     @PutMapping(MappingConstants.ID)
     @ResponseStatus(HttpStatus.OK)
     public FacultyDto updateFaculty(@Valid @RequestBody FacultyDto facultyDto,
-                                                @PathVariable("id") int facultyId) {
-        FacultyDto updatedFacultyDto = update(facultyId, facultyDto);
+                                    @PathVariable("id") int facultyId) {
+        FacultyDto updatedFacultyDto = updateInternal(facultyId, facultyDto);
         log.debug("Faculty id({}) is updated", facultyId);
         return updatedFacultyDto;
     }
@@ -98,7 +94,7 @@ public class FacultyRestController extends AbstractController<FacultyDto, Facult
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteFaculty(@PathVariable("id") int facultyId) {
         log.debug("Deleting faculty with id({})", facultyId);
-        delete(facultyId);
+        deleteInternal(facultyId);
     }
 
 //    @GetMapping(MappingConstants.ID_GROUPS)

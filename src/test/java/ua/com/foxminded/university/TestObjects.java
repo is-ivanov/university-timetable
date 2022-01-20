@@ -133,6 +133,12 @@ public class TestObjects {
         return new ArrayList<>(Arrays.asList(course1, course2));
     }
 
+    public static List<CourseDto> createTestCourseDtos() {
+        CourseDto course1 = new CourseDto(COURSE_ID1, NAME_FIRST_COURSE);
+        CourseDto course2 = new CourseDto(COURSE_ID2, NAME_SECOND_COURSE);
+        return new ArrayList<>(Arrays.asList(course1, course2));
+    }
+
     public static Group createTestGroup() {
         return new Group(GROUP_ID1, NAME_FIRST_GROUP, createTestFaculty(), true);
     }
