@@ -2,12 +2,15 @@ package ua.com.foxminded.university.domain.dto;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
+import lombok.experimental.NonFinal;
 import org.springframework.hateoas.server.core.Relation;
 import ua.com.foxminded.university.domain.validator.CapitalLetter;
 
 import javax.validation.constraints.NotBlank;
 
+
 @Value
+@NonFinal
 @EqualsAndHashCode(callSuper = false)
 @Relation(itemRelation = "faculty", collectionRelation = "faculties")
 public class FacultyDto extends AbstractDto<FacultyDto> {

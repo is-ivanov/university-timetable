@@ -7,7 +7,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.mapper.FacultyDtoMapper;
@@ -17,6 +19,10 @@ import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
 import ua.com.foxminded.university.ui.PageSequenceCreator;
 import ua.com.foxminded.university.ui.util.MappingConstants;
+
+import javax.servlet.http.HttpServletRequest;
+
+import static ua.com.foxminded.university.ui.util.ResponseUtil.defineRedirect;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -45,6 +51,15 @@ public class FacultyController {
                 pageFaculties.getNumber() + 1));
         log.debug("The required data is loaded into the model");
         return "faculty";
+    }
+
+    @DeleteMapping(MappingConstants.ID)
+    public String deleteFaculty(@PathVariable("id") int facultyId,
+                                HttpServletRequest request) {
+        log.debug("Deleting faculty with id({})", facultyId);
+        facultyService.delete(facultyId);
+        log.debug("Faculty id({}) is deleted", facultyId);
+        return defineRedirect(request);
     }
 
 

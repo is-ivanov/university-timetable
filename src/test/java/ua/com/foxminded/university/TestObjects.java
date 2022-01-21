@@ -1,5 +1,7 @@
 package ua.com.foxminded.university;
 
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.Link;
 import ua.com.foxminded.university.domain.dto.*;
 import ua.com.foxminded.university.domain.entity.*;
 import ua.com.foxminded.university.domain.filter.LessonFilter;
@@ -10,7 +12,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-public class TestObjects {
+public final class TestObjects {
     public static final int ID1 = 1;
     public static final int ID2 = 2;
     public static final int ID3 = 3;
@@ -93,6 +95,9 @@ public class TestObjects {
     public static final LocalDateTime DATE_TO = LocalDateTime.of(2021, 9, 15, 23, 0);
     public static final String TEXT_DATE_TO = "2021-09-15 23:00";
     public static final String MESSAGE_FIRST_CAPITAL_LETTER = "The first letter must be capital letter";
+    public static final String COURSE1_SELF_LINK = "http://localhost:8080/api/courses/45";
+    public static final String COURSE2_SELF_LINK = "http://localhost:8080/api/courses/13";
+    public static final String COURSES_LINK = "http://localhost:8080/api/courses";
 
 
     public static Faculty createTestFaculty() {
@@ -135,8 +140,17 @@ public class TestObjects {
 
     public static List<CourseDto> createTestCourseDtos() {
         CourseDto course1 = new CourseDto(COURSE_ID1, NAME_FIRST_COURSE);
+        course1.add(Link.of(COURSE1_SELF_LINK).withSelfRel());
         CourseDto course2 = new CourseDto(COURSE_ID2, NAME_SECOND_COURSE);
+        course2.add(Link.of(COURSE2_SELF_LINK).withSelfRel());
         return new ArrayList<>(Arrays.asList(course1, course2));
+    }
+
+    public static CollectionModel<CourseDto> createTestModelCourseDtos() {
+        List<CourseDto> testCourseDtos = createTestCourseDtos();
+        CollectionModel<CourseDto> collectionModel = CollectionModel.of(testCourseDtos);
+        collectionModel.add(Link.of(COURSES_LINK).withSelfRel());
+        return collectionModel;
     }
 
     public static Group createTestGroup() {

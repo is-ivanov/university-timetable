@@ -200,8 +200,9 @@
     $('.deleteButton').on('click', function () {
       let id = $(this).attr('data-bs-id');
       let name = $(this).attr('data-bs-name');
+      let href = '/faculties/' + id;
       $('#deletedFacultyName').text('Are you sure you want to delete \'' + name + '\'?');
-      $('#formDelete').attr('action', '/faculties/' + id);
+      $('#formDelete').attr('action', href);
     });
   });
 

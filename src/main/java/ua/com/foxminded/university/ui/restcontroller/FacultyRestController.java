@@ -57,7 +57,7 @@ public class FacultyRestController extends AbstractController<FacultyDto, Facult
     @GetMapping(params = {QueryConstants.PAGE, QueryConstants.SIZE})
     @ResponseStatus(HttpStatus.OK)
     public PagedModel<FacultyDto> getFacultiesPaginated(@PageableDefault(sort = "name")
-                                                      Pageable pageable) {
+                                                            Pageable pageable) {
         return getFacultiesPaginatedAndSorted(pageable);
     }
 
@@ -84,8 +84,9 @@ public class FacultyRestController extends AbstractController<FacultyDto, Facult
     @PutMapping(MappingConstants.ID)
     @ResponseStatus(HttpStatus.OK)
     public FacultyDto updateFaculty(@Valid @RequestBody FacultyDto facultyDto,
-                                    @PathVariable("id") int facultyId) {
-        FacultyDto updatedFacultyDto = updateInternal(facultyId, facultyDto);
+                                    @PathVariable("id") int facultyId,
+                                    HttpServletRequest request) {
+        FacultyDto updatedFacultyDto = updateInternal(facultyId, facultyDto, request);
         log.debug("Faculty id({}) is updated", facultyId);
         return updatedFacultyDto;
     }

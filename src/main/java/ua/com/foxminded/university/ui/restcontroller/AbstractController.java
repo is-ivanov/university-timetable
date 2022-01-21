@@ -52,14 +52,16 @@ public abstract class AbstractController<T extends AbstractDto<T>, D extends IEn
         return ResponseEntity.created(location).body(savedModel);
     }
 
-    protected T updateInternal(int id, T dto) {
+    protected T updateInternal(int id, T dto, HttpServletRequest request) {
         if (dto.getId() != id) {
             throw new IllegalArgumentException(
                 "ID in body request have to be equal ID in URI");
         }
         D entity = getMapper().toEntity(dto);
         D updatedEntity = getService().update(id, entity);
-        return getAssembler().toModel(updatedEntity);
+        T updatedModel = getAssembler().toModel(updatedEntity);
+        ResponseUtil.addRedirectUrl(request, updatedModel);
+        return updatedModel;
     }
 
     protected void deleteInternal(int id) {

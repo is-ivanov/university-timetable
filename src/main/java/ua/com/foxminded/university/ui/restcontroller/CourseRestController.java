@@ -54,7 +54,7 @@ public class CourseRestController extends AbstractController<CourseDto, Course> 
     @GetMapping(params = {QueryConstants.PAGE, QueryConstants.SIZE})
     @ResponseStatus(HttpStatus.OK)
     public PagedModel<CourseDto> getCoursesPaginated(@PageableDefault(sort = "name")
-                                                     Pageable pageable) {
+                                                         Pageable pageable) {
         return getCoursesPaginatedAndSorted(pageable);
     }
 
@@ -73,7 +73,7 @@ public class CourseRestController extends AbstractController<CourseDto, Course> 
 
     @PostMapping
     public ResponseEntity<CourseDto> createCourse(@Valid @RequestBody CourseDto courseDto,
-                                                    HttpServletRequest request) {
+                                                  HttpServletRequest request) {
         log.debug("Creating {}", courseDto);
         return createInternal(courseDto, request);
     }
@@ -81,8 +81,9 @@ public class CourseRestController extends AbstractController<CourseDto, Course> 
     @PutMapping(MappingConstants.ID)
     @ResponseStatus(HttpStatus.OK)
     public CourseDto updateCourse(@Valid @RequestBody CourseDto courseDto,
-                                    @PathVariable("id") int courseId) {
-        CourseDto updatedCourseDto = updateInternal(courseId, courseDto);
+                                  @PathVariable("id") int courseId,
+                                  HttpServletRequest request) {
+        CourseDto updatedCourseDto = updateInternal(courseId, courseDto, request);
         log.debug("Course id({}) is updated", courseId);
         return updatedCourseDto;
     }
