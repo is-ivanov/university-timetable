@@ -32,6 +32,7 @@ public class Student extends Person {
     @ToString.Exclude
     @ManyToMany(mappedBy = "students")
     @JsonIgnore
+    @Builder.Default
     private Set<Lesson> lessons = new HashSet<>();
 
     @Override

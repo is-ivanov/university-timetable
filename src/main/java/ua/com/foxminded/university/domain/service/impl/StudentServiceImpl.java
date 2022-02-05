@@ -25,7 +25,7 @@ import java.util.List;
 @Service
 @Transactional
 @Validated
-public class StudentServiceImpl  extends AbstractService<Student> implements StudentService {
+public class StudentServiceImpl extends AbstractService<Student> implements StudentService {
 
     public static final String LOG_FOUND_STUDENTS = "Found {} students";
 
@@ -153,17 +153,21 @@ public class StudentServiceImpl  extends AbstractService<Student> implements Stu
     }
 
     @Override
-    public List<StudentDto> getFreeStudentsFromGroup(int groupId,
-                                                     LocalDateTime from,
-                                                     LocalDateTime to) {
+    public List<Student> getFreeStudentsFromGroup(int groupId,
+                                                  LocalDateTime from,
+                                                  LocalDateTime to) {
         log.debug("Getting active students from group id({}) free from {} to {}",
             groupId, from, to);
         List<Integer> busyStudentIds = findIdsOfBusyStudentsOnTime(from, to);
-        List<Student> freeStudents =
-            studentRepo.findAllFromGroupExcluded(busyStudentIds, groupId);
+        List<Student> freeStudents;
+        if (busyStudentIds.isEmpty()) {
+            freeStudents = studentRepo.findAllByActiveTrueAndGroup_Id(groupId);
+        } else {
+            freeStudents = studentRepo.findAllFromGroupExcluded(busyStudentIds, groupId);
+        }
         log.debug("Found {} free student from group id({})", freeStudents.size(),
             groupId);
-        return studentDtoMapper.toDtos(freeStudents);
+        return freeStudents;
     }
 
     @Override

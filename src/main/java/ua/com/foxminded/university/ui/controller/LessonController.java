@@ -2,7 +2,6 @@ package ua.com.foxminded.university.ui.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -11,19 +10,19 @@ import ua.com.foxminded.university.domain.entity.*;
 import ua.com.foxminded.university.domain.filter.LessonFilter;
 import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.*;
+import ua.com.foxminded.university.ui.restcontroller.LessonRestController;
+import ua.com.foxminded.university.ui.util.MappingConstants;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static ua.com.foxminded.university.ui.util.ResponseUtil.defineRedirect;
-import static ua.com.foxminded.university.ui.util.ResponseUtil.getResponseEntityWithRedirectUrl;
 
 @Slf4j
 @RequiredArgsConstructor
 @Controller
-@RequestMapping("/lessons")
+@RequestMapping(MappingConstants.LESSONS)
 public class LessonController {
 
     public static final String GET_ALL_TEACHERS_FOR_SELECTOR = "Get all teachers for selector";
@@ -37,6 +36,7 @@ public class LessonController {
     private final RoomService roomService;
     private final GroupService groupService;
     private final LessonDtoMapper lessonDtoMapper;
+    private final LessonRestController lessonRestController;
 
     @GetMapping
     public String showLessons(Model model) {
@@ -71,16 +71,16 @@ public class LessonController {
         return LESSONS;
     }
 
-    @GetMapping("/{id}")
-    @ResponseBody
-    public LessonDto getLessonWithStudents(@PathVariable("id") int lessonId) {
-        log.debug("Getting lesson id({})", lessonId);
-        LessonDto lessonDto = lessonDtoMapper.toDto(lessonService.findById(lessonId));
-        log.debug("Found lesson [teacher {}, course {}, room {}]",
-            lessonDto.getTeacherFullName(), lessonDto.getCourseName(),
-            lessonDto.getBuildingAndRoom());
-        return lessonDto;
-    }
+//    @GetMapping("/{id}")
+//    @ResponseBody
+//    public LessonDto getLessonWithStudents(@PathVariable("id") int lessonId) {
+//        log.debug("Getting lesson id({})", lessonId);
+//        LessonDto lessonDto = lessonDtoMapper.toDto(lessonService.findById(lessonId));
+//        log.debug("Found lesson [teacher {}, course {}, room {}]",
+//            lessonDto.getTeacherFullName(), lessonDto.getCourseName(),
+//            lessonDto.getBuildingAndRoom());
+//        return lessonDto;
+//    }
 
     @GetMapping("/{id}/students")
     public String showLessonWithStudents(@PathVariable("id") int lessonId,
@@ -117,34 +117,28 @@ public class LessonController {
         return "lesson";
     }
 
-    @PostMapping
-    public ResponseEntity<String> createLesson(@ModelAttribute @Valid LessonDto lessonDto,
-                                               HttpServletRequest request) {
-        log.debug("Creating lesson {}", lessonDto);
-        lessonService.create(lessonDtoMapper.toEntity(lessonDto));
-        log.debug("Lesson {} is created", lessonDto);
-        return getResponseEntityWithRedirectUrl(request);
-    }
+//    @PostMapping
+//    public ResponseEntity<String> createLesson(@ModelAttribute @Valid LessonDto lessonDto,
+//                                               HttpServletRequest request) {
+//        log.debug("Creating lesson {}", lessonDto);
+//        lessonService.create(lessonDtoMapper.toEntity(lessonDto));
+//        log.debug("Lesson {} is created", lessonDto);
+//        return getResponseEntityWithRedirectUrl(request);
+//    }
 
-    @PostMapping("/{id}/students")
+    @PostMapping(MappingConstants.ID_STUDENTS)
     public String addStudentToLesson(@PathVariable("id") int lessonId,
                                      @RequestParam int studentId,
                                      HttpServletRequest request) {
-        log.debug("Adding student id({}) to lesson id({})", studentId, lessonId);
-        lessonService.addStudentToLesson(lessonId, studentId);
-        log.debug("Student id({}) added to lesson id({}) successfully", studentId, lessonId);
+        lessonRestController.addStudentToLesson(lessonId, studentId);
         return defineRedirect(request);
     }
 
-    @PostMapping("/{id}/groups")
+    @PostMapping(MappingConstants.ID_GROUPS)
     public String addStudentsFromGroupToLesson(@PathVariable("id") int lessonId,
                                                @RequestParam int groupId,
                                                HttpServletRequest request) {
-        log.debug("Adding all students from group id({}) to lesson id({})",
-            groupId, lessonId);
-        lessonService.addStudentsFromGroupToLesson(groupId, lessonId);
-        log.debug("Student from group id({}) is added to lesson id({})", groupId,
-            lessonId);
+        lessonRestController.addStudentsFromGroupToLesson(lessonId, groupId);
         return defineRedirect(request);
     }
 
@@ -164,15 +158,7 @@ public class LessonController {
     public String removeStudentFromLesson(@PathVariable("id") int lessonId,
                                           @RequestParam Integer[] studentIds,
                                           HttpServletRequest request) {
-        if (studentIds.length == 1) {
-            log.debug("Remove student id({}) from lesson id({})", studentIds, lessonId);
-            lessonService.removeStudentFromLesson(lessonId, studentIds[0]);
-        } else {
-            log.debug("Remove students id({}) from lesson id({})", studentIds, lessonId);
-            lessonService.removeStudentsFromLesson(lessonId, studentIds);
-        }
-        log.debug("Students id({}) successfully removed from lesson id({})",
-            studentIds, lessonId);
+        lessonRestController.removeStudentFromLesson(lessonId, studentIds);
         return defineRedirect(request);
     }
 

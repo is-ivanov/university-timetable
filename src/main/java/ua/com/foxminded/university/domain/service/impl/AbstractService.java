@@ -1,6 +1,7 @@
 package ua.com.foxminded.university.domain.service.impl;
 
 import com.google.common.base.Preconditions;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -51,7 +52,12 @@ public abstract class AbstractService<T extends IEntity> implements Service<T> {
 
     @Override
     public void delete(int id) {
-        getRepo().deleteById(id);
+
+        try {
+            getRepo().deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new MyEntityNotFoundException(getEntityName(), "id", id, e);
+        }
     }
 
     protected abstract JpaRepository<T, Integer> getRepo();

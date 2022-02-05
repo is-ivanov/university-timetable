@@ -3,6 +3,8 @@ package ua.com.foxminded.university.domain.dto;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
+import lombok.experimental.NonFinal;
+import org.springframework.hateoas.server.core.Relation;
 import ua.com.foxminded.university.domain.validator.CapitalLetter;
 
 import javax.validation.constraints.NotBlank;
@@ -11,7 +13,9 @@ import javax.validation.constraints.Size;
 
 @Value
 @Builder
+@NonFinal
 @EqualsAndHashCode(callSuper = false)
+@Relation(itemRelation = "student", collectionRelation = "students")
 public class StudentDto extends AbstractDto<StudentDto> {
 
     Integer id;

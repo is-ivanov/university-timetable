@@ -56,33 +56,33 @@ public class GroupController {
         return "group";
     }
 
-    @PostMapping
-    public ResponseEntity<String> createGroup(@ModelAttribute @Valid Group group,
-                                              HttpServletRequest request) {
-        log.debug("Creating {}", group);
-        groupService.create(group);
-        log.debug("{} is created", group);
-        return getResponseEntityWithRedirectUrl(request);
-    }
+//    @PostMapping
+//    public ResponseEntity<String> createGroup(@ModelAttribute @Valid Group group,
+//                                              HttpServletRequest request) {
+//        log.debug("Creating {}", group);
+//        groupService.create(group);
+//        log.debug("{} is created", group);
+//        return getResponseEntityWithRedirectUrl(request);
+//    }
 
-    @GetMapping("/{id}")
-    @ResponseBody
-    public Group getGroup(@PathVariable("id") int groupId) {
-        log.debug("Getting group id({})", groupId);
-        Group group = groupService.findById(groupId);
-        log.debug("Found {}", group);
-        return group;
-    }
+//    @GetMapping("/{id}")
+//    @ResponseBody
+//    public Group getGroup(@PathVariable("id") int groupId) {
+//        log.debug("Getting group id({})", groupId);
+//        Group group = groupService.findById(groupId);
+//        log.debug("Found {}", group);
+//        return group;
+//    }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<String> updateGroup(@ModelAttribute @Valid Group group,
-                                              @PathVariable("id") int groupId,
-                                              HttpServletRequest request) {
-        log.debug("Updating group id({})", groupId);
-        groupService.update(groupId, group);
-        log.debug("Group id({}) is updated", groupId);
-        return getResponseEntityWithRedirectUrl(request);
-    }
+//    @PutMapping("/{id}")
+//    public ResponseEntity<String> updateGroup(@ModelAttribute @Valid Group group,
+//                                              @PathVariable("id") int groupId,
+//                                              HttpServletRequest request) {
+//        log.debug("Updating group id({})", groupId);
+//        groupService.update(groupId, group);
+//        log.debug("Group id({}) is updated", groupId);
+//        return getResponseEntityWithRedirectUrl(request);
+//    }
 
     @DeleteMapping("/{id}")
     public String deleteGroup(@PathVariable("id") int groupId,
@@ -93,21 +93,21 @@ public class GroupController {
         return defineRedirect(request);
     }
 
-    @GetMapping("/{id}/students/free")
-    @ResponseBody
-    public List<StudentDto> getFreeStudentsFromGroup(@PathVariable("id") int groupId,
-                                                     @RequestParam("time_start")
-                                                     @DateTimeFormat(pattern = DATE_TIME_PATTERN)
-                                                         LocalDateTime startTime,
-                                                     @RequestParam("time_end")
-                                                     @DateTimeFormat(pattern = DATE_TIME_PATTERN)
-                                                         LocalDateTime endTime) {
-        log.debug("Getting active students from group id({}) free from {} to {}",
-            groupId, startTime, endTime);
-        List<StudentDto> freeStudentsFromGroup =
-            studentService.getFreeStudentsFromGroup(groupId, startTime, endTime);
-        log.debug("Found {} students", freeStudentsFromGroup.size());
-        return freeStudentsFromGroup;
-    }
+//    @GetMapping("/{id}/students/free")
+//    @ResponseBody
+//    public List<StudentDto> getFreeStudentsFromGroup(@PathVariable("id") int groupId,
+//                                                     @RequestParam("time_start")
+//                                                     @DateTimeFormat(pattern = DATE_TIME_PATTERN)
+//                                                         LocalDateTime startTime,
+//                                                     @RequestParam("time_end")
+//                                                     @DateTimeFormat(pattern = DATE_TIME_PATTERN)
+//                                                         LocalDateTime endTime) {
+//        log.debug("Getting active students from group id({}) free from {} to {}",
+//            groupId, startTime, endTime);
+//        List<StudentDto> freeStudentsFromGroup =
+//            studentService.getFreeStudentsFromGroup(groupId, startTime, endTime);
+//        log.debug("Found {} students", freeStudentsFromGroup.size());
+//        return freeStudentsFromGroup;
+//    }
 
 }

@@ -1,5 +1,6 @@
 package ua.com.foxminded.university.domain.service.impl;
 
+import com.google.common.base.Preconditions;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -7,12 +8,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.com.foxminded.university.dao.*;
-import ua.com.foxminded.university.domain.dto.LessonDto;
 import ua.com.foxminded.university.domain.entity.*;
 import ua.com.foxminded.university.domain.filter.LessonFilter;
 import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
+import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 import ua.com.foxminded.university.domain.service.interfaces.LessonService;
 import ua.com.foxminded.university.domain.service.interfaces.StudentService;
+import ua.com.foxminded.university.exception.MyEntityNotFoundException;
 import ua.com.foxminded.university.exception.ServiceException;
 
 import javax.persistence.EntityNotFoundException;
@@ -25,7 +27,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Service
 @Transactional
-public class LessonServiceImpl  extends AbstractService<Lesson> implements LessonService {
+public class LessonServiceImpl extends AbstractService<Lesson> implements LessonService {
 
     public static final String FOUND_LESSONS = "Found {} lessons";
     public static final String MESSAGE_FILTER_NOT_SELECT = "Select at least one filter";
@@ -34,6 +36,7 @@ public class LessonServiceImpl  extends AbstractService<Lesson> implements Lesso
     public static final String MESSAGE_TEACHER_NOT_AVAILABLE = "Teacher id(%d) is not available";
     public static final String MESSAGE_STUDENT_NOT_AVAILABLE = "Student id(%d) is not available";
     public static final String MESSAGE_ROOM_NOT_AVAILABLE = "Room id(%d) is not available";
+    public static final String MESSAGE_STUDENT_ALREADY_ADDED = "Student id(%d) already added to lesson id(%d)";
 
     private final LessonRepository lessonRepo;
     private final LessonDtoMapper lessonDtoMapper;
@@ -42,8 +45,9 @@ public class LessonServiceImpl  extends AbstractService<Lesson> implements Lesso
     private final CourseRepository courseRepo;
     private final TeacherRepository teacherRepo;
     private final RoomRepository roomRepo;
+    private final GroupService groupService;
 
-//    @Override
+    //    @Override
 //    public Lesson save(Lesson lesson) throws ServiceException {
 //        log.debug("Check lesson id({}) before adding", lesson.getId());
 //        checkLesson(lesson);
@@ -69,16 +73,17 @@ public class LessonServiceImpl  extends AbstractService<Lesson> implements Lesso
 //        return lessons;
 //    }
 //
-//    @Override
-//    public void update(LessonDto lessonDto) {
-//        Lesson existingLesson = getLessonById(lessonDto.getId());
-//        updateCourse(lessonDto.getCourseId(), existingLesson);
-//        updateTeacher(lessonDto.getTeacherId(), existingLesson);
-//        updateRoom(lessonDto.getRoomId(), existingLesson);
-//        existingLesson.setTimeStart(lessonDto.getTimeStart());
-//        existingLesson.setTimeEnd(lessonDto.getTimeEnd());
-//        lessonRepo.save(existingLesson);
-//    }
+    @Override
+    public Lesson update(int id, Lesson entity) {
+        Preconditions.checkNotNull(entity);
+        Lesson existingLesson = getLessonById(entity.getId());
+        updateCourse(entity.getCourse().getId(), existingLesson);
+        updateTeacher(entity.getTeacher().getId(), existingLesson);
+        updateRoom(entity.getRoom().getId(), existingLesson);
+        existingLesson.setTimeStart(entity.getTimeStart());
+        existingLesson.setTimeEnd(entity.getTimeEnd());
+        return lessonRepo.save(existingLesson);
+    }
 //
 //    @Override
 //    public void delete(int id) {
@@ -101,17 +106,19 @@ public class LessonServiceImpl  extends AbstractService<Lesson> implements Lesso
     }
 
     @Override
-    public void addStudentToLesson(int lessonId, int studentId) {
+    public Lesson addStudentToLesson(int lessonId, int studentId) {
         log.debug("Getting lessonId({}) and studentId({})", lessonId, studentId);
         Lesson lesson = getLessonById(lessonId);
+        checkAlreadyStudentAdded(lesson, studentId);
         Student student = studentRepo.findById(studentId)
             .orElseThrow(() -> new EntityNotFoundException(
                 String.format("Student id(%d) not found", studentId)));
-        checkAndSaveStudentToLesson(lesson, student);
+        return checkAndSaveStudentToLesson(lesson, student);
     }
 
     @Override
     public void addStudentsFromGroupToLesson(int groupId, int lessonId) {
+        groupService.findById(groupId);
         log.debug("Getting lesson by lessonId({})", lessonId);
         Lesson lesson = getLessonById(lessonId);
         log.debug("Getting active students from group id({})", groupId);
@@ -130,7 +137,7 @@ public class LessonServiceImpl  extends AbstractService<Lesson> implements Lesso
     }
 
     @Override
-    public List<LessonDto> getAllWithFilter(LessonFilter filter) {
+    public Iterable<Lesson> getAllWithFilter(LessonFilter filter) {
         log.debug("Getting all lessons with ({})", filter);
         log.debug("Checking filter conditions");
 
@@ -140,8 +147,7 @@ public class LessonServiceImpl  extends AbstractService<Lesson> implements Lesso
             filter.getDateTo() != null) {
 
             Predicate predicate = filter.getPredicate();
-            Iterable<Lesson> filteredLessons = lessonRepo.findAll(predicate);
-            return lessonDtoMapper.toDtos(filteredLessons);
+            return lessonRepo.findAll(predicate);
         } else {
             log.warn("Filter is empty");
             throw new ServiceException(MESSAGE_FILTER_NOT_SELECT);
@@ -149,42 +155,42 @@ public class LessonServiceImpl  extends AbstractService<Lesson> implements Lesso
     }
 
     @Override
-    public List<LessonDto> getAllForStudentForTimePeriod(int studentId,
-                                                         LocalDateTime startTime,
-                                                         LocalDateTime endTime) {
+    public List<Lesson> getAllForStudentForTimePeriod(int studentId,
+                                                      LocalDateTime startTime,
+                                                      LocalDateTime endTime) {
         log.debug("Getting lessons for student id({}) from {} to {})", studentId,
             startTime, endTime);
         List<Lesson> lessonsForStudent = lessonRepo
             .findByStudents_IdAndTimeStartGreaterThanEqualAndTimeEndLessThanEqual(
                 studentId, startTime, endTime);
         log.debug(FOUND_LESSONS, lessonsForStudent.size());
-        return lessonDtoMapper.toDtos(lessonsForStudent);
+        return lessonsForStudent;
     }
 
     @Override
-    public List<LessonDto> getAllForTeacherForTimePeriod(int teacherId,
-                                                         LocalDateTime startTime,
-                                                         LocalDateTime endTime) {
+    public List<Lesson> getAllForTeacherForTimePeriod(int teacherId,
+                                                      LocalDateTime startTime,
+                                                      LocalDateTime endTime) {
         log.debug("Getting lessons for teacher id({}) from {} to {})", teacherId,
             startTime, endTime);
         List<Lesson> lessonsForTeacher =
             lessonRepo.findByTeacher_IdAndTimeStartGreaterThanEqualAndTimeEndLessThanEqual(
                 teacherId, startTime, endTime);
         log.debug(FOUND_LESSONS, lessonsForTeacher.size());
-        return lessonDtoMapper.toDtos(lessonsForTeacher);
+        return lessonsForTeacher;
     }
 
     @Override
-    public List<LessonDto> getAllForRoomForTimePeriod(int roomId,
-                                                      LocalDateTime startTime,
-                                                      LocalDateTime endTime) {
+    public List<Lesson> getAllForRoomForTimePeriod(int roomId,
+                                                   LocalDateTime startTime,
+                                                   LocalDateTime endTime) {
         log.debug("Getting lessons for room id({}) from {} to {})", roomId,
             startTime, endTime);
         List<Lesson> lessonsForRoom =
             lessonRepo.findByRoom_IdAndTimeStartGreaterThanEqualAndTimeEndLessThanEqual(
                 roomId, startTime, endTime);
         log.debug(FOUND_LESSONS, lessonsForRoom.size());
-        return lessonDtoMapper.toDtos(lessonsForRoom);
+        return lessonsForRoom;
     }
 
     @Override
@@ -209,16 +215,18 @@ public class LessonServiceImpl  extends AbstractService<Lesson> implements Lesso
             studentIds, lessonId);
     }
 
-    private void checkAndSaveStudentToLesson(Lesson lesson, Student student) {
+    private Lesson checkAndSaveStudentToLesson(Lesson lesson, Student student) {
         if (student.isActive()) {
             checkStudent(student, lesson);
-            lessonRepo.addStudentToLesson(lesson.getId(), student.getId());
+//            lessonRepo.addStudentToLesson(lesson.getId(), student.getId());
+            lesson.getStudents().add(student);
             log.debug("Student id({}) added to lesson({}) successfully", student.getId(),
                 lesson.getId());
         } else {
             log.warn("Student id({}) is inactive)", student.getId());
             throw new ServiceException(String.format("Student id(%d) is inactive", student.getId()));
         }
+        return lessonRepo.save(lesson);
     }
 
     private void checkLesson(Lesson lesson) {
@@ -254,20 +262,29 @@ public class LessonServiceImpl  extends AbstractService<Lesson> implements Lesso
         LocalDateTime timeStartCheckedLesson = checkedLesson.getTimeStart();
         LocalDateTime timeEndCheckedLesson = checkedLesson.getTimeEnd();
         for (Lesson lesson : lessons) {
-            if (!lesson.getId().equals(checkedLesson.getId())) {
-                LocalDateTime timeStartLesson = lesson.getTimeStart();
-                LocalDateTime timeEndLesson = lesson.getTimeEnd();
-                boolean checkTimeStart = timeStartLesson.compareTo(timeEndCheckedLesson) < 1;
-                boolean checkTimeEnd = timeEndLesson.compareTo(timeStartCheckedLesson) > -1;
-                if (checkTimeStart && checkTimeEnd) {
-                    log.warn("Time lesson id({}) intersect with time lesson id({})",
-                        checkedLesson.getId(), lesson.getId());
-                    throw new ServiceException(
-                        String.format(MESSAGE_LESSON_OVERLAP, checkedLesson.getId(), lesson.getId()));
-                }
+//            if (!lesson.getId().equals(checkedLesson.getId())) {
+            LocalDateTime timeStartLesson = lesson.getTimeStart();
+            LocalDateTime timeEndLesson = lesson.getTimeEnd();
+            boolean checkTimeStart = timeStartLesson.compareTo(timeEndCheckedLesson) < 1;
+            boolean checkTimeEnd = timeEndLesson.compareTo(timeStartCheckedLesson) > -1;
+            if (checkTimeStart && checkTimeEnd) {
+                log.warn("Time lesson id({}) intersect with time lesson id({})",
+                    checkedLesson.getId(), lesson.getId());
+                throw new ServiceException(
+                    String.format(MESSAGE_LESSON_OVERLAP, checkedLesson.getId(), lesson.getId()));
             }
+//            }
         }
         log.debug("Checking passed");
+    }
+
+    private void checkAlreadyStudentAdded(Lesson lesson, int studentId) {
+        boolean isExist = lesson.getStudents().stream()
+            .anyMatch(student -> student.getId().equals(studentId));
+        if (isExist) {
+            throw new ServiceException(
+                String.format(MESSAGE_STUDENT_ALREADY_ADDED, studentId, lesson.getId()));
+        }
     }
 
     private void checkTeacher(Teacher teacher, Lesson lesson) {
@@ -317,28 +334,33 @@ public class LessonServiceImpl  extends AbstractService<Lesson> implements Lesso
 
     private Lesson getLessonById(int id) {
         return lessonRepo.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException(
-                String.format(MESSAGE_LESSON_NOT_FOUND, id)));
+            .orElseThrow(() -> new MyEntityNotFoundException("lesson", "id", id));
     }
 
 
     private void updateCourse(Integer newCourseId, Lesson lesson) {
         if (newCourseId != null && !lesson.getCourse().getId().equals(newCourseId)) {
-            Course newCourse = courseRepo.getById(newCourseId);
+            Course newCourse = courseRepo.findById(newCourseId)
+                .orElseThrow(() ->
+                    new MyEntityNotFoundException("course", "id", newCourseId));
             lesson.setCourse(newCourse);
         }
     }
 
     private void updateTeacher(Integer newTeacherId, Lesson lesson) {
         if (newTeacherId != null && !lesson.getTeacher().getId().equals(newTeacherId)) {
-            Teacher newTeacher = teacherRepo.getById(newTeacherId);
+            Teacher newTeacher = teacherRepo.findById(newTeacherId)
+                .orElseThrow(() ->
+                    new MyEntityNotFoundException("teacher", "id", newTeacherId));
             lesson.setTeacher(newTeacher);
         }
     }
 
     private void updateRoom(Integer newRoomId, Lesson lesson) {
         if (newRoomId != null && !lesson.getRoom().getId().equals(newRoomId)) {
-            Room newRoom = roomRepo.getById(newRoomId);
+            Room newRoom = roomRepo.findById(newRoomId)
+                .orElseThrow(() ->
+                    new MyEntityNotFoundException("room", "id", newRoomId));
             lesson.setRoom(newRoom);
         }
     }

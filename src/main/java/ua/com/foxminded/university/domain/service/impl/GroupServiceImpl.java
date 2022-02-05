@@ -1,10 +1,12 @@
 package ua.com.foxminded.university.domain.service.impl;
 
+import com.google.common.base.Preconditions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ua.com.foxminded.university.dao.FacultyRepository;
 import ua.com.foxminded.university.dao.GroupRepository;
 import ua.com.foxminded.university.dao.StudentRepository;
 import ua.com.foxminded.university.domain.entity.Faculty;
@@ -12,6 +14,7 @@ import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.mapper.GroupDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 import ua.com.foxminded.university.domain.service.interfaces.StudentService;
+import ua.com.foxminded.university.exception.MyEntityNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -29,6 +32,7 @@ public class GroupServiceImpl extends AbstractService<Group> implements GroupSer
     private final StudentRepository studentRepo;
     private final GroupDtoMapper groupDtoMapper;
     private final StudentService studentService;
+    private final FacultyRepository facultyRepo;
 
 //    @Override
 //    public Group save(Group group) {
@@ -60,6 +64,19 @@ public class GroupServiceImpl extends AbstractService<Group> implements GroupSer
 //        groupRepo.deleteById(id);
 //        log.debug("Delete group id({})", id);
 //    }
+
+    @Override
+    public Group update(int id, Group entity) {
+        Preconditions.checkNotNull(entity);
+        Group existingGroup = groupRepo.findById(id)
+            .orElseThrow(() ->
+                new MyEntityNotFoundException("group", "id", id));
+        updateName(entity, existingGroup);
+        updateFaculty(entity, existingGroup);
+        existingGroup.setActive(entity.isActive());
+
+        return groupRepo.save(existingGroup);
+    }
 
     @Override
     protected JpaRepository<Group, Integer> getRepo() {
@@ -116,7 +133,7 @@ public class GroupServiceImpl extends AbstractService<Group> implements GroupSer
 
     @Override
     public List<Group> getFreeGroupsOnLessonTime(LocalDateTime startTime,
-                                                    LocalDateTime endTime) {
+                                                 LocalDateTime endTime) {
         log.debug("Getting groups free from {} to {}", startTime, endTime);
         List<Integer> busyStudentIds =
             studentService.findIdsOfBusyStudentsOnTime(startTime, endTime);
@@ -132,8 +149,8 @@ public class GroupServiceImpl extends AbstractService<Group> implements GroupSer
 
     @Override
     public List<Group> getFreeGroupsByFacultyOnLessonTime(int facultyId,
-                                                             LocalDateTime startTime,
-                                                             LocalDateTime endTime) {
+                                                          LocalDateTime startTime,
+                                                          LocalDateTime endTime) {
         log.debug("Getting active groups from faculty id({}) free from {} to {}",
             facultyId, startTime, endTime);
         List<Integer> busyStudentIds =
@@ -155,6 +172,25 @@ public class GroupServiceImpl extends AbstractService<Group> implements GroupSer
         List<Group> groups = groupRepo.findAllByActiveTrue();
         log.debug(FOUND_GROUPS, groups.size());
         return groups;
+    }
+
+    private void updateFaculty(Group newGroup, Group group) {
+        Integer newFacultyId = newGroup.getFaculty().getId();
+        if (newFacultyId != null) {
+            Faculty newFaculty = facultyRepo.findById(newFacultyId)
+                .orElseThrow(() ->
+                    new MyEntityNotFoundException("faculty", "id", newFacultyId));
+            group.setFaculty(newFaculty);
+        } else {
+            throw new IllegalArgumentException("Faculty ID is null");
+        }
+    }
+
+    private void updateName(Group newGroup, Group group) {
+        String newGroupName = newGroup.getName();
+        if (newGroupName != null) {
+            group.setName(newGroupName);
+        }
     }
 
 }

@@ -61,7 +61,7 @@ class TeacherServiceImplTest {
             TeacherDto teacherDto = createTestTeacherDto();
 
             when(teacherRepoMock.findById(ID1)).thenReturn(Optional.of(teacher));
-            when(mapperMock.toTeacherDto(teacher)).thenReturn(teacherDto);
+            when(mapperMock.toDto(teacher)).thenReturn(teacherDto);
 
             assertThat(teacherService.findById(ID1)).isEqualTo(teacherDto);
         }
@@ -85,7 +85,7 @@ class TeacherServiceImplTest {
         List<TeacherDto> teacherDtos = createTestTeacherDtos(FACULTY_ID1);
 
         when(teacherRepoMock.findAll()).thenReturn(teachers);
-        when(mapperMock.toTeacherDtos(teachers)).thenReturn(teacherDtos);
+        when(mapperMock.toDtos(teachers)).thenReturn(teacherDtos);
 
         assertThat(teacherService.findAll()).isEqualTo(teacherDtos);
     }
@@ -173,7 +173,7 @@ class TeacherServiceImplTest {
         List<TeacherDto> teacherDtos = createTestTeacherDtos(FACULTY_ID1);
 
         when(teacherRepoMock.findAllByDepartmentId(DEPARTMENT_ID1)).thenReturn(teachers);
-        when(mapperMock.toTeacherDtos(teachers)).thenReturn(teacherDtos);
+        when(mapperMock.toDtos(teachers)).thenReturn(teacherDtos);
 
         assertThat(teacherService.getAllByDepartment(DEPARTMENT_ID1)).isEqualTo(teacherDtos);
     }
@@ -186,7 +186,7 @@ class TeacherServiceImplTest {
         List<TeacherDto> teacherDtos = createTestTeacherDtos(FACULTY_ID1);
 
         when(teacherRepoMock.findByDepartment_Faculty_IdIs(FACULTY_ID1)).thenReturn(teachers);
-        when(mapperMock.toTeacherDtos(teachers)).thenReturn(teacherDtos);
+        when(mapperMock.toDtos(teachers)).thenReturn(teacherDtos);
 
         assertThat(teacherService.getAllByFaculty(FACULTY_ID1)).isEqualTo(teacherDtos);
     }

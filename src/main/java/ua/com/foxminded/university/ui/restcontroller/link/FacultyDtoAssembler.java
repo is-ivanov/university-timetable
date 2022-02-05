@@ -11,13 +11,15 @@ import ua.com.foxminded.university.ui.restcontroller.FacultyRestController;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-import static ua.com.foxminded.university.ui.restcontroller.link.LinkBuilder.FACULTIES_LINK;
-import static ua.com.foxminded.university.ui.restcontroller.link.LinkBuilder.FACULTIES_SELF_LINK;
 
 @SuppressWarnings("NullableProblems")
 @Component
 @RequiredArgsConstructor
 public class FacultyDtoAssembler implements RepresentationModelAssembler<Faculty, FacultyDto> {
+
+    public static final String LINK_GROUPS = "groups from this faculty";
+    public static final String LINK_DEPARTMENTS = "departments from this faculty";
+    public static final String LINK_TEACHERS = "teachers from this faculty";
 
     private final FacultyDtoMapper mapper;
 
@@ -27,8 +29,18 @@ public class FacultyDtoAssembler implements RepresentationModelAssembler<Faculty
         FacultyDto facultyDto = mapper.toDto(faculty);
 
         facultyDto.add(
-            linkTo(methodOn(FacultyRestController.class).getFaculty(faculty.getId())).withSelfRel(),
-            FACULTIES_LINK
+            linkTo(methodOn(FacultyRestController.class).getFaculty(faculty.getId()))
+                .withSelfRel(),
+            LinkBuilder.FACULTIES_LINK,
+            linkTo(methodOn(FacultyRestController.class).getGroupsByFaculty(faculty.getId()))
+                .withRel(LINK_GROUPS),
+            linkTo(methodOn(FacultyRestController.class)
+                .getDepartmentsByFaculty(faculty.getId()))
+                .withRel(LINK_DEPARTMENTS),
+            linkTo(methodOn(FacultyRestController.class)
+                .getTeachersByFaculty(faculty.getId()))
+                .withRel(LINK_TEACHERS),
+            LinkBuilder.ROOT_LINK
         );
 
         return facultyDto;
@@ -39,7 +51,11 @@ public class FacultyDtoAssembler implements RepresentationModelAssembler<Faculty
 
         CollectionModel<FacultyDto> facultyDtos =
             RepresentationModelAssembler.super.toCollectionModel(entities);
-        facultyDtos.add(FACULTIES_SELF_LINK);
+
+        facultyDtos.add(
+            LinkBuilder.FACULTIES_SELF_LINK,
+            LinkBuilder.ROOT_LINK
+        );
 
         return facultyDtos;
     }

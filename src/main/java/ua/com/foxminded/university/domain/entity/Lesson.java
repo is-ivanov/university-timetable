@@ -25,6 +25,15 @@ import java.util.Set;
     @Index(name = "idx_lesson_time_start", columnList = "time_start"),
     @Index(name = "idx_lesson_time_end", columnList = "time_end")
 })
+@NamedEntityGraph(name = "graph.lesson.all",
+    attributeNodes = {
+        @NamedAttributeNode("course"),
+        @NamedAttributeNode("teacher"),
+        @NamedAttributeNode("room"),
+        @NamedAttributeNode(value = "students", subgraph = "group")
+    },
+    subgraphs = @NamedSubgraph(name = "group",
+        attributeNodes = @NamedAttributeNode("group")))
 public class Lesson implements IEntity {
 
     @Id
@@ -67,6 +76,7 @@ public class Lesson implements IEntity {
         foreignKey = @ForeignKey(name = "fk_lesson"),
         inverseForeignKey = @ForeignKey(name = "fk_student"))
     @ToString.Exclude
+    @Builder.Default
     private Set<Student> students = new HashSet<>();
 
     public Lesson(Course course, Teacher teacher, Room room,

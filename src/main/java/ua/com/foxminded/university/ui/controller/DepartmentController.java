@@ -57,33 +57,33 @@ public class DepartmentController {
         return "department";
     }
 
-    @PostMapping
-    public ResponseEntity<String> createDepartment(@ModelAttribute @Valid Department department,
-                                                   HttpServletRequest request) {
-        log.debug("Creating {}", department);
-        departmentService.create(department);
-        log.debug("{} is created", department);
-        return getResponseEntityWithRedirectUrl(request);
-    }
+//    @PostMapping
+//    public ResponseEntity<String> createDepartment(@ModelAttribute @Valid Department department,
+//                                                   HttpServletRequest request) {
+//        log.debug("Creating {}", department);
+//        departmentService.create(department);
+//        log.debug("{} is created", department);
+//        return getResponseEntityWithRedirectUrl(request);
+//    }
 
-    @GetMapping("/{id}")
-    @ResponseBody
-    public Department getDepartment(@PathVariable("id") int departmentId) {
-        log.debug("Getting department id({})", departmentId);
-        Department department = departmentService.findById(departmentId);
-        log.debug("Found {}", department);
-        return department;
-    }
+//    @GetMapping("/{id}")
+//    @ResponseBody
+//    public Department getDepartment(@PathVariable("id") int departmentId) {
+//        log.debug("Getting department id({})", departmentId);
+//        Department department = departmentService.findById(departmentId);
+//        log.debug("Found {}", department);
+//        return department;
+//    }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<String> updateDepartment(@ModelAttribute @Valid Department department,
-                                   @PathVariable("id") int departmentId,
-                                   HttpServletRequest request) {
-        log.debug("Updating department id({})", departmentId);
-        departmentService.update(departmentId, department);
-        log.debug("Department id({}) is updated", departmentId);
-        return getResponseEntityWithRedirectUrl(request);
-    }
+//    @PutMapping("/{id}")
+//    public ResponseEntity<String> updateDepartment(@ModelAttribute @Valid Department department,
+//                                   @PathVariable("id") int departmentId,
+//                                   HttpServletRequest request) {
+//        log.debug("Updating department id({})", departmentId);
+//        departmentService.update(departmentId, department);
+//        log.debug("Department id({}) is updated", departmentId);
+//        return getResponseEntityWithRedirectUrl(request);
+//    }
 
     @DeleteMapping("/{id}")
     public String deleteDepartment(@PathVariable("id") int departmentId,
@@ -94,12 +94,12 @@ public class DepartmentController {
         return defineRedirect(request);
     }
 
-    @GetMapping("/{id}/teachers")
-    @ResponseBody
-    public List<Teacher> getTeachersByDepartment(@PathVariable("id") int departmentId) {
-        log.debug("Getting teacherDtos by department id({})", departmentId);
-        List<Teacher> teachers = teacherService.getAllByDepartment(departmentId);
-        log.debug("Found {} teachers", teachers.size());
-        return teachers;
-    }
+//    @GetMapping("/{id}/teachers")
+//    @ResponseBody
+//    public List<Teacher> getTeachersByDepartment(@PathVariable("id") int departmentId) {
+//        log.debug("Getting teacherDtos by department id({})", departmentId);
+//        List<Teacher> teachers = teacherService.getAllByDepartment(departmentId);
+//        log.debug("Found {} teachers", teachers.size());
+//        return teachers;
+//    }
 }

@@ -5,9 +5,13 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 import ua.com.foxminded.university.domain.dto.CourseDto;
+import ua.com.foxminded.university.domain.dto.LessonDto;
 import ua.com.foxminded.university.domain.entity.Course;
+import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.mapper.CourseDtoMapper;
+import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
 import ua.com.foxminded.university.ui.restcontroller.CourseRestController;
+import ua.com.foxminded.university.ui.restcontroller.LessonRestController;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -15,35 +19,35 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @SuppressWarnings("NullableProblems")
 @Component
 @RequiredArgsConstructor
-public class CourseDtoAssembler implements RepresentationModelAssembler<Course, CourseDto> {
+public class LessonDtoAssembler implements RepresentationModelAssembler<Lesson, LessonDto> {
 
-    private final CourseDtoMapper mapper;
+    private final LessonDtoMapper mapper;
 
     @Override
-    public CourseDto toModel(Course course) {
+    public LessonDto toModel(Lesson lesson) {
 
-        CourseDto courseDto = mapper.toDto(course);
+        LessonDto lessonDto = mapper.toDto(lesson);
 
-        Class<CourseRestController> classController = CourseRestController.class;
-
-        courseDto.add(
-            linkTo(methodOn(classController).getCourse(course.getId())).withSelfRel(),
-            LinkBuilder.COURSES_LINK,
+        lessonDto.add(
+            linkTo(methodOn(LessonRestController.class).getLesson(lesson.getId()))
+                .withSelfRel(),
+            LinkBuilder.LESSONS_LINK,
             LinkBuilder.ROOT_LINK
         );
-        return courseDto;
+        return lessonDto;
     }
 
     @Override
-    public CollectionModel<CourseDto> toCollectionModel(Iterable<? extends Course> entities) {
+    public CollectionModel<LessonDto> toCollectionModel(Iterable<? extends Lesson> entities) {
 
-        CollectionModel<CourseDto> courseDtos =
+        CollectionModel<LessonDto> lessonDtos =
             RepresentationModelAssembler.super.toCollectionModel(entities);
-        courseDtos.add(
-            LinkBuilder.COURSES_SELF_LINK,
+
+        lessonDtos.add(
+            LinkBuilder.LESSONS_LINK,
             LinkBuilder.ROOT_LINK
         );
 
-        return courseDtos;
+        return lessonDtos;
     }
 }

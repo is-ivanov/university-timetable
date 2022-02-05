@@ -23,7 +23,7 @@ public interface StudentService extends Service<Student> {
 
     List<Student> getAllActiveStudents();
 
-    List<StudentDto> getFreeStudentsFromGroup(int groupId,
+    List<Student> getFreeStudentsFromGroup(int groupId,
                                            LocalDateTime startTime,
                                            LocalDateTime endTime);
 

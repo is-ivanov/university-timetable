@@ -71,51 +71,51 @@ public class TeacherController {
         return "teacher";
     }
 
-    @GetMapping("/free")
-    @ResponseBody
-    public List<Teacher> getFreeTeachers(@RequestParam("time_start")
-                                            @DateTimeFormat(pattern = DATE_TIME_PATTERN)
-                                                LocalDateTime startTime,
-                                            @RequestParam("time_end")
-                                            @DateTimeFormat(pattern = DATE_TIME_PATTERN)
-                                                LocalDateTime endTime) {
-        log.debug("Getting teachers free from {} to {}", startTime, endTime);
-        List<Teacher> freeTeachers =
-            teacherService.getFreeTeachersOnLessonTime(startTime, endTime);
-        log.debug("Found {} active free teachers", freeTeachers.size());
-        return freeTeachers;
-    }
+//    @GetMapping("/free")
+//    @ResponseBody
+//    public List<Teacher> getFreeTeachers(@RequestParam("time_start")
+//                                            @DateTimeFormat(pattern = DATE_TIME_PATTERN)
+//                                                LocalDateTime startTime,
+//                                            @RequestParam("time_end")
+//                                            @DateTimeFormat(pattern = DATE_TIME_PATTERN)
+//                                                LocalDateTime endTime) {
+//        log.debug("Getting teachers free from {} to {}", startTime, endTime);
+//        List<Teacher> freeTeachers =
+//            teacherService.getFreeTeachersOnLessonTime(startTime, endTime);
+//        log.debug("Found {} active free teachers", freeTeachers.size());
+//        return freeTeachers;
+//    }
 
-    @PostMapping
-    public ResponseEntity<String> createTeacher(@ModelAttribute @Valid TeacherDto teacherDto,
-                                                HttpServletRequest request) {
-        log.debug("Creating teacher [{} {} {}]", teacherDto.getFirstName(),
-            teacherDto.getPatronymic(), teacherDto.getLastName());
-        teacherService.create(teacherMapper.toTeacher(teacherDto));
-        log.debug("Teacher [{}, {}, {}] is created", teacherDto.getFirstName(),
-            teacherDto.getPatronymic(), teacherDto.getLastName());
-        return getResponseEntityWithRedirectUrl(request);
-    }
+//    @PostMapping
+//    public ResponseEntity<String> createTeacher(@ModelAttribute @Valid TeacherDto teacherDto,
+//                                                HttpServletRequest request) {
+//        log.debug("Creating teacher [{} {} {}]", teacherDto.getFirstName(),
+//            teacherDto.getPatronymic(), teacherDto.getLastName());
+//        teacherService.create(teacherMapper.toEntity(teacherDto));
+//        log.debug("Teacher [{}, {}, {}] is created", teacherDto.getFirstName(),
+//            teacherDto.getPatronymic(), teacherDto.getLastName());
+//        return getResponseEntityWithRedirectUrl(request);
+//    }
 
-    @GetMapping("/{id}")
-    @ResponseBody
-    public Teacher getTeacher(@PathVariable("id") int teacherId) {
-        log.debug("Getting teacher id({})", teacherId);
-        Teacher teacher = teacherService.findById(teacherId);
-        log.debug("Found teacher [{} {} {}]", teacher.getFirstName(),
-            teacher.getPatronymic(), teacher.getLastName());
-        return teacher;
-    }
+//    @GetMapping("/{id}")
+//    @ResponseBody
+//    public Teacher getTeacher(@PathVariable("id") int teacherId) {
+//        log.debug("Getting teacher id({})", teacherId);
+//        Teacher teacher = teacherService.findById(teacherId);
+//        log.debug("Found teacher [{} {} {}]", teacher.getFirstName(),
+//            teacher.getPatronymic(), teacher.getLastName());
+//        return teacher;
+//    }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<String> updateTeacher(@ModelAttribute @Valid TeacherDto teacherDto,
-                                                @PathVariable("id") int teacherId,
-                                                HttpServletRequest request) {
-        log.debug("Updating teacher id({})", teacherId);
-//        teacherService.save(teacherMapper.toTeacher(teacherDto));
-        log.debug("Teacher id({}) is updated", teacherId);
-        return getResponseEntityWithRedirectUrl(request);
-    }
+//    @PutMapping("/{id}")
+//    public ResponseEntity<String> updateTeacher(@ModelAttribute @Valid TeacherDto teacherDto,
+//                                                @PathVariable("id") int teacherId,
+//                                                HttpServletRequest request) {
+//        log.debug("Updating teacher id({})", teacherId);
+////        teacherService.save(teacherMapper.toTeacher(teacherDto));
+//        log.debug("Teacher id({}) is updated", teacherId);
+//        return getResponseEntityWithRedirectUrl(request);
+//    }
 
     @DeleteMapping("/{id}")
     public String deleteTeacher(@PathVariable("id") int teacherId,
@@ -126,22 +126,22 @@ public class TeacherController {
         return defineRedirect(request);
     }
 
-    @GetMapping("/{id}/timetable")
-    @ResponseBody
-    public List<LessonDto> getLessonsForTeacher(@PathVariable("id") int teacherId,
-                                                @RequestParam("start")
-                                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                                    ZonedDateTime startTime,
-                                                @RequestParam("end")
-                                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                                    ZonedDateTime endTime) {
-        log.debug("Getting lessons for teacher id({}) from {} to {}", teacherId,
-            startTime, endTime);
-        List<LessonDto> lessonsForTeacher = lessonService
-            .getAllForTeacherForTimePeriod(teacherId,
-                startTime.toLocalDateTime(), endTime.toLocalDateTime());
-        log.debug("Found {} lessons", lessonsForTeacher.size());
-        return lessonsForTeacher;
-    }
+//    @GetMapping("/{id}/timetable")
+//    @ResponseBody
+//    public List<LessonDto> getLessonsForTeacher(@PathVariable("id") int teacherId,
+//                                                @RequestParam("start")
+//                                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+//                                                    ZonedDateTime startTime,
+//                                                @RequestParam("end")
+//                                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+//                                                    ZonedDateTime endTime) {
+//        log.debug("Getting lessons for teacher id({}) from {} to {}", teacherId,
+//            startTime, endTime);
+//        List<LessonDto> lessonsForTeacher = lessonService
+//            .getAllForTeacherForTimePeriod(teacherId,
+//                startTime.toLocalDateTime(), endTime.toLocalDateTime());
+//        log.debug("Found {} lessons", lessonsForTeacher.size());
+//        return lessonsForTeacher;
+//    }
 
 }

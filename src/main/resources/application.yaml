@@ -23,6 +23,8 @@ spring:
   jackson:
     serialization:
       INDENT_OUTPUT: true
+      write_dates_as_timestamps: false
+    date-format: yyyy-MM-dd HH:mm
 logging:
   level:
     ua.com.foxminded.university: DEBUG

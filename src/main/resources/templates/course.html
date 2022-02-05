@@ -52,7 +52,8 @@
             <div class="col-auto">
               <a href="#deleteCourseModal"
                  class="btn btn-danger btn-sm deleteButton"
-                 data-bs-toggle="modal" th:data-bs-id="${course.id}">
+                 data-bs-toggle="modal" th:data-bs-id="${course.id}"
+                 th:data-bs-name="${course.name}">
                 <i class="bi-trash"></i>Delete
               </a>
             </div>
@@ -74,7 +75,7 @@
        aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <form action="#" th:action="@{/courses}" method="post"
+        <form action="#" th:action="@{/api/courses}" method="post"
               th:object="${newCourse}" data-validate="yes">
           <div class="modal-header">
             <h5 class="modal-title" id="newCourseModalLabel">New Course</h5>
@@ -105,7 +106,8 @@
        tabindex="-1" aria-labelledby="editCourseModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <form id="formEdit" th:method="put" data-validate="yes">
+        <form id="formEdit" method="put" data-validate="yes">
+          <input type="hidden" name="id" id="editCourseId">
           <div class="modal-header">
             <h5 class="modal-title" id="editCourseModalLabel">Update Course</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -174,10 +176,11 @@
   // EDIT MODAL
   $(function () {
     $('.editButton').on('click', function () {
-      let href = '/courses/' + $(this).attr('data-bs-id');
+      let href = 'api/courses/' + $(this).attr('data-bs-id');
       $('#formEdit').attr('action', href);
       $.get(href, function (course) {
         $('#editCourseNameInput').val(course.name);
+        $('#editCourseId').val(course.id);
       });
     });
   });
@@ -191,10 +194,8 @@
   $(function () {
     $('.deleteButton').on('click', function () {
       let id = $(this).attr('data-bs-id');
-      let row = $(this).parent().parent().parent().parent();
-      let name = row.children('.course_name').text();
-      $('#deletedCourseName').
-        text('\'' + name + '\'?');
+      let name = $(this).attr('data-bs-name');
+      $('#deletedCourseName').text('\'' + name + '\'?');
       $('#formDelete').attr('action', '/courses/' + id);
     });
   });

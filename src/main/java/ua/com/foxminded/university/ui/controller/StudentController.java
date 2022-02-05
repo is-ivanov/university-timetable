@@ -9,7 +9,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ua.com.foxminded.university.domain.dto.LessonDto;
 import ua.com.foxminded.university.domain.dto.StudentDto;
+import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Student;
+import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
 import ua.com.foxminded.university.domain.mapper.StudentDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
@@ -75,36 +77,36 @@ public class StudentController {
         return "student";
     }
 
-    @PostMapping
-    public ResponseEntity<String> createStudent(@ModelAttribute @Valid StudentDto studentDto,
-                                                HttpServletRequest request) {
-        log.debug("Creating student [{} {} {}]", studentDto.getFirstName(),
-            studentDto.getPatronymic(), studentDto.getLastName());
-//        studentService.save(studentDtoMapper.toStudent(studentDto));
-        log.debug("Student [{}, {}, {}] is created", studentDto.getFirstName(),
-            studentDto.getPatronymic(), studentDto.getLastName());
-        return getResponseEntityWithRedirectUrl(request);
-    }
+//    @PostMapping
+//    public ResponseEntity<String> createStudent(@ModelAttribute @Valid StudentDto studentDto,
+//                                                HttpServletRequest request) {
+//        log.debug("Creating student [{} {} {}]", studentDto.getFirstName(),
+//            studentDto.getPatronymic(), studentDto.getLastName());
+////        studentService.save(studentDtoMapper.toStudent(studentDto));
+//        log.debug("Student [{}, {}, {}] is created", studentDto.getFirstName(),
+//            studentDto.getPatronymic(), studentDto.getLastName());
+//        return getResponseEntityWithRedirectUrl(request);
+//    }
 
-    @GetMapping("/{id}")
-    @ResponseBody
-    public Student getStudent(@PathVariable("id") int studentId) {
-        log.debug("Getting student id({})", studentId);
-        Student student = studentService.findById(studentId);
-        log.debug("Found student [{} {} {}]", student.getFirstName(),
-            student.getPatronymic(), student.getLastName());
-        return student;
-    }
+//    @GetMapping("/{id}")
+//    @ResponseBody
+//    public Student getStudent(@PathVariable("id") int studentId) {
+//        log.debug("Getting student id({})", studentId);
+//        Student student = studentService.findById(studentId);
+//        log.debug("Found student [{} {} {}]", student.getFirstName(),
+//            student.getPatronymic(), student.getLastName());
+//        return student;
+//    }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<String> updateStudent(@ModelAttribute @Valid StudentDto studentDto,
-                                                @PathVariable("id") int studentId,
-                                                HttpServletRequest request) {
-        log.debug("Updating student id({})", studentId);
-//        studentService.save(studentDtoMapper.toStudent(studentDto));
-        log.debug("Student id({}) is updated", studentId);
-        return getResponseEntityWithRedirectUrl(request);
-    }
+//    @PutMapping("/{id}")
+//    public ResponseEntity<String> updateStudent(@ModelAttribute @Valid StudentDto studentDto,
+//                                                @PathVariable("id") int studentId,
+//                                                HttpServletRequest request) {
+//        log.debug("Updating student id({})", studentId);
+////        studentService.save(studentDtoMapper.toStudent(studentDto));
+//        log.debug("Student id({}) is updated", studentId);
+//        return getResponseEntityWithRedirectUrl(request);
+//    }
 
     @DeleteMapping("/{id}")
     public String deleteStudent(@PathVariable("id") int studentId,
@@ -115,22 +117,22 @@ public class StudentController {
         return defineRedirect(request);
     }
 
-    @GetMapping("/{id}/timetable")
-    @ResponseBody
-    public List<LessonDto> getLessonsForStudent(@PathVariable("id") int studentId,
-                                                @RequestParam("start")
-                                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                                    ZonedDateTime startTime,
-                                                @RequestParam("end")
-                                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                                    ZonedDateTime endTime) {
-        log.debug("Getting lessons for student id({}) from {} to {}", studentId,
-            startTime, endTime);
-        List<LessonDto> lessonsForStudent = lessonService
-            .getAllForStudentForTimePeriod(studentId,
-                startTime.toLocalDateTime(), endTime.toLocalDateTime());
-        log.debug("Found {} lessons", lessonsForStudent.size());
-        return lessonsForStudent;
-    }
+//    @GetMapping("/{id}/timetable")
+//    @ResponseBody
+//    public List<LessonDto> getLessonsForStudent(@PathVariable("id") int studentId,
+//                                                @RequestParam("start")
+//                                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+//                                                    ZonedDateTime startTime,
+//                                                @RequestParam("end")
+//                                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+//                                                    ZonedDateTime endTime) {
+//        log.debug("Getting lessons for student id({}) from {} to {}", studentId,
+//            startTime, endTime);
+//        List<Lesson> lessonsForStudent = lessonService
+//            .getAllForStudentForTimePeriod(studentId,
+//                startTime.toLocalDateTime(), endTime.toLocalDateTime());
+//        log.debug("Found {} lessons", lessonsForStudent.size());
+//        return lessonDtoMapper.toDtos(lessonsForStudent);
+//    }
 
 }

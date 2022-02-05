@@ -5,10 +5,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import ua.com.foxminded.university.domain.dto.LessonDto;
 import ua.com.foxminded.university.domain.entity.Lesson;
+import ua.com.foxminded.university.ui.restcontroller.link.StudentDtoAssembler;
 
-import java.util.List;
-
-@Mapper(uses = StudentDtoMapper.class)
+@Mapper(uses = StudentDtoAssembler.class)
 public interface LessonDtoMapper extends DtoMapper<Lesson, LessonDto> {
 
     @Override
@@ -23,9 +22,7 @@ public interface LessonDtoMapper extends DtoMapper<Lesson, LessonDto> {
 
     @Override
     @InheritInverseConfiguration(name = "toDto")
-    Lesson toEntity(LessonDto dto);
 
-    @Override
-    List<LessonDto> toDtos(Iterable<Lesson> entities);
+    Lesson toEntity(LessonDto dto);
 
 }

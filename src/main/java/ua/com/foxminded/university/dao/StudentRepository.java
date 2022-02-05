@@ -1,5 +1,6 @@
 package ua.com.foxminded.university.dao;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -30,6 +31,7 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
         return findAllByLessonsTimeEndGreaterThanEqualAndLessonsTimeStartLessThanEqual(from, to);
     }
 
+    @EntityGraph(attributePaths = {"group"})
     List<Student> findAllByIdNotInAndActiveIsTrueAndGroup_IdIsAndGroup_ActiveIsTrueOrderByLastNameAscFirstNameAsc(
         Collection<Integer> studentIds, Integer groupId);
 
@@ -39,5 +41,6 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
             studentIds, groupId);
     }
 
+    @EntityGraph(attributePaths = {"group"})
     List<Student> findAllByActiveTrueAndGroup_Id(int groupId);
 }

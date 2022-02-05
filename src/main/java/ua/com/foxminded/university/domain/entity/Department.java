@@ -32,7 +32,6 @@ public class Department implements IEntity {
     private String name;
 
     @NotNull
-    @ToString.Exclude
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "faculty_id", nullable = false,
         foreignKey = @ForeignKey(name = "fk_faculty"))

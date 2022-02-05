@@ -260,46 +260,46 @@ class RoomControllerTest {
         }
     }
 
-    @Nested
-    @DisplayName("test 'getLessonsForRoom' method")
-    class GetLessonsForRoomTest {
-        @Test
-        @DisplayName("when GET request with parameters id, start and end then should " +
-            "return JSON with list lessonDtos in body")
-        void getRequestWithParametersShouldReturnJsonWithListLessonDtos() throws Exception {
-            int roomId = 13;
-            List<LessonDto> testLessonDtos = createTestLessonDtos();
-            when(lessonServiceMock.getAllForRoomForTimePeriod(roomId,
-                START_TIME_TIMETABLE, END_TIME_TIMETABLE))
-                .thenReturn(testLessonDtos);
-            mockMvc.perform(get(URI_ROOMS_ROOM_ID_TIMETABLE, roomId)
-                    .param("start", START_TIME_TIMETABLE_ISO)
-                    .param("end", END_TIME_TIMETABLE_ISO))
-                .andDo(print())
-                .andExpectAll(
-                    status().isOk(),
-                    content().contentType(MediaType.APPLICATION_JSON),
-                    jsonPath("$", hasSize(2)),
-                    jsonPath("$[0].id", is(LESSON_ID1)),
-                    jsonPath("$[0].courseId", is(COURSE_ID1)),
-                    jsonPath("$[0].courseName", is(NAME_FIRST_COURSE)),
-                    jsonPath("$[0].teacherId", is(TEACHER_ID1)),
-                    jsonPath("$[0].teacherFullName", is(FULL_NAME_FIRST_TEACHER)),
-                    jsonPath("$[0].roomId", is(ROOM_ID1)),
-                    jsonPath("$[0].buildingAndRoom", is(BUILDING_AND_NUMBER_FIRST_ROOM)),
-                    jsonPath("$[0].timeStart", is(TEXT_DATE_START_FIRST_LESSON)),
-                    jsonPath("$[0].timeEnd", is(TEXT_DATE_END_FIRST_LESSON)),
-                    jsonPath("$[1].id", is(LESSON_ID2)),
-                    jsonPath("$[1].courseId", is(COURSE_ID1)),
-                    jsonPath("$[1].courseName", is(NAME_FIRST_COURSE)),
-                    jsonPath("$[1].teacherId", is(TEACHER_ID1)),
-                    jsonPath("$[1].teacherFullName", is(FULL_NAME_FIRST_TEACHER)),
-                    jsonPath("$[1].roomId", is(ROOM_ID1)),
-                    jsonPath("$[1].buildingAndRoom", is(BUILDING_AND_NUMBER_FIRST_ROOM)),
-                    jsonPath("$[1].timeStart", is(TEXT_DATE_START_SECOND_LESSON)),
-                    jsonPath("$[1].timeEnd", is(TEXT_DATE_END_SECOND_LESSON))
-                );
-        }
-    }
+//    @Nested
+//    @DisplayName("test 'getLessonsForRoom' method")
+//    class GetLessonsForRoomTest {
+//        @Test
+//        @DisplayName("when GET request with parameters id, start and end then should " +
+//            "return JSON with list lessonDtos in body")
+//        void getRequestWithParametersShouldReturnJsonWithListLessonDtos() throws Exception {
+//            int roomId = 13;
+//            List<LessonDto> testLessonDtos = createTestLessonDtos();
+//            when(lessonServiceMock.getAllForRoomForTimePeriod(roomId,
+//                START_TIME_TIMETABLE, END_TIME_TIMETABLE))
+//                .thenReturn(testLessonDtos);
+//            mockMvc.perform(get(URI_ROOMS_ROOM_ID_TIMETABLE, roomId)
+//                    .param("start", START_TIME_TIMETABLE_ISO)
+//                    .param("end", END_TIME_TIMETABLE_ISO))
+//                .andDo(print())
+//                .andExpectAll(
+//                    status().isOk(),
+//                    content().contentType(MediaType.APPLICATION_JSON),
+//                    jsonPath("$", hasSize(2)),
+//                    jsonPath("$[0].id", is(LESSON_ID1)),
+//                    jsonPath("$[0].courseId", is(COURSE_ID1)),
+//                    jsonPath("$[0].courseName", is(NAME_FIRST_COURSE)),
+//                    jsonPath("$[0].teacherId", is(TEACHER_ID1)),
+//                    jsonPath("$[0].teacherFullName", is(FULL_NAME_FIRST_TEACHER)),
+//                    jsonPath("$[0].roomId", is(ROOM_ID1)),
+//                    jsonPath("$[0].buildingAndRoom", is(BUILDING_AND_NUMBER_FIRST_ROOM)),
+//                    jsonPath("$[0].timeStart", is(TEXT_DATE_START_FIRST_LESSON)),
+//                    jsonPath("$[0].timeEnd", is(TEXT_DATE_END_FIRST_LESSON)),
+//                    jsonPath("$[1].id", is(LESSON_ID2)),
+//                    jsonPath("$[1].courseId", is(COURSE_ID1)),
+//                    jsonPath("$[1].courseName", is(NAME_FIRST_COURSE)),
+//                    jsonPath("$[1].teacherId", is(TEACHER_ID1)),
+//                    jsonPath("$[1].teacherFullName", is(FULL_NAME_FIRST_TEACHER)),
+//                    jsonPath("$[1].roomId", is(ROOM_ID1)),
+//                    jsonPath("$[1].buildingAndRoom", is(BUILDING_AND_NUMBER_FIRST_ROOM)),
+//                    jsonPath("$[1].timeStart", is(TEXT_DATE_START_SECOND_LESSON)),
+//                    jsonPath("$[1].timeEnd", is(TEXT_DATE_END_SECOND_LESSON))
+//                );
+//        }
+//    }
 
 }

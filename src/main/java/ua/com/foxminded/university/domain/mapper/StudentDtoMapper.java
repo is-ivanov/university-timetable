@@ -22,10 +22,10 @@ public interface StudentDtoMapper extends DtoMapper<Student, StudentDto> {
     @Mapping(target = "group.name", source = "groupName")
     Student toEntity(StudentDto dto);
 
-    @Override
-    List<StudentDto> toDtos(Iterable<Student> entities);
-
-    @Override
-    List<Student> toEntities(Iterable<StudentDto> dtos);
+//    @Override
+//    List<StudentDto> toDtos(Iterable<Student> entities);
+//
+//    @Override
+//    List<Student> toEntities(Iterable<StudentDto> dtos);
 
 }

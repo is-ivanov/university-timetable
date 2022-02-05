@@ -55,4 +55,5 @@ public final class ResponseUtil {
     private static String getRedirectUrl(HttpServletRequest request) {
         return request.getHeader("referer");
     }
+
 }

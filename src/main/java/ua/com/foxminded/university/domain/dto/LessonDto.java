@@ -1,20 +1,27 @@
 package ua.com.foxminded.university.domain.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import lombok.*;
+import lombok.experimental.NonFinal;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.hateoas.server.core.Relation;
 import ua.com.foxminded.university.domain.validator.LessonsTime;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Set;
 
 import static ua.com.foxminded.university.ui.util.ResponseUtil.DATE_TIME_PATTERN;
 
 @Value
+@NonFinal
 @RequiredArgsConstructor
 @Builder
 @EqualsAndHashCode(callSuper = false)
+@Relation(itemRelation = "lesson", collectionRelation = "lessons")
 public class LessonDto extends AbstractDto<LessonDto> {
 
     private static final String TIME_START_FROM = "07:30";
@@ -25,37 +32,31 @@ public class LessonDto extends AbstractDto<LessonDto> {
     Integer id;
 
     @NotNull
-    int courseId;
+    Integer courseId;
 
     String courseName;
 
     @NotNull
-    int teacherId;
+    Integer teacherId;
 
     String teacherFullName;
 
     @NotNull
-    int roomId;
+    Integer roomId;
 
     String buildingAndRoom;
     Set<StudentDto> students;
 
+    @NotNull
     @LessonsTime(from = TIME_START_FROM, to = TIME_START_TO)
     @DateTimeFormat(pattern = DATE_TIME_PATTERN)
     @JsonFormat(pattern = DATE_TIME_PATTERN)
     LocalDateTime timeStart;
 
+    @NotNull
     @LessonsTime(from = TIME_END_FROM, to = TIME_END_TO)
     @DateTimeFormat(pattern = DATE_TIME_PATTERN)
     @JsonFormat(pattern = DATE_TIME_PATTERN)
     LocalDateTime timeEnd;
 
-//    public LessonDto(int courseId, int teacherId, int roomId,
-//                     LocalDateTime timeStart, LocalDateTime timeEnd) {
-//        this.courseId = courseId;
-//        this.teacherId = teacherId;
-//        this.roomId = roomId;
-//        this.timeStart = timeStart;
-//        this.timeEnd = timeEnd;
-//    }
 }

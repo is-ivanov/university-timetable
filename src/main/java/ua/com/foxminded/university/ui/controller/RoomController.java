@@ -52,48 +52,48 @@ public class RoomController {
         return "room";
     }
 
-    @GetMapping("/{id}")
-    @ResponseBody
-    public Room showRoom(@PathVariable("id") int roomId) {
-        log.debug("Getting room by id({})", roomId);
-        Room room = roomService.findById(roomId);
-        log.debug("Found {}", room);
-        return room;
-    }
+//    @GetMapping("/{id}")
+//    @ResponseBody
+//    public Room showRoom(@PathVariable("id") int roomId) {
+//        log.debug("Getting room by id({})", roomId);
+//        Room room = roomService.findById(roomId);
+//        log.debug("Found {}", room);
+//        return room;
+//    }
 
-    @GetMapping("/free")
-    @ResponseBody
-    public List<Room> getFreeRooms(@RequestParam("time_start")
-                                   @DateTimeFormat(pattern = DATE_TIME_PATTERN)
-                                       LocalDateTime startTime,
-                                   @RequestParam("time_end")
-                                   @DateTimeFormat(pattern = DATE_TIME_PATTERN)
-                                       LocalDateTime endTime) {
-        log.debug("Getting rooms free from {} to {}", startTime, endTime);
-        List<Room> freeRooms = roomService.getFreeRoomsOnLessonTime(startTime, endTime);
-        log.debug("Found {} free rooms", freeRooms.size());
-        return freeRooms;
-    }
+//    @GetMapping("/free")
+//    @ResponseBody
+//    public List<Room> getFreeRooms(@RequestParam("time_start")
+//                                   @DateTimeFormat(pattern = DATE_TIME_PATTERN)
+//                                       LocalDateTime startTime,
+//                                   @RequestParam("time_end")
+//                                   @DateTimeFormat(pattern = DATE_TIME_PATTERN)
+//                                       LocalDateTime endTime) {
+//        log.debug("Getting rooms free from {} to {}", startTime, endTime);
+//        List<Room> freeRooms = roomService.getFreeRoomsOnLessonTime(startTime, endTime);
+//        log.debug("Found {} free rooms", freeRooms.size());
+//        return freeRooms;
+//    }
 
-    @PostMapping
-    public ResponseEntity<String> createRoom(@ModelAttribute @Valid Room room,
-                                             HttpServletRequest request) {
-        log.debug("Creating {}", room);
-        roomService.create(room);
-        log.debug("{} is created", room);
-        return getResponseEntityWithRedirectUrl(request);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<String> updateRoom(@ModelAttribute @Valid Room room,
-                                             @PathVariable("id") int roomId,
-                                             HttpServletRequest request) {
-        log.debug("Updating room id({})", roomId);
-//        roomService.save(room);
-        log.debug("Room id({}) is updated", roomId);
-        return getResponseEntityWithRedirectUrl(request);
-    }
-
+//    @PostMapping
+//    public ResponseEntity<String> createRoom(@ModelAttribute @Valid Room room,
+//                                             HttpServletRequest request) {
+//        log.debug("Creating {}", room);
+//        roomService.create(room);
+//        log.debug("{} is created", room);
+//        return getResponseEntityWithRedirectUrl(request);
+//    }
+//
+//    @PutMapping("/{id}")
+//    public ResponseEntity<String> updateRoom(@ModelAttribute @Valid Room room,
+//                                             @PathVariable("id") int roomId,
+//                                             HttpServletRequest request) {
+//        log.debug("Updating room id({})", roomId);
+////        roomService.save(room);
+//        log.debug("Room id({}) is updated", roomId);
+//        return getResponseEntityWithRedirectUrl(request);
+//    }
+//
     @DeleteMapping("/{id}")
     public String deleteRoom(@PathVariable("id") int roomId,
                              HttpServletRequest request) {
@@ -103,22 +103,22 @@ public class RoomController {
         return defineRedirect(request);
     }
 
-    @GetMapping("/{id}/timetable")
-    @ResponseBody
-    public List<LessonDto> getLessonsForRoom(@PathVariable("id") int roomId,
-                                             @RequestParam("start")
-                                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                                 ZonedDateTime startTime,
-                                             @RequestParam("end")
-                                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                                 ZonedDateTime endTime) {
-        log.debug("Getting lessons for room id({}) from {} to {}", roomId,
-            startTime, endTime);
-        List<LessonDto> lessonsForTeacher = lessonService
-            .getAllForRoomForTimePeriod(roomId,
-                startTime.toLocalDateTime(), endTime.toLocalDateTime());
-        log.debug("Found {} lessons", lessonsForTeacher.size());
-        return lessonsForTeacher;
-    }
+//    @GetMapping("/{id}/timetable")
+//    @ResponseBody
+//    public List<LessonDto> getLessonsForRoom(@PathVariable("id") int roomId,
+//                                             @RequestParam("start")
+//                                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+//                                                 ZonedDateTime startTime,
+//                                             @RequestParam("end")
+//                                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+//                                                 ZonedDateTime endTime) {
+//        log.debug("Getting lessons for room id({}) from {} to {}", roomId,
+//            startTime, endTime);
+//        List<LessonDto> lessonsForTeacher = lessonService
+//            .getAllForRoomForTimePeriod(roomId,
+//                startTime.toLocalDateTime(), endTime.toLocalDateTime());
+//        log.debug("Found {} lessons", lessonsForTeacher.size());
+//        return lessonsForTeacher;
+//    }
 
 }

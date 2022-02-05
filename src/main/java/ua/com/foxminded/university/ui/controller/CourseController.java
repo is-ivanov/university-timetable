@@ -7,11 +7,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ua.com.foxminded.university.domain.entity.Course;
 import ua.com.foxminded.university.domain.service.interfaces.CourseService;
 import ua.com.foxminded.university.ui.PageSequenceCreator;
+
+import javax.servlet.http.HttpServletRequest;
+
+import static ua.com.foxminded.university.ui.util.ResponseUtil.defineRedirect;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -40,41 +46,13 @@ public class CourseController {
         return "course";
     }
 
-//    @PostMapping
-//    public ResponseEntity<String> createCourse(@ModelAttribute @Valid Course course,
-//                                               HttpServletRequest request) {
-//        log.debug("Creating {}", course);
-//        courseService.create(course);
-//        log.debug("{} is created", course);
-//        return getResponseEntityWithRedirectUrl(request);
-//    }
-
-//    @GetMapping("/{id}")
-//    @ResponseBody
-//    public Course getCourse(@PathVariable("id") int courseId) {
-//        log.debug("Getting course id({}})", courseId);
-//        Course course = courseService.findById(courseId);
-//        log.debug("Found {}", course);
-//        return course;
-//    }
-
-//    @PutMapping("/{id}")
-//    public ResponseEntity<String> updateCourse(@ModelAttribute @Valid Course course,
-//                                               @PathVariable("id") int courseId,
-//                                               HttpServletRequest request) {
-//        log.debug("Updating course id({})", courseId);
-//        courseService.update(courseId, course);
-//        log.debug("Course id({}) is updated", courseId);
-//        return getResponseEntityWithRedirectUrl(request);
-//    }
-//
-//    @DeleteMapping("/{id}")
-//    public String deleteCourse(@PathVariable("id") int courseId,
-//                               HttpServletRequest request) {
-//        log.debug("Deleting course id({})", courseId);
-//        courseService.delete(courseId);
-//        log.debug("Course id({}) is deleted", courseId);
-//        return defineRedirect(request);
-//    }
+    @DeleteMapping("/{id}")
+    public String deleteCourse(@PathVariable("id") int courseId,
+                               HttpServletRequest request) {
+        log.debug("Deleting course id({})", courseId);
+        courseService.delete(courseId);
+        log.debug("Course id({}) is deleted", courseId);
+        return defineRedirect(request);
+    }
 
 }

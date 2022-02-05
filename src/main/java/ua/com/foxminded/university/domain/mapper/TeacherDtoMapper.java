@@ -8,18 +8,19 @@ import ua.com.foxminded.university.domain.entity.Teacher;
 import java.util.List;
 
 @Mapper
-public interface TeacherDtoMapper {
+public interface TeacherDtoMapper extends DtoMapper<Teacher, TeacherDto> {
 
+    @Override
     @Mapping(target = "departmentId", source = "department.id")
     @Mapping(target = "departmentName", source = "department.name")
-    TeacherDto toTeacherDto(Teacher teacher);
+    TeacherDto toDto(Teacher entity);
 
-
+    @Override
     @Mapping(target = "department")
     @Mapping(target = "department.id", source = "departmentId")
     @Mapping(target = "department.name", source = "departmentName")
-    Teacher toTeacher(TeacherDto teacherDto);
+    Teacher toEntity(TeacherDto dto);
 
-    List<TeacherDto> toTeacherDtos(List<Teacher> teachers);
+//    List<TeacherDto> toDtos(List<Teacher> teachers);
 
 }

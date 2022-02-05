@@ -1,5 +1,9 @@
 package ua.com.foxminded.university.dao;
 
+import com.querydsl.core.types.Predicate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -9,10 +13,28 @@ import ua.com.foxminded.university.domain.entity.Lesson;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
+@SuppressWarnings("NullableProblems")
 @Repository
 public interface LessonRepository extends JpaRepository<Lesson, Integer>,
     QuerydslPredicateExecutor<Lesson> {
+
+    @Override
+    @EntityGraph("graph.lesson.all")
+    List<Lesson> findAll();
+
+    @Override
+    @EntityGraph("graph.lesson.all")
+    Page<Lesson> findAll(Pageable pageable);
+
+    @Override
+    @EntityGraph("graph.lesson.all")
+    Iterable<Lesson> findAll(Predicate predicate);
+
+    @Override
+    @EntityGraph("graph.lesson.all")
+    Optional<Lesson> findById(Integer integer);
 
     @Modifying
     @Query(value = "DELETE FROM students_lessons WHERE lesson_id = :lessonId",

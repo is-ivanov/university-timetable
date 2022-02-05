@@ -6,7 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.com.foxminded.university.dao.DepartmentRepository;
+import ua.com.foxminded.university.dao.FacultyRepository;
 import ua.com.foxminded.university.domain.entity.Department;
+import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.mapper.DepartmentDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 
@@ -23,6 +25,7 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
 
     private final DepartmentRepository departmentRepo;
     private final DepartmentDtoMapper departmentDtoMapper;
+    private final FacultyRepository facultyRepo;
 
 //    @Override
 //    public Department save(Department department) {
@@ -30,6 +33,14 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
 //        return departmentRepo.save(department);
 //    }
 //
+
+    @Override
+    public Department update(int id, Department entity) {
+        Department updatedDepartment = super.update(id, entity);
+        log.debug("Update department {}", updatedDepartment);
+        return updatedDepartment;
+    }
+
 //    @Override
 //    public Department getById(int id) {
 //        log.debug("Getting department by id({})", id);

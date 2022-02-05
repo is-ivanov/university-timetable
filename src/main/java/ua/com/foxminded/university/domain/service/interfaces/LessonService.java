@@ -1,6 +1,5 @@
 package ua.com.foxminded.university.domain.service.interfaces;
 
-import ua.com.foxminded.university.domain.dto.LessonDto;
 import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.filter.LessonFilter;
 
@@ -11,21 +10,21 @@ public interface LessonService extends Service<Lesson> {
 
 //    void update(LessonDto lessonDto);
 
-    void addStudentToLesson(int lessonId, int studentId);
+    Lesson addStudentToLesson(int lessonId, int studentId);
 
     void addStudentsFromGroupToLesson(int groupId, int lessonId);
 
-    List<LessonDto> getAllWithFilter(LessonFilter filter);
+    Iterable<Lesson> getAllWithFilter(LessonFilter filter);
 
-    List<LessonDto> getAllForStudentForTimePeriod(int studentId,
+    List<Lesson> getAllForStudentForTimePeriod(int studentId,
                                                LocalDateTime startTime,
                                                LocalDateTime endTime);
 
-    List<LessonDto> getAllForTeacherForTimePeriod(int teacherId,
+    List<Lesson> getAllForTeacherForTimePeriod(int teacherId,
                                                LocalDateTime startTime,
                                                LocalDateTime endTime);
 
-    List<LessonDto> getAllForRoomForTimePeriod(int roomId,
+    List<Lesson> getAllForRoomForTimePeriod(int roomId,
                                             LocalDateTime startTime,
                                             LocalDateTime endTime);
 

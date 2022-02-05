@@ -50,6 +50,7 @@ public class Group implements IEntity {
     @Size(max = 25, message = "{group.students.size}")
     @OneToMany(mappedBy = "group", orphanRemoval = true)
     @ToString.Exclude
+    @Builder.Default
     @JsonIgnore
     private Set<Student> students = new HashSet<>();
 

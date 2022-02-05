@@ -6,8 +6,6 @@ import org.mapstruct.Mapping;
 import ua.com.foxminded.university.domain.dto.GroupDto;
 import ua.com.foxminded.university.domain.entity.Group;
 
-import java.util.List;
-
 @Mapper
 public interface GroupDtoMapper extends DtoMapper<Group, GroupDto> {
 
@@ -18,9 +16,7 @@ public interface GroupDtoMapper extends DtoMapper<Group, GroupDto> {
 
     @Override
     @InheritInverseConfiguration(name = "toDto")
+    @Mapping(target = "students", ignore = true)
     Group toEntity(GroupDto dto);
-
-    @Override
-    List<GroupDto> toDtos(Iterable<Group> entities);
 
 }

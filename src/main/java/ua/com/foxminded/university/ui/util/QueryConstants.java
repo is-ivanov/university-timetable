@@ -5,7 +5,6 @@ public class QueryConstants {
     public static final String PAGE = "page";
     public static final String SIZE = "size";
     public static final String SORT = "sort";
-//    public static final String SORT_ORDER = "sortOrder";
 
     private QueryConstants() {
     }

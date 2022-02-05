@@ -53,9 +53,12 @@ public abstract class AbstractController<T extends AbstractDto<T>, D extends IEn
     }
 
     protected T updateInternal(int id, T dto, HttpServletRequest request) {
+        if (dto.getId() == null) {
+            throw new IllegalArgumentException("not ID in the request body");
+        }
         if (dto.getId() != id) {
             throw new IllegalArgumentException(
-                "ID in body request have to be equal ID in URI");
+                "ID in the request body have to be equal ID in URI");
         }
         D entity = getMapper().toEntity(dto);
         D updatedEntity = getService().update(id, entity);
