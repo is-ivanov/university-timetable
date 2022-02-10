@@ -39,7 +39,7 @@ public class TeacherDto extends AbstractDto<TeacherDto> {
     String fullName;
 
     @NotNull
-    int departmentId;
+    Integer departmentId;
 
     String departmentName;
 }

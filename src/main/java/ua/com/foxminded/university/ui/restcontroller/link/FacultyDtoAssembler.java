@@ -49,14 +49,14 @@ public class FacultyDtoAssembler implements RepresentationModelAssembler<Faculty
     @Override
     public CollectionModel<FacultyDto> toCollectionModel(Iterable<? extends Faculty> entities) {
 
-        CollectionModel<FacultyDto> facultyDtos =
+        CollectionModel<FacultyDto> modelFaculties =
             RepresentationModelAssembler.super.toCollectionModel(entities);
 
-        facultyDtos.add(
+        modelFaculties.add(
             LinkBuilder.FACULTIES_SELF_LINK,
             LinkBuilder.ROOT_LINK
         );
 
-        return facultyDtos;
+        return modelFaculties;
     }
 }

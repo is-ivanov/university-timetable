@@ -41,13 +41,13 @@ public class DepartmentDtoAssembler implements RepresentationModelAssembler<Depa
     @Override
     public CollectionModel<DepartmentDto> toCollectionModel(Iterable<? extends Department> entities) {
 
-        CollectionModel<DepartmentDto> departmentDtos =
+        CollectionModel<DepartmentDto> modelDepartments =
             RepresentationModelAssembler.super.toCollectionModel(entities);
-        departmentDtos.add(
+        modelDepartments.add(
             LinkBuilder.DEPARTMENTS_LINK,
             LinkBuilder.ROOT_LINK
         );
 
-        return departmentDtos;
+        return modelDepartments;
     }
 }

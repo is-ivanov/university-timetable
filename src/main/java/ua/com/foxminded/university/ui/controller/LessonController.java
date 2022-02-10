@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ua.com.foxminded.university.domain.dto.LessonDto;
 import ua.com.foxminded.university.domain.entity.*;
 import ua.com.foxminded.university.domain.filter.LessonFilter;
 import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
@@ -64,42 +63,30 @@ public class LessonController {
         model.addAttribute("departments", getDepartmentsByFaculty(facultyId));
 
         log.debug("Get filtered lessons");
+        Iterable<Lesson> filteredLessons = lessonService.getAllWithFilter(lessonFilter);
         model.addAttribute("lessons",
-            lessonService.getAllWithFilter(lessonFilter));
+            lessonDtoMapper.toDtos(filteredLessons));
         model.addAttribute("newLesson", new Lesson());
         log.debug("The required data is loaded into the model");
         return LESSONS;
     }
 
-//    @GetMapping("/{id}")
-//    @ResponseBody
-//    public LessonDto getLessonWithStudents(@PathVariable("id") int lessonId) {
-//        log.debug("Getting lesson id({})", lessonId);
-//        LessonDto lessonDto = lessonDtoMapper.toDto(lessonService.findById(lessonId));
-//        log.debug("Found lesson [teacher {}, course {}, room {}]",
-//            lessonDto.getTeacherFullName(), lessonDto.getCourseName(),
-//            lessonDto.getBuildingAndRoom());
-//        return lessonDto;
-//    }
-
     @GetMapping("/{id}/students")
     public String showLessonWithStudents(@PathVariable("id") int lessonId,
                                          Model model) {
         log.debug("Getting data for lesson.html for lesson id({})", lessonId);
-        LessonDto lesson = lessonDtoMapper.toDto(lessonService.findById(lessonId));
-        model.addAttribute("lesson", lesson);
+        Lesson lesson = lessonService.findById(lessonId);
+        model.addAttribute("lesson", lessonDtoMapper.toDto(lesson));
 
         LocalDateTime timeStart = lesson.getTimeStart();
         LocalDateTime timeEnd = lesson.getTimeEnd();
-        int teacherId = lesson.getTeacherId();
-//        TeacherDto teacher = teacherService.getById(teacherId);
-        int roomId = lesson.getRoomId();
-        Room room = roomService.findById(roomId);
+        Teacher teacher = lesson.getTeacher();
+        Room room = lesson.getRoom();
 
         log.debug("Loading free teachers in model");
         List<Teacher> freeTeachers = teacherService
             .getFreeTeachersOnLessonTime(timeStart, timeEnd);
-//        freeTeachers.add(teacher);
+        freeTeachers.add(teacher);
         model.addAttribute("teachers", freeTeachers);
 
         log.debug("Loading free rooms in model");
@@ -117,15 +104,6 @@ public class LessonController {
         return "lesson";
     }
 
-//    @PostMapping
-//    public ResponseEntity<String> createLesson(@ModelAttribute @Valid LessonDto lessonDto,
-//                                               HttpServletRequest request) {
-//        log.debug("Creating lesson {}", lessonDto);
-//        lessonService.create(lessonDtoMapper.toEntity(lessonDto));
-//        log.debug("Lesson {} is created", lessonDto);
-//        return getResponseEntityWithRedirectUrl(request);
-//    }
-
     @PostMapping(MappingConstants.ID_STUDENTS)
     public String addStudentToLesson(@PathVariable("id") int lessonId,
                                      @RequestParam int studentId,
@@ -141,18 +119,6 @@ public class LessonController {
         lessonRestController.addStudentsFromGroupToLesson(lessonId, groupId);
         return defineRedirect(request);
     }
-
-//    @PutMapping("/{id}")
-//    public ResponseEntity<String> updateLesson(@ModelAttribute @Valid LessonDto lessonDto,
-//                                               @PathVariable("id") int lessonId,
-//                                               HttpServletRequest request) {
-//        log.debug("Updating lesson id({})", lessonId);
-//        lessonDto.setId(lessonId);
-//        Lesson lesson = lessonDtoMapper.toLesson(lessonDto);
-//        lessonService.update(lessonId, lesson);
-//        log.debug("Lesson id({}) updated successfully", lessonId);
-//        return getResponseEntityWithRedirectUrl(request);
-//    }
 
     @DeleteMapping("/{id}/students")
     public String removeStudentFromLesson(@PathVariable("id") int lessonId,

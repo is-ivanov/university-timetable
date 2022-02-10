@@ -19,43 +19,6 @@ public class FacultyServiceImpl extends AbstractService<Faculty> implements Facu
 
     private final FacultyRepository facultyRepo;
 
-//    @Override
-//    public Faculty findById(int id) {
-//        log.debug("Getting faculty by id({})", id);
-//        return super.findById(id);
-//    }
-
-    //    @Override
-//    public Faculty save(Faculty faculty) {
-//        log.debug("Saving {}", faculty);
-//        return facultyRepo.save(faculty);
-//    }
-//
-//    @Override
-//    public Faculty getById(int id) {
-//        log.debug("Getting faculty by id({})", id);
-//        Faculty faculty = facultyRepo.findById(id)
-//            .orElseThrow(() -> new MyEntityNotFoundException(
-//                "faculty", "id", id));
-//        log.debug("Found {}", faculty);
-//        return faculty;
-//    }
-//
-//    @Override
-//    public List<Faculty> getAll() {
-//        log.debug("Getting all faculties");
-//        List<Faculty> faculties = facultyRepo.findAll();
-//        log.debug("Found {} faculties", faculties.size());
-//        return faculties;
-//    }
-//
-//    @Override
-//    public void delete(int id) {
-//        log.debug("Deleting faculty id({})", id);
-//        facultyRepo.deleteById(id);
-//        log.debug("Delete faculty id({})", id);
-//    }
-//
     @Override
     public List<Faculty> getAllSortedByNameAsc() {
         log.debug("Getting all faculties sorted by name ascending");
@@ -71,15 +34,5 @@ public class FacultyServiceImpl extends AbstractService<Faculty> implements Facu
     protected String getEntityName() {
         return Faculty.class.getSimpleName();
     }
-//
-//    @Override
-//    public Page<Faculty> getAllSortedPaginated(Pageable pageable) {
-//        log.debug("Getting sorted page {} from list of faculties", pageable.getPageNumber());
-//        Page<Faculty> pageFaculties = facultyRepo.findAll(pageable);
-//        log.debug("Found {} faculties on page {}", pageFaculties.getContent().size(),
-//            pageFaculties.getNumber());
-//        return pageFaculties;
-//    }
-
 
 }

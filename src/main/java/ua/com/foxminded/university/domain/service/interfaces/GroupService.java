@@ -22,6 +22,4 @@ public interface GroupService extends Service<Group> {
                                                    LocalDateTime startTime,
                                                    LocalDateTime endTime);
 
-    List<Group> getActiveGroups();
-
 }

@@ -51,15 +51,18 @@ public interface LessonRepository extends JpaRepository<Lesson, Integer>,
 
     List<Lesson> findAllByRoomId(int roomId);
 
+    @EntityGraph("graph.lesson.all")
     List<Lesson> findByStudents_IdAndTimeStartGreaterThanEqualAndTimeEndLessThanEqual(Integer studentId,
                                                                                       LocalDateTime from,
                                                                                       LocalDateTime to);
 
+    @EntityGraph("graph.lesson.all")
     List<Lesson> findByTeacher_IdAndTimeStartGreaterThanEqualAndTimeEndLessThanEqual(Integer teacherId,
                                                                                      LocalDateTime from,
                                                                                      LocalDateTime to);
 
-    List<Lesson> findByRoom_IdAndTimeStartGreaterThanEqualAndTimeEndLessThanEqual(Integer teacherId,
+    @EntityGraph("graph.lesson.all")
+    List<Lesson> findByRoom_IdAndTimeStartGreaterThanEqualAndTimeEndLessThanEqual(Integer roomId,
                                                                                      LocalDateTime from,
                                                                                      LocalDateTime to);
 

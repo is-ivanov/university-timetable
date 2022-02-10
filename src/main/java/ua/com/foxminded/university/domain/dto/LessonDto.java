@@ -1,9 +1,10 @@
 package ua.com.foxminded.university.domain.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import lombok.*;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import lombok.experimental.NonFinal;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.hateoas.server.core.Relation;
@@ -11,7 +12,6 @@ import ua.com.foxminded.university.domain.validator.LessonsTime;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Set;
 
 import static ua.com.foxminded.university.ui.util.ResponseUtil.DATE_TIME_PATTERN;

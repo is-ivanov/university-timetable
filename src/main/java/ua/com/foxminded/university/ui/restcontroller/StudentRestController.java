@@ -23,6 +23,7 @@ import ua.com.foxminded.university.domain.service.interfaces.LessonService;
 import ua.com.foxminded.university.domain.service.interfaces.Service;
 import ua.com.foxminded.university.domain.service.interfaces.StudentService;
 import ua.com.foxminded.university.ui.restcontroller.link.LessonDtoAssembler;
+import ua.com.foxminded.university.ui.restcontroller.link.LinkBuilder;
 import ua.com.foxminded.university.ui.restcontroller.link.StudentDtoAssembler;
 import ua.com.foxminded.university.ui.util.MappingConstants;
 import ua.com.foxminded.university.ui.util.QueryConstants;
@@ -31,6 +32,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.time.ZonedDateTime;
 import java.util.List;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -46,12 +50,13 @@ public class StudentRestController extends AbstractController<StudentDto, Studen
     private final LessonDtoAssembler lessonAssembler;
     private final PagedResourcesAssembler<Student> pagedAssembler;
 
-
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public CollectionModel<StudentDto> getStudents() {
         log.debug("Getting all students");
-        return getAllInternal();
+        CollectionModel<StudentDto> students = getAllInternal();
+        students.add(LinkBuilder.STUDENTS_SELF_LINK);
+        return students;
     }
 
     @GetMapping(params = {QueryConstants.PAGE, QueryConstants.SIZE, QueryConstants.SORT})
@@ -121,7 +126,13 @@ public class StudentRestController extends AbstractController<StudentDto, Studen
         List<Lesson> lessonsForStudent = lessonService
             .getAllForStudentForTimePeriod(studentId,
                 from.toLocalDateTime(), to.toLocalDateTime());
-        return lessonAssembler.toCollectionModel(lessonsForStudent);
+        CollectionModel<LessonDto> modelLessons = lessonAssembler.toCollectionModel(lessonsForStudent);
+        modelLessons.add(
+            linkTo(methodOn(StudentRestController.class)
+                .getLessonsForStudent(studentId, from, to))
+                .withSelfRel()
+        );
+        return modelLessons;
     }
 
     @Override

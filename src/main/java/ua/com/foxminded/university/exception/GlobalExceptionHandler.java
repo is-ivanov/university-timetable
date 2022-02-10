@@ -10,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;
@@ -55,11 +56,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 (ConstraintViolationException) ex);
         }
 
-//        ValidationErrorResponse errorResponseBody =
-//            new ValidationErrorResponse(VALIDATION_ERROR_MESSAGE,
-//                BAD_REQUEST.value(), BAD_REQUEST.getReasonPhrase(),
-//                getNow(), listViolations, ex, request);
-
         return createErrorResponse(ex, request, listViolations);
     }
 
@@ -75,7 +71,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({
         MyPageNotFoundException.class,
         IllegalArgumentException.class,
-        ServiceException.class
+        ServiceException.class,
+        MethodArgumentTypeMismatchException.class
     })
     public ResponseEntity<Object> handleBadRequestExceptions(Exception ex,
                                                              HttpServletRequest request) {

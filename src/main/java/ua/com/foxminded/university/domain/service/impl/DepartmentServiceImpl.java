@@ -1,16 +1,16 @@
 package ua.com.foxminded.university.domain.service.impl;
 
+import com.google.common.base.Preconditions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.com.foxminded.university.dao.DepartmentRepository;
-import ua.com.foxminded.university.dao.FacultyRepository;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Faculty;
-import ua.com.foxminded.university.domain.mapper.DepartmentDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
+import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 
 import java.util.List;
 
@@ -20,52 +20,22 @@ import java.util.List;
 @Transactional
 public class DepartmentServiceImpl extends AbstractService<Department> implements DepartmentService {
 
-    public static final String MESSAGE_DEPARTMENT_NOT_FOUND =
-        "Department id(%d) not found";
-
     private final DepartmentRepository departmentRepo;
-    private final DepartmentDtoMapper departmentDtoMapper;
-    private final FacultyRepository facultyRepo;
-
-//    @Override
-//    public Department save(Department department) {
-//        log.debug("Saving {}", department);
-//        return departmentRepo.save(department);
-//    }
-//
+    private final FacultyService facultyService;
 
     @Override
-    public Department update(int id, Department entity) {
-        Department updatedDepartment = super.update(id, entity);
-        log.debug("Update department {}", updatedDepartment);
-        return updatedDepartment;
+    public Department update(int id, Department department) {
+        Preconditions.checkNotNull(department);
+        Department existingDepartment = findById(id);
+        existingDepartment.setName(department.getName());
+        Integer existingFacultyId = existingDepartment.getFaculty().getId();
+        Integer newFacultyId = department.getFaculty().getId();
+        if (newFacultyId != null && !newFacultyId.equals(existingFacultyId)) {
+            Faculty newFaculty = facultyService.findById(newFacultyId);
+            existingDepartment.setFaculty(newFaculty);
+        }
+        return departmentRepo.save(existingDepartment);
     }
-
-//    @Override
-//    public Department getById(int id) {
-//        log.debug("Getting department by id({})", id);
-//        Department department = departmentRepo.findById(id)
-//            .orElseThrow(() -> new EntityNotFoundException(
-//                String.format(MESSAGE_DEPARTMENT_NOT_FOUND, id)));
-//        log.debug("Found {}", department);
-//        return department;
-//    }
-//
-//
-//    @Override
-//    public List<Department> getAll() {
-//        log.debug("Getting all departments");
-//        List<Department> departments = departmentRepo.findAll();
-//        log.debug("Found {} departments", departments.size());
-//        return departments;
-//    }
-//
-//    @Override
-//    public void delete(int id) {
-//        log.debug("Deleting department id({})", id);
-//        departmentRepo.deleteById(id);
-//        log.debug("Delete department id({})", id);
-//    }
 
     @Override
     protected JpaRepository<Department, Integer> getRepo() {

@@ -1,8 +1,9 @@
 package ua.com.foxminded.university.domain.service.impl;
 
 import com.google.common.base.Preconditions;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,16 +13,15 @@ import ua.com.foxminded.university.dao.StudentRepository;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.mapper.GroupDtoMapper;
+import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 import ua.com.foxminded.university.domain.service.interfaces.StudentService;
-import ua.com.foxminded.university.exception.MyEntityNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
-@RequiredArgsConstructor
 @Service
 @Transactional
 public class GroupServiceImpl extends AbstractService<Group> implements GroupService {
@@ -30,50 +30,32 @@ public class GroupServiceImpl extends AbstractService<Group> implements GroupSer
 
     private final GroupRepository groupRepo;
     private final StudentRepository studentRepo;
-    private final GroupDtoMapper groupDtoMapper;
+    private final FacultyService facultyService;
     private final StudentService studentService;
-    private final FacultyRepository facultyRepo;
 
-//    @Override
-//    public Group save(Group group) {
-//        log.debug("Saving {}", group);
-//        return groupRepo.save(group);
-//    }
-//
-//    @Override
-//    public Group getById(int id) {
-//        log.debug("Getting group by id({})", id);
-//        Group group = groupRepo.findById(id)
-//            .orElseThrow(() -> new EntityNotFoundException(
-//                String.format("Group id(%d) not found", id)));
-//        log.debug("Found {}", group);
-//        return group;
-//    }
-//
-//    @Override
-//    public List<Group> getAll() {
-//        log.debug("Getting all groups");
-//        List<Group> groups = groupRepo.findAll();
-//        log.debug(FOUND_GROUPS, groups.size());
-//        return groups;
-//    }
-//
-//    @Override
-//    public void delete(int id) {
-//        log.debug("Deleting group id({})", id);
-//        groupRepo.deleteById(id);
-//        log.debug("Delete group id({})", id);
-//    }
+    @Autowired
+    public GroupServiceImpl(GroupRepository groupRepo, StudentRepository studentRepo,
+                            FacultyService facultyService,
+                            @Lazy StudentService studentService) {
+        this.groupRepo = groupRepo;
+        this.studentRepo = studentRepo;
+        this.facultyService = facultyService;
+        this.studentService = studentService;
+    }
 
     @Override
-    public Group update(int id, Group entity) {
-        Preconditions.checkNotNull(entity);
-        Group existingGroup = groupRepo.findById(id)
-            .orElseThrow(() ->
-                new MyEntityNotFoundException("group", "id", id));
-        updateName(entity, existingGroup);
-        updateFaculty(entity, existingGroup);
-        existingGroup.setActive(entity.isActive());
+    public Group update(int id, Group group) {
+        Preconditions.checkNotNull(group);
+        Group existingGroup = findById(id);
+        String newGroupName = group.getName();
+        existingGroup.setName(newGroupName);
+        Integer existingFaultyId = existingGroup.getFaculty().getId();
+        Integer newFacultyId = group.getFaculty().getId();
+        if (newFacultyId != null && !newFacultyId.equals(existingFaultyId)) {
+            Faculty newFaculty = facultyService.findById(newFacultyId);
+            existingGroup.setFaculty(newFaculty);
+        }
+        existingGroup.setActive(group.isActive());
 
         return groupRepo.save(existingGroup);
     }
@@ -164,33 +146,6 @@ public class GroupServiceImpl extends AbstractService<Group> implements GroupSer
         }
         log.debug(FOUND_GROUPS, groups.size());
         return groups;
-    }
-
-    @Override
-    public List<Group> getActiveGroups() {
-        log.debug("Getting all active groups");
-        List<Group> groups = groupRepo.findAllByActiveTrue();
-        log.debug(FOUND_GROUPS, groups.size());
-        return groups;
-    }
-
-    private void updateFaculty(Group newGroup, Group group) {
-        Integer newFacultyId = newGroup.getFaculty().getId();
-        if (newFacultyId != null) {
-            Faculty newFaculty = facultyRepo.findById(newFacultyId)
-                .orElseThrow(() ->
-                    new MyEntityNotFoundException("faculty", "id", newFacultyId));
-            group.setFaculty(newFaculty);
-        } else {
-            throw new IllegalArgumentException("Faculty ID is null");
-        }
-    }
-
-    private void updateName(Group newGroup, Group group) {
-        String newGroupName = newGroup.getName();
-        if (newGroupName != null) {
-            group.setName(newGroupName);
-        }
     }
 
 }

@@ -4,13 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
-import ua.com.foxminded.university.domain.dto.CourseDto;
 import ua.com.foxminded.university.domain.dto.LessonDto;
-import ua.com.foxminded.university.domain.entity.Course;
 import ua.com.foxminded.university.domain.entity.Lesson;
-import ua.com.foxminded.university.domain.mapper.CourseDtoMapper;
 import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
-import ua.com.foxminded.university.ui.restcontroller.CourseRestController;
 import ua.com.foxminded.university.ui.restcontroller.LessonRestController;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -40,14 +36,16 @@ public class LessonDtoAssembler implements RepresentationModelAssembler<Lesson, 
     @Override
     public CollectionModel<LessonDto> toCollectionModel(Iterable<? extends Lesson> entities) {
 
-        CollectionModel<LessonDto> lessonDtos =
+        CollectionModel<LessonDto> modelLessons =
             RepresentationModelAssembler.super.toCollectionModel(entities);
 
-        lessonDtos.add(
+        modelLessons.add(
             LinkBuilder.LESSONS_LINK,
+            linkTo(methodOn(LessonRestController.class).getFilteredLessons(null))
+                .withRel("filtered lessons"),
             LinkBuilder.ROOT_LINK
         );
 
-        return lessonDtos;
+        return modelLessons;
     }
 }

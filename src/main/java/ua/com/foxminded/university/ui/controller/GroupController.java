@@ -2,23 +2,18 @@ package ua.com.foxminded.university.ui.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ua.com.foxminded.university.domain.dto.StudentDto;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
-import ua.com.foxminded.university.domain.service.interfaces.StudentService;
+import ua.com.foxminded.university.ui.restcontroller.link.GroupDtoAssembler;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.time.LocalDateTime;
 import java.util.List;
 
-import static ua.com.foxminded.university.ui.util.ResponseUtil.*;
+import static ua.com.foxminded.university.ui.util.ResponseUtil.defineRedirect;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -28,7 +23,7 @@ public class GroupController {
 
     private final GroupService groupService;
     private final FacultyService facultyService;
-    private final StudentService studentService;
+    private final GroupDtoAssembler assembler;
 
     @GetMapping
     public String showGroups(@RequestParam(required = false) Integer facultyId,
@@ -48,41 +43,14 @@ public class GroupController {
             log.debug("get all groups");
             groups = groupService.findAll();
         }
+
         log.debug("adding groups and selected faculty into model");
-        model.addAttribute("groups", groups);
+        model.addAttribute("groups", assembler.toCollectionModel(groups));
         model.addAttribute("facultyIdSelect", facultyId);
         model.addAttribute("newGroup", new Group());
         log.debug("The list of groups and selected faculty is loaded into the model");
         return "group";
     }
-
-//    @PostMapping
-//    public ResponseEntity<String> createGroup(@ModelAttribute @Valid Group group,
-//                                              HttpServletRequest request) {
-//        log.debug("Creating {}", group);
-//        groupService.create(group);
-//        log.debug("{} is created", group);
-//        return getResponseEntityWithRedirectUrl(request);
-//    }
-
-//    @GetMapping("/{id}")
-//    @ResponseBody
-//    public Group getGroup(@PathVariable("id") int groupId) {
-//        log.debug("Getting group id({})", groupId);
-//        Group group = groupService.findById(groupId);
-//        log.debug("Found {}", group);
-//        return group;
-//    }
-
-//    @PutMapping("/{id}")
-//    public ResponseEntity<String> updateGroup(@ModelAttribute @Valid Group group,
-//                                              @PathVariable("id") int groupId,
-//                                              HttpServletRequest request) {
-//        log.debug("Updating group id({})", groupId);
-//        groupService.update(groupId, group);
-//        log.debug("Group id({}) is updated", groupId);
-//        return getResponseEntityWithRedirectUrl(request);
-//    }
 
     @DeleteMapping("/{id}")
     public String deleteGroup(@PathVariable("id") int groupId,
@@ -92,22 +60,5 @@ public class GroupController {
         log.debug("Group id({}) is deleted", groupId);
         return defineRedirect(request);
     }
-
-//    @GetMapping("/{id}/students/free")
-//    @ResponseBody
-//    public List<StudentDto> getFreeStudentsFromGroup(@PathVariable("id") int groupId,
-//                                                     @RequestParam("time_start")
-//                                                     @DateTimeFormat(pattern = DATE_TIME_PATTERN)
-//                                                         LocalDateTime startTime,
-//                                                     @RequestParam("time_end")
-//                                                     @DateTimeFormat(pattern = DATE_TIME_PATTERN)
-//                                                         LocalDateTime endTime) {
-//        log.debug("Getting active students from group id({}) free from {} to {}",
-//            groupId, startTime, endTime);
-//        List<StudentDto> freeStudentsFromGroup =
-//            studentService.getFreeStudentsFromGroup(groupId, startTime, endTime);
-//        log.debug("Found {} students", freeStudentsFromGroup.size());
-//        return freeStudentsFromGroup;
-//    }
 
 }

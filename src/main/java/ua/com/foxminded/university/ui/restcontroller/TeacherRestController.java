@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ua.com.foxminded.university.domain.dto.LessonDto;
-import ua.com.foxminded.university.domain.dto.StudentDto;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
 import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Teacher;
@@ -24,6 +23,7 @@ import ua.com.foxminded.university.domain.service.interfaces.LessonService;
 import ua.com.foxminded.university.domain.service.interfaces.Service;
 import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
 import ua.com.foxminded.university.ui.restcontroller.link.LessonDtoAssembler;
+import ua.com.foxminded.university.ui.restcontroller.link.LinkBuilder;
 import ua.com.foxminded.university.ui.restcontroller.link.TeacherDtoAssembler;
 import ua.com.foxminded.university.ui.util.MappingConstants;
 import ua.com.foxminded.university.ui.util.QueryConstants;
@@ -34,6 +34,8 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import static ua.com.foxminded.university.ui.util.ResponseUtil.DATE_TIME_PATTERN;
 
 @Slf4j
@@ -54,7 +56,9 @@ public class TeacherRestController extends AbstractController<TeacherDto, Teache
     @ResponseStatus(HttpStatus.OK)
     public CollectionModel<TeacherDto> getTeachers() {
         log.debug("Getting all teachers");
-        return getAllInternal();
+        CollectionModel<TeacherDto> teachers = getAllInternal();
+        teachers.add(LinkBuilder.TEACHERS_SELF_LINK);
+        return teachers;
     }
 
     @GetMapping(params = {QueryConstants.PAGE, QueryConstants.SIZE, QueryConstants.SORT})
@@ -122,7 +126,10 @@ public class TeacherRestController extends AbstractController<TeacherDto, Teache
         List<Teacher> freeTeachers =
             teacherService.getFreeTeachersOnLessonTime(from, to);
         log.debug("Found {} active free teachers", freeTeachers.size());
-        return assembler.toCollectionModel(freeTeachers);
+        CollectionModel<TeacherDto> modelTeachers = assembler.toCollectionModel(freeTeachers);
+        modelTeachers.add(linkTo(methodOn(TeacherRestController.class)
+            .getFreeTeachers(from, to)).withSelfRel());
+        return modelTeachers;
     }
 
     @GetMapping("/{id}/timetable")
@@ -140,7 +147,14 @@ public class TeacherRestController extends AbstractController<TeacherDto, Teache
             .getAllForTeacherForTimePeriod(teacherId,
                 from.toLocalDateTime(), to.toLocalDateTime());
         log.debug("Found {} lessons", lessonsForTeacher.size());
-        return lessonAssembler.toCollectionModel(lessonsForTeacher);
+        CollectionModel<LessonDto> modelLessons
+            = lessonAssembler.toCollectionModel(lessonsForTeacher);
+        modelLessons.add(
+            linkTo(methodOn(TeacherRestController.class)
+                .getLessonsForTeacher(teacherId, from, to))
+                .withSelfRel()
+        );
+        return modelLessons;
     }
 
     @Override

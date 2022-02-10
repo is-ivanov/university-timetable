@@ -126,15 +126,15 @@ public class GroupRestController extends AbstractController<GroupDto, Group> {
         List<Student> freeStudentsFromGroup =
             studentService.getFreeStudentsFromGroup(groupId, from, to);
 
-        CollectionModel<StudentDto> studentDtos =
+        CollectionModel<StudentDto> modelStudents =
             studentAssembler.toCollectionModel(freeStudentsFromGroup);
 
-        studentDtos.add(
+        modelStudents.add(
             linkTo(methodOn(GroupRestController.class)
                 .getFreeStudentsFromGroup(groupId, from, to))
                 .withSelfRel()
         );
-        return studentDtos;
+        return modelStudents;
     }
 
     @Override

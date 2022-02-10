@@ -23,7 +23,6 @@ public class DepartmentDto extends AbstractDto<DepartmentDto> {
 
     @NotNull
     Integer facultyId;
-
     String facultyName;
 
 }

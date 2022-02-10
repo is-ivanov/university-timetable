@@ -121,14 +121,19 @@ public class FacultyRestController extends AbstractController<FacultyDto, Facult
     @ResponseStatus(HttpStatus.OK)
     public CollectionModel<GroupDto> getGroupsByFaculty(@PathVariable("id") int facultyId) {
         log.debug("Getting groups by faculty id({})", facultyId);
-        List<Group> groups = groupService.getAllByFacultyId(facultyId);
-        CollectionModel<GroupDto> groupDtos = groupAssembler.toCollectionModel(groups);
-        groupDtos.add(
+        List<Group> groups;
+        if(facultyId == 0) {
+            groups = groupService.findAll();
+        } else {
+            groups = groupService.getAllByFacultyId(facultyId);
+        }
+        CollectionModel<GroupDto> modelGroups = groupAssembler.toCollectionModel(groups);
+        modelGroups.add(
             linkTo(methodOn(FacultyRestController.class)
                 .getGroupsByFaculty(facultyId))
                 .withSelfRel()
         );
-        return groupDtos;
+        return modelGroups;
     }
 
     @GetMapping(MappingConstants.ID_GROUPS_FREE)
@@ -146,46 +151,51 @@ public class FacultyRestController extends AbstractController<FacultyDto, Facult
         List<Group> freeGroups = groupService
             .getFreeGroupsByFacultyOnLessonTime(facultyId, from, to);
 
-        CollectionModel<GroupDto> groupDtos = groupAssembler.toCollectionModel(freeGroups);
-        groupDtos.add(
+        CollectionModel<GroupDto> modelGroups = groupAssembler.toCollectionModel(freeGroups);
+        modelGroups.add(
             linkTo(methodOn(FacultyRestController.class)
                 .getFreeGroupsByFaculty(facultyId, from, to))
                 .withSelfRel()
         );
-        return groupDtos;
+        return modelGroups;
     }
 
     @GetMapping(MappingConstants.ID_DEPARTMENTS)
     public CollectionModel<DepartmentDto> getDepartmentsByFaculty(@PathVariable("id")
                                                                       int facultyId) {
         log.debug("Getting departments by facultyId ({})", facultyId);
-        List<Department> departmentsFromFaculty =
-            departmentService.getAllByFaculty(facultyId);
-        CollectionModel<DepartmentDto> departmentDtos =
+        List<Department> departmentsFromFaculty;
+        if (facultyId == 0) {
+            departmentsFromFaculty = departmentService.findAll();
+        } else {
+            departmentsFromFaculty =
+                departmentService.getAllByFaculty(facultyId);
+        }
+        CollectionModel<DepartmentDto> modelDepartments =
             departmentAssembler.toCollectionModel(departmentsFromFaculty);
 
-        departmentDtos.add(
+        modelDepartments.add(
             linkTo(methodOn(FacultyRestController.class)
                 .getDepartmentsByFaculty(facultyId))
                 .withSelfRel()
         );
-        return departmentDtos;
+        return modelDepartments;
     }
 
     @GetMapping(MappingConstants.ID_TEACHERS)
     public CollectionModel<TeacherDto> getTeachersByFaculty(@PathVariable("id")
                                                                 int facultyId) {
-        log.debug("Getting teacherDtos by faculty id({})", facultyId);
+        log.debug("Getting teachers by faculty id({})", facultyId);
         List<Teacher> teachersFromFaculty =
             teacherService.getAllByFaculty(facultyId);
-        CollectionModel<TeacherDto> teacherDtos = teacherAssembler.toCollectionModel(teachersFromFaculty);
+        CollectionModel<TeacherDto> modelTeachers = teacherAssembler.toCollectionModel(teachersFromFaculty);
 
-        teacherDtos.add(
+        modelTeachers.add(
             linkTo(methodOn(FacultyRestController.class)
                 .getTeachersByFaculty(facultyId))
                 .withSelfRel()
         );
-        return teacherDtos;
+        return modelTeachers;
     }
 
     @Override

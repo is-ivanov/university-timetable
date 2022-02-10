@@ -23,6 +23,7 @@ import ua.com.foxminded.university.domain.service.interfaces.LessonService;
 import ua.com.foxminded.university.domain.service.interfaces.RoomService;
 import ua.com.foxminded.university.domain.service.interfaces.Service;
 import ua.com.foxminded.university.ui.restcontroller.link.LessonDtoAssembler;
+import ua.com.foxminded.university.ui.restcontroller.link.LinkBuilder;
 import ua.com.foxminded.university.ui.restcontroller.link.RoomDtoAssembler;
 import ua.com.foxminded.university.ui.util.MappingConstants;
 import ua.com.foxminded.university.ui.util.QueryConstants;
@@ -33,6 +34,8 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import static ua.com.foxminded.university.ui.util.ResponseUtil.DATE_TIME_PATTERN;
 
 @Slf4j
@@ -53,7 +56,9 @@ public class RoomRestController extends AbstractController<RoomDto, Room> {
     @ResponseStatus(HttpStatus.OK)
     public CollectionModel<RoomDto> getRooms() {
         log.debug("Getting all rooms");
-        return getAllInternal();
+        CollectionModel<RoomDto> rooms = getAllInternal();
+        rooms.add(LinkBuilder.ROOMS_SELF_LINK);
+        return rooms;
     }
 
     @GetMapping(params = {QueryConstants.PAGE, QueryConstants.SIZE, QueryConstants.SORT})
@@ -119,7 +124,12 @@ public class RoomRestController extends AbstractController<RoomDto, Room> {
         log.debug("Getting rooms free from {} to {}", from, to);
         List<Room> freeRooms = roomService.getFreeRoomsOnLessonTime(from, to);
 
-        return assembler.toCollectionModel(freeRooms);
+        CollectionModel<RoomDto> modelFreeRooms = assembler.toCollectionModel(freeRooms);
+        modelFreeRooms.add(
+            linkTo(methodOn(RoomRestController.class).getFreeRooms(from, to))
+                .withSelfRel()
+        );
+        return modelFreeRooms;
     }
 
     @GetMapping(MappingConstants.ID_TIMETABLE)
@@ -133,10 +143,16 @@ public class RoomRestController extends AbstractController<RoomDto, Room> {
                                                             ZonedDateTime to) {
         log.debug("Getting lessons for room id({}) from {} to {}", roomId,
             from, to);
-        List<Lesson> lessonsForTeacher = lessonService
+        List<Lesson> lessonsForRoom = lessonService
             .getAllForRoomForTimePeriod(roomId,
                 from.toLocalDateTime(), to.toLocalDateTime());
-        return lessonAssembler.toCollectionModel(lessonsForTeacher);
+        CollectionModel<LessonDto> modelLessons =
+            lessonAssembler.toCollectionModel(lessonsForRoom);
+        modelLessons.add(
+            linkTo(methodOn(RoomRestController.class).getLessonsForRoom(roomId, from, to))
+                .withSelfRel()
+        );
+        return modelLessons;
     }
 
 

@@ -38,14 +38,14 @@ public class GroupDtoAssembler implements RepresentationModelAssembler<Group, Gr
     @Override
     public CollectionModel<GroupDto> toCollectionModel(Iterable<? extends Group> entities) {
 
-        CollectionModel<GroupDto> groupDtos =
+        CollectionModel<GroupDto> modelGroups =
             RepresentationModelAssembler.super.toCollectionModel(entities);
 
-        groupDtos.add(
+        modelGroups.add(
             LinkBuilder.GROUPS_LINK,
             LinkBuilder.ROOT_LINK
         );
 
-        return groupDtos;
+        return modelGroups;
     }
 }

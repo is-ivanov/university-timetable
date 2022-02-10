@@ -8,11 +8,9 @@ import java.util.List;
 
 public interface LessonService extends Service<Lesson> {
 
-//    void update(LessonDto lessonDto);
-
     Lesson addStudentToLesson(int lessonId, int studentId);
 
-    void addStudentsFromGroupToLesson(int groupId, int lessonId);
+    Lesson addStudentsFromGroupToLesson(int groupId, int lessonId);
 
     Iterable<Lesson> getAllWithFilter(LessonFilter filter);
 

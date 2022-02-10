@@ -2,7 +2,6 @@ package ua.com.foxminded.university.ui.restcontroller.link;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 import ua.com.foxminded.university.domain.dto.RoomDto;
@@ -27,7 +26,10 @@ public class RoomDtoAssembler implements RepresentationModelAssembler<Room, Room
 
         roomDto.add(
             linkTo(methodOn(RoomRestController.class).getRoom(room.getId())).withSelfRel(),
-            LinkBuilder.ROOMS_LINK
+            linkTo(methodOn(RoomRestController.class).getLessonsForRoom(room.getId(), null, null))
+                .withRel("lessons for room"),
+            LinkBuilder.ROOMS_LINK,
+            LinkBuilder.ROOT_LINK
         );
 
         return roomDto;
@@ -36,11 +38,14 @@ public class RoomDtoAssembler implements RepresentationModelAssembler<Room, Room
     @Override
     public CollectionModel<RoomDto> toCollectionModel(Iterable<? extends Room> entities) {
 
-        CollectionModel<RoomDto> roomDtos =
+        CollectionModel<RoomDto> modelRooms =
             RepresentationModelAssembler.super.toCollectionModel(entities);
 
-        roomDtos.add(LinkBuilder.ROOMS_SELF_LINK);
+        modelRooms.add(
+            LinkBuilder.ROOMS_LINK,
+            LinkBuilder.ROOT_LINK
+        );
 
-        return roomDtos;
+        return modelRooms;
     }
 }

@@ -15,40 +15,7 @@ import ua.com.foxminded.university.domain.service.interfaces.CourseService;
 @Transactional
 public class CourseServiceImpl extends AbstractService<Course> implements CourseService {
 
-    private static final String MESSAGE_COURSE_NOT_FOUND = "Course id(%d) not found";
-
     private final CourseRepository courseRepo;
-
-//    @Override
-//    public Course save(Course course) {
-//        log.debug("Saving {}", course);
-//        return courseRepo.save(course);
-//    }
-//
-//    @Override
-//    public Course getById(int id) {
-//        log.debug("Getting course by id({})", id);
-//        Course course = courseRepo.findById(id)
-//            .orElseThrow(() -> new EntityNotFoundException(
-//            String.format(MESSAGE_COURSE_NOT_FOUND, id)));
-//        log.debug("Found {}", course);
-//        return course;
-//    }
-//
-//    @Override
-//    public List<Course> getAll() {
-//        log.debug("Getting all courses");
-//        List<Course> courses = courseRepo.findAll();
-//        log.debug("Found {} courses", courses.size());
-//        return courses;
-//    }
-//
-//    @Override
-//    public void delete(int id) {
-//        log.debug("Deleting course id({})", id);
-//        courseRepo.deleteById(id);
-//        log.debug("Delete course id({})", id);
-//    }
 
     @Override
     protected JpaRepository<Course, Integer> getRepo() {
@@ -60,12 +27,4 @@ public class CourseServiceImpl extends AbstractService<Course> implements Course
         return Course.class.getSimpleName();
     }
 
-//    @Override
-//    public Page<Course> getAllSortedPaginated(Pageable pageable) {
-//        log.debug("Getting sorted page {} from list of courses", pageable.getPageNumber());
-//        Page<Course> pageCourses = courseRepo.findAll(pageable);
-//        log.debug("Found {} courses on page {}", pageCourses.getContent().size(),
-//            pageCourses.getNumber());
-//        return pageCourses;
-//    }
 }

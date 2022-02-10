@@ -24,6 +24,7 @@ public class GroupDto extends AbstractDto<GroupDto> {
     @NotNull
     boolean active;
 
+    @NotNull
     Integer facultyId;
     String facultyName;
 

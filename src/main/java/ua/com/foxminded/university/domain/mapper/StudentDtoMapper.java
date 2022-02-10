@@ -5,8 +5,6 @@ import org.mapstruct.Mapping;
 import ua.com.foxminded.university.domain.dto.StudentDto;
 import ua.com.foxminded.university.domain.entity.Student;
 
-import java.util.List;
-
 @Mapper
 public interface StudentDtoMapper extends DtoMapper<Student, StudentDto> {
 
@@ -21,11 +19,5 @@ public interface StudentDtoMapper extends DtoMapper<Student, StudentDto> {
     @Mapping(target = "group.id", source = "groupId")
     @Mapping(target = "group.name", source = "groupName")
     Student toEntity(StudentDto dto);
-
-//    @Override
-//    List<StudentDto> toDtos(Iterable<Student> entities);
-//
-//    @Override
-//    List<Student> toEntities(Iterable<StudentDto> dtos);
 
 }

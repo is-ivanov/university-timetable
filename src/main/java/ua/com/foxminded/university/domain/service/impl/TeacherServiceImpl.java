@@ -1,5 +1,6 @@
 package ua.com.foxminded.university.domain.service.impl;
 
+import com.google.common.base.Preconditions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.com.foxminded.university.dao.TeacherRepository;
 import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Teacher;
-import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
+import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
 import ua.com.foxminded.university.domain.util.EntityUtil;
 
@@ -19,43 +20,33 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 @Transactional
-public class TeacherServiceImpl  extends AbstractService<Teacher> implements TeacherService {
-
-    private static final String MESSAGE_TEACHER_NOT_FOUND = "Teacher id(%d) not found";
+public class TeacherServiceImpl extends AbstractService<Teacher> implements TeacherService {
 
     private final TeacherRepository teacherRepo;
-    private final TeacherDtoMapper teacherDtoMapper;
+    private final DepartmentService departmentService;
 
-//    @Override
-//    public Teacher save(Teacher teacher) {
-//        log.debug("Saving teacher {}", teacher);
-//        return teacherRepo.save(teacher);
-//    }
-//
-//    @Override
-//    public Teacher getById(int id) {
-//        log.debug("Getting teacher by id({})", id);
-//        Teacher teacher = teacherRepo.findById(id)
-//            .orElseThrow(() -> new EntityNotFoundException(
-//                String.format(MESSAGE_TEACHER_NOT_FOUND, id)));
-//        log.debug("Found {}", teacher);
-//        return teacher;
-//    }
-//
-//    @Override
-//    public List<Teacher> getAll() {
-//        log.debug("Getting all teachers");
-//        List<Teacher> teachers = teacherRepo.findAll();
-//        log.debug("Found {} teachers", teachers.size());
-//        return teachers;
-//    }
-//
-//    @Override
-//    public void delete(int id) {
-//        log.debug("Deleting teacher id({})", id);
-//        teacherRepo.deleteById(id);
-//        log.debug("Delete teacher id({})", id);
-//    }
+    @Override
+    public Teacher create(Teacher teacher) {
+        Integer departmentId = teacher.getDepartment().getId();
+        Department department = departmentService.findById(departmentId);
+        teacher.setDepartment(department);
+        return super.create(teacher);
+    }
+
+    @Override
+    public Teacher update(int id, Teacher teacher) {
+        Preconditions.checkNotNull(teacher);
+        Integer newDepartmentId = teacher.getDepartment().getId();
+        Department newDepartment = departmentService.findById(newDepartmentId);
+
+        Teacher existingTeacher = findById(id);
+        existingTeacher.setFirstName(teacher.getFirstName());
+        existingTeacher.setPatronymic(teacher.getPatronymic());
+        existingTeacher.setLastName(teacher.getLastName());
+        existingTeacher.setActive(teacher.isActive());
+        existingTeacher.setDepartment(newDepartment);
+        return teacherRepo.save(existingTeacher);
+    }
 
     @Override
     protected JpaRepository<Teacher, Integer> getRepo() {
@@ -115,21 +106,20 @@ public class TeacherServiceImpl  extends AbstractService<Teacher> implements Tea
 
     @Override
     public List<Teacher> getFreeTeachersOnLessonTime(LocalDateTime startTime,
-                                                        LocalDateTime endTime) {
+                                                     LocalDateTime endTime) {
         log.debug("Getting active teachers free from {} to {}", startTime, endTime);
         List<Teacher> busyTeachers =
             teacherRepo.findBusyTeachersOnTime(startTime, endTime);
-        List<Integer> busyTeacherIds = EntityUtil.extractIdsFromEntities(busyTeachers);
-        List<Teacher> freeTeachers =
-            teacherRepo.findByActiveIsTrueAndIdNotInOrderByLastNameAscFirstNameAsc(busyTeacherIds);
+        List<Teacher> freeTeachers;
+        if (busyTeachers.isEmpty()) {
+            freeTeachers = findAll();
+        } else {
+            List<Integer> busyTeacherIds = EntityUtil.extractIdsFromEntities(busyTeachers);
+            freeTeachers =
+                teacherRepo.findByActiveIsTrueAndIdNotInOrderByLastNameAscFirstNameAsc(busyTeacherIds);
+        }
         log.debug("Found {} active free teachers", freeTeachers.size());
         return freeTeachers;
     }
-
-//    private List<Integer> getIdsFromTeachers(List<Teacher> teachers) {
-//        return teachers.stream()
-//            .map(Teacher::getId)
-//            .collect(Collectors.toList());
-//    }
 
 }

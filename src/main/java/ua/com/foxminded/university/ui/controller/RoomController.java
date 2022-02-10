@@ -5,24 +5,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import ua.com.foxminded.university.domain.dto.LessonDto;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import ua.com.foxminded.university.domain.entity.Room;
-import ua.com.foxminded.university.domain.service.interfaces.LessonService;
 import ua.com.foxminded.university.domain.service.interfaces.RoomService;
 import ua.com.foxminded.university.ui.PageSequenceCreator;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
-import java.util.List;
 
-import static ua.com.foxminded.university.ui.util.ResponseUtil.*;
+import static ua.com.foxminded.university.ui.util.ResponseUtil.defineRedirect;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -33,7 +28,6 @@ public class RoomController {
     public static final String URI_ROOMS = "/rooms";
 
     private final RoomService roomService;
-    private final LessonService lessonService;
     private final PageSequenceCreator pageSequenceCreator;
 
     @GetMapping
@@ -52,48 +46,6 @@ public class RoomController {
         return "room";
     }
 
-//    @GetMapping("/{id}")
-//    @ResponseBody
-//    public Room showRoom(@PathVariable("id") int roomId) {
-//        log.debug("Getting room by id({})", roomId);
-//        Room room = roomService.findById(roomId);
-//        log.debug("Found {}", room);
-//        return room;
-//    }
-
-//    @GetMapping("/free")
-//    @ResponseBody
-//    public List<Room> getFreeRooms(@RequestParam("time_start")
-//                                   @DateTimeFormat(pattern = DATE_TIME_PATTERN)
-//                                       LocalDateTime startTime,
-//                                   @RequestParam("time_end")
-//                                   @DateTimeFormat(pattern = DATE_TIME_PATTERN)
-//                                       LocalDateTime endTime) {
-//        log.debug("Getting rooms free from {} to {}", startTime, endTime);
-//        List<Room> freeRooms = roomService.getFreeRoomsOnLessonTime(startTime, endTime);
-//        log.debug("Found {} free rooms", freeRooms.size());
-//        return freeRooms;
-//    }
-
-//    @PostMapping
-//    public ResponseEntity<String> createRoom(@ModelAttribute @Valid Room room,
-//                                             HttpServletRequest request) {
-//        log.debug("Creating {}", room);
-//        roomService.create(room);
-//        log.debug("{} is created", room);
-//        return getResponseEntityWithRedirectUrl(request);
-//    }
-//
-//    @PutMapping("/{id}")
-//    public ResponseEntity<String> updateRoom(@ModelAttribute @Valid Room room,
-//                                             @PathVariable("id") int roomId,
-//                                             HttpServletRequest request) {
-//        log.debug("Updating room id({})", roomId);
-////        roomService.save(room);
-//        log.debug("Room id({}) is updated", roomId);
-//        return getResponseEntityWithRedirectUrl(request);
-//    }
-//
     @DeleteMapping("/{id}")
     public String deleteRoom(@PathVariable("id") int roomId,
                              HttpServletRequest request) {
@@ -102,23 +54,5 @@ public class RoomController {
         log.debug("Room id({}) is deleted", roomId);
         return defineRedirect(request);
     }
-
-//    @GetMapping("/{id}/timetable")
-//    @ResponseBody
-//    public List<LessonDto> getLessonsForRoom(@PathVariable("id") int roomId,
-//                                             @RequestParam("start")
-//                                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-//                                                 ZonedDateTime startTime,
-//                                             @RequestParam("end")
-//                                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-//                                                 ZonedDateTime endTime) {
-//        log.debug("Getting lessons for room id({}) from {} to {}", roomId,
-//            startTime, endTime);
-//        List<LessonDto> lessonsForTeacher = lessonService
-//            .getAllForRoomForTimePeriod(roomId,
-//                startTime.toLocalDateTime(), endTime.toLocalDateTime());
-//        log.debug("Found {} lessons", lessonsForTeacher.size());
-//        return lessonsForTeacher;
-//    }
 
 }

@@ -111,14 +111,19 @@ public class DepartmentRestController extends AbstractController<DepartmentDto, 
     @GetMapping(MappingConstants.ID_TEACHERS)
     @ResponseStatus(HttpStatus.OK)
     public CollectionModel<TeacherDto> getTeachersByDepartment(@PathVariable("id") int departmentId) {
-        log.debug("Getting teacherDtos by department id({})", departmentId);
-        List<Teacher> teachers = teacherService.getAllByDepartment(departmentId);
-        CollectionModel<TeacherDto> teacherDtos = teacherAssembler.toCollectionModel(teachers);
-        teacherDtos.add(linkTo(methodOn(DepartmentRestController.class)
+        log.debug("Getting teachers by department id({})", departmentId);
+        List<Teacher> teachers;
+        if (departmentId == 0) {
+            teachers = teacherService.findAll();
+        } else {
+            teachers = teacherService.getAllByDepartment(departmentId);
+        }
+        CollectionModel<TeacherDto> modelTeachers = teacherAssembler.toCollectionModel(teachers);
+        modelTeachers.add(linkTo(methodOn(DepartmentRestController.class)
             .getTeachersByDepartment(departmentId))
             .withSelfRel()
         );
-        return teacherDtos;
+        return modelTeachers;
     }
 
     @Override

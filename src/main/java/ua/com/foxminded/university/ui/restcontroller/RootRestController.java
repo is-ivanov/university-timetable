@@ -26,7 +26,9 @@ public class RootRestController {
         model.add(LinkBuilder.FACULTIES_LINK);
         model.add(LinkBuilder.GROUPS_LINK);
         model.add(LinkBuilder.LESSONS_LINK);
-        model.add(linkTo(RoomRestController.class).withRel("rooms"));
+        model.add(LinkBuilder.ROOMS_LINK);
+        model.add(LinkBuilder.STUDENTS_LINK);
+        model.add(LinkBuilder.TEACHERS_LINK);
 
         return model;
     }

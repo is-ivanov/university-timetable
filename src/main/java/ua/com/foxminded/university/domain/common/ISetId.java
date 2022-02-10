@@ -1,4 +1,4 @@
-package ua.com.foxminded.university.common;
+package ua.com.foxminded.university.domain.common;
 
 public interface ISetId {
 

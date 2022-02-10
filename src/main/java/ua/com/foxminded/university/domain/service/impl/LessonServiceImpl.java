@@ -7,17 +7,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.com.foxminded.university.dao.*;
+import ua.com.foxminded.university.dao.LessonRepository;
+import ua.com.foxminded.university.dao.StudentRepository;
 import ua.com.foxminded.university.domain.entity.*;
 import ua.com.foxminded.university.domain.filter.LessonFilter;
-import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
-import ua.com.foxminded.university.domain.service.interfaces.GroupService;
-import ua.com.foxminded.university.domain.service.interfaces.LessonService;
-import ua.com.foxminded.university.domain.service.interfaces.StudentService;
-import ua.com.foxminded.university.exception.MyEntityNotFoundException;
+import ua.com.foxminded.university.domain.service.interfaces.*;
 import ua.com.foxminded.university.exception.ServiceException;
 
-import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,52 +27,22 @@ public class LessonServiceImpl extends AbstractService<Lesson> implements Lesson
 
     public static final String FOUND_LESSONS = "Found {} lessons";
     public static final String MESSAGE_FILTER_NOT_SELECT = "Select at least one filter";
-    public static final String MESSAGE_LESSON_NOT_FOUND = "Lesson id(%d) not found";
     public static final String MESSAGE_LESSON_OVERLAP = "Lesson id(%d) overlap with lesson id(%d)";
-    public static final String MESSAGE_TEACHER_NOT_AVAILABLE = "Teacher id(%d) is not available";
     public static final String MESSAGE_STUDENT_NOT_AVAILABLE = "Student id(%d) is not available";
-    public static final String MESSAGE_ROOM_NOT_AVAILABLE = "Room id(%d) is not available";
     public static final String MESSAGE_STUDENT_ALREADY_ADDED = "Student id(%d) already added to lesson id(%d)";
 
     private final LessonRepository lessonRepo;
-    private final LessonDtoMapper lessonDtoMapper;
     private final StudentRepository studentRepo;
     private final StudentService studentService;
-    private final CourseRepository courseRepo;
-    private final TeacherRepository teacherRepo;
-    private final RoomRepository roomRepo;
+    private final CourseService courseService;
     private final GroupService groupService;
+    private final TeacherService teacherService;
+    private final RoomService roomService;
 
-    //    @Override
-//    public Lesson save(Lesson lesson) throws ServiceException {
-//        log.debug("Check lesson id({}) before adding", lesson.getId());
-//        checkLesson(lesson);
-//        log.debug("Saving ({})", lesson);
-//        return lessonRepo.save(lesson);
-//    }
-//
-//    @Override
-//    public Lesson getById(int id) {
-//        log.debug("Getting lesson by id({})", id);
-//        Lesson lesson = getLessonById(id);
-//        log.debug("Found lesson [teacher {}, course {}, room {}]",
-//            lesson.getTeacher().getFullName(), lesson.getCourse().getName(),
-//            lesson.getRoom().getNumber());
-//        return lesson;
-//    }
-//
-//    @Override
-//    public List<Lesson> getAll() {
-//        log.debug("Getting all lessons");
-//        List<Lesson> lessons = lessonRepo.findAll();
-//        log.debug(FOUND_LESSONS, lessons.size());
-//        return lessons;
-//    }
-//
     @Override
     public Lesson update(int id, Lesson entity) {
         Preconditions.checkNotNull(entity);
-        Lesson existingLesson = getLessonById(entity.getId());
+        Lesson existingLesson = findById(entity.getId());
         updateCourse(entity.getCourse().getId(), existingLesson);
         updateTeacher(entity.getTeacher().getId(), existingLesson);
         updateRoom(entity.getRoom().getId(), existingLesson);
@@ -84,16 +50,6 @@ public class LessonServiceImpl extends AbstractService<Lesson> implements Lesson
         existingLesson.setTimeEnd(entity.getTimeEnd());
         return lessonRepo.save(existingLesson);
     }
-//
-//    @Override
-//    public void delete(int id) {
-//        log.debug("Start deleting lesson id({})", id);
-//        log.debug("Deleting all students from lesson id({})", id);
-//        lessonRepo.deleteAllStudentsFromLesson(id);
-//        log.debug("Deleting lesson id({})", id);
-//        lessonRepo.deleteById(id);
-//        log.debug("Lesson id({}) deleted successfully", id);
-//    }
 
     @Override
     protected JpaRepository<Lesson, Integer> getRepo() {
@@ -108,19 +64,17 @@ public class LessonServiceImpl extends AbstractService<Lesson> implements Lesson
     @Override
     public Lesson addStudentToLesson(int lessonId, int studentId) {
         log.debug("Getting lessonId({}) and studentId({})", lessonId, studentId);
-        Lesson lesson = getLessonById(lessonId);
+        Lesson lesson = findById(lessonId);
         checkAlreadyStudentAdded(lesson, studentId);
-        Student student = studentRepo.findById(studentId)
-            .orElseThrow(() -> new EntityNotFoundException(
-                String.format("Student id(%d) not found", studentId)));
+        Student student = studentService.findById(studentId);
         return checkAndSaveStudentToLesson(lesson, student);
     }
 
     @Override
-    public void addStudentsFromGroupToLesson(int groupId, int lessonId) {
+    public Lesson addStudentsFromGroupToLesson(int groupId, int lessonId) {
         groupService.findById(groupId);
         log.debug("Getting lesson by lessonId({})", lessonId);
-        Lesson lesson = getLessonById(lessonId);
+        Lesson lesson = findById(lessonId);
         log.debug("Getting active students from group id({})", groupId);
         List<Integer> busyStudentIds =
             studentService.findIdsOfBusyStudentsOnTime(lesson.getTimeStart(), lesson.getTimeEnd());
@@ -131,9 +85,8 @@ public class LessonServiceImpl extends AbstractService<Lesson> implements Lesson
         } else {
             freeStudentsFromGroup = studentRepo.findAllByActiveTrueAndGroup_Id(groupId);
         }
-
         freeStudentsFromGroup.forEach(student -> checkAndSaveStudentToLesson(lesson, student));
-        log.debug("{} students is added successfully", freeStudentsFromGroup.size());
+        return lesson;
     }
 
     @Override
@@ -184,7 +137,7 @@ public class LessonServiceImpl extends AbstractService<Lesson> implements Lesson
     public List<Lesson> getAllForRoomForTimePeriod(int roomId,
                                                    LocalDateTime startTime,
                                                    LocalDateTime endTime) {
-        log.debug("Getting lessons for room id({}) from {} to {})", roomId,
+        log.debug("Getting lessons for room id({}) from {} to {}", roomId,
             startTime, endTime);
         List<Lesson> lessonsForRoom =
             lessonRepo.findByRoom_IdAndTimeStartGreaterThanEqualAndTimeEndLessThanEqual(
@@ -199,8 +152,6 @@ public class LessonServiceImpl extends AbstractService<Lesson> implements Lesson
         Student student = studentRepo.getById(studentId);
         Lesson lesson = lessonRepo.getById(lessonId);
         lesson.removeStudent(student);
-        log.debug("Student id({}) successfully removed from lesson id({})",
-            studentId, lessonId);
     }
 
     @Override
@@ -211,15 +162,12 @@ public class LessonServiceImpl extends AbstractService<Lesson> implements Lesson
             Student student = studentRepo.getById(studentId);
             lesson.removeStudent(student);
         }
-        log.debug("Students id({}) successfully removed from lesson id({})",
-            studentIds, lessonId);
     }
 
     private Lesson checkAndSaveStudentToLesson(Lesson lesson, Student student) {
         if (student.isActive()) {
             checkStudent(student, lesson);
-//            lessonRepo.addStudentToLesson(lesson.getId(), student.getId());
-            lesson.getStudents().add(student);
+            lesson.addStudent(student);
             log.debug("Student id({}) added to lesson({}) successfully", student.getId(),
                 lesson.getId());
         } else {
@@ -227,17 +175,6 @@ public class LessonServiceImpl extends AbstractService<Lesson> implements Lesson
             throw new ServiceException(String.format("Student id(%d) is inactive", student.getId()));
         }
         return lessonRepo.save(lesson);
-    }
-
-    private void checkLesson(Lesson lesson) {
-        log.debug("Start checking the lesson id({})", lesson.getId());
-        Teacher teacher = lesson.getTeacher();
-        checkTeacher(teacher, lesson);
-        log.debug("Teacher id({}) is available", teacher.getId());
-        Room room = lesson.getRoom();
-        checkRoom(room, lesson);
-        log.debug("Room id({}) is available", room.getId());
-        log.debug("Lesson id({}) checking passed", lesson.getId());
     }
 
     private void checkAvailableLesson(Lesson checkedLesson, List<Lesson> lessons) {
@@ -262,7 +199,6 @@ public class LessonServiceImpl extends AbstractService<Lesson> implements Lesson
         LocalDateTime timeStartCheckedLesson = checkedLesson.getTimeStart();
         LocalDateTime timeEndCheckedLesson = checkedLesson.getTimeEnd();
         for (Lesson lesson : lessons) {
-//            if (!lesson.getId().equals(checkedLesson.getId())) {
             LocalDateTime timeStartLesson = lesson.getTimeStart();
             LocalDateTime timeEndLesson = lesson.getTimeEnd();
             boolean checkTimeStart = timeStartLesson.compareTo(timeEndCheckedLesson) < 1;
@@ -273,7 +209,6 @@ public class LessonServiceImpl extends AbstractService<Lesson> implements Lesson
                 throw new ServiceException(
                     String.format(MESSAGE_LESSON_OVERLAP, checkedLesson.getId(), lesson.getId()));
             }
-//            }
         }
         log.debug("Checking passed");
     }
@@ -287,25 +222,11 @@ public class LessonServiceImpl extends AbstractService<Lesson> implements Lesson
         }
     }
 
-    private void checkTeacher(Teacher teacher, Lesson lesson) {
-        log.debug("Checking the teacher id({}) for lesson id({})", teacher.getId(),
-            lesson.getId());
-        List<Lesson> lessonsFromThisTeacher = lessonRepo.findAllByTeacherId(teacher.getId());
-        try {
-            checkAvailableLesson(lesson, lessonsFromThisTeacher);
-        } catch (ServiceException e) {
-            log.warn("Teacher id({}) is not available for the lesson id({})",
-                teacher.getId(), lesson.getId());
-            throw new ServiceException(String.format(MESSAGE_TEACHER_NOT_AVAILABLE,
-                teacher.getId()), e);
-        }
-    }
-
     private void checkStudent(Student student, Lesson lesson) {
         log.debug("Checking the student id({}) for lesson id({})",
             student.getId(), lesson.getId());
         Set<Lesson> lessonsForStudent = student.getLessons();
-        if (lessonsForStudent != null) {
+        if (lessonsForStudent != null && !lessonsForStudent.isEmpty()) {
             List<Lesson> lessonsFromThisStudent = new ArrayList<>(lessonsForStudent);
             try {
                 checkAvailableLesson(lesson, lessonsFromThisStudent);
@@ -318,49 +239,26 @@ public class LessonServiceImpl extends AbstractService<Lesson> implements Lesson
         }
     }
 
-    private void checkRoom(Room room, Lesson lesson) {
-        log.debug("Checking the room id({}) for lesson id({})", room.getId(),
-            lesson.getId());
-        List<Lesson> lessonsFromThisRoom = lessonRepo.findAllByRoomId(room.getId());
-        try {
-            checkAvailableLesson(lesson, lessonsFromThisRoom);
-        } catch (ServiceException e) {
-            log.warn("Room id({}) is not available for lesson id({})",
-                room.getId(), lesson.getId());
-            throw new ServiceException(String.format(MESSAGE_ROOM_NOT_AVAILABLE,
-                room.getId()), e);
-        }
-    }
-
-    private Lesson getLessonById(int id) {
-        return lessonRepo.findById(id)
-            .orElseThrow(() -> new MyEntityNotFoundException("lesson", "id", id));
-    }
-
-
     private void updateCourse(Integer newCourseId, Lesson lesson) {
-        if (newCourseId != null && !lesson.getCourse().getId().equals(newCourseId)) {
-            Course newCourse = courseRepo.findById(newCourseId)
-                .orElseThrow(() ->
-                    new MyEntityNotFoundException("course", "id", newCourseId));
+        Integer existingCourseId = lesson.getCourse().getId();
+        if (newCourseId != null && !existingCourseId.equals(newCourseId)) {
+            Course newCourse = courseService.findById(newCourseId);
             lesson.setCourse(newCourse);
         }
     }
 
     private void updateTeacher(Integer newTeacherId, Lesson lesson) {
-        if (newTeacherId != null && !lesson.getTeacher().getId().equals(newTeacherId)) {
-            Teacher newTeacher = teacherRepo.findById(newTeacherId)
-                .orElseThrow(() ->
-                    new MyEntityNotFoundException("teacher", "id", newTeacherId));
+        Integer existingTeacherId = lesson.getTeacher().getId();
+        if (newTeacherId != null && !existingTeacherId.equals(newTeacherId)) {
+            Teacher newTeacher = teacherService.findById(newTeacherId);
             lesson.setTeacher(newTeacher);
         }
     }
 
     private void updateRoom(Integer newRoomId, Lesson lesson) {
-        if (newRoomId != null && !lesson.getRoom().getId().equals(newRoomId)) {
-            Room newRoom = roomRepo.findById(newRoomId)
-                .orElseThrow(() ->
-                    new MyEntityNotFoundException("room", "id", newRoomId));
+        Integer existingRoomId = lesson.getRoom().getId();
+        if (newRoomId != null && !existingRoomId.equals(newRoomId)) {
+            Room newRoom = roomService.findById(newRoomId);
             lesson.setRoom(newRoom);
         }
     }

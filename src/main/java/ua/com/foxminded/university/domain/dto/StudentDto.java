@@ -39,7 +39,7 @@ public class StudentDto extends AbstractDto<StudentDto> {
     String fullName;
 
     @NotNull
-    int groupId;
+    Integer groupId;
 
     String groupName;
 }

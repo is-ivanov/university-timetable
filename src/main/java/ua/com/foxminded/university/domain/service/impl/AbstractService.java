@@ -52,7 +52,6 @@ public abstract class AbstractService<T extends IEntity> implements Service<T> {
 
     @Override
     public void delete(int id) {
-
         try {
             getRepo().deleteById(id);
         } catch (EmptyResultDataAccessException e) {

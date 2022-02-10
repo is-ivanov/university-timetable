@@ -1,5 +1,7 @@
 package ua.com.foxminded.university.dao;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -11,9 +13,23 @@ import ua.com.foxminded.university.domain.entity.Student;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
+@SuppressWarnings("NullableProblems")
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Integer> {
+
+    @Override
+    @EntityGraph(attributePaths = {"group"})
+    List<Student> findAll();
+
+    @Override
+    @EntityGraph(attributePaths = {"group"})
+    Page<Student> findAll(Pageable pageable);
+
+    @Override
+    @EntityGraph(attributePaths = {"group"})
+    Optional<Student> findById(Integer integer);
 
     List<Student> findAllByGroup(Group group);
 

@@ -27,6 +27,9 @@ public class StudentDtoAssembler implements RepresentationModelAssembler<Student
         studentDto.add(
             linkTo(methodOn(StudentRestController.class).getStudent(student.getId()))
                 .withSelfRel(),
+            linkTo(methodOn(StudentRestController.class)
+                .getLessonsForStudent(student.getId(), null, null))
+                .withRel("lessons for student"),
             LinkBuilder.STUDENTS_LINK,
             LinkBuilder.ROOT_LINK
         );
@@ -36,14 +39,13 @@ public class StudentDtoAssembler implements RepresentationModelAssembler<Student
     @Override
     public CollectionModel<StudentDto> toCollectionModel(Iterable<? extends Student> entities) {
 
-        CollectionModel<StudentDto> studentDtos =
+        CollectionModel<StudentDto> modelStudents =
             RepresentationModelAssembler.super.toCollectionModel(entities);
 
-        studentDtos.add(
+        modelStudents.add(
             LinkBuilder.STUDENTS_LINK,
             LinkBuilder.ROOT_LINK
         );
-
-        return studentDtos;
+        return modelStudents;
     }
 }

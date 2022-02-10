@@ -4,13 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
-import ua.com.foxminded.university.domain.dto.DepartmentDto;
 import ua.com.foxminded.university.domain.dto.TeacherDto;
-import ua.com.foxminded.university.domain.entity.Department;
 import ua.com.foxminded.university.domain.entity.Teacher;
-import ua.com.foxminded.university.domain.mapper.DepartmentDtoMapper;
 import ua.com.foxminded.university.domain.mapper.TeacherDtoMapper;
-import ua.com.foxminded.university.ui.restcontroller.DepartmentRestController;
 import ua.com.foxminded.university.ui.restcontroller.TeacherRestController;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -29,8 +25,13 @@ public class TeacherDtoAssembler implements RepresentationModelAssembler<Teacher
         TeacherDto teacherDto = mapper.toDto(teacher);
 
         teacherDto.add(
-            linkTo(methodOn(TeacherRestController.class).getTeacher(teacher.getId())).withSelfRel(),
-            LinkBuilder.TEACHERS_LINK
+            linkTo(methodOn(TeacherRestController.class).getTeacher(teacher.getId()))
+                .withSelfRel(),
+            linkTo(methodOn(TeacherRestController.class)
+                .getLessonsForTeacher(teacher.getId(), null, null))
+                .withRel("lessons for teacher"),
+            LinkBuilder.TEACHERS_LINK,
+            LinkBuilder.ROOT_LINK
         );
         return teacherDto;
     }
@@ -38,13 +39,13 @@ public class TeacherDtoAssembler implements RepresentationModelAssembler<Teacher
     @Override
     public CollectionModel<TeacherDto> toCollectionModel(Iterable<? extends Teacher> entities) {
 
-        CollectionModel<TeacherDto> teacherDtos =
+        CollectionModel<TeacherDto> modelTeachers =
             RepresentationModelAssembler.super.toCollectionModel(entities);
-        teacherDtos.add(
+
+        modelTeachers.add(
             LinkBuilder.TEACHERS_LINK,
             LinkBuilder.ROOT_LINK
         );
-
-        return teacherDtos;
+        return modelTeachers;
     }
 }

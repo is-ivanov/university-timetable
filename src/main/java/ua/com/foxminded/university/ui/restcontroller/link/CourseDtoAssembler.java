@@ -37,13 +37,13 @@ public class CourseDtoAssembler implements RepresentationModelAssembler<Course, 
     @Override
     public CollectionModel<CourseDto> toCollectionModel(Iterable<? extends Course> entities) {
 
-        CollectionModel<CourseDto> courseDtos =
+        CollectionModel<CourseDto> modelCourses =
             RepresentationModelAssembler.super.toCollectionModel(entities);
-        courseDtos.add(
+        modelCourses.add(
             LinkBuilder.COURSES_SELF_LINK,
             LinkBuilder.ROOT_LINK
         );
 
-        return courseDtos;
+        return modelCourses;
     }
 }

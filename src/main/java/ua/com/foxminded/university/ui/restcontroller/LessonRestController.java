@@ -1,6 +1,5 @@
 package ua.com.foxminded.university.ui.restcontroller;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +26,9 @@ import ua.com.foxminded.university.ui.util.QueryConstants;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -84,7 +86,13 @@ public class LessonRestController extends AbstractController<LessonDto, Lesson> 
         log.debug("Get filtered lessons");
         Iterable<Lesson> filteredLessons =
             lessonService.getAllWithFilter(lessonFilter);
-        return assembler.toCollectionModel(filteredLessons);
+        CollectionModel<LessonDto> modelFilteredLessons =
+            assembler.toCollectionModel(filteredLessons);
+        modelFilteredLessons.add(
+            linkTo(methodOn(LessonRestController.class).getFilteredLessons(lessonFilter))
+                .withSelfRel()
+        );
+        return modelFilteredLessons;
     }
 
     @PostMapping
@@ -114,7 +122,7 @@ public class LessonRestController extends AbstractController<LessonDto, Lesson> 
     @PutMapping(MappingConstants.ID_STUDENTS_STUDENT_ID)
     @ResponseStatus(HttpStatus.OK)
     public LessonDto addStudentToLesson(@PathVariable("id") int lessonId,
-                                   @PathVariable int studentId) {
+                                        @PathVariable int studentId) {
         log.debug("Adding student id({}) to lesson id({})", studentId, lessonId);
         Lesson lesson = lessonService.addStudentToLesson(lessonId, studentId);
         return assembler.toModel(lesson);
@@ -122,24 +130,24 @@ public class LessonRestController extends AbstractController<LessonDto, Lesson> 
 
     @PutMapping(MappingConstants.ID_GROUPS_GROUP_ID)
     @ResponseStatus(HttpStatus.OK)
-    public void addStudentsFromGroupToLesson(@PathVariable("id") int lessonId, //TODO return LessonDto
-                                             @PathVariable int groupId) {
+    public LessonDto addStudentsFromGroupToLesson(@PathVariable("id") int lessonId,
+                                                  @PathVariable int groupId) {
         log.debug("Adding all students from group id({}) to lesson id({})",
             groupId, lessonId);
-        lessonService.addStudentsFromGroupToLesson(groupId, lessonId);
-        log.debug("Student from group id({}) is added to lesson id({})", groupId,
+        Lesson lesson = lessonService.addStudentsFromGroupToLesson(groupId, lessonId);
+        log.debug("Students from group id({}) is added to lesson id({})", groupId,
             lessonId);
+        return assembler.toModel(lesson);
     }
 
     @DeleteMapping(MappingConstants.ID_STUDENTS)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removeStudentFromLesson(@PathVariable("id") int lessonId,
                                         @RequestBody Integer[] studentIds) {
+        log.debug("Remove students id({}) from lesson id({})", studentIds, lessonId);
         if (studentIds.length == 1) {
-            log.debug("Remove student id({}) from lesson id({})", studentIds, lessonId);
             lessonService.removeStudentFromLesson(lessonId, studentIds[0]);
         } else {
-            log.debug("Remove students id({}) from lesson id({})", studentIds, lessonId);
             lessonService.removeStudentsFromLesson(lessonId, studentIds);
         }
         log.debug("Students id({}) successfully removed from lesson id({})",

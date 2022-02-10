@@ -1,24 +1,28 @@
 package ua.com.foxminded.university.domain.service.impl;
 
+import com.google.common.base.Preconditions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-import ua.com.foxminded.university.dao.GroupRepository;
 import ua.com.foxminded.university.dao.StudentRepository;
 import ua.com.foxminded.university.domain.dto.StudentDto;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.domain.mapper.StudentDtoMapper;
+import ua.com.foxminded.university.domain.service.interfaces.GroupService;
 import ua.com.foxminded.university.domain.service.interfaces.StudentService;
 import ua.com.foxminded.university.domain.util.EntityUtil;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -31,51 +35,42 @@ public class StudentServiceImpl extends AbstractService<Student> implements Stud
 
     private final StudentRepository studentRepo;
     private final StudentDtoMapper studentDtoMapper;
-    private final GroupRepository groupRepo;
-
+    private final GroupService groupService;
     private final Validator validator;
 
-//    @Override
-//    public Student save(Student student) {
-//        log.debug("Saving student {}", student);
-//        Integer groupId = student.getGroup().getId();
-//        Group group = groupRepo.findById(groupId)
-//            .orElseThrow(() ->
-//                new EntityNotFoundException(
-//                    String.format("Group id(%d) not found", groupId)));
-//        group.addStudent(student);
-//        Set<ConstraintViolation<Group>> violations = validator.validate(group);
-//        if (!violations.isEmpty()) {
-//            throw new ConstraintViolationException(violations);
-//        }
-//        return studentRepo.save(student);
-//    }
-//
-//    @Override
-//    public Student getById(int id) {
-//        log.debug("Getting student by id({})", id);
-//        Student student = studentRepo.findById(id)
-//            .orElseThrow(() -> new EntityNotFoundException(
-//                String.format("Student id(%d) not found", id)));
-//        log.debug("Found {}", student);
-//        return student;
-//    }
-//
-//    @Override
-//    public List<Student> getAll() {
-//        log.debug("Getting all students");
-//        List<Student> students = studentRepo.findAll();
-//        log.debug(LOG_FOUND_STUDENTS, students.size());
-//        return students;
-//
-//    }
-//
-//    @Override
-//    public void delete(int id) {
-//        log.debug("Deleting student id({})", id);
-//        studentRepo.deleteById(id);
-//        log.debug("Delete student id({})", id);
-//    }
+
+    @Override
+    public Student create(Student student) {
+        Integer groupId = student.getGroup().getId();
+        Group group = groupService.findById(groupId);
+        group.addStudent(student);
+        validateBeforeSaving(group);
+        return super.create(student);
+    }
+
+    @Override
+    public Student update(int id, Student student) {
+        Preconditions.checkNotNull(student);
+        Integer newGroupId = student.getGroup().getId();
+        Group group = groupService.findById(newGroupId);
+
+        Student existingStudent = findById(id);
+        existingStudent.setFirstName(student.getFirstName());
+        existingStudent.setPatronymic(student.getPatronymic());
+        existingStudent.setLastName(student.getLastName());
+        existingStudent.setActive(student.isActive());
+        group.addStudent(existingStudent);
+        validateBeforeSaving(group);
+        return studentRepo.save(existingStudent);
+    }
+
+
+    private void validateBeforeSaving(Group group) {
+        Set<ConstraintViolation<Group>> violations = validator.validate(group);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
+    }
 
     @Override
     protected JpaRepository<Student, Integer> getRepo() {
@@ -142,14 +137,6 @@ public class StudentServiceImpl extends AbstractService<Student> implements Stud
         List<Student> students = studentRepo.findAllByFaculty(faculty);
         log.debug("Found {} student from faculty id({})", students.size(), facultyId);
         return studentDtoMapper.toDtos(students);
-    }
-
-    @Override
-    public List<Student> getAllActiveStudents() {
-        log.debug("Getting all active students");
-        List<Student> students = studentRepo.findAllByActiveTrue();
-        log.debug(LOG_FOUND_STUDENTS, students.size());
-        return students;
     }
 
     @Override
