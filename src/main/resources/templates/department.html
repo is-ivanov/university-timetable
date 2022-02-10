@@ -86,7 +86,7 @@
        aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <form action="#" th:action="@{/departments}" method="post"
+        <form action="#" th:action="@{/api/departments}" method="post"
               th:object="${newDepartment}" data-validate="yes">
           <div class="modal-header">
             <h5 class="modal-title" id="newDepartmentModalLabel">New Department</h5>
@@ -103,7 +103,7 @@
             </div>
             <div class="mb-3">
               <label for="selectFacultyNewDepartment" class="form-label">Faculty</label>
-              <select name="faculty.id" id="selectFacultyNewDepartment"
+              <select name="facultyId" id="selectFacultyNewDepartment"
                       class="form-select validated-field" required>
                 <option value="" disabled selected>Please select faculty...
                 </option>
@@ -132,7 +132,8 @@
        tabindex="-1" aria-labelledby="editDepartmentModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <form id="formEdit" th:method="put" data-validate="yes">
+        <form id="formEdit" method="put" data-validate="yes">
+          <input type="hidden" name="id" id="editDepartmentId">
           <div class="modal-header">
             <h5 class="modal-title" id="editDepartmentModalLabel">Update Department</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -146,7 +147,7 @@
             </div>
             <div class="mb-3">
               <label for="editDepartmentFacultySelect" class="form-label">Faculty</label>
-              <select name="faculty.id" id="editDepartmentFacultySelect"
+              <select name="facultyId" id="editDepartmentFacultySelect"
                       class="form-select validated-field" required>
                 <option value="" disabled selected>Please select faculty...
                 </option>
@@ -212,12 +213,13 @@
   // EDIT MODAL
   $(function () {
     $('.editButton').on('click', function () {
-      let href = '/departments/' + $(this).attr('data-bs-id');
+      let href = '/api/departments/' + $(this).attr('data-bs-id');
       $('#formEdit').attr('action', href);
       $.get(href, function (department) {
         $('#editDepartmentNameInput').val(department.name);
         let facultyId = department.facultyId;
         $('#editDepartmentFacultySelect option[value=' + facultyId + ']').prop('selected', true);
+        $('#editDepartmentId').val(department.id);
       });
     });
   });

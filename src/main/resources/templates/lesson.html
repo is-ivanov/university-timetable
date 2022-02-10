@@ -11,8 +11,9 @@
     <h1>Lesson</h1>
     <!--    Lesson Properties-->
     <div class="col-8 border">
-      <form id="lesson properties" th:method="put" th:action="${'/lessons/' + lesson.id}"
+      <form id="lesson properties" method="put" th:action="${'/api/lessons/' + lesson.id}"
             data-validate="yes">
+        <input type="hidden" name="id" id="editLessonId" th:value="${lesson.id}">
         <fieldset id="main_properties" disabled>
           <input type="hidden" id="lessonId" th:value="${lesson.id}">
           <legend class="visually-hidden">lesson properties</legend>
@@ -406,7 +407,7 @@
     let time_end = $('#dateEndPickerLesson').children('input').val();
     let selectTeacher = $('#selectTeacherEditLesson');
     let selectRoom = $('#selectRoomEditLesson');
-    updateSelectTeacherFilteredByDate(time_start, time_start, selectTeacher);
+    updateSelectTeacherFilteredByDate(time_start, time_end, selectTeacher);
     updateSelectRoomFilteredByDate(time_start, time_end, selectRoom);
 
   }

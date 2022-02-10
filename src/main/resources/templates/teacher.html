@@ -127,7 +127,7 @@
        aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <form action="#" th:action="@{/teachers}" method="post"
+        <form action="#" th:action="@{/api/teachers}" method="post"
               th:object="${newTeacher}" data-validate="yes">
           <div class="modal-header">
             <h5 class="modal-title" id="newTeacherModalLabel">New Teacher</h5>
@@ -162,7 +162,7 @@
             <div class="col-auto form-check form-switch mb-3">
               <input class="form-check-input validated-field" type="checkbox"
                      id="switchActiveNewTeacher"
-                     th:field="*{active}">
+                     th:field="*{active}" value="true">
               <label class="form-check-label" for="switchActiveNewTeacher">Active teacher</label>
             </div>
 
@@ -196,7 +196,8 @@
        tabindex="-1" aria-labelledby="editTeacherModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <form id="formEdit" th:method="put" data-validate="yes">
+        <form id="formEdit" method="put" data-validate="yes">
+          <input type="hidden" name="id" id="editTeacherId">
           <div class="modal-header">
             <h5 class="modal-title" id="editTeacherModalLabel">Update Teacher</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -227,7 +228,7 @@
             <div class="col-auto form-check form-switch mb-3">
               <input class="form-check-input validated-field" type="checkbox"
                      id="switchActiveEditTeacher"
-                     name="active">
+                     name="active" value="true">
               <label class="form-check-label" for="switchActiveEditTeacher">Active teacher</label>
             </div>
 
@@ -330,7 +331,7 @@
   // EDIT MODAL
   $(function () {
     $('.editButton').on('click', function () {
-      let href = '/teachers/' + $(this).attr('data-bs-id');
+      let href = '/api/teachers/' + $(this).attr('data-bs-id');
       $('#formEdit').attr('action', href);
       $.get(href, function (teacher) {
         $('#editTeacherFirstNameInput').val(teacher.firstName);
@@ -339,6 +340,7 @@
         let departmentId = teacher.departmentId;
         $('#switchActiveEditTeacher').prop('checked', teacher.active);
         $('#editTeacherDepartmentSelect option[value=' + departmentId + ']').prop('selected', true);
+        $('#editTeacherId').val(teacher.id);
       });
     });
   });

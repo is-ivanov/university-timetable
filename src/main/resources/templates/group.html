@@ -94,7 +94,7 @@
        aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <form action="#" th:action="@{/groups}" method="post"
+        <form action="#" th:action="@{/api/groups}" method="post"
               th:object="${newGroup}" data-validate="yes">
           <div class="modal-header">
             <h5 class="modal-title" id="newGroupModalLabel">New Group</h5>
@@ -111,13 +111,13 @@
 
             <div class="col-auto form-check form-switch mb-3">
               <input class="form-check-input validated-field" type="checkbox"
-                     id="switchActiveNewGroup" th:field="*{active}">
+                     id="switchActiveNewGroup" th:field="*{active}" value="true">
               <label class="form-check-label" for="switchActiveNewGroup">Active group</label>
             </div>
 
             <div class="mb-3">
               <label for="selectFacultyNewGroup" class="form-label">Faculty</label>
-              <select name="faculty.id" id="selectFacultyNewGroup"
+              <select name="facultyId" id="selectFacultyNewGroup"
                       class="form-select validated-field" required>
                 <option value="" disabled selected>Please select faculty...
                 </option>
@@ -145,7 +145,8 @@
        tabindex="-1" aria-labelledby="editGroupModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <form id="formEdit" th:method="put" data-validate="yes">
+        <form id="formEdit" method="put" data-validate="yes">
+          <input type="hidden" name="id" id="editGroupId">
           <div class="modal-header">
             <h5 class="modal-title" id="editGroupModalLabel">Update Group</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -160,13 +161,13 @@
 
             <div class="col-auto form-check form-switch mb-3">
               <input class="form-check-input validated-field" type="checkbox"
-                     id="switchActiveEditGroup" name="active">
+                     id="switchActiveEditGroup" name="active" value="true">
               <label class="form-check-label" for="switchActiveEditGroup">Active group</label>
             </div>
 
             <div class="mb-3">
               <label for="editGroupFacultySelect" class="form-label">Faculty</label>
-              <select name="faculty.id" id="editGroupFacultySelect"
+              <select name="facultyId" id="editGroupFacultySelect"
                       class="form-select validated-field" required>
                 <option value="" disabled selected>Please select faculty...
                 </option>
@@ -244,13 +245,14 @@
   // EDIT MODAL
   $(function () {
     $('.editButton').on('click', function () {
-      let href = '/groups/' + $(this).attr('data-bs-id');
+      let href = '/api/groups/' + $(this).attr('data-bs-id');
       $('#formEdit').attr('action', href);
       $.get(href, function (group) {
         $('#editGroupNameInput').val(group.name);
         let facultyId = group.facultyId;
         $('#switchActiveEditGroup').prop('checked', group.active);
         $('#editGroupFacultySelect option[value=' + facultyId + ']').prop('selected', true);
+        $('#editGroupId').val(group.id);
       });
     });
   });

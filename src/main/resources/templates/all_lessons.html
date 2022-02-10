@@ -239,7 +239,7 @@
        aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <form action="#" th:action="@{/lessons}" method="post"
+        <form action="#" th:action="@{/api/lessons}" method="post"
               th:object="${newLesson}" data-validate="yes">
           <div class="modal-header">
             <h5 class="modal-title" id="newLessonModalLabel">New Lesson</h5>
@@ -338,7 +338,8 @@
        tabindex="-1" aria-labelledby="editLessonModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <form id="formEdit" th:method="put" data-validate="yes">
+        <form id="formEdit" method="put" data-validate="yes">
+          <input type="hidden" name="id" id="editLessonId">
           <div class="modal-header">
             <h5 class="modal-title" id="editLessonModalLabel">Update Lesson</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -563,7 +564,7 @@
   // EDIT MODAL
   $(function () {
     $('.editButton').on('click', function () {
-      let href = '/lessons/' + $(this).attr('data-bs-id');
+      let href = '/api/lessons/' + $(this).attr('data-bs-id');
       $('#formEdit').attr('action', href);
       $.get(href, function (lessonDto) {
         $('#selectCourseEditLesson option[value=' + lessonDto.courseId + ']').prop('selected', true);
@@ -571,6 +572,7 @@
         $('#selectRoomEditLesson option[value=' + lessonDto.roomId + ']').prop('selected', true);
         $('#dateStartPickerEditLesson').children('.datetimepicker-input').val(lessonDto.timeStart);
         $('#dateEndPickerEditLesson').children('.datetimepicker-input').val(lessonDto.timeEnd);
+        $('#editLessonId').val(lessonDto.id);
       });
     });
   });

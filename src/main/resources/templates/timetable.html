@@ -9,7 +9,7 @@
   <script th:inline="javascript">
     document.addEventListener('DOMContentLoaded', function () {
       let typeTimetable = [[${type}]];
-      let url = '/' + [[${type}]] + '/' + [[${object.id}]] + '/timetable';
+      let url = '/api/' + [[${type}]] + '/' + [[${object.id}]] + '/timetable';
       let calendarEl = document.getElementById('calendar');
       let calendar = new FullCalendar.Calendar(calendarEl, {
         aspectRatio: 1.5,
@@ -83,7 +83,9 @@
               } else {
                 lessonDescription = event.extendedProps.buildingAndRoom;
               }
-              $(el).find('.fc-list-event-title > a').append('&nbsp;&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;&nbsp;' + lessonDescription);
+              $(el).
+                find('.fc-list-event-title > a').
+                append('&nbsp;&nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp;&nbsp;' + lessonDescription);
             },
           },
         },
@@ -104,18 +106,21 @@
               start: info.startStr,
               end: info.endStr,
             },
-            function (lessons) {
+            function (json_response) {
               let events = [];
-              lessons.forEach(function (lesson) {
-                events.push({
-                  id: lesson.id,
-                  title: lesson.courseName,
-                  start: lesson.timeStart,
-                  end: lesson.timeEnd,
-                  teacher: lesson.teacherFullName,
-                  buildingAndRoom: lesson.buildingAndRoom,
+              if (json_response.hasOwnProperty('_embedded')) {
+                let lessons = json_response._embedded.lessons;
+                lessons.forEach(function (lesson) {
+                  events.push({
+                    id: lesson.id,
+                    title: lesson.courseName,
+                    start: lesson.timeStart,
+                    end: lesson.timeEnd,
+                    teacher: lesson.teacherFullName,
+                    buildingAndRoom: lesson.buildingAndRoom,
+                  });
                 });
-              });
+              }
               callback(events);
             });
         },

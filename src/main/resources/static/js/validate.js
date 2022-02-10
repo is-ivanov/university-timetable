@@ -9,8 +9,18 @@ function ajaxFormValidation (event) {
   const _form = $(event.target);
   const _formData = getFormData(_form);
   const _formMethod = _form.attr('method');
+
+  let json_form_data = JSON.stringify(_formData,
+    (key, value) => {
+      if (key.substring(0, 4) === 'time') {
+        return value.replace(' ', 'T');
+      }
+      return value;
+    },
+  );
+
   let settings = {
-    data: JSON.stringify(_formData),
+    data: json_form_data,
     processData: false,
     type: _formMethod,
     contentType: 'application/json; charset=UTF-8',
@@ -84,12 +94,11 @@ $(window).bind('load', function () {
   $('form[data-validate]').bind('submit', ajaxFormValidation);
 });
 
-
-function getFormData($form){
+function getFormData ($form) {
   let array = $form.serializeArray();
   let indexed_array = {};
 
-  $.map(array, function(n){
+  $.map(array, function (n) {
     indexed_array[n['name']] = n['value'];
   });
 

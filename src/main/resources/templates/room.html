@@ -87,7 +87,7 @@
        tabindex="-1" aria-labelledby="NewRoomModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <form action="#" th:action="@{/rooms}" method="post"
+        <form action="#" th:action="@{/api/rooms}" method="post"
               th:object="${newRoom}" data-validate="yes">
           <div class="modal-header">
             <h5 class="modal-title" id="newRoomModalLabel">New Room</h5>
@@ -126,7 +126,8 @@
        tabindex="-1" aria-labelledby="editRoomModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <form id="formEdit" th:method="put" data-validate="yes">
+        <form id="formEdit" method="put" data-validate="yes">
+          <input type="hidden" name="id" id="editRoomId">
           <div class="modal-header">
             <h5 class="modal-title" id="editRoomModalLabel">Update Room</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -198,11 +199,12 @@
   // EDIT MODAL
   $(function () {
     $('.editButton').on('click', function () {
-      let href = '/rooms/' + $(this).attr('data-bs-id');
+      let href = 'api/rooms/' + $(this).attr('data-bs-id');
       $('#formEdit').attr('action', href);
       $.get(href, function (room) {
         $('#editRoomBuildingInput').val(room.building);
         $('#editRoomNumberInput').val(room.number);
+        $('#editRoomId').val(room.id);
       });
     });
   });
