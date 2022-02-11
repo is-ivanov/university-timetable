@@ -136,7 +136,7 @@ class StudentDtoMapperTest {
             StudentDto studentDto = mapper.toDto(student);
 
             assertThat(studentDto.isActive(), is(false));
-            assertThat(studentDto.getGroupId(), is(equalTo(0)));
+            assertThat(studentDto.getGroupId(), nullValue());
             assertThat(studentDto.getGroupName(), nullValue());
         }
     }
