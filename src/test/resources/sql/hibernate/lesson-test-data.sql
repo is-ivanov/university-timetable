@@ -38,7 +38,7 @@ VALUES (12, 'Mike', 'Smith', 'Jr', TRUE, 2);
 INSERT INTO students (id, first_name, last_name,
                       patronymic,
                       active, group_id)
-VALUES (78, 'Alan', 'Johnson', 'III', TRUE, 2);
+VALUES (79, 'Alan', 'Johnson', 'III', TRUE, 2);
 
 INSERT INTO students (id, first_name, last_name,
                       patronymic,
@@ -84,7 +84,7 @@ VALUES (75, 7, 45, 62, '2021-06-13 14:00:00', '2021-06-13 15:30:00');
 INSERT INTO students_lessons (student_id, lesson_id)
 VALUES (12, 23);
 INSERT INTO students_lessons (student_id, lesson_id)
-VALUES (78, 23);
+VALUES (79, 23);
 INSERT INTO students_lessons (student_id, lesson_id)
 VALUES (3, 2);
 INSERT INTO students_lessons (student_id, lesson_id)

@@ -25,7 +25,7 @@ public final class TestObjects {
     public static final int TEACHER_ID2 = 78;
     public static final int TEACHER_ID3 = 12;
     public static final int STUDENT_ID1 = 12;
-    public static final int STUDENT_ID2 = 78;
+    public static final int STUDENT_ID2 = 79;
     public static final int STUDENT_ID3 = 3;
     public static final int COURSE_ID1 = 45;
     public static final int COURSE_ID2 = 13;
