@@ -10,6 +10,7 @@ import ua.com.foxminded.university.domain.dto.StudentDto;
 import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.springconfig.TestMapperConfig;
+import ua.com.foxminded.university.ui.restcontroller.link.StudentDtoAssembler;
 
 import java.util.List;
 import java.util.Set;
@@ -22,6 +23,9 @@ class LessonDtoMapperTest {
 
     @Autowired
     private LessonDtoMapper mapper;
+
+    @Autowired
+    private StudentDtoAssembler studentAssembler;
 
     @Nested
     @DisplayName("When we convert lesson to lessonDto")
