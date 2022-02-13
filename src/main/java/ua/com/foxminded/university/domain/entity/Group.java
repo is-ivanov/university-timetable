@@ -2,34 +2,30 @@ package ua.com.foxminded.university.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+@SuperBuilder
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
-@Builder
 @Table(name = "groups", indexes = {
     @Index(name = "idx_group_group_name", columnList = "group_name", unique = true),
     @Index(name = "idx_group_group_active", columnList = "group_active"),
     @Index(name = "idx_group_faculty_id", columnList = "faculty_id")
 })
-public class Group implements IEntity {
-
-    @Id
-    @GeneratedValue
-    @Column(name = "group_id")
-    private Integer id;
+public class Group extends GenericEntity {
 
     @Size(max = 15)
     @NotBlank(message = "{group.name.not.blank}")
@@ -54,14 +50,24 @@ public class Group implements IEntity {
     @JsonIgnore
     private Set<Student> students = new HashSet<>();
 
-    public Group(String name, Faculty faculty, boolean active) {
+    public Group(Integer id, LocalDateTime createdTimestamp,
+                 LocalDateTime updatedTimestamp, String name, Faculty faculty,
+                 boolean active, Set<Student> students) {
+        super(id, createdTimestamp, updatedTimestamp);
+        this.name = name;
+        this.faculty = faculty;
+        this.active = active;
+        this.students = students;
+    }
+
+    public Group(Integer id, String name, Faculty faculty, boolean active) {
+        super(id);
         this.name = name;
         this.faculty = faculty;
         this.active = active;
     }
 
-    public Group(Integer id, String name, Faculty faculty, boolean active) {
-        this.id = id;
+    public Group(String name, Faculty faculty, boolean active) {
         this.name = name;
         this.faculty = faculty;
         this.active = active;
@@ -83,7 +89,7 @@ public class Group implements IEntity {
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o))
             return false;
         Group group = (Group) o;
-        return id != null && Objects.equals(id, group.id);
+        return getId() != null && Objects.equals(getId(), group.getId());
     }
 
     @Override

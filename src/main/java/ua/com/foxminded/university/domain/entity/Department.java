@@ -1,30 +1,30 @@
 package ua.com.foxminded.university.domain.entity;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.Hibernate;
 import ua.com.foxminded.university.domain.validator.CapitalLetter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
+@SuperBuilder
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "departments", indexes = {
     @Index(name = "idx_department", columnList = "department_name"),
     @Index(name = "idx_department_faculty_id", columnList = "faculty_id")
 })
-public class Department implements IEntity {
-
-    @Id
-    @GeneratedValue
-    @Column(name = "department_id")
-    private Integer id;
+public class Department extends GenericEntity {
 
     @NotBlank(message = "{department.name.not.blank}")
     @CapitalLetter
@@ -38,7 +38,21 @@ public class Department implements IEntity {
     @ToString.Exclude
     private Faculty faculty;
 
+    public Department(Integer id, LocalDateTime createdTimestamp,
+                      LocalDateTime updatedTimestamp,
+                      String name, Faculty faculty) {
+        super(id, createdTimestamp, updatedTimestamp);
+        this.name = name;
+        this.faculty = faculty;
+    }
+
     public Department(String name, Faculty faculty) {
+        this.name = name;
+        this.faculty = faculty;
+    }
+
+    public Department(Integer id, String name, Faculty faculty) {
+        super(id);
         this.name = name;
         this.faculty = faculty;
     }
@@ -48,8 +62,8 @@ public class Department implements IEntity {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o))
             return false;
-        Department that = (Department) o;
-        return id != null && Objects.equals(id, that.id);
+        Department department = (Department) o;
+        return getId() != null && Objects.equals(getId(), department.getId());
     }
 
     @Override

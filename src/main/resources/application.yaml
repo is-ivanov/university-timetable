@@ -9,8 +9,8 @@ spring:
       ddl-auto: validate
     properties:
       hibernate:
-        format_sql: true
-        highlight_sql: true
+#        format_sql: true
+#        highlight_sql: true
     open-in-view: false
     database-platform: org.hibernate.dialect.PostgreSQL10Dialect
     show-sql: true
@@ -25,4 +25,5 @@ spring:
       INDENT_OUTPUT: true
 logging:
   level:
-    ua.com.foxminded.university: DEBUG
+    ua.com.foxminded.university: INFO
+#    org.hibernate.type.descriptor.sql.BasicBinder: TRACE

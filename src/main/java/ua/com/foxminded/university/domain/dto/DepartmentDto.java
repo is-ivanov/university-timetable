@@ -1,5 +1,6 @@
 package ua.com.foxminded.university.domain.dto;
 
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 import lombok.experimental.NonFinal;
@@ -11,11 +12,9 @@ import javax.validation.constraints.NotNull;
 
 @Value
 @NonFinal
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 @Relation(itemRelation = "department", collectionRelation = "departments")
-public class DepartmentDto extends AbstractDto<DepartmentDto> {
-
-    Integer id;
+public class DepartmentDto extends GenericDto {
 
     @NotBlank(message = "{department.name.not.blank}")
     @CapitalLetter
@@ -25,4 +24,11 @@ public class DepartmentDto extends AbstractDto<DepartmentDto> {
     Integer facultyId;
     String facultyName;
 
+    @Builder
+    public DepartmentDto(Integer id, String name, Integer facultyId, String facultyName) {
+        super(id);
+        this.name = name;
+        this.facultyId = facultyId;
+        this.facultyName = facultyName;
+    }
 }

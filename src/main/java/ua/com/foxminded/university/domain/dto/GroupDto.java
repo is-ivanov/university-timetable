@@ -11,11 +11,9 @@ import javax.validation.constraints.Size;
 
 @Value
 @NonFinal
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 @Relation(itemRelation = "group", collectionRelation = "groups")
-public class GroupDto extends AbstractDto<GroupDto> {
-
-    Integer id;
+public class GroupDto extends GenericDto {
 
     @Size(max = 15)
     @NotBlank(message = "{group.name.not.blank}")
@@ -28,4 +26,12 @@ public class GroupDto extends AbstractDto<GroupDto> {
     Integer facultyId;
     String facultyName;
 
+    public GroupDto(Integer id, String name, boolean active, Integer facultyId,
+                    String facultyName) {
+        super(id);
+        this.name = name;
+        this.active = active;
+        this.facultyId = facultyId;
+        this.facultyName = facultyName;
+    }
 }

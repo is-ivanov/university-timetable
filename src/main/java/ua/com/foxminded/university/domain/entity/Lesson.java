@@ -2,6 +2,7 @@ package ua.com.foxminded.university.domain.entity;
 
 import com.querydsl.core.annotations.QueryInit;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
@@ -11,12 +12,11 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+@SuperBuilder
 @Getter
 @Setter
 @ToString
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "lessons", indexes = {
     @Index(name = "idx_lesson_course_id", columnList = "course_id"),
@@ -34,12 +34,7 @@ import java.util.Set;
     },
     subgraphs = @NamedSubgraph(name = "group",
         attributeNodes = @NamedAttributeNode("group")))
-public class Lesson implements IEntity {
-
-    @Id
-    @GeneratedValue
-    @Column(name = "lesson_id")
-    private Integer id;
+public class Lesson extends GenericEntity {
 
     @NotNull
     @ToString.Exclude
@@ -104,7 +99,7 @@ public class Lesson implements IEntity {
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o))
             return false;
         Lesson lesson = (Lesson) o;
-        return id != null && Objects.equals(id, lesson.id);
+        return getId() != null && Objects.equals(getId(), lesson.getId());
     }
 
     @Override

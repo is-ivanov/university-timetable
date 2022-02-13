@@ -12,13 +12,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Value
-@Builder
 @NonFinal
 @EqualsAndHashCode(callSuper = false)
 @Relation(itemRelation = "student", collectionRelation = "students")
-public class StudentDto extends AbstractDto<StudentDto> {
-
-    Integer id;
+public class StudentDto extends GenericDto {
 
     @Size(max = 100)
     @NotBlank(message = "{person.name.not.blank}")
@@ -42,4 +39,18 @@ public class StudentDto extends AbstractDto<StudentDto> {
     Integer groupId;
 
     String groupName;
+
+    @Builder
+    public StudentDto(Integer id, String firstName, String patronymic,
+                      String lastName, boolean active, String fullName,
+                      Integer groupId, String groupName) {
+        super(id);
+        this.firstName = firstName;
+        this.patronymic = patronymic;
+        this.lastName = lastName;
+        this.active = active;
+        this.fullName = fullName;
+        this.groupId = groupId;
+        this.groupName = groupName;
+    }
 }

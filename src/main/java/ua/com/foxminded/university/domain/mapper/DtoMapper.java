@@ -1,11 +1,11 @@
 package ua.com.foxminded.university.domain.mapper;
 
-import ua.com.foxminded.university.domain.dto.AbstractDto;
-import ua.com.foxminded.university.domain.entity.IEntity;
+import ua.com.foxminded.university.domain.dto.GenericDto;
+import ua.com.foxminded.university.domain.entity.GenericEntity;
 
 import java.util.List;
 
-public interface DtoMapper<T extends IEntity, D extends AbstractDto<D>> {
+public interface DtoMapper<T extends GenericEntity, D extends GenericDto> {
 
     D toDto(T entity);
 

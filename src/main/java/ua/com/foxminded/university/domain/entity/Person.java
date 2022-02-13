@@ -19,13 +19,9 @@ import java.util.Objects;
 @NoArgsConstructor
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public abstract class Person implements IEntity {
+public abstract class Person extends GenericEntity {
 
     public static final String MASK_FULL_NAME = "%s, %.1s.%.1s.";
-
-    @Id
-    @GeneratedValue
-    private Integer id;
 
     @Size(max = 100)
     @NotBlank(message = "{person.name.not.blank}")
@@ -58,7 +54,7 @@ public abstract class Person implements IEntity {
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o))
             return false;
         Person person = (Person) o;
-        return id != null && Objects.equals(id, person.id);
+        return getId() != null && Objects.equals(getId(), person.getId());
     }
 
     @Override

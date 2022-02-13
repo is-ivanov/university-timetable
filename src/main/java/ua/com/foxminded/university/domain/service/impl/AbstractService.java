@@ -6,14 +6,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
-import ua.com.foxminded.university.domain.entity.IEntity;
+import ua.com.foxminded.university.domain.entity.GenericEntity;
 import ua.com.foxminded.university.domain.service.interfaces.Service;
 import ua.com.foxminded.university.exception.MyEntityNotFoundException;
 
 import java.util.List;
 
 @Transactional
-public abstract class AbstractService<T extends IEntity> implements Service<T> {
+public abstract class AbstractService<T extends GenericEntity> implements Service<T> {
 
     @Override
     @Transactional(readOnly = true)

@@ -29,6 +29,8 @@ public class LessonServiceImpl extends AbstractService<Lesson> implements Lesson
     public static final String MESSAGE_FILTER_NOT_SELECT = "Select at least one filter";
     public static final String MESSAGE_LESSON_OVERLAP = "Lesson id(%d) overlap with lesson id(%d)";
     public static final String MESSAGE_STUDENT_NOT_AVAILABLE = "Student id(%d) is not available";
+    public static final String MESSAGE_TEACHER_NOT_AVAILABLE = "Teacher id(%d) is not available";
+    public static final String MESSAGE_ROOM_NOT_AVAILABLE = "Room id(%d) is not available";
     public static final String MESSAGE_STUDENT_ALREADY_ADDED = "Student id(%d) already added to lesson id(%d)";
 
     private final LessonRepository lessonRepo;
@@ -38,6 +40,12 @@ public class LessonServiceImpl extends AbstractService<Lesson> implements Lesson
     private final GroupService groupService;
     private final TeacherService teacherService;
     private final RoomService roomService;
+
+    @Override
+    public Lesson create(Lesson entity) {
+        checkLesson(entity);
+        return super.create(entity);
+    }
 
     @Override
     public Lesson update(int id, Lesson entity) {
@@ -177,6 +185,17 @@ public class LessonServiceImpl extends AbstractService<Lesson> implements Lesson
         return lessonRepo.save(lesson);
     }
 
+    private void checkLesson(Lesson lesson) {
+        log.debug("Start checking the lesson id({})", lesson.getId());
+        Teacher teacher = lesson.getTeacher();
+        checkTeacher(teacher, lesson);
+        log.debug("Teacher id({}) is available", teacher.getId());
+        Room room = lesson.getRoom();
+        checkRoom(room, lesson);
+        log.debug("Room id({}) is available", room.getId());
+        log.debug("Lesson id({}) checking passed", lesson.getId());
+    }
+
     private void checkAvailableLesson(Lesson checkedLesson, List<Lesson> lessons) {
         if (checkLessonsIsEmpty(lessons)) {
             return;
@@ -213,6 +232,20 @@ public class LessonServiceImpl extends AbstractService<Lesson> implements Lesson
         log.debug("Checking passed");
     }
 
+    private void checkTeacher(Teacher teacher, Lesson lesson) {
+        log.debug("Checking the teacher id({}) for lesson id({})", teacher.getId(),
+            lesson.getId());
+        List<Lesson> lessonsFromThisTeacher = lessonRepo.findAllByTeacherId(teacher.getId());
+        try {
+            checkAvailableLesson(lesson, lessonsFromThisTeacher);
+        } catch (ServiceException e) {
+            log.warn("Teacher id({}) is not available for the lesson id({})",
+                teacher.getId(), lesson.getId());
+            throw new ServiceException(String.format(MESSAGE_TEACHER_NOT_AVAILABLE,
+                teacher.getId()), e);
+        }
+    }
+
     private void checkAlreadyStudentAdded(Lesson lesson, int studentId) {
         boolean isExist = lesson.getStudents().stream()
             .anyMatch(student -> student.getId().equals(studentId));
@@ -236,6 +269,20 @@ public class LessonServiceImpl extends AbstractService<Lesson> implements Lesson
                 throw new ServiceException(String.format(MESSAGE_STUDENT_NOT_AVAILABLE,
                     student.getId()), e);
             }
+        }
+    }
+
+    private void checkRoom(Room room, Lesson lesson) {
+        log.debug("Checking the room id({}) for lesson id({})", room.getId(),
+            lesson.getId());
+        List<Lesson> lessonsFromThisRoom = lessonRepo.findAllByRoomId(room.getId());
+        try {
+            checkAvailableLesson(lesson, lessonsFromThisRoom);
+        } catch (ServiceException e) {
+            log.warn("Room id({}) is not available for lesson id({})",
+                room.getId(), lesson.getId());
+            throw new ServiceException(String.format(MESSAGE_ROOM_NOT_AVAILABLE,
+                room.getId()), e);
         }
     }
 
