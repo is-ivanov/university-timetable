@@ -8,15 +8,15 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ua.com.foxminded.university.dao.GroupRepository;
 import ua.com.foxminded.university.dao.StudentRepository;
 import ua.com.foxminded.university.domain.dto.StudentDto;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.domain.mapper.StudentDtoMapper;
+import ua.com.foxminded.university.domain.service.interfaces.GroupService;
+import ua.com.foxminded.university.exception.MyEntityNotFoundException;
 
-import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.util.HashSet;
@@ -25,7 +25,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static ua.com.foxminded.university.TestObjects.*;
@@ -33,13 +33,13 @@ import static ua.com.foxminded.university.TestObjects.*;
 @ExtendWith(MockitoExtension.class)
 class StudentServiceImplTest {
 
-    public static final String MESSAGE_STUDENT_NOT_FOUND = "Student id(78) not found";
+    public static final String MESSAGE_STUDENT_NOT_FOUND = "Student with id(79) not found";
 
     @Mock
     private StudentRepository studentRepoMock;
 
     @Mock
-    private GroupRepository groupRepoMock;
+    private GroupService groupServiceMock;
 
     @Mock
     private StudentDtoMapper mapperMock;
@@ -51,8 +51,8 @@ class StudentServiceImplTest {
     private StudentServiceImpl studentService;
 
     @Nested
-    @DisplayName("test 'save' method")
-    class SaveTest {
+    @DisplayName("test 'create' method")
+    class CreateTest {
 
         @Test
         @DisplayName("when validator return empty set without violations then method " +
@@ -63,13 +63,15 @@ class StudentServiceImplTest {
                 .lastName(LAST_NAME_FIRST_STUDENT)
                 .active(true)
                 .build();
-            Group groupInStudent = Group.builder().id(GROUP_ID1).build();
+            Group groupInStudent = Group.builder()
+                .id(GROUP_ID1)
+                .build();
             student.setGroup(groupInStudent);
 
             Group groupFromDb = createTestGroup();
             Set<ConstraintViolation<Group>> emptyViolations = new HashSet<>();
 
-            when(groupRepoMock.findById(GROUP_ID1)).thenReturn(Optional.of(groupFromDb));
+            when(groupServiceMock.findById(GROUP_ID1)).thenReturn(groupFromDb);
             when(validatorMock.validate(groupFromDb)).thenReturn(emptyViolations);
 
             studentService.create(student);
@@ -79,33 +81,29 @@ class StudentServiceImplTest {
     }
 
     @Test
-    @DisplayName("test 'getAll' when Repository return List students then method " +
+    @DisplayName("test 'findAll' when Repository return List students then method " +
         "should return this List")
-    void testGetAll_ReturnListStudents() {
+    void testFindAll_ReturnListStudents() {
         List<Student> testStudents = createTestStudents();
-        List<StudentDto> testStudentDtos = createTestStudentDtos(GROUP_ID1);
 
         when(studentRepoMock.findAll()).thenReturn(testStudents);
-        when(mapperMock.toDtos(testStudents)).thenReturn(testStudentDtos);
 
-        assertThat(studentService.findAll()).isEqualTo(testStudentDtos);
+        assertThat(studentService.findAll()).isEqualTo(testStudents);
     }
 
     @Nested
-    @DisplayName("test 'getById' method")
-    class GetByIdTest {
+    @DisplayName("test 'findById' method")
+    class FindByIdTest {
 
         @Test
         @DisplayName("when Repository return Optional with Student then method " +
             "should return this Student")
         void testReturnExpectedStudent() {
             Student testStudent = createTestStudent();
-            StudentDto testStudentDto = createTestStudentDto();
 
             when(studentRepoMock.findById(ID1)).thenReturn(Optional.of(testStudent));
-            when(mapperMock.toDto(testStudent)).thenReturn(testStudentDto);
 
-            assertThat(studentService.findById(ID1)).isEqualTo(testStudentDto);
+            assertThat(studentService.findById(ID1)).isEqualTo(testStudent);
         }
 
         @Test
@@ -113,10 +111,12 @@ class StudentServiceImplTest {
             "return empty Student")
         void testReturnEmptyStudent() {
             Optional<Student> optional = Optional.empty();
+
             when(studentRepoMock.findById(STUDENT_ID2)).thenReturn(optional);
-            EntityNotFoundException e = assertThrows(EntityNotFoundException.class,
-                () -> studentService.findById(STUDENT_ID2));
-            assertThat(e.getMessage()).isEqualTo(MESSAGE_STUDENT_NOT_FOUND);
+
+            assertThatThrownBy(() -> studentService.findById(STUDENT_ID2))
+                .isInstanceOf(MyEntityNotFoundException.class)
+                .hasMessage(MESSAGE_STUDENT_NOT_FOUND);
         }
     }
 
@@ -140,7 +140,7 @@ class StudentServiceImplTest {
             ArgumentCaptor<Student> captor =
                 ArgumentCaptor.forClass(Student.class);
             verify(studentRepoMock).save(captor.capture());
-            assertFalse(captor.getValue().isActive());
+            assertThat(captor.getValue().isActive()).isFalse();
         }
     }
 
@@ -163,7 +163,7 @@ class StudentServiceImplTest {
             ArgumentCaptor<Student> captor =
                 ArgumentCaptor.forClass(Student.class);
             verify(studentRepoMock).save(captor.capture());
-            assertTrue(captor.getValue().isActive());
+            assertThat(captor.getValue().isActive()).isTrue();
         }
     }
 
@@ -190,7 +190,7 @@ class StudentServiceImplTest {
             ArgumentCaptor<Student> captor =
                 ArgumentCaptor.forClass(Student.class);
             verify(studentRepoMock).save(captor.capture());
-            assertEquals(expectedGroup, captor.getValue().getGroup());
+            assertThat(captor.getValue().getGroup()).isEqualTo(expectedGroup);
         }
     }
 

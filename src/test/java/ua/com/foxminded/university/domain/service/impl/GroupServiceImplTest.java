@@ -10,13 +10,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.foxminded.university.dao.GroupRepository;
 import ua.com.foxminded.university.dao.StudentRepository;
-import ua.com.foxminded.university.domain.dto.GroupDto;
 import ua.com.foxminded.university.domain.entity.Faculty;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.domain.entity.Student;
-import ua.com.foxminded.university.domain.mapper.GroupDtoMapper;
+import ua.com.foxminded.university.exception.MyEntityNotFoundException;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -37,15 +35,13 @@ class GroupServiceImplTest {
     private GroupRepository groupRepositoryMock;
     @Mock
     private StudentRepository studentRepositoryMock;
-    @Mock
-    private GroupDtoMapper mapperMock;
 
     @InjectMocks
     private GroupServiceImpl groupService;
 
     @Test
-    @DisplayName("test 'save' when call add method then should call Repository once")
-    void testSave_CallDaoOnce() {
+    @DisplayName("test 'create' when call add method then should call Repository once")
+    void testCreate_CallDaoOnce() {
         Group group = new Group();
         groupService.create(group);
         verify(groupRepositoryMock).save(group);
@@ -60,12 +56,10 @@ class GroupServiceImplTest {
             "return this Group")
         void testReturnExpectedGroup() {
             Group group = createTestGroup();
-            GroupDto groupDto = createTestGroupDto();
 
             when(groupRepositoryMock.findById(ID1)).thenReturn(Optional.of(group));
-            when(mapperMock.toDto(group)).thenReturn(groupDto);
 
-            assertThat(groupService.findById(ID1)).isEqualTo(groupDto);
+            assertThat(groupService.findById(ID1)).isEqualTo(group);
         }
 
         @Test
@@ -75,8 +69,8 @@ class GroupServiceImplTest {
             when(groupRepositoryMock.findById(ID3)).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> groupService.findById(ID3))
-                .isInstanceOf(EntityNotFoundException.class)
-                    .hasMessage("Group id(3) not found");
+                .isInstanceOf(MyEntityNotFoundException.class)
+                    .hasMessage("Group with id(3) not found");
         }
     }
 
@@ -85,12 +79,10 @@ class GroupServiceImplTest {
         "should return this List")
     void testGetAll_ReturnListGroups() {
         List<Group> groups = createTestGroups();
-        List<GroupDto> groupDtos = createTestGroupDtos(FACULTY_ID1);
 
         when(groupRepositoryMock.findAll()).thenReturn(groups);
-        when(mapperMock.toDtos(groups)).thenReturn(groupDtos);
 
-        assertThat(groupService.findAll()).isEqualTo(groupDtos);
+        assertThat(groupService.findAll()).isEqualTo(groups);
     }
 
     @Test
@@ -190,12 +182,10 @@ class GroupServiceImplTest {
         "method should return this List")
     void testGetAllByFacultyId_ReturnListGroups() {
         List<Group> groups = createTestGroups();
-        List<GroupDto> groupDtos = createTestGroupDtos(FACULTY_ID1);
 
         when(groupRepositoryMock.findAllByFacultyId(FACULTY_ID1)).thenReturn(groups);
-        when(mapperMock.toDtos(groups)).thenReturn(groupDtos);
 
-        assertThat(groupService.getAllByFacultyId(FACULTY_ID1)).isEqualTo(groupDtos);
+        assertThat(groupService.getAllByFacultyId(FACULTY_ID1)).isEqualTo(groups);
 
     }
 }

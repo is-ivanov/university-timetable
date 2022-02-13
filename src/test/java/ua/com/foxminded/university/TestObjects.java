@@ -154,7 +154,13 @@ public final class TestObjects {
     }
 
     public static Group createTestGroup() {
-        return new Group(GROUP_ID1, NAME_FIRST_GROUP, createTestFaculty(), true);
+        return Group.builder()
+            .id(GROUP_ID1)
+            .name(NAME_FIRST_GROUP)
+            .faculty(createTestFaculty())
+            .active(true)
+            .students(new HashSet<>())
+            .build();
     }
 
     public static Group createTestSecondGroup() {

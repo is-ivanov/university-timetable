@@ -9,14 +9,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.foxminded.university.dao.CourseRepository;
 import ua.com.foxminded.university.domain.entity.Course;
+import ua.com.foxminded.university.exception.MyEntityNotFoundException;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -39,7 +39,7 @@ class CourseServiceImplTest {
     }
 
     @Test
-    @DisplayName("test 'save' when call add method then should call courseDao once")
+    @DisplayName("test 'create' when call add method then should call courseDao once")
     void testSave_CallDaoOnce() {
         Course course = new Course();
         courseService.create(course);
@@ -47,7 +47,7 @@ class CourseServiceImplTest {
     }
 
     @Nested
-    @DisplayName("test 'getById' method")
+    @DisplayName("test 'findById' method")
     class GetByIdTest {
 
         @Test
@@ -59,17 +59,17 @@ class CourseServiceImplTest {
             Optional<Course> optionalCourse = Optional.of(expectedCourse);
             when(courseRepoMock.findById(ID1))
                     .thenReturn(optionalCourse);
-            assertEquals(expectedCourse, courseService.findById(ID1));
+            assertThat(courseService.findById(ID1)).isEqualTo(expectedCourse);
         }
 
         @Test
         @DisplayName("when Repository return empty Optional then method should throw " +
-            "new EntityNotFoundException")
+            "new MyEntityNotFoundException")
         void testReturnEmptyCourse() {
             when(courseRepoMock.findById(ID1)).thenReturn(Optional.empty());
             assertThatThrownBy(() -> courseService.findById(ID1))
-                .isInstanceOf(EntityNotFoundException.class)
-                .hasMessageContaining("Course id(1) not found");
+                .isInstanceOf(MyEntityNotFoundException.class)
+                .hasMessageContaining("Course with id(1) not found");
         }
     }
 
@@ -84,7 +84,7 @@ class CourseServiceImplTest {
         expectedCourses.add(course1);
         expectedCourses.add(course2);
         when(courseRepoMock.findAll()).thenReturn(expectedCourses);
-        assertEquals(expectedCourses, courseService.findAll());
+        assertThat(courseService.findAll()).isEqualTo(expectedCourses);
     }
 
     @Test

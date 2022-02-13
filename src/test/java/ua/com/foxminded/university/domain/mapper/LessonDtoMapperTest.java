@@ -7,10 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import ua.com.foxminded.university.domain.dto.LessonDto;
 import ua.com.foxminded.university.domain.dto.StudentDto;
-import ua.com.foxminded.university.domain.entity.Lesson;
-import ua.com.foxminded.university.domain.entity.Student;
+import ua.com.foxminded.university.domain.entity.*;
 import ua.com.foxminded.university.springconfig.TestMapperConfig;
-import ua.com.foxminded.university.ui.restcontroller.link.StudentDtoAssembler;
 
 import java.util.List;
 import java.util.Set;
@@ -23,9 +21,6 @@ class LessonDtoMapperTest {
 
     @Autowired
     private LessonDtoMapper mapper;
-
-    @Autowired
-    private StudentDtoAssembler studentAssembler;
 
     @Nested
     @DisplayName("When we convert lesson to lessonDto")
@@ -70,13 +65,15 @@ class LessonDtoMapperTest {
 
             Lesson lesson = mapper.toEntity(lessonDto);
 
-            assertThat(lesson.getId()).isEqualTo(lessonDto.getId());
-            assertThat(lesson.getCourse().getId()).isEqualTo(lessonDto.getCourseId());
-            assertThat(lesson.getCourse().getName()).isEqualTo(lessonDto.getCourseName());
+            LessonAssert.assertThat(lesson)
+                .hasId(lessonDto.getId())
+                .hasTimeStart(lessonDto.getTimeStart())
+                .hasTimeEnd(lessonDto.getTimeEnd());
+            CourseAssert.assertThat(lesson.getCourse())
+                .hasId(lessonDto.getCourseId())
+                .hasName(lessonDto.getCourseName());
             assertThat(lesson.getTeacher().getId()).isEqualTo(lessonDto.getTeacherId());
             assertThat(lesson.getRoom().getId()).isEqualTo(lessonDto.getRoomId());
-            assertThat(lesson.getTimeStart()).isEqualTo(lessonDto.getTimeStart());
-            assertThat(lesson.getTimeEnd()).isEqualTo(lessonDto.getTimeEnd());
 
             Set<Student> students = lesson.getStudents();
             assertThat(students).hasSize(2);

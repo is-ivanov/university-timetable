@@ -7,8 +7,8 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.http.ResponseEntity;
-import ua.com.foxminded.university.domain.dto.AbstractDto;
-import ua.com.foxminded.university.domain.entity.IEntity;
+import ua.com.foxminded.university.domain.dto.GenericDto;
+import ua.com.foxminded.university.domain.entity.GenericEntity;
 import ua.com.foxminded.university.domain.mapper.DtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.Service;
 import ua.com.foxminded.university.exception.MyPageNotFoundException;
@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.List;
 
-public abstract class AbstractController<T extends AbstractDto<T>, D extends IEntity> {
+public abstract class AbstractController<T extends GenericDto, D extends GenericEntity> {
 
     protected CollectionModel<T> getAllInternal() {
         List<D> entities = getService().findAll();

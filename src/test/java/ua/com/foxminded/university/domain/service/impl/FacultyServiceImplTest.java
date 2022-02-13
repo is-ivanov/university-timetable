@@ -9,7 +9,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.foxminded.university.dao.FacultyRepository;
 import ua.com.foxminded.university.domain.entity.Faculty;
-import ua.com.foxminded.university.domain.mapper.FacultyDtoMapper;
 import ua.com.foxminded.university.exception.MyEntityNotFoundException;
 
 import java.util.ArrayList;
@@ -17,8 +16,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -34,23 +33,20 @@ class FacultyServiceImplTest {
     @Mock
     private FacultyRepository facultyRepoMock;
 
-    @Mock
-    private FacultyDtoMapper mapperMock;
-
     @InjectMocks
     private FacultyServiceImpl facultyService;
 
     @Test
-    @DisplayName("test 'save' when call add method then should call Repository once")
-    void testSave_CallDaoOnce() {
+    @DisplayName("test 'create' when call add method then should call Repository once")
+    void testCreate_CallDaoOnce() {
         Faculty faculty = new Faculty();
         facultyService.create(faculty);
         verify(facultyRepoMock).save(faculty);
     }
 
     @Nested
-    @DisplayName("test 'getById' method")
-    class GetByIdTest {
+    @DisplayName("test 'findById' method")
+    class FindByIdTest {
 
         @Test
         @DisplayName("when Repository return Optional with Faculty then method " +
@@ -62,24 +58,24 @@ class FacultyServiceImplTest {
 
             when(facultyRepoMock.findById(ID1))
                 .thenReturn(Optional.of(expectedFaculty));
-            assertEquals(expectedFaculty, facultyService.findById(ID1));
+            assertThat(facultyService.findById(ID1)).isEqualTo(expectedFaculty);
         }
 
         @Test
         @DisplayName("when Repository return empty Optional then method should throw" +
-            " new EntityNotFoundException")
+            " new MyEntityNotFoundException")
         void testReturnEmptyFaculty() {
             when(facultyRepoMock.findById(ID1)).thenReturn(Optional.empty());
             assertThatThrownBy(() -> facultyService.findById(ID1))
                 .isInstanceOf(MyEntityNotFoundException.class)
-                .hasMessageContaining("Faculty id(1) not found");
+                .hasMessageContaining("Faculty with id(1) not found");
         }
     }
 
     @Test
-    @DisplayName("test 'getAll' when Repository return List faculties then method " +
+    @DisplayName("test 'findAll' when Repository return List faculties then method " +
         "should return this List")
-    void testGetAll_ReturnListFaculties() {
+    void testFindAll_ReturnListFaculties() {
         Faculty faculty1 = new Faculty();
         faculty1.setId(1);
         Faculty faculty2 = new Faculty();
@@ -88,7 +84,7 @@ class FacultyServiceImplTest {
         expectedFaculties.add(faculty1);
         expectedFaculties.add(faculty2);
         when(facultyRepoMock.findAll()).thenReturn(expectedFaculties);
-        assertEquals(expectedFaculties, facultyService.findAll());
+        assertThat(facultyService.findAll()).isEqualTo(expectedFaculties);
     }
 
     @Test
@@ -110,6 +106,6 @@ class FacultyServiceImplTest {
         facultiesFromDao.add(firstFaculty);
         facultiesFromDao.add(secondFaculty);
         when(facultyRepoMock.findAllByOrderByNameAsc()).thenReturn(facultiesFromDao);
-        assertEquals(facultiesFromDao, facultyService.getAllSortedByNameAsc());
+        assertThat(facultyService.getAllSortedByNameAsc()).isEqualTo(facultiesFromDao);
     }
 }

@@ -4,21 +4,19 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.foxminded.university.dao.LessonRepository;
 import ua.com.foxminded.university.dao.StudentRepository;
-import ua.com.foxminded.university.domain.dto.LessonDto;
 import ua.com.foxminded.university.domain.entity.Lesson;
 import ua.com.foxminded.university.domain.entity.Room;
 import ua.com.foxminded.university.domain.entity.Student;
 import ua.com.foxminded.university.domain.entity.Teacher;
-import ua.com.foxminded.university.domain.mapper.LessonDtoMapper;
+import ua.com.foxminded.university.domain.service.interfaces.StudentService;
+import ua.com.foxminded.university.exception.MyEntityNotFoundException;
 import ua.com.foxminded.university.exception.ServiceException;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,8 +31,8 @@ class LessonServiceImplTest {
 
     private static final String MESSAGE_TEACHER_NOT_AVAILABLE = "Teacher id(7) is not available";
     private static final String MESSAGE_ROOM_NOT_AVAILABLE = "Room id(5) is not available";
-    private static final String MESSAGE_STUDENT_NOT_AVAILABLE = "Student id(78) is not available";
-    public static final String MESSAGE_STUDENT_IS_INACTIVE = "Student id(78) is inactive";
+    private static final String MESSAGE_STUDENT_NOT_AVAILABLE = "Student id(3) is not available";
+    public static final String MESSAGE_STUDENT_IS_INACTIVE = "Student id(3) is inactive";
 
     @Mock
     private LessonRepository lessonRepoMock;
@@ -43,22 +41,20 @@ class LessonServiceImplTest {
     private StudentRepository studentRepoMock;
 
     @Mock
-    private LessonDtoMapper mapperMock;
+    private StudentService studentServiceMock;
 
     @InjectMocks
     private LessonServiceImpl lessonService;
 
     @Test
-    @DisplayName("test 'getAll' when Repository return List lessons then method " +
+    @DisplayName("test 'findAll' when Repository return List lessons then method " +
         "should return this List")
-    void testGetAll_ReturnListLessons() {
+    void testFindAll_ReturnListLessons() {
         List<Lesson> lessons = createTestLessons();
-        List<LessonDto> lessonDtos = createTestLessonDtos();
 
         when(lessonRepoMock.findAll()).thenReturn(lessons);
-        when(mapperMock.toDtos(lessons)).thenReturn(lessonDtos);
 
-        assertThat(lessonService.findAll()).isEqualTo(lessonDtos);
+        assertThat(lessonService.findAll()).isEqualTo(lessons);
     }
 
 
@@ -66,41 +62,22 @@ class LessonServiceImplTest {
     @DisplayName("test 'delete' method")
     class DeleteTest {
         @Test
-        @DisplayName("when call delete method then should call " +
-            "lessonDao in Order")
+        @DisplayName("when call delete method then should call lessonDao ")
         void whenDeleteLesson_CallDaoInOrder() {
-            InOrder inOrder = inOrder(lessonRepoMock);
             int lessonId = anyInt();
 
             lessonService.delete(lessonId);
 
-            inOrder.verify(lessonRepoMock).deleteAllStudentsFromLesson(lessonId);
-            inOrder.verify(lessonRepoMock).deleteById(lessonId);
+            verify(lessonRepoMock).deleteById(lessonId);
         }
     }
 
     @Nested
-    @DisplayName("test 'delete lessonId' method")
-    class DeleteLessonIdTest {
-        @Test
-        @DisplayName("when call delete method then should call " +
-            "lessonDao in Order")
-        void whenDeleteLesson_CallDaoInOrder() {
-            InOrder inOrder = inOrder(lessonRepoMock);
-
-            lessonService.delete(ID1);
-
-            inOrder.verify(lessonRepoMock).deleteAllStudentsFromLesson(ID1);
-            inOrder.verify(lessonRepoMock).deleteById(ID1);
-        }
-    }
-
-    @Nested
-    @DisplayName("test 'save' method")
-    class SaveTest {
+    @DisplayName("test 'create' method")
+    class CreateTest {
 
         @Test
-        @DisplayName("when check is passed then should call lessonDao.add once")
+        @DisplayName("when check is passed then should call lessonDao.save once")
         void testAddCheckPassed_CallDaoOnce() {
             Lesson testLesson = createTestLesson(LESSON_ID1);
 
@@ -199,20 +176,18 @@ class LessonServiceImplTest {
     }
 
     @Nested
-    @DisplayName("test 'getById' method")
-    class GetByIdTest {
+    @DisplayName("test 'findById' method")
+    class FindByIdTest {
 
         @Test
         @DisplayName("when Repository return Optional with Lesson then method should" +
             " return this Lesson")
         void testReturnExpectedLesson() {
             Lesson lesson = createTestLesson(LESSON_ID1);
-            LessonDto lessonDto = createTestLessonDto(LESSON_ID1);
 
             when(lessonRepoMock.findById(anyInt())).thenReturn(Optional.of(lesson));
-            when(mapperMock.toDto(lesson)).thenReturn(lessonDto);
 
-            assertThat(lessonService.findById(anyInt())).isEqualTo(lessonDto);
+            assertThat(lessonService.findById(anyInt())).isEqualTo(lesson);
         }
 
         @Test
@@ -222,8 +197,8 @@ class LessonServiceImplTest {
             when(lessonRepoMock.findById(anyInt())).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> lessonService.findById(ID1))
-                .isInstanceOf(EntityNotFoundException.class)
-                .hasMessageContaining("Lesson id(1) not found");
+                .isInstanceOf(MyEntityNotFoundException.class)
+                .hasMessageContaining("Lesson with id(1) not found");
         }
     }
 
@@ -236,16 +211,16 @@ class LessonServiceImplTest {
         void testChecksTrue_CallDaoOnce() throws ServiceException {
             Lesson testLesson = createTestLesson(LESSON_ID1);
             Student student = Student.builder()
-                .id(STUDENT_ID2)
+                .id(STUDENT_ID3)
                 .active(true)
                 .build();
 
             when(lessonRepoMock.findById(LESSON_ID1)).thenReturn(Optional.of(testLesson));
-            when(studentRepoMock.findById(STUDENT_ID2)).thenReturn(Optional.of(student));
+            when(studentServiceMock.findById(STUDENT_ID3)).thenReturn(student);
 
-            lessonService.addStudentToLesson(LESSON_ID1, STUDENT_ID2);
+            lessonService.addStudentToLesson(LESSON_ID1, STUDENT_ID3);
 
-            verify(lessonRepoMock).addStudentToLesson(LESSON_ID1, STUDENT_ID2);
+            verify(lessonRepoMock).save(testLesson);
         }
 
         @Test
@@ -253,18 +228,15 @@ class LessonServiceImplTest {
         void whenAddedInactiveStudent_ThrowException() {
             Lesson testLesson = createTestLesson(LESSON_ID1);
             Student student = Student.builder()
-                .id(STUDENT_ID2)
+                .id(STUDENT_ID3)
                 .active(false)
                 .build();
 
             when(lessonRepoMock.findById(LESSON_ID1)).thenReturn(Optional.of(testLesson));
-            when(studentRepoMock.findById(STUDENT_ID2)).thenReturn(Optional.of(student));
-
-
-            verify(lessonRepoMock, never()).addStudentToLesson(LESSON_ID1, STUDENT_ID2);
+            when(studentServiceMock.findById(STUDENT_ID3)).thenReturn(student);
 
             assertThatThrownBy(() -> lessonService.addStudentToLesson(
-                LESSON_ID1, STUDENT_ID2))
+                LESSON_ID1, STUDENT_ID3))
                 .isInstanceOf(ServiceException.class)
                 .hasMessage(MESSAGE_STUDENT_IS_INACTIVE);
         }
@@ -284,16 +256,16 @@ class LessonServiceImplTest {
             lessonsThisStudent.add(anotherLessonAtSameTime);
 
             Student studentAdding = Student.builder()
-                .id(STUDENT_ID2)
+                .id(STUDENT_ID3)
                 .active(true)
                 .lessons(lessonsThisStudent)
                 .build();
 
             when(lessonRepoMock.findById(LESSON_ID1)).thenReturn(Optional.of(testLesson));
-            when(studentRepoMock.findById(STUDENT_ID2)).thenReturn(Optional.of(studentAdding));
+            when(studentServiceMock.findById(STUDENT_ID3)).thenReturn(studentAdding);
 
             assertThatThrownBy(() -> lessonService.addStudentToLesson(
-                LESSON_ID1, STUDENT_ID2))
+                LESSON_ID1, STUDENT_ID3))
                 .isInstanceOf(ServiceException.class)
                 .hasMessage(MESSAGE_STUDENT_NOT_AVAILABLE);
         }

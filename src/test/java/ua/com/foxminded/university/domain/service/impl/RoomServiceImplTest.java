@@ -9,14 +9,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.com.foxminded.university.dao.RoomRepository;
 import ua.com.foxminded.university.domain.entity.Room;
+import ua.com.foxminded.university.exception.MyEntityNotFoundException;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -47,8 +48,8 @@ class RoomServiceImplTest {
     }
 
     @Nested
-    @DisplayName("test 'getById' method")
-    class GetByIdTest {
+    @DisplayName("test 'findById' method")
+    class FindByIdTest {
 
 
         @Test
@@ -60,7 +61,7 @@ class RoomServiceImplTest {
             expectedRoom.setNumber(NUMBER_ROOM);
             expectedRoom.setBuilding(BUILDING);
             when(roomRepoMock.findById(ID1)).thenReturn(Optional.of(expectedRoom));
-            assertEquals(expectedRoom, roomService.findById(ID1));
+            assertThat(roomService.findById(ID1)).isEqualTo(expectedRoom);
         }
 
         @Test
@@ -69,8 +70,8 @@ class RoomServiceImplTest {
         void testReturnEmptyRoom() {
             when(roomRepoMock.findById(ID1)).thenReturn(Optional.empty());
             assertThatThrownBy(() -> roomService.findById(ID1))
-                .isInstanceOf(EntityNotFoundException.class)
-                .hasMessageContaining("Room id(1) not found");
+                .isInstanceOf(MyEntityNotFoundException.class)
+                .hasMessageContaining("Room with id(1) not found");
         }
     }
 
@@ -86,7 +87,7 @@ class RoomServiceImplTest {
         expectedRooms.add(room1);
         expectedRooms.add(room2);
         when(roomRepoMock.findAll()).thenReturn(expectedRooms);
-        assertEquals(expectedRooms, roomService.findAll());
+        assertThat(roomService.findAll()).isEqualTo(expectedRooms);
     }
 
 }
