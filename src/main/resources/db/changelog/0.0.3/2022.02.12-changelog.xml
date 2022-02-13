@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.7.xsd">
+
+    <changeSet id="20220212-1" author="ivan">
+        <renameColumn tableName="courses" oldColumnName="course_id"
+                      newColumnName="id"/>
+    </changeSet>
+    <changeSet id="20220212-2" author="ivan">
+        <addColumn tableName="courses">
+            <column name="created_timestamp" type="TIMESTAMP"/>
+        </addColumn>
+        <addColumn tableName="courses">
+            <column name="updated_timestamp" type="TIMESTAMP"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="20220112-3" author="ivan">
+        <renameColumn tableName="departments" oldColumnName="department_id"
+                      newColumnName="id"/>
+    </changeSet>
+    <changeSet id="20220212-4" author="ivan">
+        <addColumn tableName="departments">
+            <column name="created_timestamp" type="TIMESTAMP"/>
+        </addColumn>
+        <addColumn tableName="departments">
+            <column name="updated_timestamp" type="TIMESTAMP"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="20220112-5" author="ivan">
+        <renameColumn tableName="faculties" oldColumnName="faculty_id"
+                      newColumnName="id"/>
+    </changeSet>
+    <changeSet id="20220212-6" author="ivan">
+        <addColumn tableName="faculties">
+            <column name="created_timestamp" type="TIMESTAMP"/>
+        </addColumn>
+        <addColumn tableName="faculties">
+            <column name="updated_timestamp" type="TIMESTAMP"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="20220112-7" author="ivan">
+        <renameColumn tableName="groups" oldColumnName="group_id"
+                      newColumnName="id"/>
+    </changeSet>
+    <changeSet id="20220212-8" author="ivan">
+        <addColumn tableName="groups">
+            <column name="created_timestamp" type="TIMESTAMP"/>
+        </addColumn>
+        <addColumn tableName="groups">
+            <column name="updated_timestamp" type="TIMESTAMP"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="20220112-9" author="ivan">
+        <renameColumn tableName="lessons" oldColumnName="lesson_id"
+                      newColumnName="id"/>
+    </changeSet>
+    <changeSet id="20220212-10" author="ivan">
+        <addColumn tableName="lessons">
+            <column name="created_timestamp" type="TIMESTAMP"/>
+        </addColumn>
+        <addColumn tableName="lessons">
+            <column name="updated_timestamp" type="TIMESTAMP"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="20220112-11" author="ivan">
+        <renameColumn tableName="rooms" oldColumnName="room_id"
+                      newColumnName="id"/>
+    </changeSet>
+    <changeSet id="20220212-12" author="ivan">
+        <addColumn tableName="rooms">
+            <column name="created_timestamp" type="TIMESTAMP"/>
+        </addColumn>
+        <addColumn tableName="rooms">
+            <column name="updated_timestamp" type="TIMESTAMP"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="20220212-13" author="ivan">
+        <addColumn tableName="students">
+            <column name="created_timestamp" type="TIMESTAMP"/>
+        </addColumn>
+        <addColumn tableName="students">
+            <column name="updated_timestamp" type="TIMESTAMP"/>
+        </addColumn>
+    </changeSet>
+    <changeSet id="20220212-14" author="ivan">
+        <addColumn tableName="teachers">
+            <column name="created_timestamp" type="TIMESTAMP"/>
+        </addColumn>
+        <addColumn tableName="teachers">
+            <column name="updated_timestamp" type="TIMESTAMP"/>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>
