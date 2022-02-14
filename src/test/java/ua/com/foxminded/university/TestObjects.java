@@ -1,5 +1,8 @@
 package ua.com.foxminded.university;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
 import ua.com.foxminded.university.domain.dto.*;
@@ -95,9 +98,11 @@ public final class TestObjects {
     public static final LocalDateTime DATE_TO = LocalDateTime.of(2021, 9, 15, 23, 0);
     public static final String TEXT_DATE_TO = "2021-09-15 23:00";
     public static final String MESSAGE_FIRST_CAPITAL_LETTER = "The first letter must be capital letter";
-    public static final String COURSE1_SELF_LINK = "http://localhost:8080/api/courses/45";
-    public static final String COURSE2_SELF_LINK = "http://localhost:8080/api/courses/13";
-    public static final String COURSES_LINK = "http://localhost:8080/api/courses";
+    public static final String COURSE1_SELF_LINK = "http://localhost/api/courses/45";
+    public static final String COURSE2_SELF_LINK = "http://localhost/api/courses/13";
+    public static final String COURSES_LINK = "http://localhost/api/courses";
+    public static final String TYPE_APPLICATION_HAL_JSON = "application/hal+json";
+    public static final int TOTAL_ELEMENTS = 6;
 
 
     public static Faculty createTestFaculty() {
@@ -136,6 +141,10 @@ public final class TestObjects {
         Course course1 = new Course(COURSE_ID1, NAME_FIRST_COURSE);
         Course course2 = new Course(COURSE_ID2, NAME_SECOND_COURSE);
         return new ArrayList<>(Arrays.asList(course1, course2));
+    }
+
+    public static Page<Course> createTestPageCourse(Pageable pageable) {
+        return new PageImpl<>(createTestCourses(), pageable, TOTAL_ELEMENTS);
     }
 
     public static List<CourseDto> createTestCourseDtos() {
@@ -189,8 +198,8 @@ public final class TestObjects {
 
     public static List<GroupDto> createTestGroupDtos(int facultyId) {
         GroupDto group1 = new GroupDto(GROUP_ID1, NAME_FIRST_GROUP, true,
-            facultyId,NAME_FIRST_FACULTY);
-        GroupDto group2 = new GroupDto(GROUP_ID2, NAME_SECOND_GROUP,true,
+            facultyId, NAME_FIRST_FACULTY);
+        GroupDto group2 = new GroupDto(GROUP_ID2, NAME_SECOND_GROUP, true,
             facultyId, NAME_FIRST_FACULTY);
         return new ArrayList<>(Arrays.asList(group1, group2));
     }

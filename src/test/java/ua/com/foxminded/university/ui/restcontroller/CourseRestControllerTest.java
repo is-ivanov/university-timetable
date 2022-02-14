@@ -8,33 +8,30 @@ import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.hateoas.CollectionModel;
+import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import ua.com.foxminded.university.domain.dto.CourseDto;
 import ua.com.foxminded.university.domain.entity.Course;
-import ua.com.foxminded.university.domain.mapper.CourseDtoMapper;
 import ua.com.foxminded.university.domain.service.interfaces.CourseService;
-import ua.com.foxminded.university.ui.restcontroller.link.CourseDtoAssembler;
+import ua.com.foxminded.university.springconfig.TestMapperConfig;
 import ua.com.foxminded.university.ui.util.MappingConstants;
 
 import java.util.List;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ua.com.foxminded.university.TestObjects.*;
-import static ua.com.foxminded.university.domain.entity.Assertions.assertThat;
 
 @WebMvcTest(CourseRestController.class)
+@Import(TestMapperConfig.class)
 class CourseRestControllerTest {
-
-    public static final String APPLICATION_HAL_JSON = "application/hal+json";
 
     @Autowired
     private MockMvc mockMvc;
@@ -42,52 +39,36 @@ class CourseRestControllerTest {
     @MockBean
     private CourseService courseServiceMock;
 
-    @MockBean
-    private CourseDtoMapper mapperMock;
+//    @MockBean
+//    private CourseDtoMapper mapperMock;
 
-    @MockBean
-    private CourseDtoAssembler assemblerMock;
+//    @MockBean
+//    private CourseDtoAssembler assemblerMock;
 
-    @MockBean
-    private PagedResourcesAssembler<Course> pagedAssemblerMock;
-
-//    @Autowired
-//    private CourseRestController courseRestController;
+//    @MockBean
+//    private PagedResourcesAssembler<Course> pagedAssemblerMock;
 
     @Captor
     ArgumentCaptor<Course> courseCaptor;
-
-//    @BeforeEach
-//    void setUp() {
-//        mockMvc = MockMvcBuilders
-//            .standaloneSetup(courseRestController)
-//            .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
-//            .setControllerAdvice(new GlobalExceptionHandler())
-//            .build();
-//    }
 
     @Nested
     @DisplayName("test 'getCourses' method")
     class GetCoursesTest {
         @Test
-        @DisplayName("when service return list faculties then method return " +
-            "CollectionModel<FacultyDtos> with expected links")
-        void whenServiceReturnListFaculties_thenMethodReturnCollectionModel()
+        @DisplayName("when service return list courses then method return " +
+            "CollectionModel<CourseDto> with expected links")
+        void whenServiceReturnListCourses_MethodReturnCollectionModel()
             throws Exception {
 
             List<Course> testCourses = createTestCourses();
-            CollectionModel<CourseDto> testCourseDtos =
-                createTestModelCourseDtos();
 
             when(courseServiceMock.findAll()).thenReturn(testCourses);
-//            when(assemblerMock.toCollectionModel(testCourses))
-//                .thenReturn(testCourseDtos);
 
-            mockMvc.perform(MockMvcRequestBuilders.get(MappingConstants.API_COURSES))
+            mockMvc.perform(get(MappingConstants.API_COURSES))
                 .andDo(print())
                 .andExpectAll(
                     status().isOk(),
-                    content().contentType(APPLICATION_HAL_JSON),
+                    content().contentType(TYPE_APPLICATION_HAL_JSON),
                     jsonPath("$._embedded.courses", hasSize(2)),
                     jsonPath("$._embedded.courses[0].id", is(COURSE_ID1)),
                     jsonPath("$._embedded.courses[0].name", is(NAME_FIRST_COURSE)),
@@ -96,6 +77,45 @@ class CourseRestControllerTest {
                     jsonPath("$._embedded.courses[1].name", is(NAME_SECOND_COURSE)),
                     jsonPath("$._embedded.courses[1]._links.self.href", is(COURSE2_SELF_LINK)),
                     jsonPath("$._links.self.href", is(COURSES_LINK))
+                );
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'getCoursesPaginatedAndSorted' method")
+    class GetCoursesPaginatedAndSortedTest {
+        @Test
+        @DisplayName("\"when GET request with parameters page, size and sort then " +
+            "should use this parameters and return HAL+JSON PagedModel with expected links")
+        void whenServiceReturnPageCourseThenMethodReturnPagedModel() throws Exception {
+            int page = 3;
+            int size = 2;
+            String sort = "course_id,desc";
+            Pageable pageable = PageRequest.of(page, size,
+                Sort.by(Sort.Order.desc("course_id")));
+            Page<Course> coursePage = createTestPageCourse(pageable);
+
+            when(courseServiceMock.findAll(pageable)).thenReturn(coursePage);
+            String sefLink= COURSES_LINK + "?page=3&size=2&sort=course_id,desc";
+
+            mockMvc.perform(get(MappingConstants.API_COURSES)
+                .param("page", String.valueOf(page))
+                .param("size", String.valueOf(size))
+                .param("sort", sort))
+                .andDo(print())
+                .andExpectAll(
+                    status().isOk(),
+                    content().contentType(TYPE_APPLICATION_HAL_JSON),
+                    jsonPath("$._embedded.courses", hasSize(2)),
+                    jsonPath("$._embedded.courses[0].id", is(COURSE_ID1)),
+                    jsonPath("$._embedded.courses[0].name", is(NAME_FIRST_COURSE)),
+                    jsonPath("$._embedded.courses[0]._links.self.href", is(COURSE1_SELF_LINK)),
+                    jsonPath("$._embedded.courses[1].id", is(COURSE_ID2)),
+                    jsonPath("$._embedded.courses[1].name", is(NAME_SECOND_COURSE)),
+                    jsonPath("$._embedded.courses[1]._links.self.href", is(COURSE2_SELF_LINK)),
+                    jsonPath("$._links.self.href", is(sefLink)),
+                    jsonPath("$.page.size", is(size)),
+                    jsonPath("$.page.number", is(page))
                 );
         }
     }
