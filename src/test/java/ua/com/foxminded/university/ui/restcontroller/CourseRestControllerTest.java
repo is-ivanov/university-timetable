@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.com.foxminded.university.domain.entity.Course;
 import ua.com.foxminded.university.domain.service.interfaces.CourseService;
@@ -21,8 +22,10 @@ import ua.com.foxminded.university.ui.util.MappingConstants;
 
 import java.util.List;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -33,6 +36,7 @@ import static ua.com.foxminded.university.TestObjects.*;
 @Import(TestMapperConfig.class)
 class CourseRestControllerTest {
 
+    private static final String URI_COURSES_ID = "/courses/{id}";
     @Autowired
     private MockMvc mockMvc;
 
@@ -85,7 +89,7 @@ class CourseRestControllerTest {
     @DisplayName("test 'getCoursesPaginatedAndSorted' method")
     class GetCoursesPaginatedAndSortedTest {
         @Test
-        @DisplayName("\"when GET request with parameters page, size and sort then " +
+        @DisplayName("when GET request with parameters page, size and sort then " +
             "should use this parameters and return HAL+JSON PagedModel with expected links")
         void whenServiceReturnPageCourseThenMethodReturnPagedModel() throws Exception {
             int page = 3;
@@ -96,12 +100,10 @@ class CourseRestControllerTest {
             Page<Course> coursePage = createTestPageCourse(pageable);
 
             when(courseServiceMock.findAll(pageable)).thenReturn(coursePage);
-            String sefLink= COURSES_LINK + "?page=3&size=2&sort=course_id,desc";
+            String parameters = "?page=" + page + "&size=" + size + "&sort=" + sort;
+            String sefLink= COURSES_LINK + parameters;
 
-            mockMvc.perform(get(MappingConstants.API_COURSES)
-                .param("page", String.valueOf(page))
-                .param("size", String.valueOf(size))
-                .param("sort", sort))
+            mockMvc.perform(get(MappingConstants.API_COURSES + parameters))
                 .andDo(print())
                 .andExpectAll(
                     status().isOk(),
@@ -116,6 +118,30 @@ class CourseRestControllerTest {
                     jsonPath("$._links.self.href", is(sefLink)),
                     jsonPath("$.page.size", is(size)),
                     jsonPath("$.page.number", is(page))
+                );
+        }
+    }
+
+        @Nested
+    @DisplayName("test 'getCourse' method")
+    class GetCourseTest {
+
+        @Test
+        @DisplayName("when GET request with @PathParameter 'id' then should return " +
+            "JSON with expected course")
+        void getRequestWithId() throws Exception {
+            int courseId = anyInt();
+            Course expectedCourse = new Course(courseId, NAME_FIRST_COURSE);
+
+            when(courseServiceMock.findById(courseId)).thenReturn(expectedCourse);
+
+            mockMvc.perform(get(URI_COURSES_ID, courseId))
+                .andDo(print())
+                .andExpectAll(
+                    status().isOk(),
+                    content().contentType(MediaType.APPLICATION_JSON),
+                    content().string(containsString(String.valueOf(courseId))),
+                    content().string(containsString(NAME_FIRST_COURSE))
                 );
         }
     }
@@ -154,29 +180,7 @@ class CourseRestControllerTest {
 //        }
 //    }
 
-//    @Nested
-//    @DisplayName("test 'getCourse' method")
-//    class GetCourseTest {
-//
-//        @Test
-//        @DisplayName("when GET request with @PathParameter 'id' then should return " +
-//            "JSON with expected course")
-//        void getRequestWithId() throws Exception {
-//            int courseId = anyInt();
-//            Course expectedCourse = new Course(courseId, NAME_FIRST_COURSE);
-//
-//            when(courseServiceMock.findById(courseId)).thenReturn(expectedCourse);
-//
-//            mockMvc.perform(get(URI_COURSES_ID, courseId))
-//                .andDo(print())
-//                .andExpectAll(
-//                    status().isOk(),
-//                    content().contentType(MediaType.APPLICATION_JSON),
-//                    content().string(containsString(String.valueOf(courseId))),
-//                    content().string(containsString(NAME_FIRST_COURSE))
-//                );
-//        }
-//    }
+
 
 //    @Nested
 //    @DisplayName("test 'updateCourse' method")
