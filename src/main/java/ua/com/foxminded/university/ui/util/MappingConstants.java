@@ -18,6 +18,7 @@ public final class MappingConstants {
     public static final String TIMETABLE = "/timetable";
     public static final String FILTER = "/filter";
     public static final String API_COURSES = API + COURSES;
+    public static final String API_COURSES_ID = API + COURSES + ID;
     public static final String API_DEPARTMENTS = API + DEPARTMENTS;
     public static final String API_FACULTIES = API + FACULTIES;
     public static final String API_GROUPS = API + GROUPS;

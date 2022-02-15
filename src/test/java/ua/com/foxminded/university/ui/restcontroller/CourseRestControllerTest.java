@@ -31,12 +31,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ua.com.foxminded.university.TestObjects.*;
+import static ua.com.foxminded.university.ui.util.MappingConstants.API_COURSES;
+import static ua.com.foxminded.university.ui.util.MappingConstants.API_COURSES_ID;
 
 @WebMvcTest(CourseRestController.class)
 @Import(TestMapperConfig.class)
 class CourseRestControllerTest {
 
-    private static final String URI_COURSES_ID = "/courses/{id}";
+    private static final String URI_COURSES_ID = "/api/courses/{id}";
     @Autowired
     private MockMvc mockMvc;
 
@@ -68,7 +70,7 @@ class CourseRestControllerTest {
 
             when(courseServiceMock.findAll()).thenReturn(testCourses);
 
-            mockMvc.perform(get(MappingConstants.API_COURSES))
+            mockMvc.perform(get(API_COURSES))
                 .andDo(print())
                 .andExpectAll(
                     status().isOk(),
@@ -103,7 +105,7 @@ class CourseRestControllerTest {
             String parameters = "?page=" + page + "&size=" + size + "&sort=" + sort;
             String sefLink= COURSES_LINK + parameters;
 
-            mockMvc.perform(get(MappingConstants.API_COURSES + parameters))
+            mockMvc.perform(get(API_COURSES + parameters))
                 .andDo(print())
                 .andExpectAll(
                     status().isOk(),
@@ -130,18 +132,18 @@ class CourseRestControllerTest {
         @DisplayName("when GET request with @PathParameter 'id' then should return " +
             "JSON with expected course")
         void getRequestWithId() throws Exception {
-            int courseId = anyInt();
-            Course expectedCourse = new Course(courseId, NAME_FIRST_COURSE);
+            Course expectedCourse = createTestCourse();
 
-            when(courseServiceMock.findById(courseId)).thenReturn(expectedCourse);
+            when(courseServiceMock.findById(COURSE_ID1)).thenReturn(expectedCourse);
 
-            mockMvc.perform(get(URI_COURSES_ID, courseId))
+            mockMvc.perform(get(API_COURSES_ID, COURSE_ID1))
                 .andDo(print())
                 .andExpectAll(
                     status().isOk(),
-                    content().contentType(MediaType.APPLICATION_JSON),
-                    content().string(containsString(String.valueOf(courseId))),
-                    content().string(containsString(NAME_FIRST_COURSE))
+                    content().contentType(TYPE_APPLICATION_HAL_JSON),
+                    content().string(containsString(String.valueOf(COURSE_ID1))),
+                    content().string(containsString(NAME_FIRST_COURSE)),
+                    jsonPath("$._links.self.href", is(COURSE1_SELF_LINK))
                 );
         }
     }
