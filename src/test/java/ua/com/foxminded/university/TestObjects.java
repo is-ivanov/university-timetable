@@ -103,6 +103,7 @@ public final class TestObjects {
     public static final String COURSES_LINK = "http://localhost/api/courses";
     public static final String TYPE_APPLICATION_HAL_JSON = "application/hal+json";
     public static final int TOTAL_ELEMENTS = 6;
+    private static final String DEPARTMENTS_LINK = "http://localhost/api/departments";
 
 
     public static Faculty createTestFaculty() {
@@ -233,6 +234,13 @@ public final class TestObjects {
         DepartmentDto department2 = new DepartmentDto(DEPARTMENT_ID2,
             NAME_SECOND_DEPARTMENT, FACULTY_ID1, NAME_FIRST_FACULTY);
         return new ArrayList<>(Arrays.asList(department1, department2));
+    }
+
+    public static CollectionModel<DepartmentDto> createTestCollectionModelDepartments() {
+        List<DepartmentDto> testDepartmentDtos = createTestDepartmentDtos();
+        CollectionModel<DepartmentDto> model = CollectionModel.of(testDepartmentDtos);
+        model.add(Link.of(DEPARTMENTS_LINK).withSelfRel());
+        return model;
     }
 
     public static Student createTestStudent() {
