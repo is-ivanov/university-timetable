@@ -1,13 +1,125 @@
 package ua.com.foxminded.university.ui.restcontroller;
 
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.test.web.servlet.MockMvc;
+import ua.com.foxminded.university.domain.entity.Course;
+import ua.com.foxminded.university.domain.entity.Department;
+import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
+import ua.com.foxminded.university.domain.service.interfaces.TeacherService;
 import ua.com.foxminded.university.springconfig.TestMapperConfig;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.List;
+
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.core.Is.is;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static ua.com.foxminded.university.TestObjects.*;
+import static ua.com.foxminded.university.ui.util.MappingConstants.API_COURSES;
+import static ua.com.foxminded.university.ui.util.MappingConstants.API_DEPARTMENTS;
+
 @WebMvcTest(DepartmentRestController.class)
 @Import(TestMapperConfig.class)
 class DepartmentRestControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private DepartmentService departmentServiceMock;
+
+    @MockBean
+    private TeacherService teacherServiceMock;
+
+    @Nested
+    @DisplayName("test 'getDepartments' method")
+    class GetDepartmentsTest {
+        @Test
+        @DisplayName("when GET request without parameters and service return list " +
+            "departments then method return CollectionModel<DepartmentDto> with expected links")
+        void whenServiceReturnListDepartments_MethodReturnCollectionModel() throws Exception {
+
+            List<Department> testDepartments = createTestDepartments();
+
+            when(departmentServiceMock.findAll()).thenReturn(testDepartments);
+
+            mockMvc.perform(get(API_DEPARTMENTS))
+                .andDo(print())
+                .andExpectAll(
+                    status().isOk(),
+                    content().contentType(TYPE_APPLICATION_HAL_JSON),
+                    jsonPath("$._embedded.departments", hasSize(2)),
+                    jsonPath("$._embedded.departments[0].id",
+                        is(DEPARTMENT_ID1)),
+                    jsonPath("$._embedded.departments[0].name",
+                        is(NAME_FIRST_DEPARTMENT)),
+                    jsonPath("$._embedded.departments[0]._links.self.href",
+                        is(DEPARTMENT1_SELF_LINK)),
+                    jsonPath("$._embedded.departments[1].id",
+                        is(DEPARTMENT_ID2)),
+                    jsonPath("$._embedded.departments[1].name",
+                        is(NAME_SECOND_DEPARTMENT)),
+                    jsonPath("$._embedded.departments[1]._links.self.href",
+                        is(DEPARTMENT2_SELF_LINK)),
+                    jsonPath("$._links.self.href", is(DEPARTMENTS_LINK))
+                );
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'getDepartmentsPaginatedAndSorted' method")
+    class GetDepartmentsPaginatedAndSortedTest {
+        @Test
+        @DisplayName("when GET request with parameters page, size and sort then " +
+            "should use this parameters and return HAL+JSON PagedModel with expected links")
+        void whenServiceReturnPageCourseThenMethodReturnPagedModel() throws Exception {
+            int page = 3;
+            int size = 2;
+            String sort = "id,desc";
+            Pageable pageable = PageRequest.of(page, size,
+                Sort.by(Sort.Order.desc("id")));
+            Page<Department> departmentPage = createTestPageDepartment(pageable);
+
+            when(departmentServiceMock.findAll(pageable)).thenReturn(departmentPage);
+            String parameters = "?page=" + page + "&size=" + size + "&sort=" + sort;
+            String sefLink = DEPARTMENTS_LINK + parameters;
+
+            mockMvc.perform(get(API_DEPARTMENTS + parameters))
+                .andDo(print())
+                .andExpectAll(
+                    status().isOk(),
+                    content().contentType(TYPE_APPLICATION_HAL_JSON),
+                    jsonPath("$._embedded.departments", hasSize(2)),
+                    jsonPath("$._embedded.departments[0].id",
+                        is(DEPARTMENT_ID1)),
+                    jsonPath("$._embedded.departments[0].name",
+                        is(NAME_FIRST_DEPARTMENT)),
+                    jsonPath("$._embedded.departments[0]._links.self.href",
+                        is(DEPARTMENT1_SELF_LINK)),
+                    jsonPath("$._embedded.departments[1].id",
+                        is(DEPARTMENT_ID2)),
+                    jsonPath("$._embedded.departments[1].name",
+                        is(NAME_SECOND_DEPARTMENT)),
+                    jsonPath("$._embedded.departments[1]._links.self.href",
+                        is(DEPARTMENT2_SELF_LINK)),
+                    jsonPath("$._links.self.href", is(sefLink)),
+                    jsonPath("$.page.size", is(size)),
+                    jsonPath("$.page.number", is(page))
+                );
+        }
+    }
 
 //    @Nested
 //    @DisplayName("test 'createDepartment' method")

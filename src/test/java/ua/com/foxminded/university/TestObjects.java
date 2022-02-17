@@ -103,7 +103,9 @@ public final class TestObjects {
     public static final String COURSES_LINK = "http://localhost/api/courses";
     public static final String TYPE_APPLICATION_HAL_JSON = "application/hal+json";
     public static final int TOTAL_ELEMENTS = 6;
-    private static final String DEPARTMENTS_LINK = "http://localhost/api/departments";
+    public static final String DEPARTMENTS_LINK = "http://localhost/api/departments";
+    public static final String DEPARTMENT1_SELF_LINK = "http://localhost/api/departments/8";
+    public static final String DEPARTMENT2_SELF_LINK = "http://localhost/api/departments/54";
 
 
     public static Faculty createTestFaculty() {
@@ -146,6 +148,10 @@ public final class TestObjects {
 
     public static Page<Course> createTestPageCourse(Pageable pageable) {
         return new PageImpl<>(createTestCourses(), pageable, TOTAL_ELEMENTS);
+    }
+
+    public static Page<Department> createTestPageDepartment(Pageable pageable) {
+        return new PageImpl<>(createTestDepartments(), pageable, TOTAL_ELEMENTS);
     }
 
     public static List<CourseDto> createTestCourseDtos() {

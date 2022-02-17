@@ -42,6 +42,7 @@ class CourseRestControllerTest {
 
     @Captor
     ArgumentCaptor<Course> courseCaptor;
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -52,10 +53,9 @@ class CourseRestControllerTest {
     @DisplayName("test 'getCourses' method")
     class GetCoursesTest {
         @Test
-        @DisplayName("when service return list courses then method return " +
-            "CollectionModel<CourseDto> with expected links")
-        void whenServiceReturnListCourses_MethodReturnCollectionModel()
-            throws Exception {
+        @DisplayName("when GET request without parameters and service return list " +
+            "courses then method return CollectionModel<CourseDto> with expected links")
+        void whenServiceReturnListCourses_MethodReturnCollectionModel() throws Exception {
 
             List<Course> testCourses = createTestCourses();
 
@@ -87,9 +87,9 @@ class CourseRestControllerTest {
         void whenServiceReturnPageCourseThenMethodReturnPagedModel() throws Exception {
             int page = 3;
             int size = 2;
-            String sort = "course_id,desc";
+            String sort = "id,desc";
             Pageable pageable = PageRequest.of(page, size,
-                Sort.by(Sort.Order.desc("course_id")));
+                Sort.by(Sort.Order.desc("id")));
             Page<Course> coursePage = createTestPageCourse(pageable);
 
             when(courseServiceMock.findAll(pageable)).thenReturn(coursePage);
