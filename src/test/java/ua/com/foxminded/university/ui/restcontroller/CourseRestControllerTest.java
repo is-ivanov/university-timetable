@@ -16,18 +16,17 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.com.foxminded.university.domain.entity.Course;
+import ua.com.foxminded.university.domain.entity.CourseAssert;
 import ua.com.foxminded.university.domain.service.interfaces.CourseService;
 import ua.com.foxminded.university.springconfig.TestMapperConfig;
-import ua.com.foxminded.university.ui.util.MappingConstants;
 
 import java.util.List;
 
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ua.com.foxminded.university.TestObjects.*;
@@ -38,24 +37,16 @@ import static ua.com.foxminded.university.ui.util.MappingConstants.API_COURSES_I
 @Import(TestMapperConfig.class)
 class CourseRestControllerTest {
 
+    public static final String FAIL_COURSE_NAME = "fail course name";
     private static final String URI_COURSES_ID = "/api/courses/{id}";
+
+    @Captor
+    ArgumentCaptor<Course> courseCaptor;
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
     private CourseService courseServiceMock;
-
-//    @MockBean
-//    private CourseDtoMapper mapperMock;
-
-//    @MockBean
-//    private CourseDtoAssembler assemblerMock;
-
-//    @MockBean
-//    private PagedResourcesAssembler<Course> pagedAssemblerMock;
-
-    @Captor
-    ArgumentCaptor<Course> courseCaptor;
 
     @Nested
     @DisplayName("test 'getCourses' method")
@@ -103,7 +94,7 @@ class CourseRestControllerTest {
 
             when(courseServiceMock.findAll(pageable)).thenReturn(coursePage);
             String parameters = "?page=" + page + "&size=" + size + "&sort=" + sort;
-            String sefLink= COURSES_LINK + parameters;
+            String sefLink = COURSES_LINK + parameters;
 
             mockMvc.perform(get(API_COURSES + parameters))
                 .andDo(print())
@@ -124,7 +115,7 @@ class CourseRestControllerTest {
         }
     }
 
-        @Nested
+    @Nested
     @DisplayName("test 'getCourse' method")
     class GetCourseTest {
 
@@ -141,89 +132,143 @@ class CourseRestControllerTest {
                 .andExpectAll(
                     status().isOk(),
                     content().contentType(TYPE_APPLICATION_HAL_JSON),
-                    content().string(containsString(String.valueOf(COURSE_ID1))),
-                    content().string(containsString(NAME_FIRST_COURSE)),
+                    jsonPath("$.id", is(COURSE_ID1)),
+                    jsonPath("$.name", is(NAME_FIRST_COURSE)),
                     jsonPath("$._links.self.href", is(COURSE1_SELF_LINK))
                 );
         }
     }
 
-//    @Nested
-//    @DisplayName("test 'createCourse' method")
-//    class CreateCourseTest {
-//
-//        @Test
-//        @DisplayName("when POST request with parameter name then should call " +
-//            "courseService.add once")
-//        void postRequestCreateCourse() throws Exception {
-//            mockMvc.perform(post(URI_COURSES)
-//                    .param("name", NAME_FIRST_COURSE))
-//                .andDo(print())
-//                .andExpect(status().is2xxSuccessful());
-//
-//            verify(courseServiceMock).create(courseCaptor.capture());
-//            Course expectedCourse = courseCaptor.getValue();
-//            assertThat(expectedCourse).hasId(null);
-//            assertThat(expectedCourse).hasName(NAME_FIRST_COURSE);
-//        }
-//
-//        @Test
-//        @DisplayName("when POST request with fail parameter (name with first " +
-//            "letter lower case) then should return error 400.BAD_REQUEST")
-//        void whenPostRequestWithFailParameter() throws Exception {
-//            mockMvc.perform(post(URI_COURSES)
-//                    .param("name", FAIL_NAME_FIRST_COURSE))
-//                .andDo(print())
-//                .andExpectAll(
-//                    status().isBadRequest(),
-//                    content().contentType(MediaType.APPLICATION_JSON),
-//                    jsonPath("$.violations[0].field", is("name")),
-//                    jsonPath("$.violations[0].message", is(MESSAGE_FIRST_CAPITAL_LETTER)));
-//        }
-//    }
+    @Nested
+    @DisplayName("test 'createCourse' method")
+    class CreateCourseTest {
+
+        @Test
+        @DisplayName("when POST request with parameter 'name' then should call " +
+            "courseService.add once")
+        void postRequestCreateCourse() throws Exception {
+
+            when(courseServiceMock.create(any()))
+                .thenReturn(new Course(COURSE_ID1, NAME_FIRST_COURSE));
+
+            mockMvc.perform(post(API_COURSES)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("{\"name\": \"" + NAME_FIRST_COURSE + "\"}"))
+                .andDo(print())
+                .andExpectAll(
+                    status().isCreated(),
+                    jsonPath("$.id", is(COURSE_ID1)),
+                    jsonPath("$.name", is(NAME_FIRST_COURSE)),
+                    jsonPath("$._links.self.href", is(COURSE1_SELF_LINK))
+                );
+
+            verify(courseServiceMock).create(courseCaptor.capture());
+            Course expectedCourse = courseCaptor.getValue();
+            CourseAssert.assertThat(expectedCourse)
+                .hasId(null)
+                .hasName(NAME_FIRST_COURSE);
+        }
+
+        @Test
+        @DisplayName("when POST request with fail parameter (name with first " +
+            "letter lower case) then should return error 400.BAD_REQUEST")
+        void whenPostRequestWithFailParameter() throws Exception {
+            mockMvc.perform(post(API_COURSES)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("{\"name\": \"" + FAIL_COURSE_NAME + "\"}"))
+                .andDo(print())
+                .andExpectAll(
+                    status().isBadRequest(),
+                    content().contentType(MediaType.APPLICATION_JSON),
+                    jsonPath("$.violations[0].field", is("name")),
+                    jsonPath("$.violations[0].message", is(MESSAGE_FIRST_CAPITAL_LETTER)));
+        }
+    }
 
 
+    @Nested
+    @DisplayName("test 'updateCourse' method")
+    class UpdateCourseTest {
 
-//    @Nested
-//    @DisplayName("test 'updateCourse' method")
-//    class UpdateCourseTest {
-//
-//        @Test
-//        @DisplayName("when PUT request with parameters id and name then call " +
-//            "courseService.update once")
-//        void putRequestWithIdAndName() throws Exception {
-//            int courseId = anyInt();
-//            mockMvc.perform(put(URI_COURSES_ID, courseId)
-//                    .param("name", NAME_FIRST_COURSE))
-//                .andDo(print())
-//                .andExpect(status().is2xxSuccessful());
-//
-//            Course updatedCourse = new Course(courseId, NAME_FIRST_COURSE);
-//            verify(courseServiceMock).create(updatedCourse);
-//        }
-//
-//        @Test
-//        @DisplayName("when PUT request with fail parameter (name with first " +
-//            "letter lower case) then should return error 400.BAD_REQUEST")
-//        void whenPutRequestWithFailParameter() throws Exception {
-//            mockMvc.perform(put(URI_COURSES_ID, COURSE_ID1)
-//                    .param("name", FAIL_NAME_FIRST_COURSE))
-//                .andDo(print())
-//                .andExpectAll(
-//                    status().isBadRequest(),
-//                    content().contentType(MediaType.APPLICATION_JSON),
-//                    jsonPath("$.violations[0].field", is("name")),
-//                    jsonPath("$.violations[0].message", is(MESSAGE_FIRST_CAPITAL_LETTER)));
-//        }
-//    }
+        @Test
+        @DisplayName("when PUT request with parameters id and name then call " +
+            "courseService.update once")
+        void putRequestWithIdAndName() throws Exception {
+            String newName = "New Course Name";
+            Course existingCourse = new Course(COURSE_ID1, NAME_FIRST_COURSE);
+            Course updatedCourse = new Course(COURSE_ID1, newName);
 
+            String jsonBodyRequest = "{\"name\": \"" + newName + "\",   " +
+                "\"id\":" + COURSE_ID1 + "}";
 
+            when(courseServiceMock.update(COURSE_ID1, existingCourse))
+                .thenReturn(updatedCourse);
 
+            mockMvc.perform(put(URI_COURSES_ID, COURSE_ID1)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jsonBodyRequest))
+                .andDo(print())
+                .andExpectAll(
+                    status().isOk(),
+                    jsonPath("$.id", is(COURSE_ID1)),
+                    jsonPath("$.name", is(newName)),
+                    jsonPath("$._links.self.href", is(COURSE1_SELF_LINK))
+                );
+        }
 
+        @Test
+        @DisplayName("when PUT request with fail parameter (name with first " +
+            "letter lower case) then should return error 400.BAD_REQUEST")
+        void whenPutRequestWithFailParameter() throws Exception {
 
+            String jsonBodyRequest = "{\"name\": \"" + FAIL_COURSE_NAME + "\",   " +
+                "\"id\":" + COURSE_ID1 + "}";
 
+            mockMvc.perform(put(URI_COURSES_ID, COURSE_ID1)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jsonBodyRequest))
+                .andDo(print())
+                .andExpectAll(
+                    status().isBadRequest(),
+                    content().contentType(MediaType.APPLICATION_JSON),
+                    jsonPath("$.violations[0].field", is("name")),
+                    jsonPath("$.violations[0].message", is(MESSAGE_FIRST_CAPITAL_LETTER))
+                );
+        }
+    }
 
+    @Nested
+    @DisplayName("test 'deleteCourse' method")
+    class DeleteCourseTest {
+        @Test
+        @DisplayName("when DELETE request with @PathParameter 'id' then call" +
+            " once service.delete(id)")
+        void whenDeleteRequestWithPathParameterIdThenCallServiceDelete() throws Exception {
 
+            mockMvc.perform(delete(URI_COURSES_ID, COURSE_ID1))
+                .andDo(print())
+                .andExpect(status().isNoContent());
 
+            verify(courseServiceMock).delete(COURSE_ID1);
+        }
+
+        @Test
+        @DisplayName("when DELETE request with @PathParameter id < 1 then return" +
+            " status BAD_REQUEST and never call service.delete()")
+        void whenDeleteRequestWithPathParameterId1ThenReturnStatusBadRequest()
+            throws Exception {
+            int illegalId = -5;
+
+            mockMvc.perform(delete(URI_COURSES_ID, illegalId))
+                .andDo(print())
+                .andExpectAll(
+                    status().isBadRequest(),
+                    content().contentType(MediaType.APPLICATION_JSON),
+                    jsonPath("$.message", is("illegal ID"))
+                );
+
+            verify(courseServiceMock, never()).delete(COURSE_ID1);
+        }
+    }
 
 }
