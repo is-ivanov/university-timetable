@@ -195,11 +195,11 @@ class DepartmentRestControllerTest {
 
             verify(departmentServiceMock).create(departmentCaptor.capture());
 
-            Department expectedCreatedDepartment = departmentCaptor.getValue();
-            DepartmentAssert.assertThat(expectedCreatedDepartment)
+            Department departmentForSaving = departmentCaptor.getValue();
+            DepartmentAssert.assertThat(departmentForSaving)
                 .hasId(null)
                 .hasName(NAME_FIRST_DEPARTMENT);
-            FacultyAssert.assertThat(expectedCreatedDepartment.getFaculty())
+            FacultyAssert.assertThat(departmentForSaving.getFaculty())
                 .hasId(FACULTY_ID1)
                 .hasName(null);
         }

@@ -26,6 +26,15 @@ import static ua.com.foxminded.university.ui.util.ResponseUtil.defineRedirect;
 @RequestMapping(MappingConstants.FACULTIES)
 public class FacultyController {
 
+    public static final String URI_FACULTIES_ID = "/faculties/{id}";
+    public static final String URI_FACULTIES_ID_GROUPS = "/faculties/{id}/groups";
+    public static final String URI_FACULTIES_ID_DEPARTMENTS = "/faculties/{id}/departments";
+    public static final String URI_FACULTIES_ID_TEACHERS = "/faculties/{id}/teachers";
+    public static final String URI_FACULTIES_ID_GROUPS_FREE = "/faculties/{id}/groups/free";
+    public static final String FACULTY_NAME = "name";
+    public static final String TIME_START = "time_start";
+    public static final String TIME_END = "time_end";
+
     private final FacultyService facultyService;
     private final PageSequenceCreator pageSequenceCreator;
 

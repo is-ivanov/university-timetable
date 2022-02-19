@@ -106,7 +106,9 @@ public final class TestObjects {
     public static final String DEPARTMENTS_LINK = "http://localhost/api/departments";
     public static final String DEPARTMENT1_SELF_LINK = "http://localhost/api/departments/8";
     public static final String DEPARTMENT2_SELF_LINK = "http://localhost/api/departments/54";
-
+    public static final String FACULTIES_LINK = "http://localhost/api/faculties";
+    public static final String FACULTY1_SELF_LINK = "http://localhost/api/faculties/10";
+    public static final String FACULTY2_SELF_LINK = "http://localhost/api/faculties/4";
 
     public static Faculty createTestFaculty() {
         return new Faculty(FACULTY_ID1, NAME_FIRST_FACULTY);
@@ -152,6 +154,10 @@ public final class TestObjects {
 
     public static Page<Department> createTestPageDepartment(Pageable pageable) {
         return new PageImpl<>(createTestDepartments(), pageable, TOTAL_ELEMENTS);
+    }
+
+    public static Page<Faculty> createTestPageFaculty(Pageable pageable) {
+        return new PageImpl<>(createTestFaculties(), pageable, TOTAL_ELEMENTS);
     }
 
     public static List<CourseDto> createTestCourseDtos() {
