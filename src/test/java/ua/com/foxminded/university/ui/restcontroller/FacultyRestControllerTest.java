@@ -26,13 +26,10 @@ import ua.com.foxminded.university.ui.util.MappingConstants;
 
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ua.com.foxminded.university.TestObjects.*;
@@ -223,25 +220,30 @@ class FacultyRestControllerTest {
     }
 
 
-//    @Nested
-//    @DisplayName("test 'updateFaculty' method")
-//    class UpdateFacultyTest {
-//
-//        @Test
-//        @DisplayName("when PUT request with parameters 'id' and 'name' then should " +
-//            "call facultyService.update call")
-//        void putRequestWithIdAndName() throws Exception {
-//            int facultyId = anyInt();
-//            Faculty faculty = new Faculty(facultyId, NAME_FIRST_FACULTY);
-//
-//            mockMvc.perform(put(URI_FACULTIES_ID, facultyId)
-//                    .param("name", NAME_FIRST_FACULTY))
-//                .andDo(print())
-//                .andExpect(status().is2xxSuccessful());
-//
-//            verify(facultyServiceMock, times(1)).save(faculty);
-//        }
-//    }
+    @Nested
+    @DisplayName("test 'updateFaculty' method")
+    class UpdateFacultyTest {
+
+        @Test
+        @DisplayName("when PUT request with parameters 'id' and 'name' then should " +
+            "call facultyService.update call")
+        void putRequestWithIdAndName() throws Exception {
+            String newFacultyName = "New Faculty Name";
+            String jsonBodyRequest = "{\"name\": \"" + newFacultyName + "\", " +
+        "\"id\": " + FACULTY_ID1 + "}";
+
+
+            Faculty faculty = new Faculty(FACULTY_ID1, NAME_FIRST_FACULTY);
+
+            mockMvc.perform(put(API_FACULTIES_ID, FACULTY_ID1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonBodyRequest))
+                .andDo(print())
+                .andExpect(status().is2xxSuccessful());
+
+            verify(facultyServiceMock, times(1)).create(faculty);
+        }
+    }
 
 
 //    @Nested
