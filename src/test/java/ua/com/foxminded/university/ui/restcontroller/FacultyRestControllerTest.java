@@ -15,8 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ua.com.foxminded.university.domain.entity.Faculty;
-import ua.com.foxminded.university.domain.entity.FacultyAssert;
+import ua.com.foxminded.university.domain.entity.*;
 import ua.com.foxminded.university.domain.service.interfaces.DepartmentService;
 import ua.com.foxminded.university.domain.service.interfaces.FacultyService;
 import ua.com.foxminded.university.domain.service.interfaces.GroupService;
@@ -40,15 +39,16 @@ import static ua.com.foxminded.university.ui.util.MappingConstants.API_FACULTIES
 @Import(TestMapperConfig.class)
 class FacultyRestControllerTest {
 
-    public static final String URI_FACULTIES_ID = "/api/faculties/{id}";
     public static final String URI_FACULTIES_ID_GROUPS = "/api/faculties/{id}/groups";
     public static final String URI_FACULTIES_ID_DEPARTMENTS = "/api/faculties/{id}/departments";
     public static final String URI_FACULTIES_ID_TEACHERS = "/api/faculties/{id}/teachers";
     public static final String URI_FACULTIES_ID_GROUPS_FREE = "/api/faculties/{id}/groups/free";
-    public static final String FACULTY_NAME = "name";
     public static final String TIME_START = "time_start";
     public static final String TIME_END = "time_end";
     public static final String FAIL_FACULTY_NAME = "fail Name";
+    public static final String MESSAGE_NOT_ID = "not ID in the request body";
+    public static final String MESSAGE_DIFFERENT_ID =
+        "ID in the request body have to be equal ID in URI";
 
     @Captor
     ArgumentCaptor<Faculty> facultyCaptor;
@@ -230,191 +230,249 @@ class FacultyRestControllerTest {
         void putRequestWithIdAndName() throws Exception {
             String newFacultyName = "New Faculty Name";
             String jsonBodyRequest = "{\"name\": \"" + newFacultyName + "\", " +
-        "\"id\": " + FACULTY_ID1 + "}";
+                "\"id\": " + FACULTY_ID1 + "}";
+            Faculty updatedFaculty = new Faculty(FACULTY_ID1, newFacultyName);
 
-
-            Faculty faculty = new Faculty(FACULTY_ID1, NAME_FIRST_FACULTY);
+            when(facultyServiceMock.update(FACULTY_ID1, updatedFaculty))
+                .thenReturn(updatedFaculty);
 
             mockMvc.perform(put(API_FACULTIES_ID, FACULTY_ID1)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonBodyRequest))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jsonBodyRequest))
                 .andDo(print())
-                .andExpect(status().is2xxSuccessful());
+                .andExpectAll(
+                    status().isOk(),
+                    jsonPath("$.id", is(FACULTY_ID1)),
+                    jsonPath("$.name", is(newFacultyName))
+                );
+        }
 
-            verify(facultyServiceMock, times(1)).create(faculty);
+        @Test
+        @DisplayName("when PUT request without 'id' in body then should return" +
+            " error 400.BAD_REQUEST")
+        void whenPutRequestWithoutIdInBody_Error400BadRequest() throws Exception {
+            String newFacultyName = "New Faculty Name";
+            String jsonBodyRequest = "{\"name\": \"" + newFacultyName + "\"}";
+
+            mockMvc.perform(put(API_FACULTIES_ID, FACULTY_ID1)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jsonBodyRequest))
+                .andDo(print())
+                .andExpectAll(
+                    status().isBadRequest(),
+                    jsonPath("$.message", is(MESSAGE_NOT_ID))
+                );
+        }
+
+        @Test
+        @DisplayName("when PUT request with 'id' in body different 'id' in path " +
+            "then should return error 400.BAD_REQUEST")
+        void whenPutRequestWithIdInBodyDifferentIdPath_Error400BadRequest()
+            throws Exception {
+            int bodyId = 2;
+            int pathId = 3;
+            String newFacultyName = "New Faculty Name";
+            String jsonBodyRequest = "{\"name\": \"" + newFacultyName + "\", " +
+                "\"id\": " + bodyId + "}";
+
+            mockMvc.perform(put(API_FACULTIES_ID, pathId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jsonBodyRequest))
+                .andDo(print())
+                .andExpectAll(
+                    status().isBadRequest(),
+                    jsonPath("$.message", is(MESSAGE_DIFFERENT_ID))
+                );
         }
     }
 
 
-//    @Nested
-//    @DisplayName("test 'getGroupsByFaculty' method")
-//    class GetGroupsByFacultyTest {
-//
-//        @Test
-//        @DisplayName("when GET request with parameter id = 0 then should call " +
-//            "groupService.getAll once and return JSON with groups")
-//        void getRequestWithId0() throws Exception {
-//            int facultyId = 0;
-//            List<GroupDto> testGroups = createTestGroupDtos(facultyId);
-//
-//            when(groupServiceMock.getAll()).thenReturn(testGroups);
-//
-//            mockMvc.perform(get(URI_FACULTIES_ID_GROUPS, facultyId))
-//                .andDo(print())
-//                .andExpectAll(
-//                    status().isOk(),
-//                    content().contentType(MediaType.APPLICATION_JSON),
-//                    jsonPath("$", hasSize(testGroups.size())),
-//                    jsonPath("$[0].id", is(GROUP_ID1)),
-//                    jsonPath("$[0].name", is(NAME_FIRST_GROUP)),
-//                    jsonPath("$[0].facultyId", is(facultyId)),
-//                    jsonPath("$[0].facultyName", is(NAME_FIRST_FACULTY)),
-//                    jsonPath("$[1].id", is(GROUP_ID2)),
-//                    jsonPath("$[1].name", is(NAME_SECOND_GROUP)),
-//                    jsonPath("$[1].facultyId", is(facultyId)),
-//                    jsonPath("$[1].facultyName", is(NAME_FIRST_FACULTY))
-//                );
-//            verify(groupServiceMock, times(1)).getAll();
-//        }
-//
-//        @Test
-//        @DisplayName("when GET request with parameter id != 0 then should call " +
-//            "groupService.getAllByFacultyId once and return JSON with groups")
-//        void getRequestWithId2() throws Exception {
-//            int facultyId = 3;
-//            List<GroupDto> testGroups = createTestGroupDtos(facultyId);
-//            when(groupServiceMock.getAllByFacultyId(facultyId)).thenReturn(testGroups);
-//
-//            mockMvc.perform(get(URI_FACULTIES_ID_GROUPS, facultyId))
-//                .andDo(print())
-//                .andExpectAll(
-//                    status().isOk(),
-//                    content().contentType(MediaType.APPLICATION_JSON),
-//                    jsonPath("$", hasSize(testGroups.size())),
-//                    jsonPath("$[0].id", is(GROUP_ID1)),
-//                    jsonPath("$[0].name", is(NAME_FIRST_GROUP)),
-//                    jsonPath("$[0].facultyId", is(facultyId)),
-//                    jsonPath("$[0].facultyName", is(NAME_FIRST_FACULTY)),
-//                    jsonPath("$[1].id", is(GROUP_ID2)),
-//                    jsonPath("$[1].name", is(NAME_SECOND_GROUP)),
-//                    jsonPath("$[1].facultyId", is(facultyId)),
-//                    jsonPath("$[1].facultyName", is(NAME_FIRST_FACULTY))
-//                );
-//            verify(groupServiceMock, times(1)).getAllByFacultyId(facultyId);
-//        }
-//    }
-//
-//    @Nested
-//    @DisplayName("test 'getFreeGroupsByFaculty' method")
-//    class GetFreeGroupsByFacultyTest {
-//
-//        @Test
-//        @DisplayName("when GET request with parameters then should call " +
-//            "groupService.getFreeGroupsByFacultyOnLessonTime once return JSON with groups")
-//        void getRequestWithParameters() throws Exception {
-//            int facultyId = 4;
-//
-//            List<GroupDto> testGroups = createTestGroupDtos(facultyId);
-//
-//            when(groupServiceMock.getFreeGroupsByFacultyOnLessonTime(facultyId,
-//                DATE_FROM, DATE_TO)).thenReturn(testGroups);
-//            mockMvc.perform(get(URI_FACULTIES_ID_GROUPS_FREE, facultyId)
-//                    .param(TIME_START, TEXT_DATE_FROM)
-//                    .param(TIME_END, TEXT_DATE_TO))
-//                .andDo(print())
-//                .andExpectAll(
-//                    status().isOk(),
-//                    content().contentType(MediaType.APPLICATION_JSON),
-//                    jsonPath("$", hasSize(testGroups.size())),
-//                    jsonPath("$[0].id", is(GROUP_ID1)),
-//                    jsonPath("$[0].name", is(NAME_FIRST_GROUP)),
-//                    jsonPath("$[0].facultyId", is(facultyId)),
-//                    jsonPath("$[0].facultyName", is(NAME_FIRST_FACULTY)),
-//                    jsonPath("$[1].id", is(GROUP_ID2)),
-//                    jsonPath("$[1].name", is(NAME_SECOND_GROUP)),
-//                    jsonPath("$[1].facultyId", is(facultyId)),
-//                    jsonPath("$[1].facultyName", is(NAME_FIRST_FACULTY))
-//                );
-//            verify(groupServiceMock, times(1))
-//                .getFreeGroupsByFacultyOnLessonTime(facultyId, DATE_FROM, DATE_TO);
-//        }
-//    }
-//
-//    @Nested
-//    @DisplayName("test 'getDepartmentsByFaculty' method")
-//    class GetDepartmentsByFacultyTest {
-//
-//        @Test
-//        @DisplayName("when GET request with parameter id = 0 then should call " +
-//            "departmentService.getAll once and return JSON with departments")
-//        void getRequestWithParameterIdEquals0() throws Exception {
-//            int facultyId = 0;
-//            List<DepartmentDto> testDepartments = createTestDepartmentDtos();
-//
-//            when(departmentServiceMock.getAll()).thenReturn(testDepartments);
-//
-//            mockMvc.perform(get(URI_FACULTIES_ID_DEPARTMENTS, facultyId))
-//                .andDo(print())
-//                .andExpectAll(
-//                    status().isOk(),
-//                    content().contentType(MediaType.APPLICATION_JSON),
-//                    jsonPath("$", hasSize(testDepartments.size())),
-//                    jsonPath("$[0].name", is(NAME_FIRST_DEPARTMENT)),
-//                    jsonPath("$[1].name", is(NAME_SECOND_DEPARTMENT))
-//                );
-//
-//            verify(departmentServiceMock, times(0)).getAllByFaculty(facultyId);
-//        }
-//
-//        @Test
-//        @DisplayName("when GET request with parameter id > 0 then should call " +
-//            "departmentService.getAllByFaculty once and return JSON with departments")
-//        void getRequestWithParameterIdEquals8() throws Exception {
-//            int facultyId = 8;
-//            List<DepartmentDto> testDepartments = createTestDepartmentDtos();
-//
-//            when(departmentServiceMock.getAllByFaculty(facultyId)).thenReturn(testDepartments);
-//
-//            mockMvc.perform(get(URI_FACULTIES_ID_DEPARTMENTS, facultyId))
-//                .andDo(print())
-//                .andExpectAll(
-//                    status().isOk(),
-//                    content().contentType(MediaType.APPLICATION_JSON),
-//                    jsonPath("$", hasSize(testDepartments.size())),
-//                    jsonPath("$[0].name", is(NAME_FIRST_DEPARTMENT)),
-//                    jsonPath("$[1].name", is(NAME_SECOND_DEPARTMENT))
-//                );
-//            verify(departmentServiceMock, times(0)).getAll();
-//        }
-//    }
-//
-//    @Nested
-//    @DisplayName("test 'getTeachersByFaculty' method")
-//    class GetTeachersByFacultyTest {
-//
-//        @Test
-//        @DisplayName("when GET request with parameter id then should call " +
-//            "teacherDtoMapper and teacherService once")
-//        void getRequestWithParameterIdEquals4() throws Exception {
-//            int facultyId = 4;
-//            List<TeacherDto> testTeacherDtos = createTestTeacherDtos(facultyId);
-//
-//            when(teacherServiceMock.getAllByFaculty(facultyId))
-//                .thenReturn(testTeacherDtos);
-//
-//            mockMvc.perform(get(URI_FACULTIES_ID_TEACHERS, facultyId))
-//                .andDo(print())
-//                .andExpectAll(
-//                    status().isOk(),
-//                    content().contentType(MediaType.APPLICATION_JSON),
-//                    jsonPath("$", hasSize(testTeacherDtos.size())),
-//                    jsonPath("$[0].firstName", is(NAME_FIRST_TEACHER)),
-//                    jsonPath("$[0].lastName", is(LAST_NAME_FIRST_TEACHER)),
-//                    jsonPath("$[0].patronymic", is(PATRONYMIC_FIRST_TEACHER)),
-//                    jsonPath("$[1].firstName", is(NAME_SECOND_TEACHER)),
-//                    jsonPath("$[1].lastName", is(LAST_NAME_SECOND_TEACHER)),
-//                    jsonPath("$[1].patronymic", is(PATRONYMIC_SECOND_TEACHER))
-//                );
-//        }
-//    }
+    @Nested
+    @DisplayName("test 'getGroupsByFaculty' method")
+    class GetGroupsByFacultyTest {
+
+        @Test
+        @DisplayName("when GET request with parameter id = 0 then should call " +
+            "groupService.findAll once and return JSON with groups")
+        void getRequestWithId0() throws Exception {
+            int facultyId = 0;
+            List<Group> testGroups = createTestGroups();
+
+            when(groupServiceMock.findAll()).thenReturn(testGroups);
+
+            mockMvc.perform(get(URI_FACULTIES_ID_GROUPS, facultyId))
+                .andDo(print())
+                .andExpectAll(
+                    status().isOk(),
+                    content().contentType(TYPE_APPLICATION_HAL_JSON),
+                    jsonPath("$._embedded.groups", hasSize(testGroups.size())),
+                    jsonPath("$._embedded.groups[0].id", is(GROUP_ID1)),
+                    jsonPath("$._embedded.groups[0].name",
+                        is(NAME_FIRST_GROUP)),
+                    jsonPath("$._embedded.groups[0].facultyId",
+                        is(FACULTY_ID1)),
+                    jsonPath("$._embedded.groups[0].facultyName",
+                        is(NAME_FIRST_FACULTY)),
+                    jsonPath("$._embedded.groups[1].id", is(GROUP_ID2)),
+                    jsonPath("$._embedded.groups[1].name",
+                        is(NAME_SECOND_GROUP)),
+                    jsonPath("$._embedded.groups[1].facultyId",
+                        is(FACULTY_ID1)),
+                    jsonPath("$._embedded.groups[1].facultyName",
+                        is(NAME_FIRST_FACULTY))
+                );
+
+            verify(groupServiceMock, never()).getAllByFacultyId(facultyId);
+        }
+
+        @Test
+        @DisplayName("when GET request with parameter id != 0 then should call " +
+            "groupService.getAllByFacultyId once and return JSON with groups")
+        void getRequestWithId2() throws Exception {
+            int facultyId = 3;
+            List<Group> testGroups = createTestGroups(facultyId);
+
+            when(groupServiceMock.getAllByFacultyId(facultyId))
+                .thenReturn(testGroups);
+
+            mockMvc.perform(get(URI_FACULTIES_ID_GROUPS, facultyId))
+                .andDo(print())
+                .andExpectAll(
+                    status().isOk(),
+                    content().contentType(TYPE_APPLICATION_HAL_JSON)
+                );
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'getFreeGroupsByFaculty' method")
+    class GetFreeGroupsByFacultyTest {
+
+        @Test
+        @DisplayName("when GET request with parameters then should call " +
+            "groupService.getFreeGroupsByFacultyOnLessonTime once return JSON with groups")
+        void getRequestWithParameters() throws Exception {
+            int facultyId = 4;
+            List<Group> testGroups = createTestGroups(facultyId);
+
+            when(groupServiceMock.getFreeGroupsByFacultyOnLessonTime(facultyId,
+                DATE_FROM, DATE_TO)).thenReturn(testGroups);
+
+            mockMvc.perform(get(URI_FACULTIES_ID_GROUPS_FREE, facultyId)
+                    .param(TIME_START, TEXT_DATE_FROM)
+                    .param(TIME_END, TEXT_DATE_TO))
+                .andDo(print())
+                .andExpectAll(
+                    status().isOk(),
+                    content().contentType(TYPE_APPLICATION_HAL_JSON),
+                    jsonPath("$._embedded.groups", hasSize(testGroups.size())),
+                    jsonPath("$._embedded.groups[0].id", is(GROUP_ID1)),
+                    jsonPath("$._embedded.groups[0].name",
+                        is(NAME_FIRST_GROUP)),
+                    jsonPath("$._embedded.groups[0].facultyId",
+                        is(facultyId)),
+                    jsonPath("$._embedded.groups[0].facultyName",
+                        is(NAME_FIRST_FACULTY)),
+                    jsonPath("$._embedded.groups[1].id", is(GROUP_ID2)),
+                    jsonPath("$._embedded.groups[1].name",
+                        is(NAME_SECOND_GROUP)),
+                    jsonPath("$._embedded.groups[1].facultyId",
+                        is(facultyId)),
+                    jsonPath("$._embedded.groups[1].facultyName",
+                        is(NAME_FIRST_FACULTY))
+                );
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'getDepartmentsByFaculty' method")
+    class GetDepartmentsByFacultyTest {
+
+        @Test
+        @DisplayName("when GET request with parameter id = 0 then should call " +
+            "departmentService.getAll once and return JSON with departments")
+        void getRequestWithParameterIdEquals0() throws Exception {
+            int facultyId = 0;
+            List<Department> testDepartments = createTestDepartments();
+
+            when(departmentServiceMock.findAll()).thenReturn(testDepartments);
+
+            mockMvc.perform(get(URI_FACULTIES_ID_DEPARTMENTS, facultyId))
+                .andDo(print())
+                .andExpectAll(
+                    status().isOk(),
+                    content().contentType(TYPE_APPLICATION_HAL_JSON),
+                    jsonPath("$._embedded.departments",
+                        hasSize(testDepartments.size())),
+                    jsonPath("$._embedded.departments[0].name",
+                        is(NAME_FIRST_DEPARTMENT)),
+                    jsonPath("$._embedded.departments[1].name",
+                        is(NAME_SECOND_DEPARTMENT))
+                );
+
+            verify(departmentServiceMock, never()).getAllByFaculty(facultyId);
+        }
+
+        @Test
+        @DisplayName("when GET request with parameter id > 0 then should call " +
+            "departmentService.getAllByFaculty once and return JSON with departments")
+        void getRequestWithParameterIdEquals8() throws Exception {
+            int facultyId = 8;
+            List<Department> testDepartments = createTestDepartments();
+
+            when(departmentServiceMock.getAllByFaculty(facultyId))
+                .thenReturn(testDepartments);
+
+            mockMvc.perform(get(URI_FACULTIES_ID_DEPARTMENTS, facultyId))
+                .andDo(print())
+                .andExpectAll(
+                    status().isOk(),
+                    content().contentType(TYPE_APPLICATION_HAL_JSON),
+                    jsonPath("$._embedded.departments",
+                        hasSize(testDepartments.size())),
+                    jsonPath("$._embedded.departments[0].name",
+                        is(NAME_FIRST_DEPARTMENT)),
+                    jsonPath("$._embedded.departments[1].name",
+                        is(NAME_SECOND_DEPARTMENT))
+                );
+            verify(departmentServiceMock, never()).findAll();
+        }
+    }
+
+    @Nested
+    @DisplayName("test 'getTeachersByFaculty' method")
+    class GetTeachersByFacultyTest {
+
+        @Test
+        @DisplayName("when GET request with parameter id then should call " +
+            "teacherDtoMapper and teacherService once")
+        void getRequestWithParameterIdEquals4() throws Exception {
+            int facultyId = 4;
+            List<Teacher> testTeacherDtos = createTestTeachers(facultyId);
+
+            when(teacherServiceMock.getAllByFaculty(facultyId))
+                .thenReturn(testTeacherDtos);
+
+            mockMvc.perform(get(URI_FACULTIES_ID_TEACHERS, facultyId))
+                .andDo(print())
+                .andExpectAll(
+                    status().isOk(),
+                    content().contentType(TYPE_APPLICATION_HAL_JSON),
+                    jsonPath("$._embedded.teachers",
+                        hasSize(testTeacherDtos.size())),
+                    jsonPath("$._embedded.teachers[0].firstName",
+                        is(NAME_FIRST_TEACHER)),
+                    jsonPath("$._embedded.teachers[0].lastName",
+                        is(LAST_NAME_FIRST_TEACHER)),
+                    jsonPath("$._embedded.teachers[0].patronymic",
+                        is(PATRONYMIC_FIRST_TEACHER)),
+                    jsonPath("$._embedded.teachers[1].firstName",
+                        is(NAME_SECOND_TEACHER)),
+                    jsonPath("$._embedded.teachers[1].lastName",
+                        is(LAST_NAME_SECOND_TEACHER)),
+                    jsonPath("$._embedded.teachers[1].patronymic",
+                        is(PATRONYMIC_SECOND_TEACHER))
+                );
+        }
+    }
 }
