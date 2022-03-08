@@ -103,12 +103,15 @@ public final class TestObjects {
     public static final String COURSES_LINK = "http://localhost/api/courses";
     public static final String TYPE_APPLICATION_HAL_JSON = "application/hal+json";
     public static final int TOTAL_ELEMENTS = 6;
+    public static final String GROUPS_LINK = "http://localhost/api/groups";
     public static final String DEPARTMENTS_LINK = "http://localhost/api/departments";
     public static final String DEPARTMENT1_SELF_LINK = "http://localhost/api/departments/8";
     public static final String DEPARTMENT2_SELF_LINK = "http://localhost/api/departments/54";
     public static final String FACULTIES_LINK = "http://localhost/api/faculties";
     public static final String FACULTY1_SELF_LINK = "http://localhost/api/faculties/10";
     public static final String FACULTY2_SELF_LINK = "http://localhost/api/faculties/4";
+    public static final String TIME_START = "time_start";
+    public static final String TIME_END = "time_end";
 
     public static Faculty createTestFaculty() {
         return new Faculty(FACULTY_ID1, NAME_FIRST_FACULTY);
@@ -207,6 +210,13 @@ public final class TestObjects {
         Group group1 = new Group(GROUP_ID1, NAME_FIRST_GROUP, faculty, true);
         Group group2 = new Group(GROUP_ID2, NAME_SECOND_GROUP, faculty, true);
         return new ArrayList<>(Arrays.asList(group1, group2));
+    }
+
+    public static CollectionModel<GroupDto> createTestCollectionModelGroups() {
+        List<GroupDto> testGroupDtos = createTestGroupDtos(FACULTY_ID1);
+        CollectionModel<GroupDto> model = CollectionModel.of(testGroupDtos);
+        model.add(Link.of(GROUPS_LINK).withSelfRel());
+        return model;
     }
 
     public static List<GroupDto> createTestGroupDtos(int facultyId) {

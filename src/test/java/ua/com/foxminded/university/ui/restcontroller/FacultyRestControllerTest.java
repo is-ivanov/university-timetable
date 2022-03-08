@@ -43,8 +43,6 @@ class FacultyRestControllerTest {
     public static final String URI_FACULTIES_ID_DEPARTMENTS = "/api/faculties/{id}/departments";
     public static final String URI_FACULTIES_ID_TEACHERS = "/api/faculties/{id}/teachers";
     public static final String URI_FACULTIES_ID_GROUPS_FREE = "/api/faculties/{id}/groups/free";
-    public static final String TIME_START = "time_start";
-    public static final String TIME_END = "time_end";
     public static final String FAIL_FACULTY_NAME = "fail Name";
     public static final String MESSAGE_NOT_ID = "not ID in the request body";
     public static final String MESSAGE_DIFFERENT_ID =
