@@ -104,6 +104,8 @@ public final class TestObjects {
     public static final String TYPE_APPLICATION_HAL_JSON = "application/hal+json";
     public static final int TOTAL_ELEMENTS = 6;
     public static final String GROUPS_LINK = "http://localhost/api/groups";
+    public static final String GROUP1_SELF_LINK = "http://localhost/api/groups/2";
+    public static final String GROUP2_SELF_LINK = "http://localhost/api/groups/14";
     public static final String DEPARTMENTS_LINK = "http://localhost/api/departments";
     public static final String DEPARTMENT1_SELF_LINK = "http://localhost/api/departments/8";
     public static final String DEPARTMENT2_SELF_LINK = "http://localhost/api/departments/54";

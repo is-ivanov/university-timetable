@@ -24,6 +24,9 @@ public final class MappingConstants {
     public static final String API_FACULTIES = API + FACULTIES;
     public static final String API_FACULTIES_ID = API + FACULTIES + ID;
     public static final String API_GROUPS = API + GROUPS;
+    public static final String API_GROUPS_ID = API + GROUPS + ID;
+    public static final String API_GROUPS_ID_STUDENTS = API_GROUPS_ID + STUDENTS;
+    public static final String API_GROUPS_ID_STUDENTS_FREE = API_GROUPS_ID_STUDENTS + FREE;
     public static final String API_LESSONS = API + LESSONS;
     public static final String API_ROOMS = API + ROOMS;
     public static final String API_STUDENTS = API + STUDENTS;

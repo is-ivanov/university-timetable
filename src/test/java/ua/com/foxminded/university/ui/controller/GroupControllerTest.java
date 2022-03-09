@@ -33,7 +33,6 @@ class GroupControllerTest {
 
     public static final String URI_GROUPS = "/groups";
     public static final String URI_GROUPS_ID = "/groups/{id}";
-    public static final String URI_GROUPS_ID_STUDENTS_FREE = "/groups/{id}/students/free";
     public static final String ON = "on";
 
 
