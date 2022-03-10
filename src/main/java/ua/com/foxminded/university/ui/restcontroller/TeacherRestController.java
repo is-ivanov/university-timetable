@@ -1,5 +1,6 @@
 package ua.com.foxminded.university.ui.restcontroller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -43,6 +44,7 @@ import static ua.com.foxminded.university.ui.util.ResponseUtil.DATE_TIME_PATTERN
 @RestController
 @Validated
 @RequestMapping(MappingConstants.API_TEACHERS)
+@Tag(name = "Teacher Controller", description = "Management teachers")
 public class TeacherRestController extends AbstractController<TeacherDto, Teacher> {
 
     private final TeacherService teacherService;

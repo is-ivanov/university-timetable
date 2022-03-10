@@ -1,5 +1,6 @@
 package ua.com.foxminded.university.ui.restcontroller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -41,6 +42,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RestController
 @Validated
 @RequestMapping(MappingConstants.API_STUDENTS)
+@Tag(name = "Student Controller", description = "Management students")
 public class StudentRestController extends AbstractController<StudentDto, Student> {
 
     private final StudentService studentService;

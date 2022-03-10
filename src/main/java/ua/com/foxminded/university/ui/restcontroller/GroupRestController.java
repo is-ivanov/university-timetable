@@ -1,5 +1,6 @@
 package ua.com.foxminded.university.ui.restcontroller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -42,6 +43,7 @@ import static ua.com.foxminded.university.ui.util.ResponseUtil.DATE_TIME_PATTERN
 @RestController
 @RequestMapping(MappingConstants.API_GROUPS)
 @Validated
+@Tag(name = "Group Controller", description = "Management groups")
 public class GroupRestController extends AbstractController<GroupDto, Group> {
 
     private final GroupService groupService;

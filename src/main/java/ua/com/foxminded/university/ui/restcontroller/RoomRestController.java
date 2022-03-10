@@ -1,5 +1,6 @@
 package ua.com.foxminded.university.ui.restcontroller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -43,6 +44,7 @@ import static ua.com.foxminded.university.ui.util.ResponseUtil.DATE_TIME_PATTERN
 @RestController
 @Validated
 @RequestMapping(MappingConstants.API_ROOMS)
+@Tag(name = "Room Controller", description = "Management rooms")
 public class RoomRestController extends AbstractController<RoomDto, Room> {
 
     private final RoomService roomService;

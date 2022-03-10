@@ -1,5 +1,6 @@
 package ua.com.foxminded.university.ui.restcontroller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +14,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 @RestController
 @RequestMapping(MappingConstants.API)
+@Tag(name = "Root Controller", description = "Entry point in application")
 public class RootRestController {
 
     @GetMapping

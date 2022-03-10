@@ -1,5 +1,7 @@
 package ua.com.foxminded.university.ui.restcontroller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +32,7 @@ import javax.validation.Valid;
 @RestController
 @Validated
 @RequestMapping(MappingConstants.API_COURSES)
+@Tag(name = "Course", description = "The Course API")
 public class CourseRestController extends AbstractController<CourseDto, Course> {
 
     private final CourseService courseService;
@@ -39,6 +42,7 @@ public class CourseRestController extends AbstractController<CourseDto, Course> 
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "View all courses")
     public CollectionModel<CourseDto> getCourses() {
         log.debug("Getting all courses");
         return getAllInternal();
@@ -46,6 +50,7 @@ public class CourseRestController extends AbstractController<CourseDto, Course> 
 
     @GetMapping(params = {QueryConstants.PAGE, QueryConstants.SIZE, QueryConstants.SORT})
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "View all courses with page, size and sorting")
     public PagedModel<CourseDto> getCoursesPaginatedAndSorted(Pageable pageable) {
         log.debug("Getting all courses with {}", pageable);
         return getAllSortedAndPaginatedInternal(pageable);
@@ -53,6 +58,7 @@ public class CourseRestController extends AbstractController<CourseDto, Course> 
 
     @GetMapping(params = {QueryConstants.PAGE, QueryConstants.SIZE})
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "View all courses with page and size")
     public PagedModel<CourseDto> getCoursesPaginated(@PageableDefault(sort = "name")
                                                          Pageable pageable) {
         return getCoursesPaginatedAndSorted(pageable);
@@ -60,18 +66,21 @@ public class CourseRestController extends AbstractController<CourseDto, Course> 
 
     @GetMapping(params = {QueryConstants.SORT})
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "View all sorted courses")
     public PagedModel<CourseDto> getCoursesSorted(Pageable pageable) {
         return getCoursesPaginatedAndSorted(pageable);
     }
 
     @GetMapping(MappingConstants.ID)
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "View course with id")
     public CourseDto getCourse(@PathVariable("id") int courseId) {
         log.debug("Getting course by id({})", courseId);
         return getByIdInternal(courseId);
     }
 
     @PostMapping
+    @Operation(summary = "Create course")
     public ResponseEntity<CourseDto> createCourse(@Valid @RequestBody CourseDto courseDto,
                                                   HttpServletRequest request) {
         log.debug("Creating {}", courseDto);
@@ -80,6 +89,7 @@ public class CourseRestController extends AbstractController<CourseDto, Course> 
 
     @PutMapping(MappingConstants.ID)
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Update course with id")
     public CourseDto updateCourse(@Valid @RequestBody CourseDto courseDto,
                                   @PathVariable("id") int courseId,
                                   HttpServletRequest request) {
@@ -90,6 +100,7 @@ public class CourseRestController extends AbstractController<CourseDto, Course> 
 
     @DeleteMapping(MappingConstants.ID)
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Delete course with id")
     public void deleteCourse(@PathVariable("id") int courseId) {
         log.debug("Deleting course with id({})", courseId);
         deleteInternal(courseId);

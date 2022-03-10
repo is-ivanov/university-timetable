@@ -1,5 +1,6 @@
 package ua.com.foxminded.university.domain.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
@@ -13,10 +14,12 @@ import javax.validation.constraints.NotBlank;
 @NonFinal
 @EqualsAndHashCode(callSuper = true)
 @Relation(itemRelation = "course", collectionRelation = "courses")
+@Schema(description = "Course")
 public class CourseDto extends GenericDto {
 
     @NotBlank(message = "{course.name.not.blank}")
     @CapitalLetter
+    @Schema(description = "Course name")
     String name;
 
     @Builder
