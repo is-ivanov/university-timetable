@@ -58,6 +58,7 @@ public final class TestObjects {
     public static final String BUILDING_AND_NUMBER_FIRST_ROOM = "building-1 - 1457a";
     public static final String BUILDING_SECOND_ROOM = "building-2";
     public static final String NUMBER_SECOND_ROOM = "812b";
+    public static final String BUILDING_AND_NUMBER_SECOND_ROOM = "building-2 - 812b";
     public static final String BUILDING_THIRD_ROOM = "building-2";
     public static final String NUMBER_THIRD_ROOM = "145";
     public static final String NAME_FIRST_STUDENT = "Mike";
@@ -112,6 +113,9 @@ public final class TestObjects {
     public static final String FACULTIES_LINK = "http://localhost/api/faculties";
     public static final String FACULTY1_SELF_LINK = "http://localhost/api/faculties/10";
     public static final String FACULTY2_SELF_LINK = "http://localhost/api/faculties/4";
+    public static final String ROOMS_LINK = "http://localhost/api/rooms";
+    public static final String ROOM1_SELF_LINK = "http://localhost/api/rooms/5";
+    public static final String ROOM2_SELF_LINK = "http://localhost/api/rooms/62";
     public static final String TIME_START = "time_start";
     public static final String TIME_END = "time_end";
 
