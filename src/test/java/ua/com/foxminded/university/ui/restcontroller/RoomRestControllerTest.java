@@ -168,7 +168,7 @@ class RoomRestControllerTest {
         @Test
         @DisplayName("when PUT request with all required parameters then should " +
             "call roomService.update")
-        void putRequestWithAllParametersShouldCallRoomServiceAndRedirect() throws Exception {
+        void putRequestWithAllParametersShouldCallRoomService() throws Exception {
             String roomBuilding = "5 Avenue, 48";
             String roomNumber = "185";
             int roomId = 15;
