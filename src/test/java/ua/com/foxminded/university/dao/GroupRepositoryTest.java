@@ -8,7 +8,6 @@ import org.springframework.test.context.jdbc.Sql;
 import ua.com.foxminded.university.domain.entity.Group;
 import ua.com.foxminded.university.springconfig.BaseRepositoryIT;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,15 +17,6 @@ import static ua.com.foxminded.university.domain.entity.Assertions.assertThat;
 
 @Sql("/sql/hibernate/group-test-data.sql")
 class GroupRepositoryTest extends BaseRepositoryIT {
-
-    private static final LocalDateTime START_FIRST_LESSON =
-        LocalDateTime.of(2021, 6, 12, 14, 0);
-    private static final LocalDateTime END_FIRST_LESSON =
-        LocalDateTime.of(2021, 6, 12, 15, 30);
-    private static final LocalDateTime START_SECOND_LESSON =
-        LocalDateTime.of(2021, 6, 10, 14, 0);
-    private static final LocalDateTime END_SECOND_LESSON =
-        LocalDateTime.of(2021, 6, 10, 15, 30);
 
     @Autowired
     private GroupRepository repo;

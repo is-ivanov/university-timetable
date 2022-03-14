@@ -11,7 +11,6 @@ import ua.com.foxminded.university.dao.RoomRepository;
 import ua.com.foxminded.university.domain.entity.Room;
 import ua.com.foxminded.university.exception.MyEntityNotFoundException;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
