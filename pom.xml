@@ -151,7 +151,7 @@
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>font-awesome</artifactId>
-            <version>5.15.3</version>
+            <version>6.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.webjars</groupId>
@@ -166,7 +166,7 @@
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>fullcalendar</artifactId>
-            <version>5.9.0</version>
+            <version>5.10.2</version>
         </dependency>
 
         <!--Utils-->
@@ -183,7 +183,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>31.0.1-jre</version>
+            <version>31.1-jre</version>
         </dependency>
 
 
