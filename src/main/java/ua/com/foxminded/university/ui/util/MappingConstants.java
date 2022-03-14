@@ -36,6 +36,7 @@ public final class MappingConstants {
     public static final String API_STUDENTS = API + STUDENTS;
     public static final String API_STUDENTS_ID = API + STUDENTS + ID;
     public static final String API_TEACHERS = API + TEACHERS;
+    public static final String API_TEACHERS_ID = API + TEACHERS + ID;
     public static final String ID_GROUPS = ID + GROUPS;
     public static final String ID_GROUPS_GROUP_ID = ID + GROUPS + GROUP_ID;
     public static final String ID_DEPARTMENTS = ID + DEPARTMENTS;

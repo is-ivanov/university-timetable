@@ -79,6 +79,7 @@ public final class TestObjects {
     public static final String NAME_SECOND_TEACHER = "Oleg";
     public static final String PATRONYMIC_SECOND_TEACHER = "Ivanovich";
     public static final String LAST_NAME_SECOND_TEACHER = "Petrov";
+    public static final String FULL_NAME_SECOND_TEACHER = "Petrov, O.I.";
     public static final String NAME_THIRD_TEACHER = "John";
     public static final String PATRONYMIC_THIRD_TEACHER = "Jr";
     public static final String LAST_NAME_THIRD_TEACHER = "Thompson";
@@ -119,6 +120,9 @@ public final class TestObjects {
     public static final String STUDENTS_LINK = "http://localhost/api/students";
     public static final String STUDENT1_SELF_LINK = "http://localhost/api/students/12";
     public static final String STUDENT2_SELF_LINK = "http://localhost/api/students/79";
+    public static final String TEACHERS_LINK = "http://localhost/api/teachers";
+    public static final String TEACHER1_SELF_LINK = "http://localhost/api/teachers/7";
+    public static final String TEACHER2_SELF_LINK = "http://localhost/api/teachers/78";
     public static final String TIME_START = "time_start";
     public static final String TIME_END = "time_end";
 
@@ -412,6 +416,13 @@ public final class TestObjects {
             .build();
 
         return new ArrayList<>(Arrays.asList(teacherDto1, teacherDto2));
+    }
+
+    public static CollectionModel<TeacherDto> createTestModelTeacherDtos() {
+        List<TeacherDto> teacherDtos = createTestTeacherDtos(FACULTY_ID1);
+        CollectionModel<TeacherDto> collectionModel = CollectionModel.of(teacherDtos);
+        collectionModel.add(Link.of(TEACHERS_LINK).withSelfRel());
+        return collectionModel;
     }
 
     public static Room createTestRoom() {
