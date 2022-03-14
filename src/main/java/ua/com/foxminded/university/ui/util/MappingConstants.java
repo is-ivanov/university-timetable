@@ -31,8 +31,10 @@ public final class MappingConstants {
     public static final String API_LESSONS_ID = API + LESSONS + ID;
     public static final String API_ROOMS = API + ROOMS;
     public static final String API_ROOMS_ID = API + ROOMS + ID;
+    public static final String API_ROOMS_ID_TIMETABLE = API_ROOMS_ID + TIMETABLE;
     public static final String API_ROOMS_FREE = API + ROOMS + FREE;
     public static final String API_STUDENTS = API + STUDENTS;
+    public static final String API_STUDENTS_ID = API + STUDENTS + ID;
     public static final String API_TEACHERS = API + TEACHERS;
     public static final String ID_GROUPS = ID + GROUPS;
     public static final String ID_GROUPS_GROUP_ID = ID + GROUPS + GROUP_ID;
@@ -43,7 +45,6 @@ public final class MappingConstants {
     public static final String ID_STUDENTS_FREE = ID + STUDENTS + FREE;
     public static final String ID_STUDENTS_STUDENT_ID = ID + STUDENTS + STUDENT_ID;
     public static final String ID_TIMETABLE = ID + TIMETABLE;
-    public static final String API_ROOMS_ID_TIMETABLE = API_ROOMS_ID + TIMETABLE;
 
 
     private MappingConstants() {

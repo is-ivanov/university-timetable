@@ -116,6 +116,9 @@ public final class TestObjects {
     public static final String ROOMS_LINK = "http://localhost/api/rooms";
     public static final String ROOM1_SELF_LINK = "http://localhost/api/rooms/5";
     public static final String ROOM2_SELF_LINK = "http://localhost/api/rooms/62";
+    public static final String STUDENTS_LINK = "http://localhost/api/students";
+    public static final String STUDENT1_SELF_LINK = "http://localhost/api/students/12";
+    public static final String STUDENT2_SELF_LINK = "http://localhost/api/students/79";
     public static final String TIME_START = "time_start";
     public static final String TIME_END = "time_end";
 
